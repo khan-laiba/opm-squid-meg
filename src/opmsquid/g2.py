@@ -116,7 +116,7 @@ def channel_sets(array: Array) -> dict[str, np.ndarray]:
 
 @dataclass
 class Sources:
-    """Target sources (usable oct-6 vertices: inside the inner skull and >= 2 mm from its mesh) and
+    """Target sources (usable oct-6 vertices: inside the inner skull and >= 4 mm from its mesh) and
     the background grid (drawn from usable vertices)."""
 
     target: np.ndarray  # global full-resolution vertex indices
@@ -135,7 +135,7 @@ def make_sources(subject, cortex, rng) -> Sources:
     n_lh = int(np.sum(cortex.hemi == 0))
     oct_global = np.concatenate([subject.src[0]["vertno"], subject.src[1]["vertno"] + n_lh])
     target = oct_global[cortex.usable[oct_global]]
-    valid = np.flatnonzero(cortex.usable)  # A-BEM-DIST: >= 2 mm from the inner-skull mesh
+    valid = np.flatnonzero(cortex.usable)  # A-BEM-DIST: >= 4 mm from the inner-skull mesh
     grid = valid[goldenholz.poisson_disk(cortex.rr[valid], 0.007, rng)]
     grid_area = noisemodel.grid_areas(cortex.rr[grid], cortex.rr[valid], cortex.area[valid])
     depth = anatomy.depth_to_surface(cortex.rr[target], subject.scalp) * 1e3

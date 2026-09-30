@@ -7,7 +7,7 @@ The OPM maps are a NEW extension: the paper's noise model has no sensor noise, s
 calibrates the brain-noise sources on the recorded minus empty-room variance (brain only) and adds
 intrinsic SQUID/OPM noise explicitly (OPM noise swept).
 
-Sources are usable vertices only (inside the inner skull and >= 2 mm from its mesh, A-BEM-DIST).
+Sources are usable vertices only (inside the inner skull and >= 4 mm from its mesh, A-BEM-DIST).
 
 Inputs: cache/fullres/{neuromag_bem006,neuromag_bem06,opm_bem006}.npy
 Outputs: results/g1c/ (maps, g1c_summary.json, g1c_oct6_values.csv)

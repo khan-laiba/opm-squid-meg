@@ -20,6 +20,7 @@ Configuration: configs/g2_adult.toml. Outputs: results/g2/.
 from __future__ import annotations
 
 import csv
+import json
 import pickle
 import sys
 import time
@@ -435,6 +436,7 @@ def main():
                "Head-position variants move the head in the fixed Neuromag helmet; the room field is kept in head coordinates "
                "(8-term model; the change over a 5-mm move is second order).",
                "Detectability is a known-topography matched-filter SNR, not an event detection rate or localization accuracy."])
+    summary["provenance"] = dict(commit=io.RUN_COMMIT, mne_version=mne.__version__, numpy_version=np.__version__)
     state = dict(summary=summary, arrays=arrays, res=res, amp=amp, patch_det=patch_det)
     STATE.parent.mkdir(parents=True, exist_ok=True)
     with open(STATE, "wb") as fh:
@@ -814,30 +816,35 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
     oct_global = np.concatenate([st.subject.src[0]["vertno"], st.subject.src[1]["vertno"] + n_lh_full])
     ok = st.cortex.usable[oct_global]
     n_lh = st.subject.src[0]["nuse"]
+    # the medial wall (FreeSurfer 'unknown') is not cortex: kept in the statistics, shown grey like excluded vertices
+    medial_at = np.flatnonzero(ok)[np.char.endswith(st.src.region.astype(str), "unknown")]
+
+    def on_map(values):
+        v = np.full(len(oct_global), np.nan)
+        v[ok] = values
+        v[medial_at] = np.nan
+        return v
+
+    grey = "grey: medial wall and vertices < 4 mm from the inner skull"
     for cond in headline:
         rows = []
         for a, ref in (("opm_matched", "combined"), ("opm_matched", "grad"), ("opm_dense", "combined"), ("opm_dense", "grad"),
                        ("opm_dense", "mag")):
-            v = np.full(len(oct_global), np.nan)
-            v[ok] = np.log2(res[a][("opm", cond)]["detect"] / res["squid"][(ref, cond)]["detect"])
-            rows.append((f"{LABEL[a]}\nvs {LABEL[ref]}", v))
+            rows.append((f"{LABEL[a]}\nvs {LABEL[ref]}", on_map(np.log2(res[a][("opm", cond)]["detect"] / res["squid"][(ref, cond)]["detect"]))))
         if patch_det:
             for a in ("opm_matched", "opm_dense"):
-                v = np.full(len(oct_global), np.nan)
-                v[ok] = np.log2(patch_det[(a, "opm", cond, 10.0, "fixed_total")] / patch_det[("squid", "combined", cond, 10.0, "fixed_total")])
-                rows.append((f"{LABEL[a]} vs\nNeuromag combined,\n10-mm patches", v))
+                rows.append((f"{LABEL[a]} vs\nNeuromag combined,\n10-mm patches", on_map(np.log2(
+                    patch_det[(a, "opm", cond, 10.0, "fixed_total")] / patch_det[("squid", "combined", cond, 10.0, "fixed_total")]))))
         plotting.cortex_map_figure(hemis, rows, n_lh, plt.get_cmap("RdBu_r"), plt.Normalize(-1, 1),
-                                   f"G2: log2 detectability ratio OPM / Neuromag, {cond} (red: OPM higher)", "log2 ratio",
+                                   f"G2: log2 detectability ratio OPM / Neuromag, {cond} (red: OPM higher; {grey})", "log2 ratio",
                                    OUT / f"Figure_G2_maps_{cond.replace('+', '_')}.png", contour_level=0.0)
 
     # 3b. absolute detectability maps (10 nAm, first headline condition)
     rows = []
     for n, cs in (("squid", "combined"), ("squid", "grad"), ("squid", "mag"), ("opm_matched", "opm"), ("opm_dense", "opm")):
-        v = np.full(len(oct_global), np.nan)
-        v[ok] = np.log10(res[n][(cs, headline[0])]["detect"])
-        rows.append((LABEL[cs if n == "squid" else n], v))
+        rows.append((LABEL[cs if n == "squid" else n], on_map(np.log10(res[n][(cs, headline[0])]["detect"]))))
     plotting.cortex_map_figure(hemis, rows, n_lh, plt.get_cmap("viridis"), plt.Normalize(-1.5, 0.5),
-                               f"G2: log10 detectability of a 10-nAm dipole, {headline[0]}", "log10 detectability",
+                               f"G2: log10 detectability of a 10-nAm dipole, {headline[0]} ({grey})", "log10 detectability",
                                OUT / "Figure_G2_maps_absolute.png")
 
     # 4. patches
@@ -920,6 +927,10 @@ if __name__ == "__main__":
     if "--replot" in sys.argv:
         with open(STATE, "rb") as fh:
             saved = pickle.load(fh)
+        # keep the provenance of the computation (older checkpoints: from the summary it wrote)
+        if "provenance" not in saved["summary"] and (OUT / "g2_summary.json").exists():
+            saved["summary"]["provenance"] = json.loads((OUT / "g2_summary.json").read_text())["provenance"]
+        saved["summary"]["replotted_at_commit"] = io.RUN_COMMIT
         mne.set_log_level("WARNING")
         OUT.mkdir(parents=True, exist_ok=True)
         outputs(Study(saved["summary"]["config"]), saved)

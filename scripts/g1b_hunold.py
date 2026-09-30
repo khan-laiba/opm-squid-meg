@@ -313,7 +313,7 @@ def main():
     base = slice(onset - int(cfg["snr"]["baseline_s"] * fs), onset)
 
     # background: random 10 % of valid nodes, one fixed realization shared by all arrays and sources
-    usable_pos = np.flatnonzero(cortex.usable[valid_idx])  # A-BEM-DIST: >= 2 mm from the inner-skull mesh
+    usable_pos = np.flatnonzero(cortex.usable[valid_idx])  # A-BEM-DIST: >= 4 mm from the inner-skull mesh
     usable_idx = valid_idx[usable_pos]
     n_bg = int(round(cfg["background"]["fraction_of_nodes"] * len(usable_idx)))
     bg_cols = np.sort(rng.choice(usable_pos, n_bg, replace=False))
