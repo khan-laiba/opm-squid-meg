@@ -14,10 +14,10 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | Milestone | Status | Evidence |
 |---|---|---|
 | G0 audit, provenance, plan | done except the first push (private repository) | this file; `docs/audit.md`; `docs/literature/`; `docs/provenance_register.md` |
-| G1A Jas analytical benchmark | done (awaiting independent review) | `scripts/g1a_jas_benchmark.py` -> `results/g1a/`; Eq. 1 vs Sarvas 2-D maximum 4.7e-15, vs MNE sphere 5.4e-8; d_eq(eta 3) = 27.665 mm |
-| G1B Hunold depth-orientation spikes | done (awaiting independent review) | `scripts/g1b_hunold.py` -> `results/g1b/`; Fig. 6-calibrated background, p2p: bin means 0.88-0.96x the paper, r 0.93-0.97, 2.5-classification agreement 84-93 %, GM-MM sign 98-100 % |
-| G1C Goldenholz cortical SNR maps | done (awaiting independent review) | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.78 nAm at 4,000 sources (paper 1.6-1.9); focal median -21.9 dB, 55 % inside the paper's -29/-19 dB display range; medial lowest |
-| G2 realistic adult OPM-Neuromag comparison | not started | |
+| G1A Jas analytical benchmark | done; independently reviewed (approve with notes; notes addressed) | `scripts/g1a_jas_benchmark.py` -> `results/g1a/`; Eq. 1 vs Sarvas 2-D maximum 4.7e-15, vs MNE sphere 5.4e-8; d_eq(eta 3) = 27.665 mm |
+| G1B Hunold depth-orientation spikes | done; independently reviewed (approve with notes; notes addressed, rerun) | `scripts/g1b_hunold.py` -> `results/g1b/`; calibrated background, p2p: bin means 0.84-0.97x the paper (0.69-1.03x over the calibration range), r 0.93-0.97, 2.5-classification agreement 86-95 %, GM-MM sign agreement 100 % |
+| G1C Goldenholz cortical SNR maps | done; independently reviewed (approve with notes; notes addressed, rerun) | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.78 nAm at 4,000 sources (paper 1.6-1.9); focal median -22.0 dB, 55 % inside the paper's -29/-19 dB range; deep medial cortex darkest |
+| G2 realistic adult OPM-Neuromag comparison | in progress (driver running) | `scripts/g2_adult_comparison.py` |
 | G3 pediatric extension | not started; needs pediatric anatomy (see Inputs) | |
 | G4 epilepsy detection and localization | not started | |
 | G5 repository, tests, report | repository initialised locally | |
@@ -91,7 +91,8 @@ Done (`scripts/g1b_hunold.py`, methods section 6, `configs/hunold_reference.toml
 5. [x] OPM (matched 99 sites, NEW): brain noise only, OPM > MM for superficial sources, <= MM
    below ~45 mm, < GM everywhere; intrinsic sensor noise (3.5-30 fT/sqrt(Hz)) is negligible
    against this background.
-6. [ ] Independent review.
+6. [x] Independent review (approve with notes). Fixes: stationary background, calibration range and
+   effective-level wording, noisy-p2p variant, spike comparison, usable sources (A-BEM-DIST).
 
 ### G1C Goldenholz cortical SNR maps (ADAPT)
 
@@ -102,8 +103,9 @@ Done (`scripts/g1c_goldenholz.py`, methods section 7):
    modelled noise (paper's calibration rule) and recorded noise (task baselines, ADAPT).
 3. [x] Skull 0.006 and 0.06 S/m both run and labelled.
 4. [x] Soft comparisons with the paper (source SD, display range, medial maps, patch-size effect).
-5. [x] OPM extension (NEW).
-6. [ ] Independent review.
+5. [x] OPM extension (NEW), brain-only calibration and OPM noise sweep after review.
+6. [x] Independent review (approve with notes). Fixes: near-skull BEM artefacts (A-BEM-DIST),
+   double-counted instrument noise in the extension, wording, tests.
 
 GATE G1: all three run reproducibly; each output states REPRO/ADAPT status and assumptions.
 
