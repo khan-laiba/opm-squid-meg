@@ -214,6 +214,51 @@ Design
 * Bridge to G1A: the realistic OPM/magnetometer peak-field ratio vs depth and the equal-SNR depth
   d_eq(eta) (intrinsic noise only, peak-channel SNR) against the sphere benchmark.
 
+Results (`results/g2/g2_summary.json`; detectability ratios are medians over the 8,124 targets with
+bootstrap 95 % CIs narrower than +/-0.01 in the ratio; OPM 15 fT/sqrt(Hz))
+* Noise validation: the empty-room model (brochure intrinsic noise + fitted room field) gives
+  115 fT (magnetometers) and 21.4 fT/cm (gradiometers) against 115 fT and 20.2 fT/cm measured; the
+  room field explains 94 % of the magnetometer and 1.6 % of the gradiometer empty-room variance.
+  Brain noise (task baseline minus empty room, 1-40 Hz): gradiometers 37.1 fT/cm (calibrated),
+  magnetometers 262 fT measured vs 193 fT predicted (0.74x; the independent cortical background
+  under-predicts magnetometer noise, likely distant and non-cortical sources). Per array, the
+  median brain-noise RMS is ~500-520 fT at the OPM sites, 193 fT at the SQUID magnetometers.
+* Intrinsic noise only (no brain noise): Neuromag combined beats every OPM array (dense 0.74x,
+  matched 0.54x; OPM better for <= 5 % of targets); OPMs beat the gradiometers alone (2.3-3.2x).
+* With brain noise (intrinsic+brain): matched 99-site OPM 1.01x Neuromag combined (better for 59 %
+  of targets), OPM 204 1.16x, dense 216-site OPM 1.17x (100 %); vs gradiometers alone 1.14-1.36x,
+  vs magnetometers alone 1.05-1.23x. Adding the room field changes little (1.01, 1.17, 1.18x);
+  after the external projection (rank n - 8): 0.96, 1.17, 1.18x.
+* Depth (dense vs combined, intrinsic+brain): 1.59x at 10-15 mm, 1.38x at 15-20 mm, 1.23x at
+  20-25 mm, 1.08-1.13x below 30 mm; matched array 1.16x at 10-15 mm, 0.95-0.98x below 35 mm. By
+  lobe (dense): frontal 1.24x, parietal and temporal 1.16x, occipital 1.12x, cingulate and
+  insula 1.10x.
+* Metric dependence: best single channel (peak-channel SNR) dense OPM 0.91x Neuromag (its best
+  channel is usually a gradiometer), mean-power SNR 1.02x; detectability 1.17x.
+* Estimated covariance (plug-in, Ledoit-Wolf): 10 s of data cost Neuromag combined 15 % and the
+  dense OPM 10 % of the oracle detectability (60 s: 3 % and 2 %), so the dense/combined ratio is
+  1.24x (10 s) and 1.18x (60 s); matched 1.12x and 1.04x.
+* Extended sources: the OPM/Neuromag ratio is nearly independent of patch size (dense 1.17, 1.17,
+  1.16x for 5, 10, 20 mm radius; matched 1.02x), although cancellation reduces the net moment to
+  0.76, 0.52 and 0.33 of the scalar moment.
+* Sensitivity (dense | matched vs combined, intrinsic+brain): OPM noise 7 -> 30 fT/sqrt(Hz):
+  1.34 -> 1.02x | 1.09 -> 0.93x; correlated background (lambda 5, 10 mm): 1.18, 1.20x | 1.02,
+  1.03x; background calibrated on magnetometers (variance x1.85): 1.18x | 1.01x; head position
+  (+/-5 mm, +/-5 deg, well fitted): 1.13-1.20x | 0.99-1.03x; OPM scalp gap 3 and 6 mm: 1.10 and
+  1.04x | 0.99 and 0.96x.
+* Convergence: background grid vs every usable vertex changes the median log2 ratios by <= 0.014;
+  1-layer BEM refined from 5,120 to 20,480 triangles by <= 0.005; 3- vs 1-layer BEM changes the
+  gains by ~11 % but the ratios by <= 0.07; Neuromag 4-point vs accurate integration 0.6 % in the
+  gains; OPM 10-mm cell vs point 0.03 % median (max 4 %) in the peak field; oct-6 vs random
+  full-resolution targets <= 0.018; whitening tolerance none.
+* Bridge to the sphere benchmark (intrinsic noise, peak-channel SNR): the realistic OPM/Neuromag
+  magnetometer peak-field ratio follows the sphere with the real standoffs (7 mm OPM, 29.8 mm
+  median SQUID) to ~40 mm and stays higher at depth; the equal-SNR depth at eta = 3 is 29.7 mm
+  (matched) and 31.7 mm (dense) vs 28.9 mm (sphere, real standoffs) and 27.7 mm (Jas). OPMs are
+  ahead at every depth for eta <= 2.25 and behind at every depth for eta >= 5 (matched) or 5.5
+  (dense). The idealised benchmark's large OPM advantage assumes sensor-noise-limited SNR; with
+  realistic brain noise, which on-scalp sensors also see more strongly, it shrinks to ~1.2x.
+
 ## To be written
 
-G2 results summary (after the run and its review); G3; G4.
+G3; G4.

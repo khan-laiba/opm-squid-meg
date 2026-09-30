@@ -17,7 +17,7 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | G1A Jas analytical benchmark | done; independently reviewed (approve with notes; notes addressed) | `scripts/g1a_jas_benchmark.py` -> `results/g1a/`; Eq. 1 vs Sarvas 2-D maximum 4.7e-15, vs MNE sphere 5.4e-8; d_eq(eta 3) = 27.665 mm |
 | G1B Hunold depth-orientation spikes | done; independently reviewed (approve with notes; notes addressed, rerun) | `scripts/g1b_hunold.py` -> `results/g1b/`; calibrated background, p2p: bin means 0.84-0.97x the paper (0.69-1.03x over the calibration range), r 0.93-0.97, 2.5-classification agreement 86-95 %, GM-MM sign agreement 100 % |
 | G1C Goldenholz cortical SNR maps | done; independently reviewed (approve with notes; notes addressed, rerun) | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.78 nAm at 4,000 sources (paper 1.6-1.9); focal median -22.0 dB, 55 % inside the paper's -29/-19 dB range; deep medial cortex darkest |
-| G2 realistic adult OPM-Neuromag comparison | in progress (driver running) | `scripts/g2_adult_comparison.py` |
+| G2 realistic adult OPM-Neuromag comparison | done, awaiting independent review, then freeze (`adult-baseline-v1`) | `scripts/g2_adult_comparison.py` -> `results/g2/`; with brain noise the dense OPM array is 1.17x Neuromag combined (1.02-1.34x over the sensitivity analyses), the matched array 1.01x; the advantage is 1.4-1.6x for sources within 20 mm of the scalp |
 | G3 pediatric extension | not started; needs pediatric anatomy (see Inputs) | |
 | G4 epilepsy detection and localization | not started | |
 | G5 repository, tests, report | repository initialised locally | |
