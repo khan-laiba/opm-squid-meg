@@ -2,7 +2,7 @@
 
 ``fixed_gain`` returns the gain of sources fixed along the cortical normal (MNE cortical patch
 statistics), ``discrete_gain`` the gain of dipoles at arbitrary points with given orientations.
-Results are cached in ``cache/fwd/`` under a SHA-1 of everything that determines them: channel
+Gains are float32 (relative precision ~1e-7). Results are cached in ``cache/fwd/`` under a SHA-1 of everything that determines them: channel
 names, coil types, coil geometry (``loc``), ``dev_head_t``, the head-MRI transform, source
 positions/orientations/vertex numbers, BEM surfaces and conductivities, extra coil definitions
 and the MNE version. MNE 1.13.2 always uses its 'accurate' coil integration for MEG forwards.
@@ -81,7 +81,7 @@ def fixed_gain(info: mne.Info, trans, src: mne.SourceSpaces, bem_surfaces: list,
     if any(not np.array_equal(a["vertno"], b["vertno"]) for a, b in zip(fwd["src"], src)):
         raise RuntimeError("the forward model dropped sources (outside the inner skull?)")
     meta = dict(ch_names=fwd["info"]["ch_names"], n_sources=int(fwd["nsource"]), key=key)
-    gain = np.asarray(fwd["sol"]["data"])
+    gain = np.asarray(fwd["sol"]["data"], dtype=np.float32)  # 1e-7 relative precision, half the storage
     if use_cache:
         _save(key, gain, meta)
     return gain, meta
@@ -105,11 +105,29 @@ def discrete_gain(info: mne.Info, trans, rr_mri: np.ndarray, nn_mri: np.ndarray,
     g = np.asarray(fwd["sol"]["data"]).reshape(len(fwd["info"]["ch_names"]), -1, 3)
     mri_head = np.linalg.inv(trans["trans"]) if trans is not None else np.eye(4)
     nn_head = nn_mri @ mri_head[:3, :3].T  # orientations in the head frame of the forward
-    gain = np.einsum("cik,ik->ci", g, nn_head)
+    gain = np.einsum("cik,ik->ci", g, nn_head).astype(np.float32)
     meta = dict(ch_names=fwd["info"]["ch_names"], n_sources=len(rr_mri), key=key)
     if use_cache:
         _save(key, gain, meta)
     return gain, meta
+
+
+def chunked_discrete_gain(info: mne.Info, trans, rr_mri: np.ndarray, nn_mri: np.ndarray, bem_surfaces: list,
+                          coil_def: Path | None = None, chunk: int = 20000, label: str = "") -> np.ndarray:
+    """``discrete_gain`` over many points in cached chunks (float32 result, (n_channels, n))."""
+    import time
+
+    out = None
+    for start in range(0, len(rr_mri), chunk):
+        t0 = time.time()
+        sl = slice(start, min(start + chunk, len(rr_mri)))
+        g, _ = discrete_gain(info, trans, rr_mri[sl], nn_mri[sl], bem_surfaces, coil_def)
+        if out is None:
+            out = np.empty((g.shape[0], len(rr_mri)), np.float32)
+        out[:, sl] = g
+        if label:
+            print(f"  {label}: sources {sl.start}-{sl.stop} of {len(rr_mri)} ({time.time() - t0:.1f} s)", flush=True)
+    return out
 
 
 class _null:

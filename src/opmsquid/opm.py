@@ -57,10 +57,35 @@ def _coil_block(coil_type: int, size: float, description: str) -> str:
     return "\n".join(lines) + "\n"
 
 
+FOUR_POINT_COILS = {3014: 9014, 3024: 9024}  # T3 coils with MNE's 4-point 'normal' rule at every level
+
+
+def _four_point_blocks() -> str:
+    """Study coils 9014/9024: MNE's own 'normal' (4-point) integration of the T3 planar
+    gradiometer 3014 and magnetometer 3024, repeated at every accuracy level so that MNE
+    1.13.2's forward (which always requests 'accurate') uses the 4-point rule stated by
+    Hunold et al. (2016)."""
+    from mne.forward._make_forward import _read_coil_defs
+
+    defs = {(int(c["coil_type"]), int(c["accuracy"])): c for c in _read_coil_defs()}
+    out = []
+    for src_type, new_type in FOUR_POINT_COILS.items():
+        c = defs[(src_type, 1)]
+        cls = 3 if src_type == 3014 else 1
+        for accuracy in (0, 1, 2):
+            out.append(f'{cls}   {new_type}    {accuracy}  {len(c["w"]):>2d}  {c["size"]:.3e}  {c["base"]:.3e}\t'
+                       f'"{c["desc"]} [4-point normal rule at all levels]"')
+            out += [f"  {w:.12e}  {r[0]:.12e}  {r[1]:.12e}  {r[2]:.12e}  {n[0]:.6f}  {n[1]:.6f}  {n[2]:.6f}"
+                    for w, r, n in zip(c["w"], c["rmag"], c["cosmag"])]
+    return "\n".join(out) + "\n"
+
+
 def coil_def_file(cell_size: float = CELL_SIZE) -> Path:
-    """Path of an extra coil-definition file holding the study OPM coil (for use_coil_def)."""
+    """Path of the study's extra coil-definition file (for use_coil_def): the OPM cell coil
+    and the 4-point Neuromag emulation coils."""
     extra = _coil_block(OPM_COIL_TYPE, cell_size, f"Study OPM, {cell_size * 1e3:.1f}-mm cubic cell (assumption)")
-    text = "# opmsquid study OPM coil (src/opmsquid/opm.py); added to MNE's coil_def.dat\n" + extra
+    text = ("# opmsquid study coils (src/opmsquid/opm.py); added to MNE's coil_def.dat\n" + extra
+            + _four_point_blocks())
     digest = hashlib.sha1(text.encode()).hexdigest()[:10]
     out = paths.CACHE / "coils" / f"coil_def_{digest}.dat"
     if not out.exists():

@@ -1,0 +1,41 @@
+# G1C reproduction configuration: Goldenholz et al. (2009), MEG part.
+# [P] = as printed (pages in docs/literature/goldenholz2009.md); [C] = study choice for an
+# unstated item (U-GO entries in docs/provenance_register.md); [A] = adaptation.
+
+[anatomy]
+subject = "sample"                       # [A] MNE sample subject replaces the paper's four subjects
+signal_sources = "every white-surface vertex, cortical normal"   # [P] p. 1078
+exclude_outside_inner_skull = true       # [C]
+
+[head_model]
+# printed as brain / skull / scalp = 0.3 / 0.06 / 0.3 S/m (p. 1078); 0.006 is the probable intended
+# MNE default (MNE-C manual v2.5 prints 0.06 next to a "1/50" ratio). Both are run and labelled.
+variants = { as_printed = [0.3, 0.06, 0.3], probable_default = [0.3, 0.006, 0.3] }   # scalp, skull, brain order in code
+bem_triangles_per_surface = 5120         # [P] p. 1078
+
+[sensors]
+system = "Neuromag Vectorview geometry of the MNE sample recording, T3 coils, MNE accurate integration"  # [P] Vectorview; rest [C]
+channel_sets = ["mag (N = 102)", "grad (N = 204)", "pooled MEG (N = 306)"]   # [C] pooling [NS]; all reported
+
+[sources]
+focal_nAm = 10.0                         # [P] p. 1078
+patch_radii_mm = [10.0, 16.0]            # [P] geodesic radius (3 / 8 cm2 nominal)
+patch_density_pAm_per_mm2 = 50.0         # [P] p. 1078
+patch_geodesic = "Dijkstra along full-resolution white-mesh edges"   # [P] Dijkstra; surface [C]
+patch_centroids = "oct-6 vertices of the sample source space"         # [C] centroid set [NS]
+patch_elements = "every full-resolution vertex within the radius, moment = density x vertex area, signed sum of cortical-normal dipoles"  # [C]
+
+[noise_model]
+sources = "independent, cortex-normal, Poisson-disk grid with 7 mm minimum spacing on the white surface"  # [P] ~7 mm; construction [C]
+calibration = "s_s^2 = channel-count-weighted mean over sensor types of median_k(recorded_var_k / (A A^T)_kk)"  # [P] p. 1080 (EEG term absent)
+sensor_noise = "none"                    # [P] pp. 1079-1080
+
+[recorded_noise]
+data = "pre-stimulus baselines (-200 to 0 ms) of sample_audvis_raw.fif, sample SSP (3 empty-room PCA vectors) applied"  # [A] paper: 2 min spontaneous data
+band_hz = [0.5, 100.0]                   # [P] p. 1079
+filter = "Butterworth order 4, zero phase"   # [C]
+statistic = "per-channel variance (diagonal only)"   # [P] p. 1079
+ssp_on_gains = true                      # [C] SSP applied to signals and noise alike
+
+[snr]
+equation = "SNR = 10 log10[(a^2/N) sum_k b_k^2 / s_k^2]"   # [P] Eq. 1 p. 1079

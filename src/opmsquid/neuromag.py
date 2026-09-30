@@ -33,7 +33,19 @@ TRANS_FILE = "sample_audvis_raw-trans.fif"
 
 def load_info(variant: str = "T3") -> mne.Info:
     """MEG-only measurement info of the sample recording: 306 channels, no bad-channel
-    exclusion (geometry only), no projectors or compensation."""
+    exclusion (geometry only), no projectors or compensation.
+
+    variant: 'T3' (3014/3024, MNE 'accurate' integration), 'file' (stored types) or 'T3-4pt'
+    (study coils 9014/9024 = T3 with MNE's 4-point 'normal' rule, as in Hunold et al. 2016;
+    forward computations then need ``mne.use_coil_def(opm.coil_def_file())``)."""
+    if variant == "T3-4pt":
+        from .opm import FOUR_POINT_COILS
+
+        info = load_info("T3")
+        with info._unlock():
+            for ch in info["chs"]:
+                ch["coil_type"] = FOUR_POINT_COILS[int(ch["coil_type"])]
+        return info
     raw_info = mne.io.read_info(paths.require(paths.SAMPLE_MEG / RAW_FILE, "MNE sample recording"), verbose=False)
     info = mne.pick_info(raw_info, mne.pick_types(raw_info, meg=True, eeg=False, stim=False, eog=False, exclude=[]))
     with info._unlock():
@@ -49,6 +61,12 @@ def load_info(variant: str = "T3") -> mne.Info:
             elif variant != "file":
                 raise ValueError("variant must be 'T3' or 'file'")
     return info
+
+
+def channel_kinds(info: mne.Info) -> np.ndarray:
+    """'grad' (unit T/m) or 'mag' (unit T) for every MEG channel, independent of coil type."""
+    return np.array(["grad" if ch["unit"] == FIFF.FIFF_UNIT_T_M else "mag" for ch in info["chs"]
+                     if ch["kind"] == FIFF.FIFFV_MEG_CH])
 
 
 def head_mri_trans() -> mne.transforms.Transform:
@@ -79,7 +97,7 @@ def sensor_geometry(info: mne.Info, frame: str = "head", trans: mne.transforms.T
         raise ValueError("frame must be 'head' or 'mri'")
     pos = pos @ t[:3, :3].T + t[:3, 3]
     nrm = nrm @ t[:3, :3].T
-    kind = np.array(["grad" if int(ch["coil_type"]) in GRAD_TYPES else "mag" for ch in chs])
+    kind = channel_kinds(info)
     # sensor locations: channels of one triplet share the coil centre (to < 0.1 mm)
     mags = np.flatnonzero(kind == "mag")
     site = np.argmin(np.linalg.norm(pos[:, None, :] - pos[None, mags, :], axis=2), axis=1)

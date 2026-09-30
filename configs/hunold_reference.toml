@@ -1,0 +1,51 @@
+# G1B reproduction configuration: Hunold et al. (2016), MEG part.
+# Values as printed are marked [P] (page numbers in docs/literature/hunold2016.md); study choices
+# for unstated items are marked [C] and listed as U-HU entries in docs/provenance_register.md.
+
+[anatomy]
+subject = "sample"                      # [C] MNE sample subject replaces subjects AH and MF (ADAPT)
+source_surface = "white, all vertices"  # [P] p. 1148
+exclude_outside_inner_skull = true      # [C] 279 of 312,273 vertices (0.09 %)
+
+[head_model]
+conductivity_scalp_skull_brain = [0.33, 0.0042, 0.33]   # [P] p. 1151 (listed there brain/skull/scalp)
+bem_triangles_per_surface = 5120                         # [P] p. 1148; MNE linear collocation instead of Galerkin [C]
+
+[sensors]
+system = "Neuromag Vectorview geometry of the MNE sample recording"  # [P] Vectorview p. 1151; placement [NS] -> measured dev_head_t [C]
+coil_types = "T3 (3014 gradiometer, 3024 magnetometer) with MNE's 4-point 'normal' rule (study coils 9014/9024)"  # [P] 4-point integration p. 1151; T-variant [NS]
+sensor_noise = "none"                   # [P] p. 1158 (brain-noise-only reference)
+
+[descriptors]
+depth = "distance to the nearest node of the 5120-triangle scalp BEM mesh"            # [P] p. 1148
+orientation = "angle to the normal of the nearest node of the 5120-triangle inner-skull mesh, folded 0-90 deg"  # [P] p. 1148
+depth_bins_mm = [20, 25, 30, 35, 40, 45, 50, 55, 60]    # [P] p. 1150
+orientation_bins_deg = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
+
+[sources]
+sampling = "stratified to the paper's per-bin counts (Fig. 3c; 3783 dipoles)"  # [C] replaces the dipole traces (ADAPT)
+dipole_peak_nAm = 600                   # [P] p. 1151
+patch_target_area_mm2 = 20.0            # [P] p. 1149 (grow until first exceeding)
+patch_orientation_window_deg = 10.0     # [P] p. 1149
+patch_median_total_nAm = 622            # [P] p. 1151 -> fixed density = 622 nAm / median patch area [C]
+seed = 2016
+
+[waveform]
+construction = "PCHIP through the digitised Fig. 2b points, peak 600 nAm at 24 ms"   # [C] equation [NS]
+sfreq_hz = 1000                         # [P] p. 1150
+
+[background]
+fraction_of_nodes = 0.10                # [P] p. 1148
+duration_s = 6.0                        # [P] p. 1150
+bands_hz = [[0.5, 4], [4, 8], [8, 13], [13, 30], [30, 45]]   # [C] edges [NS]
+band_weights = [0.6, 0.55, 0.5, 0.45, 0.4]                    # [C] within the printed 0.4-0.6
+peak_nAm = 10.0                         # [P] p. 1151 (peak normalisation [C])
+realizations = 1                        # [P]/[Dg] one fixed realization reused across sources
+
+[snr]
+channel = "largest noise-free spike amplitude, per sensor type"   # [P] p. 1151
+baseline_s = 1.0                        # [P] p. 1151
+onset_s = 3.0                           # [C] onset [NS]
+background_amplitude = "mean(+|hilbert|) - mean(-|hilbert|) = 2 mean|hilbert|; analytic signal of the whole trace, cropped"  # [P] + [C] edge handling
+numerators = ["peak", "p2p", "noisy_peak"]   # [C] numerator [NS]; all reported
+threshold = 2.5                         # [P] empirical visual threshold, not a detector threshold

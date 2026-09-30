@@ -122,6 +122,67 @@ def orientation_angle(points: np.ndarray, normals: np.ndarray, inner_skull: Surf
     return out
 
 
+@dataclass
+class FullResCortex:
+    """Full-resolution white surface of both hemispheres (sources at every vertex, as in Hunold
+    et al. 2016 and Goldenholz et al. 2009). Vertices outside the inner-skull BEM surface are
+    marked invalid (MNE cannot place BEM sources there)."""
+
+    rr: np.ndarray  # (n, 3) MRI [m]
+    nn: np.ndarray  # (n, 3) unit normals (outward from white matter)
+    area: np.ndarray  # (n,) vertex area [m^2] (one third of adjacent triangle areas)
+    hemi: np.ndarray  # (n,) 0 = lh, 1 = rh
+    vertno: np.ndarray  # (n,) vertex number within its hemisphere
+    tris: np.ndarray  # (m, 3) triangles in global indices
+    valid: np.ndarray  # (n,) inside the inner skull
+    adjacency: object  # scipy.sparse csr (n, n) edge lengths [m]
+
+    @property
+    def n(self) -> int:
+        return len(self.rr)
+
+
+def full_resolution(subject: Subject) -> FullResCortex:
+    """Build (or load from ``cache/anatomy``) the full-resolution cortex of ``subject``."""
+    import scipy.sparse as sp
+    from mne.surface import _CheckInside
+
+    cache = paths.CACHE / "anatomy" / f"{subject.name}_fullres.npz"
+    if cache.exists():
+        z = np.load(cache)
+        adj = sp.csr_matrix((z["adj_data"], z["adj_indices"], z["adj_indptr"]), shape=(len(z["rr"]),) * 2)
+        return FullResCortex(z["rr"], z["nn"], z["area"], z["hemi"], z["vertno"], z["tris"], z["valid"], adj)
+
+    src = mne.read_source_spaces(subject.subjects_dir / subject.name / "bem" / f"{subject.name}-all-src.fif",
+                                 verbose=False)
+    rr, nn, area, hemi, vertno, tris = [], [], [], [], [], []
+    offset = 0
+    for h, s in enumerate(src):
+        r, t = s["rr"], s["tris"]
+        tri_area = 0.5 * np.linalg.norm(np.cross(r[t[:, 1]] - r[t[:, 0]], r[t[:, 2]] - r[t[:, 0]]), axis=1)
+        rr.append(r)
+        nn.append(s["nn"])
+        area.append(np.bincount(t.ravel(), np.repeat(tri_area / 3.0, 3), minlength=len(r)))
+        hemi.append(np.full(len(r), h))
+        vertno.append(np.arange(len(r)))
+        tris.append(t + offset)
+        offset += len(r)
+    rr, nn, tris = np.concatenate(rr), np.concatenate(nn), np.concatenate(tris)
+    inner = next(s for s in subject.bem_surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_BRAIN)
+    valid = _CheckInside(inner)(rr)
+    e = np.concatenate([tris[:, [0, 1]], tris[:, [1, 2]], tris[:, [2, 0]]])
+    e = np.unique(np.sort(e, axis=1), axis=0)
+    w = np.linalg.norm(rr[e[:, 0]] - rr[e[:, 1]], axis=1)
+    adj = sp.coo_matrix((np.r_[w, w], (np.r_[e[:, 0], e[:, 1]], np.r_[e[:, 1], e[:, 0]])), shape=(len(rr),) * 2)
+    out = FullResCortex(rr, nn, np.concatenate(area), np.concatenate(hemi), np.concatenate(vertno), tris, valid,
+                        adj.tocsr())
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    np.savez(cache, rr=out.rr, nn=out.nn, area=out.area, hemi=out.hemi, vertno=out.vertno, tris=out.tris,
+             valid=out.valid, adj_data=out.adjacency.data, adj_indices=out.adjacency.indices,
+             adj_indptr=out.adjacency.indptr)
+    return out
+
+
 def vertex_areas(src: mne.SourceSpaces) -> list[np.ndarray]:
     """Cortical area [m^2] represented by each source (sum over its patch of the full-resolution
     surface, from MNE's patch statistics ``pinfo``)."""
