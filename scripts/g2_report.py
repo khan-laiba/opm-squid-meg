@@ -107,6 +107,10 @@ def main():
             lobes = d["by_lobe"].get(f"{name}/combined/intrinsic+brain")
             if lobes:
                 L.append("- By lobe (vs combined, intrinsic+brain): " + ", ".join(f"{lb} {2 ** x['median_log2']:.2f}x" for lb, x in lobes.items()) + ".")
+            mw = d.get("medial_wall")
+            if mw:
+                L.append(f"- Without the {mw['n_targets']} medial-wall targets ({100 * mw['share']:.1f} %; FreeSurfer 'unknown', not cortex), "
+                         "vs combined: " + ", ".join(f"{c} {mw['ratios_without'][f'{name}/combined/{c}']:.2f}x" for c in headline) + ".")
             if bands:
                 L.append("- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): " + ", ".join(
                     f"{k} {b['ideal'][f'{name}/combined/intrinsic+brain']['ratio']:.2f}x" for k, b in bands["bands"].items()) + ".")

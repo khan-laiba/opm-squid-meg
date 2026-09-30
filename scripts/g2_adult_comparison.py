@@ -309,6 +309,13 @@ def main():
                 strata[f"{a}/combined/{cond}/{lab}"] = [dict(lo=lo, hi=hi, n=int(np.sum((x >= lo) & (x < hi))),
                                                              ratio=float(2 ** np.median(lr[(x >= lo) & (x < hi)])))
                                                         for lo, hi in zip(edges[:-1], edges[1:])]
+    # the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum and midbrain, not cortex) holds some
+    # usable targets; they enter every median above, so the headline ratios are also given without them
+    medial = np.char.endswith(st.src.region.astype(str), "unknown")
+    medial_wall = dict(n_targets=int(medial.sum()), share=float(medial.mean()), ratios_without={
+        f"{a}/combined/{cond}": float(2 ** np.median(np.log2(detect_of(res, a, None, cond)[~medial]
+                                                             / detect_of(res, "squid", "combined", cond)[~medial])))
+        for a in OPMS for cond in headline})
     bridge = bridge_to_sphere(st, amp, depth, geometry_distances(st, arrays))
     by_lobe = {}
     for a in OPMS:
@@ -416,7 +423,8 @@ def main():
         config=cfg, arrays=geometry, head_positions=head_positions, n_targets=st.nt, n_background_grid=int(len(st.src.grid)),
         enbw_hz=st.enbw, n_estimate_samples=n_est, noise_validation=validation, noise_composition=comp, retained_rank=ranks,
         primary=primary, plugin_over_oracle_median=plugin_loss, amplitude_vs_depth=amp_vs_depth, detectability_vs_depth=snr_vs_depth,
-        log2_ratio_vs_depth=ratio_vs_depth, by_lobe=by_lobe, strata=strata, projection=projection, break_even_opm_asd_fT=break_even,
+        log2_ratio_vs_depth=ratio_vs_depth, by_lobe=by_lobe, strata=strata, medial_wall=medial_wall, projection=projection,
+        break_even_opm_asd_fT=break_even,
         bridge_to_sphere=bridge, patches=patches, sensitivity=sens, sensitivity_joint_asd_gap=sens_joint, convergence=conv,
         runtime_s=time.time() - t_start,
         notes=["Bootstrap CIs resample Desikan-Killiany parcels of one anatomy (targets within a parcel are correlated); they do "
@@ -682,11 +690,11 @@ def write_targets_csv(st, res, amp, conds):
     cols = [(n, cs, cond) for n, r in res.items() for (cs, cond) in r]
     with open(OUT / "g2_targets.csv", "w", newline="") as fh:
         wr = csv.writer(fh)
-        wr.writerow(["hemi", "vertno", "depth_mm", "orientation_deg", "lobe"] + [f"amp_{k}" for k in amp]
+        wr.writerow(["hemi", "vertno", "depth_mm", "orientation_deg", "region", "lobe"] + [f"amp_{k}" for k in amp]
                     + [f"detect_{n}_{cs}_{cond}" for n, cs, cond in cols])
         for i, v in enumerate(st.src.target):
             wr.writerow([int(st.cortex.hemi[v]), int(st.cortex.vertno[v]), f"{st.src.depth_mm[i]:.2f}", f"{st.src.orientation_deg[i]:.2f}",
-                         st.src.lobe[i]] + [f"{amp[k][i]:.4e}" for k in amp] + [f"{res[n][(cs, cond)]['detect'][i]:.4f}" for n, cs, cond in cols])
+                         st.src.region[i], st.src.lobe[i]] + [f"{amp[k][i]:.4e}" for k in amp] + [f"{res[n][(cs, cond)]['detect'][i]:.4f}" for n, cs, cond in cols])
 
 
 def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, headline, conds, bridge, patch_det=None):
