@@ -168,6 +168,7 @@ def main():
         stats[key] = dict(median_db=float(np.nanmedian(a)), p5_db=float(np.nanpercentile(a, 5)),
                           p95_db=float(np.nanpercentile(a, 95)),
                           skull_0p06_minus_0p006_db=dict(median=float(np.nanmedian(b - a)),
+                                                         p95_abs=float(np.nanpercentile(np.abs(b - a), 95)),
                                                          max_abs=float(np.nanmax(np.abs(b - a)))))
     for noise_name in ("model", "recorded"):
         for cs in CH_SETS:
@@ -189,7 +190,11 @@ def main():
                             for h in ("lh", "rh")])
     lobe_v, lobe_c = plotting.lobe_of(names[valid_idx]), plotting.lobe_of(names[centroids])
     mesial_c = np.isin(names[centroids], ["entorhinal", "parahippocampal"])
-    checks = dict(source_sd_nAm={k: v["source_sd_nAm"] for k, v in results.items()}, paper_source_sd_nAm=[1.6, 1.9])
+    # s_s scales as 1/sqrt(number of noise sources) under the calibration rule; the paper's ~7-mm grid
+    # held ~4000 sources (docs/literature/goldenholz2009.md, A3)
+    checks = dict(source_sd_nAm={k: v["source_sd_nAm"] for k, v in results.items()}, paper_source_sd_nAm=[1.6, 1.9],
+                  source_sd_nAm_at_4000_sources={k: v["source_sd_nAm"] * float(np.sqrt(len(noise_cols) / 4000))
+                                                 for k, v in results.items()})
     for bem_label, r_ in results.items():
         for cs in CH_SETS:
             f = r_[f"focal/model/{cs}"]
