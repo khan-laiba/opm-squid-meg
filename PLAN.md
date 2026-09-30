@@ -16,7 +16,7 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | G0 audit, provenance, plan | done except the first push (private repository) | this file; `docs/audit.md`; `docs/literature/`; `docs/provenance_register.md` |
 | G1A Jas analytical benchmark | done (awaiting independent review) | `scripts/g1a_jas_benchmark.py` -> `results/g1a/`; Eq. 1 vs Sarvas 2-D maximum 4.7e-15, vs MNE sphere 5.4e-8; d_eq(eta 3) = 27.665 mm |
 | G1B Hunold depth-orientation spikes | done (awaiting independent review) | `scripts/g1b_hunold.py` -> `results/g1b/`; Fig. 6-calibrated background, p2p: bin means 0.88-0.96x the paper, r 0.93-0.97, 2.5-classification agreement 84-93 %, GM-MM sign 98-100 % |
-| G1C Goldenholz cortical SNR maps | in progress (full-resolution forwards done) | `scripts/g1c_goldenholz.py` |
+| G1C Goldenholz cortical SNR maps | done (awaiting independent review) | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.78 nAm at 4,000 sources (paper 1.6-1.9); focal median -21.9 dB, 55 % inside the paper's -29/-19 dB display range; medial lowest |
 | G2 realistic adult OPM-Neuromag comparison | not started | |
 | G3 pediatric extension | not started; needs pediatric anatomy (see Inputs) | |
 | G4 epilepsy detection and localization | not started | |
@@ -95,12 +95,15 @@ Done (`scripts/g1b_hunold.py`, methods section 6, `configs/hunold_reference.toml
 
 ### G1C Goldenholz cortical SNR maps (ADAPT)
 
-To be finalised from `docs/literature/goldenholz2009.md`. Planned:
-1. 10 nAm focal source; 10/16 mm geodesic-radius patches at 50 pAm/mm^2
-   (`configs/goldenholz_reference.toml`).
-2. Eq. 1 channel-averaged power SNR with 1/N; modeled background noise kept separate from a
-   recorded-noise adaptation (MNE sample baseline covariance), both labelled.
-3. Printed conductivities recorded as printed (skull 0.06 S/m investigated, not silently replaced).
+Done (`scripts/g1c_goldenholz.py`, methods section 7):
+1. [x] 10-nAm dipoles at all valid vertices; 10/16-mm geodesic patches at 50 pAm/mm^2 on the oct-6
+   centroids; signed sums.
+2. [x] Eq. 1 with 1/N per channel set (mag 102, grad 203, pooled 305; MEG 2443 excluded);
+   modelled noise (paper's calibration rule) and recorded noise (task baselines, ADAPT).
+3. [x] Skull 0.006 and 0.06 S/m both run and labelled.
+4. [x] Soft comparisons with the paper (source SD, display range, medial maps, patch-size effect).
+5. [x] OPM extension (NEW).
+6. [ ] Independent review.
 
 GATE G1: all three run reproducibly; each output states REPRO/ADAPT status and assumptions.
 

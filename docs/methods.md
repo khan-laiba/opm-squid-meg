@@ -106,7 +106,38 @@ Configuration: `configs/hunold_reference.toml` (every value tagged as printed, c
 * Extension (NEW): white sensor noise (SQUID brochure values; OPM 7/15/30 fT/sqrt(Hz)) added
   to the background, spike, background and noise filtered 0.5-70 Hz (zero phase), p2p numerator.
 
+## 7. Goldenholz cortical SNR maps (G1C, ADAPT; OPM NEW) — `opmsquid.goldenholz`, `scripts/g1c_goldenholz.py`
+
+Configuration: `configs/goldenholz_reference.toml`.
+
+* Sources: a 10-nAm dipole at each of the 311,994 valid white-surface vertices (cortical
+  normal); patches of geodesic radius 10 and 16 mm (Dijkstra along mesh edges) centred on the
+  8,193 valid oct-6 vertices, 50 pAm/mm^2 x vertex area, signed sum (median 438 and 1,158
+  vertices, i.e. ~2.8 and ~7.5 cm^2).
+* Forward: 3-layer BEM, skull 0.006 S/m (probable intended value) and 0.06 S/m (as printed),
+  T3 coils, accurate integration; the sample recording's SSP (3 vectors) applied to all gains.
+  MEG 2443, marked bad in the recording (baseline RMS 23x the gradiometer median), is excluded:
+  N = 102 magnetometers, 203 gradiometers, 305 pooled.
+* SNR: Eq. 1 with the 1/N factor, reported per channel set (pooling unstated in the paper).
+* Noise, modelled: 1,838 independent cortex-normal sources on a 7-mm Poisson-disk grid (3-D
+  distance); s_s^2 from the paper's rule (per-type median of recorded / (A A^T)_kk, channel-count
+  weighted). Noise, recorded (ADAPT): per-channel variance of the -200-0 ms pre-stimulus
+  baselines of the sample task recording (38,357 samples), SSP, 0.5-100 Hz.
+* Comparison with the paper (soft; the paper reports no distributions): s_s = 2.63 nAm on our
+  grid, 1.78 nAm when normalised to the ~4,000 sources of a 7-mm MNE grid (paper 1.6-1.9 nAm);
+  focal SNR median -21.9 dB (pooled; 5-95 % -35.0 to -16.4 dB), 55 % of vertices inside the
+  paper's -29 to -19 dB display range, medial lobes lowest (cingulate median -31 dB, insula -30
+  dB), matching the paper's dark medial MEG maps. Patch 16 mm minus 10 mm: median 5.4 dB (5.8-5.9
+  dB in the mesial temporal lobe) vs 8.2 dB for pure area scaling and 10 dB quoted by the paper
+  for the mesial temporal lobe (modality unclear, A15); cancellation within the larger folded
+  patches explains the shortfall from area scaling. Skull 0.06 vs 0.006 S/m (each with its own
+  calibration): median +0.35 to +0.49 dB, 95th percentile of the absolute change 3.4-4.2 dB.
+* Extension (NEW): the matched 99-site OPM array with the same calibrated background plus
+  intrinsic noise (OPM 15 fT/sqrt(Hz); SQUID brochure values), 0.5-100 Hz: Eq. 1 OPM vs
+  magnetometers median -0.1 dB (OPM better at 47 % of vertices), vs gradiometers +1.7 dB (97 %).
+  Eq. 1 averages channel SNRs, so these differences also reflect channel counts and coverage.
+
 ## To be written
 
-G1A figures and toy experiment; G1C Goldenholz adaptation; G2 noise model (background,
-environment), endpoints and uncertainty; G3; G4.
+G1A figures and toy experiment; G2 noise model (background, environment), endpoints and
+uncertainty; G3; G4.

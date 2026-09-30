@@ -57,8 +57,8 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | GO-patch | Patches | geodesic radius 10 / 16 mm (3 / 8 cm^2), 50 pAm/mm^2 | 1078 | as printed; Dijkstra on the full mesh, centroids = oct-6 vertices (U-GO-patch) |
 | GO-bem | Conductivities | 0.3 / 0.06 / 0.3 S/m (brain/skull/scalp) | 1078 | run as printed AND with 0.006 (probable intended MNE default; U-GO-skull) |
 | GO-eq1 | SNR | 10 log10[(a^2/N) sum_k b_k^2/s_k^2] | 1079 | as printed; mag, grad and pooled reported separately (U-GO-pool) |
-| GO-noise | Modelled noise | independent cortex-normal sources, ~7 mm grid, s_k^2 = s_s^2 (AA^T)_kk | 1079-1080 | as printed; 7-mm Poisson-disk grid (U-GO-grid) |
-| GO-cal | Calibration | per type median(recorded/(AA^T)), channel-weighted mean; s_s = 1.6-1.9 nAm | 1080 | as printed (EEG term absent) |
+| GO-noise | Modelled noise | independent cortex-normal sources, ~7 mm grid, s_k^2 = s_s^2 (AA^T)_kk | 1079-1080 | as printed; 7-mm Poisson-disk grid, 1,838 sources (U-GO-grid) |
+| GO-cal | Calibration | per type median(recorded/(AA^T)), channel-weighted mean; s_s = 1.6-1.9 nAm | 1080 | as printed (EEG term absent); s_s = 2.63 nAm on our grid, 1.78 nAm normalised to 4,000 sources |
 | GO-rec | Recorded noise | 2 min spontaneous, 0.5-100 Hz, magnetometer SSP | 1078-1079 | ADAPT: pre-stimulus baselines of the sample task recording, sample SSP |
 
 ## Recovered from the published Fig. 3 raster (legacy replica)
@@ -102,6 +102,7 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | A-OPM-CLEAR | Physical clearance | sensing centre >= standoff - 1 mm from every scalp point, sites moved outward if needed (sample: 3 sites, +3 to +4 mm over the ear pinnae and brow) | Package collisions with the pinna/brow. |
 | A-OPM-NOISE | OPM intrinsic noise | sweep 7-30 fT/sqrt(Hz) (white) | No single verified device specification (GOAL.md). |
 | D-ANAT | Primary adult anatomy | MNE `sample` subject | Individual adult MRI with real helmet position; fsaverage secondary. |
+| D-BADCH | Bad channels | channels marked bad in the sample recording (MEG 2443) are excluded wherever recorded or empty-room noise enters | Its pre-stimulus RMS is 23x the gradiometer median. |
 
 ## Unresolved ambiguities (U)
 
@@ -125,6 +126,6 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | U-HU-bem | Galerkin vs MNE linear collocation BEM | Small differences expected (paper: MEG weakly sensitive to skull conductivity). |
 | U-GO-skull | Printed skull 0.06 S/m (1:5) vs probable 0.006 (MNE default; manual v2.5 prints 0.06 beside "1/50") | Both run and labelled; MEG differences reported. |
 | U-GO-pool | Whether Eq. 1 pooled all 306 MEG channels | Magnetometers (N=102), gradiometers (N=204) and pooled (N=306) reported separately. |
-| U-GO-grid | Noise-source count and decimation unstated | 7-mm Poisson-disk grid; the calibration rule makes absolute SNR nearly independent of the density. |
+| U-GO-grid | Noise-source count and decimation unstated | 7-mm Poisson-disk grid on 3-D distance: 1,838 sources, sparser than the ~4,000 of a 7-mm MNE surface grid (A3 of the extraction). The calibration rule makes absolute SNR nearly independent of the density; s_s is compared after scaling by sqrt(M / 4000). |
 | U-GO-patch | Centroid set, surface and element weighting for patches unstated | oct-6 vertices as centroids; white surface; moment = density x vertex area; signed sum. |
 | U-OPM-PACK | OPM package footprint (no verified device data) | Minimum sensing-centre spacing 17 mm (10-mm cell in a ~12-17 mm package); densest feasible single-axis array on the sample head: 221 sites; 306 single-axis channels infeasible. |
