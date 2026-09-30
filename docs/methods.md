@@ -20,6 +20,13 @@ radial component of the primary (Biot-Savart) field.
 * The sphere centre (r_Q = 0) is silent and excluded; the ratio B_OPM/B_SQUID decreases from
   5.3086 at the brain surface to (113/95)^3 = 1.6829 at the centre, so a crossing exists only
   for 1.6829 < eta < 5.3086.
+* Figures (`scripts/g1a_jas_benchmark.py`): Fig. 3 by the validated legacy replica (dotted line at
+  the raster-matched 27.53 mm, U-J1); Fig. 4 on the paper's grid r_Q = linspace(0, b, 101)[1:]
+  with exact Eq. 3 roots as markers (printed and drawn values in `g1a_benchmark.json`, U-J2);
+  absolute SNR with sigma_SQUID = 0.3546 pT recovered from the Fig. 3 axis (R-sigma). d_eq found
+  directly from SNR curves is the same for sigma_SQUID x 0.5, 1 and 2, so only eta matters.
+* Toy experiment (Fig. 6): 30-nAm tangential target at r_Q = 0.6 b and noise dipoles at 0.4 b and
+  0.8 b (caption depths 63/47/31 mm, U-J6), SNR = ratio of peak fields, sensor standoff 0-60 mm.
 
 ## 2. Sensor models
 
@@ -139,5 +146,5 @@ Configuration: `configs/goldenholz_reference.toml`.
 
 ## To be written
 
-G1A figures and toy experiment; G2 noise model (background, environment), endpoints and
+G2 noise model (background, environment), endpoints and
 uncertainty; G3; G4.

@@ -34,6 +34,16 @@ class TestSphere(unittest.TestCase):
         b = sphere.sarvas_field(r, r_q, 30e-9 * r_q / np.linalg.norm(r_q))
         self.assertLess(np.max(np.abs(b)), 1e-25)
 
+    def test_absolute_scale(self):
+        """Absolute SI value (pins mu0/4pi): 30-nAm tangential dipole at r_Q = 80 mm, sensors on
+        the 95-mm sphere; independently 4.700750476 pT (G1A review), MNE sphere forward to 5e-8."""
+        self.assertAlmostEqual(sphere.bmax_radial(0.080, 0.095, 30e-9)[0] * 1e12, 4.700750476, places=8)
+
+    def test_sarvas_field_at_the_centre_is_zero(self):
+        r = 0.1 * np.array([[0.0, 0.6, 0.8], [1.0, 0.0, 0.0]])
+        b = sphere.sarvas_field(r, np.zeros(3), np.array([0.0, 30e-9, 0.0]))
+        self.assertEqual(float(np.max(np.abs(b))), 0.0)
+
     def test_sphere_centre_is_excluded(self):
         self.assertEqual(sphere.bmax_radial(0.0, H)[0], 0.0)
         self.assertEqual(sphere.numerical_peak_radial(0.0, H)[0], 0.0)
@@ -48,7 +58,7 @@ class TestSphere(unittest.TestCase):
         lo = sphere.centre_limit_ratio(H, 0.0, XI)  # (113/95)^3
         hi = sphere.signal_ratio(H - B)[0]  # at the brain surface
         self.assertAlmostEqual(lo, (113 / 95) ** 3, places=12)
-        self.assertAlmostEqual(hi, 5.308565, places=5)
+        self.assertAlmostEqual(hi, 5.3085673152, places=9)
         self.assertTrue(np.isnan(sphere.equal_snr_depth(0.99 * lo)))
         self.assertTrue(np.isnan(sphere.equal_snr_depth(1.01 * hi)))
         self.assertFalse(np.isnan(sphere.equal_snr_depth(1.01 * lo)))

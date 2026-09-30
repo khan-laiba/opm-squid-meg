@@ -108,8 +108,8 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 
 | ID | Item | Handling |
 |---|---|---|
-| U-J1 | Jas Fig. 3 d_eq marker at 27.53 mm vs Eq. 3 root 27.665 mm vs "28 mm" in the text | Both values reported; exact root used in analyses. |
-| U-J2 | Fig. 4B d_eq printed 34 mm, drawn ~35.0 mm, exact 35.67 mm; Fig. 4C printed 19 mm, drawn ~19.8, exact 19.82 | Exact roots used; printed and drawn values listed in `results/g1a/g1a_benchmark.json`. |
+| U-J1 | Jas Fig. 3 d_eq marker at 27.53 mm vs Eq. 3 root 27.665 mm vs "28 mm" in the text | Both values reported; exact root used in analyses. The replica's 250-point grid rule is fitted to the raster (many grid sizes give 27.50-27.56 mm), not the authors' rule; recorded in `g1a_benchmark.json` (markers). |
+| U-J2 | Fig. 4B d_eq printed 34 mm, drawn ~35.0 mm, exact 35.67 mm; Fig. 4C printed 19 mm, drawn ~19.8, exact 19.82 | Exact roots used; printed and drawn values listed in `results/g1a/g1a_benchmark.json`. Partly explained: the drawn markers are depths on the b/100 r_Q grid, and the printed values equal them truncated in SI floating point (0.034999... m -> 34, 0.019799... m -> 19); the same rule gives 26, not 28, for Fig. 3. |
 | U-J3 | eta0 / eta1 printed 1.7 / 5.3; exact 1.6829 / 5.3086 (a deep crossing exists for 1.683 < eta < 1.7) | Exact values used. |
 | U-J4 | Fig. 5B "normalized d_eq" = (d_eq - (h - b))/b (depth below the brain surface as a fraction of b), not d_eq/b; text speaks of brain *volume* | G3 reproduces the radial fraction as plotted and reports the true volume fraction separately (adult 40.4 %, newborn 87.2 % at eta = 3). |
 | U-J5 | Fig. 5 uses s = h + 18 mm for every head (size-following shell) | Reproduced as the "size-following, constant-standoff benchmark"; the fixed-helmet experiment is separate (G3). |

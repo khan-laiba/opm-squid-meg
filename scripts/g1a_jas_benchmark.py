@@ -160,6 +160,19 @@ def toy_experiment() -> tuple[list[str], dict]:
     return files, at
 
 
+def _deq_with_sigma(sigma_sq: float, eta: float = 3.0) -> float:
+    """Equal-SNR depth [mm] found directly from the SNR curves with an arbitrary absolute
+    sigma_SQUID (bisection on SNR_OPM - SNR_SQUID); equals the eta-only Eq. 3 root."""
+    def diff(d):
+        r = np.array([H - d])
+        return sphere.bmax_radial(r, H, Q)[0] / (eta * sigma_sq) - sphere.bmax_radial(r, H + XI, Q)[0] / sigma_sq
+    lo, hi = H - B, H - 1e-4
+    for _ in range(200):
+        mid = 0.5 * (lo + hi)
+        lo, hi = (mid, hi) if diff(mid) > 0 else (lo, mid)
+    return 0.5 * (lo + hi) * 1e3
+
+
 def main() -> dict:
     t0 = time.time()
     OUT.mkdir(parents=True, exist_ok=True)
@@ -189,10 +202,21 @@ def main() -> dict:
             dict(item="eta0 / eta1", printed=[1.7, 5.3], exact=[sphere.centre_limit_ratio(), float(sphere.signal_ratio(H - B)[0])]),
             dict(item="Fig. 6 depths", printed_text_mm=[32, 48, 64], printed_caption_mm=[63, 47, 31],
                  note="text values are r_Q (0.4 b, 0.6 b, 0.8 b); caption values reproduce the curves")],
+        markers=dict(
+            fig3=("dotted line at 27.53 mm: the deepest depth with SNR_OPM > SNR_SQUID on d = linspace(h - b, h, 250); the grid "
+                  "size was fitted to the published raster (many sizes give 27.50-27.56 mm) and the authors' rule is unknown; "
+                  "the exact Eq. 3 root is 27.665 mm (U-J1)"),
+            fig4=("exact Eq. 3 roots. The paper's drawn markers (35.0 and 19.8 mm) are depths on its r_Q = linspace(0, b, 101) grid; "
+                  "its printed 34 and 19 mm equal those grid depths truncated in SI floating point (0.034999... m, 0.019799... m) (U-J2)")),
         numerical_checks=checks,
-        toy_experiment=toy,
+        toy_experiment=dict(toy, xi_range_mm=[0, 60], xi_range_note="methods text; the paper's panels show about 0-50 mm",
+                            text_as_depth_reading_pT_at_xi0={f"{d:g}mm": float(sphere.bmax_radial(H - d * 1e-3, H, Q)[0] * 1e12)
+                                                             for d in (32, 48, 64)},
+                            text_as_depth_note="the text's 32/48/64 mm read as depths below the scalp does not reproduce the "
+                                               "figure; read as r_Q (0.4 b, 0.6 b, 0.8 b; caption depths 63/47/31 mm) it does (U-J6)"),
         absolute_noise=("only eta is stated; sigma_SQUID = B_max(0.8 b, h + 18 mm) recovered from the Fig. 3 SNR axis; "
                         "d_eq and all ratios are independent of it"),
+        d_eq_independent_of_sigma={f"sigma_x{k:g}": _deq_with_sigma(k * sigma_sq) for k in (0.5, 1.0, 2.0)},
         outputs=["results/g1a/fig3/"] + files + toy_files + ["results/g1a/g1a_curves.csv"],
         runtime_s=time.time() - t0)
     io.write_json(summary, OUT / "g1a_benchmark.json")
