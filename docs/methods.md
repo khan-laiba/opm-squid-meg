@@ -55,10 +55,20 @@ sensing volume would collide with the ear pinna or brow are moved outward (A-OPM
 Sample subject: 99 of 102 sites; 3 sites moved out by 3-4 mm; nearest-neighbour spacing
 21.7-30.6 mm (median 26.4 mm).
 
+Dense arrays (G2): farthest-point sampling of the scalp above the brow plane, excluding scalp
+points more than 2 mm inside the smooth BEM head surface (ear canals and pinna folds), clearance
+as above, then pruning to a 17-mm minimum centre spacing (A-OPM-PACK). The densest feasible
+single-axis array has 216 sites (`opm_dense`); the channel-budget control `opm204` takes 204 of
+them by farthest-point sampling. Every sensing centre lies outside the BEM head surface (at least
+3.0 mm for opm99, 4.9 mm for the dense arrays). A 306-channel single-axis array does not fit.
+
 ## 3. Forward models — `opmsquid.forward`, `opmsquid.anatomy`
 
 MNE-Python 1.13.2 BEM forward models (single-compartment inner skull, 0.3 S/m, unless a paper
-configuration prescribes otherwise). Cortical sources fixed along the cortical normal (cortical
+configuration prescribes otherwise; G2 uses the 3-layer 0.3/0.006/0.3 S/m model). Sources are
+taken only among usable vertices, at least 2 mm from the 5120-triangle inner-skull mesh
+(A-BEM-DIST): closer vertices carry linear-collocation artefacts (lead-field energy up to ~4000x
+that of neighbouring vertices within 0.5 mm, none beyond 2 mm). Cortical sources fixed along the cortical normal (cortical
 patch statistics), or discrete dipoles at arbitrary points. Content-addressed cache keyed by all
 inputs. Checks: discrete and surface forwards agree to < 1e-5; the OPM coil in a realistic BEM
 forward behaves as expected (`tests/test_forward.py`).

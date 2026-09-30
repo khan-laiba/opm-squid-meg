@@ -59,7 +59,7 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | GO-eq1 | SNR | 10 log10[(a^2/N) sum_k b_k^2/s_k^2] | 1079 | as printed; mag, grad and pooled reported separately (U-GO-pool) |
 | GO-noise | Modelled noise | independent cortex-normal sources, ~7 mm grid, s_k^2 = s_s^2 (AA^T)_kk | 1079-1080 | as printed; 7-mm Poisson-disk grid, 1,822 usable sources (U-GO-grid) |
 | GO-cal | Calibration | per type median(recorded/(AA^T)), channel-weighted mean; s_s = 1.6-1.9 nAm | 1080 | as printed (EEG term absent); s_s = 2.64 nAm on our grid, 1.78 nAm normalised to 4,000 sources |
-| GO-rec | Recorded noise | 2 min spontaneous, 0.5-100 Hz, magnetometer SSP | 1078-1079 | ADAPT: pre-stimulus baselines of the sample task recording, sample SSP |
+| GO-rec | Recorded noise | 2 min spontaneous, 0.5-100 Hz, magnetometer SSP | 1078-1079 | ADAPT: pre-stimulus baselines (-200-0 ms) of all 320 events of the sample task recording (317 kept after edge exclusion), sample SSP; restricting to the auditory/visual events (IDs 1-4) changes s_s by 0.6 % (review) |
 
 ## Recovered from the published Fig. 3 raster (legacy replica)
 
