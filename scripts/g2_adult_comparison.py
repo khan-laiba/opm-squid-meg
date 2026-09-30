@@ -298,6 +298,16 @@ def main():
             r2[name] = evaluate_all(G_t[name] * st.q, a, nz, headline)
         sens[f"background_corr_{lam:g}mm"] = comparisons(st, r2, headline, n_boot=200)
     log("sensitivity: correlated background done")
+    # background calibrated on the magnetometers instead (the gradiometer-calibrated model predicts
+    # ~0.7x the measured magnetometer brain-noise amplitude)
+    bs_mag = background.calibrate(unit_sq, mags, float(np.nanmedian(meas["brain"][mags])))
+    r2 = {}
+    for name, a in arrays.items():
+        nz = st.noise(a, G_g[name], bs_mag, env)
+        r2[name] = evaluate_all(G_t[name] * st.q, a, nz, headline)
+    sens["background_mag_calibrated"] = comparisons(st, r2, headline, n_boot=200)
+    sens["background_mag_calibrated"]["scale_over_primary"] = float(bs_mag / brain_scale)
+    log("sensitivity: magnetometer-calibrated background done")
     # head position (SQUID only; OPMs are head-mounted)
     hp = g2.head_position_variants(squid.info, st.subject, cfg["head_position"]["translation_mm"] * 1e-3,
                                    cfg["head_position"]["pitch_deg"], cfg["head_position"]["fit_clearance_mm"] * 1e-3,
@@ -409,19 +419,22 @@ def bridge_to_sphere(st, amp, depth, dist):
         b = binned(ratio, depth, DEPTH_EDGES)
         med = np.array([x["median"] if x["median"] is not None else np.nan for x in b], float)
         out[f"{a}_ratio_vs_depth"] = b
-        d_eq = {}
+        d_eq, opm_all, squid_all = {}, [], []
         for e in etas:  # first depth where the median ratio falls below eta (linear interpolation)
             ok = np.isfinite(med)
             c, m = centers[ok], med[ok]
             below = np.flatnonzero(m < e)
+            d_eq[f"{e:g}"] = None
             if len(below) == 0:
-                d_eq[f"{e:g}"] = None  # OPM ahead at every depth bin
+                opm_all.append(float(e))  # OPM ahead in every depth bin: no crossing
             elif below[0] == 0:
-                d_eq[f"{e:g}"] = 0.0  # SQUID ahead already in the shallowest bin
+                squid_all.append(float(e))  # SQUID ahead already in the shallowest bin: no crossing
             else:
                 i = below[0]
                 d_eq[f"{e:g}"] = float(np.interp(e, [m[i], m[i - 1]], [c[i], c[i - 1]]))
         out[f"{a}_d_eq_mm"] = d_eq
+        out[f"{a}_eta_opm_ahead_at_all_depths"] = opm_all
+        out[f"{a}_eta_squid_ahead_at_all_depths"] = squid_all
     return out
 
 
@@ -680,8 +693,9 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
     for i, cond in enumerate(headline):
         for j, a in enumerate(OPMS):
             h = heat(np.log2(res[a][("opm", cond)]["detect"] / res["squid"][("combined", cond)]["detect"]), depth, orient)
-            im = axs[i, j].imshow(h, origin="upper", aspect="auto", cmap="RdBu_r", vmin=-2, vmax=2,
+            im = axs[i, j].imshow(h, origin="upper", aspect="auto", cmap="RdBu_r", vmin=-1, vmax=1,
                                   extent=[0, 90, DEPTH_EDGES[-1], DEPTH_EDGES[0]])
+            axs[i, j].set_ylim(65, 10)
             axs[i, j].set_title(f"log2 {LABEL[a]} / Neuromag combined, {cond}", fontsize=8)
             axs[i, j].set_xlabel("orientation [deg] (0 radial)")
             axs[i, j].set_ylabel("depth [mm]")
@@ -704,7 +718,7 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
                 v = np.full(len(oct_global), np.nan)
                 v[ok] = np.log2(res[a][("opm", cond)]["detect"] / res["squid"][(ref, cond)]["detect"])
                 rows.append((f"{LABEL[a]}\nvs {LABEL[ref]}", v))
-        plotting.cortex_map_figure(hemis, rows, n_lh, plt.get_cmap("RdBu_r"), plt.Normalize(-2, 2),
+        plotting.cortex_map_figure(hemis, rows, n_lh, plt.get_cmap("RdBu_r"), plt.Normalize(-1, 1),
                                    f"G2: log2 detectability ratio OPM / Neuromag, {cond} (red: OPM higher)", "log2 ratio",
                                    OUT / f"Figure_G2_maps_{cond.replace('+', '_')}.png", contour_level=0.0)
 
@@ -735,7 +749,9 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
     plt.close(fig)
 
     # 5. sensitivity forest plot (opm_dense and opm99 vs Neuromag combined, headline conditions)
-    labels, vals = [], {a: {c: [] for c in headline} for a in ("opm99", "opm_dense")}
+    labels = []
+    vals = {a: {c: [] for c in headline} for a in ("opm99", "opm_dense")}
+    cis = {a: {c: [] for c in headline} for a in ("opm99", "opm_dense")}
     entries = [("primary (oracle)", primary["oracle"])] + [(f"plug-in {k.split('_')[1]}", primary[k]) for k in primary if k.startswith("plugin_")]
     entries += [(k.replace("_", " "), v) for k, v in sens.items()]
     for lab, comp in entries:
@@ -744,12 +760,15 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
             for c in headline:
                 x = comp.get(f"{a}/combined/{c}")
                 vals[a][c].append(x["median_log2"] if x else np.nan)
+                cis[a][c].append(x["ci95"] if x else [np.nan, np.nan])
     fig, axs = plt.subplots(1, 2, figsize=(12, 0.28 * len(labels) + 1.5), sharey=True)
     y = np.arange(len(labels))[::-1]
     for ax, c in zip(axs, headline):
         for a, mk in (("opm99", "o"), ("opm_dense", "s")):
-            ax.plot(vals[a][c], y, mk, color=colors[a], label=LABEL[a])
+            v, ci = np.array(vals[a][c]), np.array(cis[a][c])
+            ax.errorbar(v, y, xerr=[v - ci[:, 0], ci[:, 1] - v], fmt=mk, color=colors[a], label=LABEL[a], ms=4, capsize=2)
         ax.axvline(0, color="0.5", lw=0.8)
+        ax.set_xlabel("median log2(d_OPM / d_Neuromag combined); bars: bootstrap 95 % CI over targets", fontsize=7)
         ax.set_title(f"median log2 detectability ratio vs Neuromag combined, {c}", fontsize=8)
         ax.set_yticks(y)
         ax.set_yticklabels(labels, fontsize=7)

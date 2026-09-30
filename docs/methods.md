@@ -177,7 +177,43 @@ Configuration: `configs/goldenholz_reference.toml`.
   and OPM vs magnetometers +0.2 dB at 7 fT/sqrt(Hz) to -1.0 dB at 30 fT/sqrt(Hz) (crossing near
   12 fT/sqrt(Hz)). Equal channel counts or coverage do not explain these differences (review).
 
+## 8. Realistic adult OPM vs Neuromag comparison (G2, NEW) — `opmsquid.g2`, `scripts/g2_adult_comparison.py`
+
+Configuration: `configs/g2_adult.toml`; assumptions A-G2-*, D-G2-COND in the register.
+
+Design
+* Arrays: Neuromag T3 at the sample recording's measured head position (channel sets mag, grad and
+  combined, with the full cross-type covariance); OPM arrays `opm99` (matched sites, coverage
+  control), `opm204` (channel-budget control) and `opm_dense` (216 sites, full system), all
+  single-axis, 10-mm cell, 7-mm standoff, no extra scalp gap in the primary run.
+* Targets: 10-nAm dipoles along the cortical normal at the 8,124 usable oct-6 vertices; geodesic
+  patches of 5, 10 and 20 mm radius around each (signed sums; fixed total 10 nAm or fixed density
+  0.25 nAm/mm^2). All arrays see the same targets.
+* Noise, identical sources for every array, one analysis band (1-40 Hz, zero-phase Butterworth
+  order 4; variance = ASD^2 x ENBW of the composite response, 35.1 Hz): intrinsic white noise
+  (SQUID brochure values; OPM 15 fT/sqrt(Hz) primary, 7-30 swept); cortical background (1,800
+  area-weighted sources on a 7-mm grid, scale fitted once so the median good-gradiometer variance
+  equals the measured task-baseline minus empty-room variance in the band; correlated extension
+  with lambda = 5 and 10 mm, refitted); room field (8-term external expansion fitted to the
+  empty-room recording, through each array's own coil integration points).
+* Conditions: intrinsic; intrinsic+brain; intrinsic+brain+env; projected (the 8-dim external
+  subspace removed by the same noise-weighted projection for every array, rank n - 8).
+* Metrics: peak-channel SNR, mean-power SNR (dB) and known-topography detectability
+  sqrt(s^T C^+ s) (rank-aware whitening of the correlation-normalised covariance) with the oracle
+  covariance and with plug-in Ledoit-Wolf estimates from 10 and 60 s of data (matched filter from
+  the estimate, evaluated under the true covariance). Comparisons: median over targets of
+  log2(d_OPM / d_SQUID) with bootstrap 95 % CIs over targets, the share of targets where OPM is
+  higher, by depth, depth x orientation, lobe and on the cortex.
+* Sensitivity: OPM noise, correlated background, SQUID head position (measured; +/-5 mm along each
+  device axis; +/-5 deg pitch; well fitted, 20 mm from the nearest magnetometer), OPM scalp gap
+  (0, 3, 6 mm), plug-in covariance.
+* Convergence: background on the 7-mm grid vs every usable vertex; 3-layer vs 1-layer BEM and the
+  1-layer BEM refined to 20,480 triangles (1,000 targets); Neuromag 4-point vs accurate coil
+  integration; OPM point vs 10-mm cell; oct-6 vs random full-resolution targets; whitening
+  tolerance.
+* Bridge to G1A: the realistic OPM/magnetometer peak-field ratio vs depth and the equal-SNR depth
+  d_eq(eta) (intrinsic noise only, peak-channel SNR) against the sphere benchmark.
+
 ## To be written
 
-G2 noise model (background, environment), endpoints and
-uncertainty; G3; G4.
+G2 results summary (after the run and its review); G3; G4.
