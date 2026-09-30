@@ -124,3 +124,77 @@ def min_spacing(pos: np.ndarray) -> np.ndarray:
     """Distance from each sensing centre to its nearest neighbour [m]."""
     d, _ = cKDTree(pos).query(pos, k=2)
     return d[:, 1]
+
+
+def fiducials_head(info: mne.Info) -> dict:
+    """LPA, nasion and RPA [m] in the head frame from the digitisation in ``info``."""
+    idents = {FIFF.FIFFV_POINT_LPA: "lpa", FIFF.FIFFV_POINT_NASION: "nasion", FIFF.FIFFV_POINT_RPA: "rpa"}
+    out = {idents[d["ident"]]: np.asarray(d["r"], float) for d in info["dig"] or []
+           if d["kind"] == FIFF.FIFFV_POINT_CARDINAL and d["ident"] in idents}
+    if len(out) != 3:
+        raise ValueError("info has no digitised LPA/nasion/RPA")
+    return out
+
+
+def above_brow_plane(points_head: np.ndarray, fids: dict, brow_offset: float = 0.030) -> np.ndarray:
+    """True for points above the plane through LPA, RPA and a point ``brow_offset`` above the
+    nasion (head frame, +z up): the scalp region an OPM helmet can cover (no face, no neck)."""
+    brow = fids["nasion"] + np.array([0.0, 0.0, brow_offset])
+    normal = np.cross(fids["rpa"] - fids["lpa"], brow - fids["lpa"])
+    normal *= np.sign(normal[2]) / np.linalg.norm(normal)
+    return (points_head - fids["lpa"]) @ normal > 0
+
+
+def resolve_clearance(pos: np.ndarray, axis: np.ndarray, scalp, min_clearance: float, step: float = 0.0005,
+                      max_extra: float = 0.015) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Move sensing centres outward along their axes until every point is at least
+    ``min_clearance`` from the scalp (e.g. over the ear pinna or brow ridge, where the offset
+    along a smoothed normal comes close to other parts of the head). Returns (positions, extra
+    outward shift per site, feasible mask: False if more than ``max_extra`` would be needed)."""
+    tree = cKDTree(scalp.rr)
+    pos = pos.copy()
+    extra = np.zeros(len(pos))
+    ok = np.ones(len(pos), bool)
+    for i in range(len(pos)):
+        while tree.query(pos[i])[0] < min_clearance:
+            if extra[i] >= max_extra:
+                ok[i] = False
+                break
+            pos[i] += step * axis[i]
+            extra[i] += step
+    return pos, extra, ok
+
+
+def matched_to_neuromag(squid_info: mne.Info, trans: mne.transforms.Transform, scalp, digitisation: mne.Info,
+                        standoff: float = STANDOFF, scalp_gap: float = 0.0, normal_radius: float = 0.010,
+                        brow_offset: float = 0.030, min_clearance: float | None = None) -> tuple[OPMArray, dict]:
+    """Matched-site OPM array: every Neuromag sensor location (magnetometer coil centre and
+    normal, MRI frame) is projected along its inward normal onto the scalp. A site is kept if
+    that scalp point lies above the brow plane; its sensing centre is placed at
+    scalp_gap + standoff along the smoothed scalp normal and, where needed, moved further out
+    until it is ``min_clearance`` (default standoff - 1 mm) from every scalp point. Returns the
+    array (head frame) and a report with the per-site extra shift."""
+    from . import neuromag  # local import to avoid a cycle at module import
+
+    geo = neuromag.sensor_geometry(squid_info, frame="mri", trans=trans)
+    mags = np.flatnonzero(geo.kind == "mag")
+    dist = neuromag.ray_mesh_distance(geo.pos[mags], -geo.normal[mags], scalp.rr, scalp.tris)
+    hit = np.isfinite(dist)
+    scalp_pts = geo.pos[mags] - np.nan_to_num(dist)[:, None] * geo.normal[mags]
+    nrm = smoothed_normals(scalp.rr, scalp.nn, scalp_pts, normal_radius)
+    mri_head = np.linalg.inv(trans["trans"])
+    pts_head = scalp_pts @ mri_head[:3, :3].T + mri_head[:3, 3]
+    keep = hit & above_brow_plane(pts_head, fiducials_head(digitisation), brow_offset)
+    centres = scalp_pts + (scalp_gap + standoff) * nrm
+    min_clearance = standoff - 0.001 if min_clearance is None else min_clearance
+    centres, extra, feasible = resolve_clearance(centres, nrm, scalp, min_clearance)
+    keep &= feasible
+    arr = OPMArray(pos=centres[keep] @ mri_head[:3, :3].T + mri_head[:3, 3], axis=nrm[keep] @ mri_head[:3, :3].T,
+                   scalp_point=pts_head[keep], site_id=geo.site[mags][keep], standoff=standoff, scalp_gap=scalp_gap,
+                   label=f"OPM matched to Neuromag ({keep.sum()} sites)")
+    report = dict(n_neuromag_sites=len(mags), n_ray_hits=int(hit.sum()), n_kept=int(keep.sum()),
+                  squid_coil_to_scalp_mm=dist * 1e3, excluded_sites=geo.site[mags][~keep].tolist(),
+                  extra_shift_mm={int(s): round(float(e) * 1e3, 1) for s, e, k in zip(geo.site[mags], extra, keep)
+                                  if k and e > 0},
+                  min_spacing_mm=min_spacing(arr.pos) * 1e3)
+    return arr, report

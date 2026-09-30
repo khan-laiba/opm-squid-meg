@@ -50,6 +50,18 @@ class TestForward(unittest.TestCase):
         self.assertEqual(m1["key"], m2["key"])
         self.assertEqual(len(m1["ch_names"]), 306)
 
+    def test_matched_opm_array_is_physically_feasible(self):
+        dig = mne.io.read_info(paths.SAMPLE_MEG / neuromag.RAW_FILE)
+        arr, rep = opm.matched_to_neuromag(self.info, self.subject.trans, self.subject.scalp, dig)
+        self.assertEqual(rep["n_ray_hits"], 102)
+        self.assertEqual(arr.n_sites, rep["n_kept"])
+        self.assertGreaterEqual(rep["n_kept"], 95)
+        from scipy.spatial import cKDTree
+        clearance = cKDTree(self.subject.scalp.rr).query(mne.transforms.apply_trans(self.subject.trans, arr.pos))[0]
+        self.assertGreaterEqual(clearance.min(), opm.STANDOFF - 0.001 - 1e-9)
+        self.assertGreater(rep["min_spacing_mm"].min(), 17.0)  # no two 10-mm cells closer than ~17 mm
+        np.testing.assert_allclose(np.linalg.norm(arr.axis, axis=1), 1.0, atol=1e-12)
+
     def test_opm_coil_in_realistic_forward(self):
         """An OPM on the scalp above a source sees the same field with the 1-point and the
         27-point cell model to within the expected finite-cell effect (< 3 %)."""
