@@ -69,6 +69,10 @@
       "note": "text values are r_Q (0.4 b, 0.6 b, 0.8 b); caption values reproduce the curves"
     }
   ],
+  "markers": {
+    "fig3": "dotted line at 27.53 mm: the deepest depth with SNR_OPM > SNR_SQUID on d = linspace(h - b, h, 250); the grid size was fitted to the published raster (many sizes give 27.50-27.56 mm) and the authors' rule is unknown; the exact Eq. 3 root is 27.665 mm (U-J1)",
+    "fig4": "exact Eq. 3 roots. The paper's drawn markers (35.0 and 19.8 mm) are depths on its r_Q = linspace(0, b, 101) grid; its printed 34 and 19 mm equal those grid depths truncated in SI floating point (0.034999... m, 0.019799... m) (U-J2)"
+  },
   "numerical_checks": {
     "OPM": {
       "r_q_mm": [
@@ -139,9 +143,25 @@
       "B3": 0.08516789186439899,
       "B2/B1": 1.7522240583113102,
       "B2/B3": 0.6015715578650108
-    }
+    },
+    "xi_range_mm": [
+      0,
+      60
+    ],
+    "xi_range_note": "methods text; the paper's panels show about 0-50 mm",
+    "text_as_depth_reading_pT_at_xi0": {
+      "32mm": 0.9085712037691507,
+      "48mm": 0.3415088661073779,
+      "64mm": 0.1482335691309662
+    },
+    "text_as_depth_note": "the text's 32/48/64 mm read as depths below the scalp does not reproduce the figure; read as r_Q (0.4 b, 0.6 b, 0.8 b; caption depths 63/47/31 mm) it does (U-J6)"
   },
   "absolute_noise": "only eta is stated; sigma_SQUID = B_max(0.8 b, h + 18 mm) recovered from the Fig. 3 SNR axis; d_eq and all ratios are independent of it",
+  "d_eq_independent_of_sigma": {
+    "sigma_x0.5": 27.665024519081143,
+    "sigma_x1": 27.665024519081143,
+    "sigma_x2": 27.665024519081143
+  },
   "outputs": [
     "results/g1a/fig3/",
     "results/g1a/Figure_G1A_fig4.png",
@@ -150,9 +170,9 @@
     "results/g1a/Figure_G1A_toy_fig6.pdf",
     "results/g1a/g1a_curves.csv"
   ],
-  "runtime_s": 3.845151901245117,
+  "runtime_s": 4.566151857376099,
   "provenance": {
-    "commit": "cf7afa2+dirty",
+    "commit": "6aed20d+dirty",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }
