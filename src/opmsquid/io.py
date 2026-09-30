@@ -24,12 +24,17 @@ def json_safe(value):
     return value
 
 
+CODE_PATHS = ("src", "scripts", "configs", "tests", "requirements.txt")
+
+
 def git_commit() -> str:
-    """Current commit (with '+dirty' if the working tree has uncommitted changes)."""
+    """Current commit, with '+dirty' if code or configuration (``CODE_PATHS``, untracked files
+    included) differ from it. Generated outputs (results/, docs) do not count: a script
+    regenerating its own tracked figures must not mark its provenance dirty."""
     try:
         sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=paths.ROOT, capture_output=True,
                              text=True, check=True).stdout.strip()
-        dirty = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"], cwd=paths.ROOT,
+        dirty = subprocess.run(["git", "status", "--porcelain", "--", *CODE_PATHS], cwd=paths.ROOT,
                                capture_output=True, text=True, check=True).stdout.strip()
         return sha + ("+dirty" if dirty else "")
     except (OSError, subprocess.CalledProcessError):
