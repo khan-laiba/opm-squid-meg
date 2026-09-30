@@ -110,7 +110,8 @@ def main():
                 vf = [volume_fraction(d, h, b, e, eta0) * 100 for d, e in zip(ex, ETAS)]
                 axs[1, 0].plot(ETAS, vf, color=c, label=f"{name}, size-following")
             else:
-                axs[1, 1].plot(ETAS, (ex_f - (h - b)) / b * 100, color=c, label=f"{name} (xi = {xi * 1e3:.0f} mm)")
+                ahead = f", OPM ahead at every depth up to eta = {ETAS[-1]:g}" if eta0 > ETAS[-1] else ""
+                axs[1, 1].plot(ETAS, (ex_f - (h - b)) / b * 100, color=c, label=f"{name} (xi = {xi * 1e3:.0f} mm){ahead}")
                 vf = [volume_fraction(d, h, b, e, eta0) * 100 for d, e in zip(ex, ETAS)]
                 axs[1, 0].plot(ETAS, vf, color=c, ls="--", label=f"{name}, fixed shell")
     for ax, ylab, top in ((axs[0, 0], "Equal-SNR source depth d_eq [mm]", 0), (axs[0, 1], "Normalized d_eq [%]", 0),
@@ -123,7 +124,8 @@ def main():
         ax.set_ylabel(ylab)
     axs[0, 0].set_ylim(95, -5)
     axs[0, 1].set_ylim(110, -5)
-    axs[1, 1].set_ylim(110, -5)
+    axs[1, 1].set_ylim(135, -5)  # room below the 100 % floor for the legend
+    axs[1, 1].set_yticks(range(0, 101, 20))
     for name in PRINTED_NORM_ETA3:
         v = follow[name]["eta3"]["normalized_exact_pct"]
         axs[0, 1].annotate(f"{v:.1f} % (printed {PRINTED_NORM_ETA3[name]:g} %)", (3, v), (3.4, v - 8), fontsize=8,
@@ -137,7 +139,7 @@ def main():
     axs[1, 0].set_ylabel("volume fraction [%]")
     axs[1, 0].axvline(3, color="k", ls=":", lw=0.8)
     for ax in axs.ravel():
-        ax.legend(fontsize=7, loc="lower right" if ax is not axs[1, 0] else "upper right")
+        ax.legend(fontsize=7, loc="lower right" if ax is not axs[1, 0] else "lower left")
     fig.suptitle("G3A - Jas et al. 2026 Fig. 5 (size-following benchmark) and a fixed-shell contrast", fontsize=10)
     fig.tight_layout()
     files = []
