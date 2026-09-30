@@ -281,9 +281,13 @@ def summarise(state):
                 sub = table[locs]
                 boot = np.array([(lambda v: np.inf if v is None else v)(s50_from(sub[rng.integers(0, len(locs), len(locs))].mean(axis=0), strengths))
                                  for _ in range(1000)])
-                hi = float(np.percentile(boot, 97.5))
+                # resamples that never reach 50 % sort above every tested strength; a limit among them is
+                # reported as None (above the tested range) instead of interpolating between infinities
+                q = np.percentile(np.where(np.isfinite(boot), boot, 1e9), [2.5, 97.5])
                 out["strength_for_50pct_nAm"][f"{mode}/depth{db}"] = dict(
-                    value=s50_from(sub.mean(axis=0), strengths), ci95=[float(np.percentile(boot, 2.5)), hi if np.isfinite(hi) else None])
+                    value=s50_from(sub.mean(axis=0), strengths),
+                    ci95=[float(x) if x <= strengths[-1] else None for x in q],
+                    share_resamples_not_reached=float(np.mean(~np.isfinite(boot))))
         # sensitivity vs false events per minute: thresholds at every held-out event height
         h = np.sort(held[key])[::-1]
         ths = h[:min(len(h), int(10 * minutes) + 1)]
