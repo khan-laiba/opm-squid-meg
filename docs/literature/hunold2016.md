@@ -834,11 +834,14 @@ The superficial tangential dipole's spike on MM 0631 reaches 23.9 px = 4.7 pT (n
 
 **Comparison with the text's background (G1B, sample subject).** Drawing our simulated background
 at the same scale and resolution and digitising it the same way (`hunold.rendered_centroid_sd`),
-the paper's baselines are 0.43x ours at the three MM channels and 0.40x at the three GM channels,
-with the background generated as the text specifies (+/-10 nAm per dipole, stationary). Other
-reasonable channel choices give 0.52 (MM) and 0.44 (GM) against the median over all channels,
-and the review found 0.41-0.47 across background seeds, so the effective factor is about
-0.40-0.52 (bin means scale inversely).
+the paper's baselines are 0.47x our expected baselines at the three MM channels and 0.42x at the
+three GM channels, with the background generated as the text specifies (+/-10 nAm per dipole,
+stationary; sources >= 4 mm from the inner-skull mesh). "Expected" is the mean over 20
+independent background realizations (node subset and time courses): the paper's baseline is a
+single draw, and one realization of ours alone gives 0.45-0.53 (MM, 5-95 %); an earlier
+single-realization calibration gave 0.43, and the review found 0.41-0.47 across seeds. Against
+the median over all channels the factors are 0.54 (MM) and 0.46 (GM), so the effective factor
+is about 0.42-0.54 (bin means scale inversely).
 
 What the factor means is not determined. It is an effective background level at the sensors:
 - The magnetometer spike of the superficial tangential example agrees (ours 6.5 pT median for
@@ -857,5 +860,6 @@ What the factor means is not determined. It is an effective background level at 
   amplitude as the only cause.
 
 **Use in G1B.** A second background level (`fig6_calibrated`) scales all background moments by
-the magnetometer factor. The gradiometer factor is then an independent check, and the paper's
-Figs 4-5 bin means are never used for calibration (U-HU-bglevel).
+the magnetometer factor. The gradiometer factor is a partial check only (the paper's MM and GM
+baselines share one realization), and the paper's Figs 4-5 bin means are never used for
+calibration (U-HU-bglevel).

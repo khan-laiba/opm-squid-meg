@@ -15,12 +15,12 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 |---|---|---|
 | G0 audit, provenance, plan | done except the first push (private repository) | this file; `docs/audit.md`; `docs/literature/`; `docs/provenance_register.md` |
 | G1A Jas analytical benchmark | done; independently reviewed (approve with notes; notes addressed) | `scripts/g1a_jas_benchmark.py` -> `results/g1a/`; Eq. 1 vs Sarvas 2-D maximum 4.7e-15, vs MNE sphere 5.4e-8; d_eq(eta 3) = 27.665 mm |
-| G1B Hunold depth-orientation spikes | done; independently reviewed (approve with notes; notes addressed, rerun) | `scripts/g1b_hunold.py` -> `results/g1b/`; calibrated background, p2p: bin means 0.84-0.97x the paper (0.69-1.03x over the calibration range), r 0.93-0.97, 2.5-classification agreement 86-95 %, GM-MM sign agreement 100 % |
-| G1C Goldenholz cortical SNR maps | done; independently reviewed (approve with notes; notes addressed, rerun) | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.78 nAm at 4,000 sources (paper 1.6-1.9); focal median -22.0 dB, 55 % inside the paper's -29/-19 dB range; deep medial cortex darkest |
-| G2 realistic adult OPM-Neuromag comparison | done, awaiting independent review, then freeze (`adult-baseline-v1`) | `scripts/g2_adult_comparison.py` -> `results/g2/`; with brain noise the dense OPM array is 1.17x Neuromag combined (1.02-1.34x over the sensitivity analyses), the matched array 1.01x; the advantage is 1.4-1.6x for sources within 20 mm of the scalp |
+| G1B Hunold depth-orientation spikes | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule and a realization-averaged Fig. 6 calibration | `scripts/g1b_hunold.py` -> `results/g1b/`; calibrated background (scalar 0.47; one realization alone 0.45-0.53), p2p: bin means 0.78-0.91x the paper (0.68-1.01x over the calibration range), noisy p2p 0.97-1.04x, r 0.91-0.97, 2.5-classification agreement 80-93 %, GM-MM sign agreement 100 % |
+| G1C Goldenholz cortical SNR maps | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.76 nAm at 4,000 sources (paper 1.6-1.9); focal median -22.1 dB, 56 % inside the paper's -29/-19 dB range; deep medial cortex darkest |
+| G2 realistic adult OPM-Neuromag comparison | done; independently reviewed (F1-F9 addressed: parcel bootstrap, joint noise x gap grid, OPM axes, 4-mm rule, array geometry); frozen as `adult-baseline-v1` | `scripts/g2_adult_comparison.py` -> `results/g2/` (`G2_report.md`); with brain noise the dense 215-site OPM array is 1.21x [1.19-1.23] Neuromag combined (1.05-1.36x for OPM noise 30-7 fT/sqrt(Hz), 0.95-1.21x jointly with a 0-6 mm scalp gap, 1.13x with a 1-layer BEM), the matched 98-site array 1.02x (a tie); 1.4-1.7x for sources within 20 mm of the scalp; without brain noise Neuromag wins (dense 0.77x) |
 | G3 pediatric extension | not started; needs pediatric anatomy (see Inputs) | |
-| G4 epilepsy detection and localization | not started | |
-| G5 repository, tests, report | repository initialised locally | |
+| G4 epilepsy detection and localization | adult done (detection; bounded localization); pediatric waits for G3 | `scripts/g4_epilepsy_adult.py`, `scripts/g4_localization.py` -> `results/g4/`; 50 % detection at 1 false event/min: dense OPM 32 vs Neuromag combined 49 nAm (10-20 mm), 205 vs 279 nAm (45-70 mm); dense better at every depth by location (sign-flip p <= 0.02), matched no different |
+| G5 repository, tests, report | private repository `khan-laiba/opm-squid-meg` (no Pages); unittest suite; `scripts/run_all.sh`; local report builder and clean-environment smoke test pending | |
 
 ## Decisions log
 
@@ -59,7 +59,7 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 - [x] `docs/audit.md`: validated vs unverified legacy claims; reusable components.
 - [x] `docs/provenance_register.md`: paper-reported (J, HU, GO), hardware (HW), recovered (R), new assumptions (A), decisions (D); unresolved ambiguities listed.
 - [x] `docs/methods.md` (living document).
-- [ ] Private repository created, first push, tag `g0`.
+- [x] Private repository created, first push, tag `g0`.
 
 ## G1 — adult foundations
 
@@ -81,16 +81,18 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 Done (`scripts/g1b_hunold.py`, methods section 6, `configs/hunold_reference.toml`):
 1. [x] Sample subject, full-resolution white surface, 3-layer BEM with the paper's conductivities,
    4-point coil integration; depth/orientation from BEM nodes; the paper's bins; 3783 dipoles
-   stratified to the paper's per-bin counts; 20-mm^2 patches (2895 grow).
+   stratified to the paper's per-bin counts; 20-mm^2 patches (2928 grow).
 2. [x] Background: 10 % of vertices, band-limited, stationary (edge-transient defect fixed),
    +/-10 nAm per dipole; one realization shared by sources and arrays.
 3. [x] SNR as printed; p2p primary (Fig. 6 digitisation), peak and noisy peak as variants.
-4. [x] Absolute level: the paper's Fig. 6 baselines are 0.43x (MM) / 0.39x (GM) ours; both levels
-   reported (U-HU-bglevel). Calibrated: strong bins 0.96-1.04x the paper; weak bins
-   0.83-0.92x (paper floor near 1). GM > MM superficially, convergence with depth: reproduced.
-5. [x] OPM (matched 99 sites, NEW): brain noise only, OPM > MM for superficial sources, <= MM
-   below ~45 mm, < GM everywhere; intrinsic sensor noise (3.5-30 fT/sqrt(Hz)) is negligible
-   against this background.
+4. [x] Absolute level: the paper's Fig. 6 baselines are 0.47x (MM) / 0.42x (GM) our expected
+   baselines (20 realizations); both levels reported (U-HU-bglevel). Calibrated, p2p: strong
+   bins 0.87-0.92x the paper, weak bins 0.73-0.90x; noisy p2p 0.97-1.04x (the paper lies between
+   the two numerators). GM > MM superficially, convergence with depth: reproduced.
+5. [x] OPM (matched 98 sites, NEW): brain noise only, OPM > MM for superficial sources (1.4x at
+   20-25 mm), equal near 40-45 mm, <= MM deeper (0.9x), < GM everywhere (0.70-0.82x, best
+   single channel); intrinsic sensor noise (3.5-30 fT/sqrt(Hz)) is negligible against this
+   background.
 6. [x] Independent review (approve with notes). Fixes: stationary background, calibration range and
    effective-level wording, noisy-p2p variant, spike comparison, usable sources (A-BEM-DIST).
 
@@ -129,7 +131,8 @@ GATE G1: all three run reproducibly; each output states REPRO/ADAPT status and a
 5. Endpoints: signal vs depth, depth-orientation heatmaps, cortical SNR maps, patch size,
    regional relative-performance maps, helmet fit, source-blind head-position sensitivity,
    convergence (sensor integration, BEM, source space) and uncertainty.
-6. Freeze the adult baseline as git tag `adult-baseline-v1`.
+6. [x] Freeze the adult baseline as git tag `adult-baseline-v1` (after the independent review's
+   pre-tag items P1-P4 and the reruns on the final arrays).
 
 ## G3 — pediatric extension (NEW; size benchmark REPRO)
 
@@ -143,11 +146,13 @@ GATE G1: all three run reproducibly; each output states REPRO/ADAPT status and a
 
 ## G4 — epilepsy (NEW)
 
-1. IED-like events across regions/depths/orientations/extents and strengths.
-2. Oracle vs practical detector; thresholds calibrated on independent null data and frozen;
-   sensitivity vs false events/min.
-3. Bounded ECD and MNE/dSPM localization with off-grid truth and registration/model mismatch;
-   nondetections, failed fits and errors reported separately.
+1. [x] (adult) IED-like events across regions/depths/orientations/extents and strengths.
+2. [x] (adult) Oracle vs practical detector; thresholds calibrated on independent null data and
+   frozen; sensitivity vs false events/min; paired comparisons with the location as the unit.
+3. [x] (adult) Bounded ECD and MNE/dSPM localization with off-grid truth and registration/model
+   mismatch (coregistration draws shared by all arrays); nondetections and errors reported
+   separately; GOF descriptive only (whitened GOF depends on the channel count).
+4. [ ] Pediatric runs (after G3 anatomy).
 
 ## G5 — software, reproduction, report
 

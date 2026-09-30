@@ -15,6 +15,7 @@ $PY scripts/g1c_goldenholz.py                            # G1C  Goldenholz et al
 $PY scripts/g2_adult_comparison.py                       # G2   realistic adult OPM vs Neuromag (NEW)
 $PY scripts/g2_band_sensitivity.py                       # G2   frequency band and OPM response
 $PY scripts/g2_report.py                                 # G2   per-configuration report
-$PY scripts/g3a_jas_size_benchmark.py                    # G3A  Jas Table 1 / Fig. 5 (REPRO)
 $PY scripts/g4_epilepsy_adult.py                         # G4   IED detection, adult
 $PY scripts/g4_localization.py                           # G4   bounded localization, adult
+# after the adult baseline (adult-baseline-v1):
+$PY scripts/g3a_jas_size_benchmark.py                    # G3A  Jas Table 1 / Fig. 5 (REPRO)
