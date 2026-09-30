@@ -49,14 +49,17 @@ Single-axis magnetometers with a 10-mm cubic sensing volume (A-OPM-CELL; custom 
 a declared helmet-to-scalp gap (A-OPM-GAP), sensitive axis along the normal of the smooth BEM
 head surface averaged within 15 mm (A-OPM-AXIS; within 6 deg of the local normal at every site).
 Clearance (A-OPM-CLEAR): every sensing centre is at least 6 mm (standoff - 1 mm) from the MRI
-scalp and 4 mm from the BEM head surface; sites are moved outward along their axis by at most
-5 mm, otherwise they are infeasible and dropped.
+scalp and 4 mm from the BEM head surface, and every integration point of the 10-mm cell is at
+least 1 mm outside the BEM head surface (height along the local normal of a 1-mm-spaced version of
+that surface; the exact nearest-point distance is >= 0.87 mm); sites are moved outward along their
+axis by at most 5 mm, otherwise they are infeasible and dropped. The cell rule (v2) keeps the
+forward model's outer boundary out of the cell (see section 3, A-BEM-SKIN).
 
 Matched-site array: each Neuromag location is projected along its inward coil normal onto the
 MRI scalp; sites below the brow plane (face/neck) or within 20 mm of a preauricular point are
-dropped (A-OPM-COVER). Sample subject: 98 of 102 sites; 11 moved out by 0.5-5 mm (pinnae, brow,
-occiput); nearest-neighbour spacing 22.9-30.3 mm (median 26.6 mm); sensing centres 4.3-10.3 mm
-(median 6.2 mm) above the BEM head surface (Neuromag coils: 25-41 mm from the scalp, median 31).
+dropped (A-OPM-COVER). Sample subject: 97 of 102 sites; 19 moved out by 0.5-5 mm (pinnae, brow,
+occiput); nearest-neighbour spacing 22.9-30.4 mm (median 26.6 mm); sensing centres 5.4-10.3 mm
+(median 6.4 mm) above the BEM head surface (Neuromag coils: 25-41 mm from the scalp, median 31).
 
 Dense arrays (G2): farthest-point sampling (15-mm spacing) of the scalp in the same coverage
 region, excluding scalp points more than 2 mm inside or 4 mm outside the smooth BEM head surface
@@ -64,11 +67,11 @@ region, excluding scalp points more than 2 mm inside or 4 mm outside the smooth 
 view, then clearance as above and pruning to a 17-mm minimum centre spacing (A-OPM-PACK). The
 field-of-view rule matters because the sample MRI is pitched ~36 deg relative to the head frame:
 the flat cap where its head surface is cut lies above the brow plane at the back of the head.
-The densest array found has 215 sites (`opm_dense`; greedy, not proven maximal; nearest-neighbour
-spacing median 18.7 mm; 22 sites moved out by up to 5 mm; centres 4.0-11.5 mm above the BEM head
+The densest array found has 211 sites (`opm_dense`; greedy, not proven maximal; nearest-neighbour
+spacing median 18.7 mm; 49 sites moved out by up to 5 mm; centres 5.2-11.5 mm above the BEM head
 surface); the channel-budget control `opm204` takes 204 of them by farthest-point sampling. The
 dense array reaches lower at the back than the matched array (lowest scalp point MRI z -105 vs
--67 mm), with one isolated lower-occipital site (nearest neighbour 43 mm) beyond the infeasible
+-67 mm), with one isolated lower-occipital site (nearest neighbour 45 mm) beyond the infeasible
 occipito-cervical crease. A 306-channel single-axis array appears infeasible under this rule
 (best spacing found 13.7-14.2 mm < 17 mm), though that is not proven. The composition and
 placement of every array are pinned by `tests/test_g2.py`.
@@ -76,7 +79,19 @@ placement of every array are pinned by `tests/test_g2.py`.
 ## 3. Forward models — `opmsquid.forward`, `opmsquid.anatomy`
 
 MNE-Python 1.13.2 BEM forward models (single-compartment inner skull, 0.3 S/m, unless a paper
-configuration prescribes otherwise; G2 uses the 3-layer 0.3/0.006/0.3 S/m model). Sources are
+configuration prescribes otherwise; G2 uses the 3-layer 0.3/0.006/0.3 S/m model). Every 3-layer
+model subdivides the 5,120-triangle head surface once (20,480 triangles, same flat geometry;
+A-BEM-SKIN, v2): on-scalp sensors sit a few millimetres from it, where the field of the coarse
+surface is not converged on this head. Refining it changed the field at OPM integration points by
+a median 0.7-0.8 % of the array field scale at 3-4 mm (95th percentile 8-12 %), more below 2 mm,
+and the dense-array headline by -2.4 %, while Neuromag gains changed by 0.08 %
+(`scripts/study_opm_near_mesh.py`, `scripts/study_bem_skin_refinement.py`). An exact test on a
+3-shell sphere shows MNE's BEM is accurate near a regular surface (95th percentile 0.45 % at 2 mm
+with 5,120 triangles, 0.07 % with 20,480; `scripts/study_bem_sphere_accuracy.py`); the sample head
+surface has larger triangles (median edge 7.3 mm, 95th percentile 13.5 mm) and a scalp as thin as
+3.5-4.7 mm in places. A second refinement is too large for a full BEM solution here; if the error
+falls with the square of the mesh size, as on the sphere, the refined surface is within about 1 %
+of convergence for the headline. Sources are
 taken only among usable vertices, inside the inner skull and at least 4 mm from its
 5120-triangle mesh (A-BEM-DIST; 91.3 % of the valid vertices). Within 0.5 mm of the mesh, linear
 collocation gives lead-field energies up to ~4000x those of neighbouring vertices; refining the

@@ -127,6 +127,13 @@ def main():
     L.append("## Convergence\n")
     c = d["convergence"]
     L.append(f"- Background grid vs every usable vertex: median log2 ratios change by <= {c['background_grid_vs_fullres']['max_abs_change_log2']:.3f}.")
+    if "bem3_head5120" in c["bem"]:
+        h5 = c["bem"]["bem3_head5120"]["median_log2"]
+        ref = c["bem"]["subset_reference_median_log2"]
+        L.append("- 3-layer head surface 20,480 triangles (primary, A-BEM-SKIN) vs the v1 5,120: dense/combined "
+                 f"{2 ** ref['opm_dense/combined/intrinsic+brain']:.3f}x vs {2 ** h5['opm_dense/combined/intrinsic+brain']:.3f}x, "
+                 f"matched/combined {2 ** ref['opm_matched/combined/intrinsic+brain']:.3f}x vs "
+                 f"{2 ** h5['opm_matched/combined/intrinsic+brain']:.3f}x (intrinsic+brain, convergence subset).")
     L.append(f"- BEM 5,120 vs 20,480 triangles (1 layer): <= {c['bem']['refinement_max_abs_change_log2']:.4f}; 3 vs 1 layer: "
              f"<= {c['bem']['bem1_5120']['max_abs_change_log2']:.3f} (dense/combined "
              f"{2 ** c['bem']['subset_reference_median_log2']['opm_dense/combined/intrinsic+brain']:.2f}x with 3 layers, "
@@ -139,10 +146,10 @@ def main():
     L.append("- One adult anatomy and one measured head position; between-subject variability is not represented.")
     L.append("- OPM intrinsic noise is a declared sweep, not a device specification; OPM movement artefacts, cross-talk and "
              "calibration errors are not modelled.")
-    L.append("- Scalp-gap variants rebuild the OPM arrays (sites farther out pack more easily: 215, 223 and 231 dense sites at 0, "
-             "3 and 6 mm), so they mix the gap with extra sensors (about 1 %).")
-    L.append("- Known sensor-side BEM error (v2 fix planned): some OPM cell integration points lie within 1 mm of, or inside, the "
-             "3-layer BEM head surface; single channels err by up to 72 %, the headline ratios by <= 0.8 % (methods section 8).")
+    L.append("- Head model: 3-layer BEM with the head surface refined to 20,480 triangles and every OPM cell integration point >= 1 mm "
+             "outside it (v2). Near the head surface the BEM field is only approximately converged (about 1 % for the headline, "
+             "methods section 3); the 1-layer model gives a lower dense/combined ratio (convergence section).")
+    L.append("- Scalp-gap variants move the primary OPM sites outward along their axes (same sites).")
     (OUT / "G2_report.md").write_text("\n".join(L) + "\n")
     print(f"wrote {OUT / 'G2_report.md'} ({len(L)} lines)")
 
