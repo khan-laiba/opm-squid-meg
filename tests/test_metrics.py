@@ -46,6 +46,18 @@ class TestMetrics(unittest.TestCase):
         v = cov @ rng.normal(size=n)
         np.testing.assert_allclose(metrics.detectability(v, w=w), np.sqrt(v @ np.linalg.pinv(cov) @ v), rtol=1e-6)
 
+    def test_plugin_detectability(self):
+        rng = np.random.default_rng(7)
+        s, cov = _random_problem(rng)
+        np.testing.assert_allclose(metrics.plugin_detectability(s, cov, cov), metrics.detectability(s, cov), rtol=1e-8)
+        a = rng.normal(size=(12, 12))
+        cov_est = cov + 0.3 * a @ a.T  # misspecified
+        d_true, d_plug = metrics.detectability(s, cov), metrics.plugin_detectability(s, cov, cov_est)
+        self.assertTrue(np.all(d_plug <= d_true + 1e-12) and np.all(d_plug > 0))
+        units = np.r_[np.ones(6), np.full(6, 1e-2)]  # consistent unit change
+        np.testing.assert_allclose(metrics.plugin_detectability(s * units[:, None], cov * np.outer(units, units),
+                                                                cov_est * np.outer(units, units)), d_plug, rtol=1e-7)
+
     def test_ledoit_wolf(self):
         rng = np.random.default_rng(4)
         true = np.diag(np.linspace(1, 3, 10)) * 1e-26

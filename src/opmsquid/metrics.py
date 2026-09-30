@@ -107,6 +107,20 @@ def detectability(s, cov=None, w: Whitener | None = None) -> np.ndarray | float:
     return float(d[0]) if single else d
 
 
+def plugin_detectability(s, cov_true, cov_est, rel_tol: float = 1e-10) -> np.ndarray | float:
+    """Output SNR of the matched filter h = C_est^+ s built from an estimated covariance and
+    applied to data whose noise has the true covariance: (h^T s) / sqrt(h^T C_true h). Equals
+    ``detectability(s, cov_true)`` when C_est = C_true and is never larger (Cauchy-Schwarz)."""
+    s2, single = _topographies(s)
+    w = whitener(cov_est, rel_tol=rel_tol)
+    h = w.matrix.T @ (w.matrix @ s2)
+    c = 0.5 * (np.asarray(cov_true, float) + np.asarray(cov_true, float).T)
+    num = np.sum(h * s2, axis=0)
+    den = np.sqrt(np.maximum(np.sum(h * (c @ h), axis=0), 0.0))
+    out = np.divide(num, den, out=np.zeros_like(num), where=den > 0)
+    return float(out[0]) if single else out
+
+
 def empirical_covariance(x: np.ndarray) -> np.ndarray:
     """Covariance of zero-mean data x (n_channels, n_times), normalised by n_times."""
     x = np.asarray(x, dtype=float)

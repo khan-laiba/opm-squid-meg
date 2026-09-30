@@ -60,6 +60,24 @@ class TestEnvironmentBasis(unittest.TestCase):
         expected = np.concatenate([arr.axis[0], [arr.axis[0] @ g @ rel for g in environment.GRADIENT_BASIS]])
         np.testing.assert_allclose(b[0], expected, atol=1e-12)
 
+    def test_empty_room_fit_ignores_bad_channels(self):
+        """Synthetic room field through the real coil responses plus white noise, one channel
+        corrupted: with that channel marked bad the fit recovers the field (explained > 99 %)."""
+        from opmsquid import noise
+
+        rng = np.random.default_rng(3)
+        fs, n = 600.0, 12000
+        coef = rng.normal(size=(8, n)) * np.r_[np.full(3, 1e-12), np.full(5, 1e-11)][:, None]
+        data = self.basis @ coef
+        data += rng.normal(size=data.shape) * np.where(self.kind == "mag", 2e-15, 2e-13)[:, None]
+        bad = self.info.ch_names[10]
+        data[10] += rng.normal(size=n) * 1e-9
+        raw = mne.io.RawArray(data, mne.create_info(self.info.ch_names, fs, ["mag" if k == "mag" else "grad" for k in self.kind]))
+        filt = noise.AnalysisFilter(fs=fs, l_freq=1.0, h_freq=100.0, order=4)
+        env = environment.fit_empty_room(raw, self.info, filt, trim_s=1.0, bads=[bad])
+        self.assertGreater(env.explained_fraction["mag"], 0.99)
+        self.assertGreater(env.explained_fraction["grad"], 0.9)
+
 
 if __name__ == "__main__":
     unittest.main()

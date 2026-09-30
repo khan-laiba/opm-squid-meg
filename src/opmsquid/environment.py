@@ -63,21 +63,23 @@ class EnvironmentModel:
 
 
 def fit_empty_room(raw: mne.io.BaseRaw, squid_info: mne.Info, analysis_filter, r0=(0.0, 0.0, 0.04),
-                   type_sigma: dict | None = None, trim_s: float = 2.0) -> EnvironmentModel:
+                   type_sigma: dict | None = None, trim_s: float = 2.0, bads=()) -> EnvironmentModel:
     """Fit the 8 external coefficients to empty-room data (analysis band) by weighted least
-    squares on all MEG channels (weights 1/type_sigma, default: per-type median RMS), using the
-    sensor geometry of ``squid_info`` (same channels, measured head position)."""
+    squares on all good MEG channels (weights 1/type_sigma, default: per-type median RMS), using
+    the sensor geometry of ``squid_info`` (same channels, measured head position). Channels in
+    ``bads`` are left out of the fit and of the explained fractions."""
     picks = mne.pick_types(raw.info, meg=True, exclude=[])
     names = [raw.ch_names[p] for p in picks]
     if names != [ch["ch_name"] for ch in squid_info["chs"]]:
         raise ValueError("empty-room channels must match the SQUID info channel order")
+    good = ~np.isin(names, list(bads))
     data = raw.get_data(picks=picks)
     data = analysis_filter.apply(data - data.mean(axis=1, keepdims=True))
     n_trim = int(trim_s * raw.info["sfreq"])
-    data = data[:, n_trim:-n_trim]
-    basis = external_basis(squid_info, r0)
+    data = data[good, n_trim:-n_trim]
+    basis = external_basis(squid_info, r0)[good]
     kinds = np.array(["grad" if ch["unit"] == mne.io.constants.FIFF.FIFF_UNIT_T_M else "mag"
-                      for ch in squid_info["chs"]])
+                      for ch in squid_info["chs"]])[good]
     if type_sigma is None:
         rms = np.sqrt(np.mean(data**2, axis=1))
         type_sigma = {k: float(np.median(rms[kinds == k])) for k in ("mag", "grad")}

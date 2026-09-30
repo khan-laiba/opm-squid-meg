@@ -127,19 +127,128 @@ def make_sources(subject, cortex, rng) -> Sources:
     return Sources(target, grid, grid_area, depth, orient, plotting.lobe_of(names[target]))
 
 
-def gains(array: Array, subject, cortex, points: np.ndarray, fullres_job: str | None = None) -> np.ndarray:
+def gains(array: Array, subject, cortex, points: np.ndarray, fullres_job: str | None = None,
+          conductivity=BEM_CONDUCTIVITY, n_check: int = 12) -> np.ndarray:
     """Lead fields (n_channels, len(points)) for global vertex indices, from a full-resolution
-    matrix if available, else computed (cached) with the 3-layer BEM."""
+    matrix if one exists for this array, else computed (cached) with the BEM. A full-resolution
+    matrix is used only after ``n_check`` of its columns agree with a direct computation for
+    this array (so a stale or mismatched matrix is never picked up silently)."""
     if fullres_job is not None:
         f = paths.CACHE / "fullres" / f"{fullres_job}.npy"
         if f.exists():
             valid_idx = np.load(paths.CACHE / "fullres" / "valid_index.npy")
             col = np.full(cortex.n, -1)
             col[valid_idx] = np.arange(len(valid_idx))
-            return np.asarray(np.load(f, mmap_mode="r")[:, col[points]], dtype=np.float64)
+            if np.any(col[points] < 0):
+                raise ValueError("points outside the valid full-resolution set")
+            full = np.load(f, mmap_mode="r")
+            chk = np.asarray(points)[np.linspace(0, len(points) - 1, n_check).astype(int)]
+            direct = forward.chunked_discrete_gain(array.info, subject.trans, cortex.rr[chk], cortex.nn[chk],
+                                                   subject.bem_model(conductivity), coil_def=opm.coil_def_file())
+            stored = np.asarray(full[:, col[chk]], dtype=np.float64)
+            if stored.shape != direct.shape or not np.allclose(stored, direct, rtol=1e-4, atol=1e-4 * np.abs(direct).max()):
+                raise ValueError(f"{fullres_job}.npy does not match array {array.name}")
+            return np.asarray(full[:, col[points]], dtype=np.float64)
     return forward.chunked_discrete_gain(array.info, subject.trans, cortex.rr[points], cortex.nn[points],
-                                         subject.bem_model(BEM_CONDUCTIVITY), coil_def=opm.coil_def_file(),
+                                         subject.bem_model(conductivity), coil_def=opm.coil_def_file(),
                                          label=array.name).astype(np.float64)
+
+
+FULLRES_JOBS = {"squid": "neuromag_bem006", "opm99": "opm_bem006", "opm204": "opm204_bem006", "opm_dense": "opm_dense_bem006"}
+ER_FILE = "ernoise_raw.fif"
+
+
+def measured_noise(squid_info: mne.Info, filt, bads, window=(-0.2, 0.0), trim_s: float = 2.0) -> dict:
+    """Per-channel variance in the analysis band (SQUID channel order, native units^2, no SSP):
+    'empty_room' (sample empty-room recording), 'baseline' (pre-stimulus windows of the sample
+    task recording, filtered as one continuous record) and 'brain' = baseline - empty_room.
+    Channels in ``bads`` are NaN. Also returns the empty-room environment fit."""
+    names = squid_info.ch_names
+    out = {}
+    for key, fname in (("empty_room", ER_FILE), ("baseline", neuromag.RAW_FILE)):
+        raw = mne.io.read_raw_fif(paths.SAMPLE_MEG / fname, preload=True, verbose=False)
+        data = raw.get_data(picks=[raw.ch_names.index(n) for n in names])
+        data = filt.apply(data - data.mean(axis=1, keepdims=True))
+        sf, n_trim = raw.info["sfreq"], int(trim_s * raw.info["sfreq"])
+        if key == "baseline":
+            ev = mne.find_events(raw, stim_channel="STI 014", verbose=False)[:, 0] - raw.first_samp
+            a, b = int(round(window[0] * sf)), int(round(window[1] * sf))
+            segs = [data[:, e + a:e + b] for e in ev if e + a > n_trim and e + b < data.shape[1] - n_trim]
+            seg = np.concatenate(segs, axis=1)
+            out["n_windows"] = len(segs)
+        else:
+            seg = data[:, n_trim:-n_trim]
+            er_raw = raw
+        out[key] = np.mean(seg**2, axis=1)
+        out[f"{key}_n_samples"] = seg.shape[1]
+    bad = np.isin(names, list(bads))
+    for key in ("empty_room", "baseline"):
+        out[key][bad] = np.nan
+    out["brain"] = out["baseline"] - out["empty_room"]
+    out["environment"] = environment.fit_empty_room(er_raw, squid_info, filt, bads=list(bads))
+    return out
+
+
+def head_position_variants(info: mne.Info, subject, step: float = 0.005, pitch_deg: float = 5.0,
+                           fit_clearance: float = 0.020, dewar_spacing: float = 0.018) -> dict:
+    """Source-blind SQUID head positions (device-to-head transforms): the measured one; the head
+    translated by +/-``step`` along each device axis; pitched by +/-``pitch_deg`` about the device
+    x axis through the head origin; and 'well_fitted', moved up (device +z) until the scalp is
+    ``fit_clearance`` from the nearest magnetometer coil. Each entry: (4x4 transform, minimum and
+    median scalp-to-magnetometer distance [m], feasible = minimum >= ``dewar_spacing``)."""
+    from scipy.spatial import cKDTree
+
+    kinds = neuromag.channel_kinds(info)
+    coil_dev = np.array([c["loc"][:3] for c, k in zip(info["chs"], kinds) if k == "mag"])
+    mri_head = np.linalg.inv(subject.trans["trans"])
+    tree = cKDTree(subject.scalp.rr @ mri_head[:3, :3].T + mri_head[:3, 3])
+    base = info["dev_head_t"]["trans"]
+    origin_dev = np.linalg.inv(base)[:3, 3]
+
+    def moved(motion):  # rigid head motion (device frame): dev_head' = dev_head @ inv(motion)
+        return base @ np.linalg.inv(motion)
+
+    def translate(d):
+        m = np.eye(4)
+        m[:3, 3] = d
+        return m
+
+    def pitch(deg):
+        c, s_ = np.cos(np.radians(deg)), np.sin(np.radians(deg))
+        rot = np.eye(4)
+        rot[1:3, 1:3] = [[c, -s_], [s_, c]]
+        return translate(origin_dev) @ rot @ translate(-origin_dev)
+
+    motions = {"measured": np.eye(4)}
+    for ax, name in enumerate("xyz"):
+        for sgn, lab in ((1, "+"), (-1, "-")):
+            motions[f"{name}{lab}{step * 1e3:g}mm"] = translate(sgn * step * np.eye(3)[ax])
+    motions[f"pitch+{pitch_deg:g}deg"] = pitch(pitch_deg)
+    motions[f"pitch-{pitch_deg:g}deg"] = pitch(-pitch_deg)
+
+    def dist(t):
+        return tree.query(coil_dev @ t[:3, :3].T + t[:3, 3])[0]
+
+    for dz in np.arange(0.0, 0.03, 0.0005):
+        if dist(moved(translate([0, 0, dz]))).min() <= fit_clearance:
+            motions["well_fitted"] = translate([0, 0, dz])
+            break
+    out = {}
+    for name, m in motions.items():
+        t = moved(m)
+        d = dist(t)
+        out[name] = dict(trans=t, min_dist=float(d.min()), median_dist=float(np.median(d)), feasible=bool(d.min() >= dewar_spacing),
+                         motion=m)
+    return out
+
+
+def sample_covariance(cov: np.ndarray, n_samples: int, rng: np.random.Generator, shrink: bool = True) -> np.ndarray:
+    """Covariance estimated from ``n_samples`` independent Gaussian draws with covariance ``cov``
+    (Ledoit-Wolf shrinkage if ``shrink``, else the empirical estimate)."""
+    ev, u = np.linalg.eigh(0.5 * (cov + cov.T))
+    keep = ev > 1e-12 * ev.max()
+    x = (u[:, keep] * np.sqrt(ev[keep])) @ rng.standard_normal((int(keep.sum()), n_samples))
+    return metrics.ledoit_wolf_covariance(x)[0] if shrink else metrics.empirical_covariance(x)
 
 
 def array_noise(array: Array, g_grid: np.ndarray, grid_area: np.ndarray, brain_scale: float, env: environment.EnvironmentModel,
@@ -156,11 +265,17 @@ def array_noise(array: Array, g_grid: np.ndarray, grid_area: np.ndarray, brain_s
     return noisemodel.ArrayNoise(ivar, brain, env.covariance(basis), basis)
 
 
-def evaluate(topo: np.ndarray, noise: noisemodel.ArrayNoise, chans: np.ndarray, condition: str) -> dict:
+def evaluate(topo: np.ndarray, noise: noisemodel.ArrayNoise, chans: np.ndarray, condition: str,
+             cov_est: dict | None = None) -> dict:
     """Peak-channel SNR, mean-power SNR (dB) and known-topography detectability of topographies
-    (n_channels, n_sources) restricted to channel set ``chans``, oracle covariance."""
+    (n_channels, n_sources) restricted to channel set ``chans`` with the oracle covariance, plus
+    the plug-in detectability for each estimated covariance in ``cov_est`` (label -> full-array
+    covariance for this condition)."""
     s = noise.signal(topo, condition)[chans]
     c = noise.covariance(condition)[np.ix_(chans, chans)]
     var = np.diag(c)
-    return dict(peak=metrics.peak_channel_snr(s, var), meanpow_db=metrics.mean_power_snr_db(s, var),
-                detect=metrics.detectability(s, c))
+    out = dict(peak=metrics.peak_channel_snr(s, var), meanpow_db=metrics.mean_power_snr_db(s, var),
+               detect=metrics.detectability(s, c))
+    for label, ce in (cov_est or {}).items():
+        out[f"detect_{label}"] = metrics.plugin_detectability(s, c, ce[np.ix_(chans, chans)])
+    return out
