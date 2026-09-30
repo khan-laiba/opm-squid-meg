@@ -68,9 +68,12 @@ class Subject:
     def src_nn(self) -> np.ndarray:
         return np.concatenate([s["nn"][s["vertno"]] for s in self.src])
 
-    def bem_model(self, conductivity: tuple | None = None) -> list:
+    def bem_model(self, conductivity: tuple | None = None, head_refine: int | None = None) -> list:
         """BEM surfaces for ``mne.make_bem_solution``. One value -> inner skull only (standard
-        MEG model); three values -> scalp, skull, brain conductivities as given (S/m)."""
+        MEG model); three values -> scalp, skull, brain conductivities as given (S/m). In a
+        3-layer model the head surface is subdivided ``head_refine`` times (default
+        ``HEAD_SURFACE_REFINE``; A-BEM-SKIN): on-scalp sensors sit a few mm from it, where the
+        field of the 5,120-triangle surface is not converged (scripts/study_opm_near_mesh.py)."""
         surfs = [dict(s) for s in self.bem_surfaces]
         if conductivity is None or len(conductivity) == 1:
             inner = next(s for s in surfs if s["id"] == FIFF.FIFFV_BEM_SURF_ID_BRAIN)
@@ -79,12 +82,32 @@ class Subject:
         if len(conductivity) != 3:
             raise ValueError("conductivity must have 1 or 3 values (scalp, skull, brain)")
         order = [FIFF.FIFFV_BEM_SURF_ID_HEAD, FIFF.FIFFV_BEM_SURF_ID_SKULL, FIFF.FIFFV_BEM_SURF_ID_BRAIN]
+        refine = HEAD_SURFACE_REFINE if head_refine is None else int(head_refine)
         out = []
         for sid, sigma in zip(order, conductivity):
             s = next(s for s in surfs if s["id"] == sid)
+            if sid == FIFF.FIFFV_BEM_SURF_ID_HEAD and refine > 0:
+                s = dict(_refined_surface(self.name, s, refine))
             s["sigma"] = float(sigma)
             out.append(s)
         return out
+
+
+HEAD_SURFACE_REFINE = 1  # A-BEM-SKIN: 3-layer head surface 5,120 -> 20,480 triangles (same flat geometry)
+_REFINED: dict = {}
+
+
+def _refined_surface(name: str, surf: dict, times: int) -> dict:
+    """A BEM surface subdivided ``times`` by flat midpoints (same shape, 4^times triangles), cached."""
+    from mne.surface import complete_surface_info
+
+    key = (name, int(surf["id"]), times, surf["rr"].shape)
+    if key not in _REFINED:
+        fine = Surface(surf["rr"], surf["tris"], surf["nn"]).subdivided(times)
+        new = dict(id=surf["id"], sigma=surf.get("sigma", 1.0), coord_frame=surf["coord_frame"], rr=fine.rr.copy(),
+                   tris=fine.tris.copy(), np=len(fine.rr), ntri=len(fine.tris))
+        _REFINED[key] = complete_surface_info(new, copy=False, verbose=False)
+    return _REFINED[key]
 
 
 def refined_inner_skull(subject: "Subject", times: int = 1, sigma: float = 0.3) -> list:

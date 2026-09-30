@@ -69,7 +69,7 @@ class TestArrayComposition(unittest.TestCase):
     def test_channel_counts_and_coil_types(self):
         types = {name: sorted({ch["coil_type"] for ch in a.info["chs"]}) for name, a in self.arrays.items()}
         self.assertEqual({name: a.n for name, a in self.arrays.items()},
-                         {"squid": 306, "opm_matched": 98, "opm204": 204, "opm_dense": 215})
+                         {"squid": 306, "opm_matched": 97, "opm204": 204, "opm_dense": 211})
         self.assertEqual(types["squid"], [3014, 3024])
         self.assertEqual(sum(ch["coil_type"] == 3014 for ch in self.arrays["squid"].info["chs"]), 204)
         for name in ("opm_matched", "opm204", "opm_dense"):
@@ -100,10 +100,58 @@ class TestArrayComposition(unittest.TestCase):
                 self.assertGreater(pos_mri[:, 2].min(), zmin)  # nothing at the MRI field-of-view cut
         self.assertLessEqual(self.arrays["opm_dense"].meta["max_extra_shift_mm"], 5.0 + 1e-9)
 
+    def test_opm_clearance_to_the_mri_scalp(self):
+        from scipy.spatial import cKDTree
+
+        from opmsquid import opm
+
+        tree = cKDTree(self.subject.scalp.rr)
+        t = self.subject.trans["trans"]
+        for name in ("opm_matched", "opm204", "opm_dense"):
+            pos, _ = self._geometry(self.arrays[name])
+            with self.subTest(name=name):  # A-OPM-CLEAR: standoff - 1 mm from every MRI scalp point
+                self.assertGreaterEqual(tree.query(mne.transforms.apply_trans(t, pos))[0].min(), opm.STANDOFF - 0.001 - 1e-6)
+
+    def test_cell_integration_points_outside_the_head_surface(self):
+        # A-OPM-CLEAR (v2): the rule keeps every point >= 1 mm out along the local normal; the exact
+        # nearest-point distance can be ~0.15 mm smaller
+        from opmsquid import opm
+
+        skin = next(s for s in self.subject.bem_surfaces if s["id"] == mne.io.constants.FIFF.FIFFV_BEM_SURF_ID_HEAD)
+        t = self.subject.trans["trans"]
+        for name in ("opm_matched", "opm_dense"):
+            pos, axis = self._geometry(self.arrays[name])
+            pts = np.concatenate([opm.cell_points(p, n) for p, n in zip(pos, axis)])
+            with self.subTest(name=name):
+                self.assertGreater(opm.signed_distance(mne.transforms.apply_trans(t, pts), skin).min(), 0.00085)
+
+    def test_lead_field_fingerprint_tracks_sensors_and_mesh(self):
+        from opmsquid import fullres
+
+        a = self.arrays["opm_matched"]
+        idx = np.arange(10)
+        bem = self.subject.bem_model(g2.BEM_CONDUCTIVITY)
+        fp = fullres.fingerprint(a.info, self.subject, bem, idx)
+        self.assertEqual(fp, fullres.fingerprint(a.info, self.subject, self.subject.bem_model(g2.BEM_CONDUCTIVITY), idx))
+        self.assertNotEqual(fp, fullres.fingerprint(g2.with_scalp_gap(a, 1e-4).info, self.subject, bem, idx))
+        self.assertNotEqual(fp, fullres.fingerprint(a.info, self.subject, self.subject.bem_model(g2.BEM_CONDUCTIVITY, head_refine=0), idx))
+        self.assertEqual(len(bem[0]["tris"]), 20480)  # A-BEM-SKIN: refined head surface by default
+
+    def test_scalp_gap_variant_keeps_the_sites(self):
+        a = self.arrays["opm_dense"]
+        b = g2.with_scalp_gap(a, 0.003)
+        pa, axis = self._geometry(a)
+        pb, axis_b = self._geometry(b)
+        self.assertEqual(a.n, b.n)
+        np.testing.assert_allclose(pb - pa, 0.003 * axis, atol=1e-12)  # moved outward along the axes, nothing rebuilt
+        np.testing.assert_array_equal(axis, axis_b)
+        pa2, _ = self._geometry(a)
+        np.testing.assert_array_equal(pa, pa2)  # the primary array is untouched
+
     def test_opm204_is_a_subset_of_the_dense_array(self):
         dense, _ = self._geometry(self.arrays["opm_dense"])
         sub, _ = self._geometry(self.arrays["opm204"])
-        self.assertEqual(self.arrays["opm204"].meta["subset_of"], 215)
+        self.assertEqual(self.arrays["opm204"].meta["subset_of"], 211)
         self.assertTrue(all(np.any(np.all(np.isclose(dense, p, atol=1e-12), axis=1)) for p in sub))
 
 

@@ -37,7 +37,7 @@ import mne  # noqa: E402
 from mne.io.constants import FIFF  # noqa: E402
 from scipy import stats  # noqa: E402
 
-from opmsquid import anatomy, hunold, io, neuromag, noise, paths, plotting  # noqa: E402
+from opmsquid import anatomy, fullres, g2, hunold, io, neuromag, noise, paths, plotting  # noqa: E402
 
 OUT = ROOT / "results" / "g1b"
 ARRAYS = ("mag", "grad", "opm")
@@ -52,10 +52,11 @@ def load_inputs():
     cfg = tomllib.loads((ROOT / "configs" / "hunold_reference.toml").read_text())
     subject = anatomy.load_sample()
     cortex = anatomy.full_resolution(subject)
-    fr = paths.CACHE / "fullres"
-    valid_idx = np.load(fr / "valid_index.npy")
-    g_nm = np.load(fr / "neuromag4pt_hunold.npy", mmap_mode="r")
-    g_opm = np.load(fr / "opm_hunold.npy", mmap_mode="r")
+    valid_idx = np.load(fullres.directory() / "valid_index.npy")
+    dig = mne.io.read_info(paths.SAMPLE_MEG / neuromag.RAW_FILE, verbose=False)
+    # fingerprint- and column-checked against the arrays used here (a stale matrix is refused)
+    g_nm, _ = fullres.load("neuromag4pt_hunold", neuromag.load_info("T3-4pt"), subject, cortex)
+    g_opm, _ = fullres.load("opm_hunold", g2.matched_opm(subject, dig).info, subject, cortex)
     info = neuromag.load_info("T3")
     kinds = neuromag.channel_kinds(info)
     gains = {"mag": np.asarray(g_nm[kinds == "mag"]), "grad": np.asarray(g_nm[kinds == "grad"]), "opm": np.asarray(g_opm)}

@@ -69,7 +69,7 @@ def _solution(bem_surfaces: list):
         _hash_update(h, int(s["id"]), float(s["sigma"]), s["rr"], s["tris"])
     key = h.hexdigest()
     if key not in _SOLUTIONS:
-        if len(_SOLUTIONS) >= 4:
+        if len(_SOLUTIONS) >= 2:  # refined 3-layer solutions are ~2 GB each
             _SOLUTIONS.pop(next(iter(_SOLUTIONS)))
         _SOLUTIONS[key] = mne.make_bem_solution(bem_surfaces, verbose=False)
     return _SOLUTIONS[key]

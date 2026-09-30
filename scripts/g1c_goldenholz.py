@@ -31,7 +31,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import mne  # noqa: E402
 from scipy.spatial import cKDTree  # noqa: E402
 
-from opmsquid import anatomy, goldenholz, io, neuromag, noise, paths, plotting  # noqa: E402
+from opmsquid import anatomy, fullres, g2, goldenholz, io, neuromag, noise, paths, plotting  # noqa: E402
 
 OUT = ROOT / "results" / "g1c"
 CH_SETS = ("mag", "grad", "pooled")
@@ -97,7 +97,8 @@ def main():
     cfg = tomllib.loads((ROOT / "configs" / "goldenholz_reference.toml").read_text())
     subject = anatomy.load_sample()
     cortex = anatomy.full_resolution(subject)
-    valid_idx = np.load(paths.CACHE / "fullres" / "valid_index.npy")
+    valid_idx = np.load(fullres.directory() / "valid_index.npy")
+    dig = mne.io.read_info(paths.SAMPLE_MEG / neuromag.RAW_FILE, verbose=False)
     col_of = np.full(cortex.n, -1)
     col_of[valid_idx] = np.arange(len(valid_idx))
     use = cortex.usable[valid_idx]  # usable columns (A-BEM-DIST)
@@ -144,7 +145,7 @@ def main():
     focal_am = cfg["sources"]["focal_nAm"] * 1e-9
     g_sq = p_sq = aat_sq = None
     for bem_label, fname in (("probable_default", "neuromag_bem006"), ("as_printed", "neuromag_bem06")):
-        g = proj.astype(np.float32) @ np.load(paths.CACHE / "fullres" / f"{fname}.npy")
+        g = proj.astype(np.float32) @ np.asarray(fullres.load(fname, info, subject, cortex)[0])  # checked against this array
         aat = np.sum(g[:, noise_cols].astype(np.float64) ** 2, axis=1)
         s_s2, per_type = goldenholz.calibrate_source_variance(rec_var[good], aat[good], kinds[good])
         model_var = s_s2 * aat
@@ -166,7 +167,7 @@ def main():
 
     # NEW extension: brain-only calibration (recorded - empty room), then explicit intrinsic noise
     s_s2_brain, per_type_brain = goldenholz.calibrate_source_variance(brain_var[good], aat_sq[good], kinds[good])
-    g_opm = np.load(paths.CACHE / "fullres" / "opm_bem006.npy")
+    g_opm = np.asarray(fullres.load("opm_bem006", g2.matched_opm(subject, dig).info, subject, cortex)[0])
     p_opm = {r: goldenholz.patch_topographies(g_opm, mem, col_of, weights) for r, mem in members.items()}
     aat_opm = np.sum(g_opm[:, noise_cols].astype(np.float64) ** 2, axis=1)
     enbw = filt.enbw()

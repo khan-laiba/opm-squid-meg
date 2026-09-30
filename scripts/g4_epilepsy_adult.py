@@ -62,12 +62,14 @@ def wilson(k, n, z=1.96):
 
 
 def stratified_locations(st, n, rng):
-    """Up to n/12 targets per depth x orientation stratum (fewer if the stratum is small)."""
+    """Up to n/12 targets per depth x orientation stratum (fewer if the stratum is small), never on
+    the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum, not cortex)."""
     per = n // (len(DEPTH_BANDS) * len(ORIENT_BANDS))
+    cortical = ~np.char.endswith(st.src.region.astype(str), "unknown")
     out, strata = [], []
     for i, (d0, d1) in enumerate(DEPTH_BANDS):
         for j, (o0, o1) in enumerate(ORIENT_BANDS):
-            pool = np.flatnonzero((st.src.depth_mm >= d0) & (st.src.depth_mm < d1) & (st.src.orientation_deg >= o0)
+            pool = np.flatnonzero(cortical & (st.src.depth_mm >= d0) & (st.src.depth_mm < d1) & (st.src.orientation_deg >= o0)
                                   & (st.src.orientation_deg < o1))
             pick = rng.choice(pool, min(per, len(pool)), replace=False) if len(pool) else []
             out += list(pick)
@@ -203,10 +205,11 @@ def main(overrides: dict | None = None):
 
     # checkpoint, then summaries (``--resummarise`` redoes them from the checkpoint)
     state = dict(cfg=cfg, fs=fs, events=events, strata=strata, rec=rec, held_heights=held_heights, thr=thr, zcrit=zcrit,
-                 minutes_held=cfg["null"]["heldout_min"], n_dictionary=int(len(cand)),
+                 minutes_held=cfg["null"]["heldout_min"], n_dictionary=int(len(cand)), simulated_at_commit=io.RUN_COMMIT,
                  locations=[dict(vertex=int(st.cortex.vertno[v]), hemi=int(st.cortex.hemi[v]), depth_mm=float(st.src.depth_mm[li]),
                                  orientation_deg=float(st.src.orientation_deg[li]), lobe=str(st.src.lobe[li]),
-                                 stratum=[int(a) for a in strata[k]]) for k, (v, li) in enumerate(zip(tgt, loc))])
+                                 region=str(st.src.region[li]), stratum=[int(a) for a in strata[k]])
+                            for k, (v, li) in enumerate(zip(tgt, loc))])
     STATE.parent.mkdir(parents=True, exist_ok=True)
     with open(STATE, "wb") as fh:
         pickle.dump(state, fh)
@@ -246,6 +249,7 @@ def summarise(state):
     modes = ["oracle"] + [f"practical@{op}" for op in thr[keys[0]]]
     rng = np.random.default_rng(7)
     summary = dict(status="NEW (G4 adult: IED detection, G2 noise model in the time domain)", config=cfg, fs_out=state["fs"],
+                   simulated_at_commit=state.get("simulated_at_commit"),
                    n_events=len(events), n_locations=len(state["locations"]), n_dictionary=state["n_dictionary"],
                    locations=state["locations"], detectors={}, paired={})
     for key in keys:

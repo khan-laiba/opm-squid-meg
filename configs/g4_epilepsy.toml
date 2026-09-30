@@ -42,6 +42,6 @@ baseline_min = 5.0               # noise covariance for the inverse and the dete
 calibration_min = 10.0           # detector thresholds (1 false event per minute)
 snr = 3.0                        # MNE lambda^2 = 1 / snr^2
 depth = 0.8
-coreg_draws = 8                  # coregistration-error draws shared by all arrays; event e uses draw e mod K
+coreg_draws = 8                  # coregistration-error draws shared by all arrays; location i uses draw i mod K
 ecd_min_dist_mm = 5.0            # fit_dipole min_dist to the inner skull (MNE default); no GOF cut (whitened GOF depends on channel count)
 seed = 45

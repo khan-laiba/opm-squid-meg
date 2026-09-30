@@ -108,6 +108,18 @@ def _opm_array(name, arr, meta) -> Array:
     return Array(name, info, np.array(["mag"] * len(arr.pos)), opm.coil_def_file(), meta)
 
 
+def with_scalp_gap(array: Array, gap: float) -> Array:
+    """The same OPM sites moved outward along their sensitive axes by ``gap`` [m] (A-OPM-GAP):
+    the helmet sits farther from the scalp and every sensor keeps its site, so a gap variant
+    differs from the primary array only by the gap (clearance can only increase)."""
+    info = array.info.copy()
+    with info._unlock():
+        for ch in info["chs"]:
+            ch["loc"][:3] = ch["loc"][:3] + gap * ch["loc"][9:12]
+    meta = dict(array.meta, scalp_gap_mm=array.meta.get("scalp_gap_mm", 0.0) + gap * 1e3)
+    return Array(array.name, info, array.kinds.copy(), array.coil_def, meta)
+
+
 def channel_sets(array: Array) -> dict[str, np.ndarray]:
     if array.name == "squid":
         return {"mag": array.kinds == "mag", "grad": array.kinds == "grad", "combined": np.ones(array.n, bool)}
@@ -163,21 +175,13 @@ def gains(array: Array, subject, cortex, points: np.ndarray, fullres_job: str | 
                                          label=array.name).astype(np.float64)
 
 
-def fullres_matrix(array: Array, subject, cortex, job: str, conductivity=BEM_CONDUCTIVITY, n_check: int = 12):
+def fullres_matrix(array: Array, subject, cortex, job: str, conductivity=None, n_check: int = 12):
     """Memory-mapped full-resolution lead field (n_channels, n_valid) of ``array`` and the map from
-    global vertex index to its column (-1 if not valid), after checking ``n_check`` columns against
-    a direct computation for this array."""
-    full = np.load(paths.CACHE / "fullres" / f"{job}.npy", mmap_mode="r")
-    valid_idx = np.load(paths.CACHE / "fullres" / "valid_index.npy")
-    col = np.full(cortex.n, -1)
-    col[valid_idx] = np.arange(len(valid_idx))
-    chk = valid_idx[np.linspace(0, len(valid_idx) - 1, n_check).astype(int)]
-    direct = forward.chunked_discrete_gain(array.info, subject.trans, cortex.rr[chk], cortex.nn[chk],
-                                           subject.bem_model(conductivity), coil_def=opm.coil_def_file())
-    stored = np.asarray(full[:, col[chk]], dtype=np.float64)
-    if stored.shape != direct.shape or not np.allclose(stored, direct, rtol=1e-4, atol=1e-4 * np.abs(direct).max()):
-        raise ValueError(f"{job}.npy does not match array {array.name}")
-    return full, col
+    global vertex index to its column (-1 if not valid), after the fingerprint and column checks
+    of ``opmsquid.fullres.load`` (the job fixes the BEM; ``conductivity`` is not used)."""
+    from . import fullres  # imported here: fullres builds its arrays with this module
+
+    return fullres.load(job, array.info, subject, cortex, n_check)
 
 
 FULLRES_JOBS = {"squid": "neuromag_bem006", "opm_matched": "opm_bem006", "opm204": "opm204_bem006", "opm_dense": "opm_dense_bem006"}

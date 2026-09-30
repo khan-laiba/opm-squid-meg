@@ -390,7 +390,7 @@ def main():
         gap_geo, gap_gains = {}, {}
         for a in OPMS:
             if gap:
-                arr = g2.matched_opm(st.subject, st.dig, gap * 1e-3) if a == "opm_matched" else g2.dense_opm(st.subject, st.dig, a, gap * 1e-3)
+                arr = g2.with_scalp_gap(arrays[a], gap * 1e-3)  # same sites, moved outward (not rebuilt)
                 gt, gg = st.gains(arr, fullres=False)
                 nz = st.noise(arr, gg, brain_scale, env)
                 r2[a] = evaluate_all(gt * st.q, arr, nz, headline)
@@ -629,9 +629,10 @@ def convergence(st, arrays, G_t, G_g, noise_nom, res, brain_scale, target_var, g
         return lambda arr: forward.chunked_discrete_gain(info or arr.info, st.subject.trans, st.cortex.rr[pts], st.cortex.nn[pts],
                                                          bem_surfs, coil_def=coil_def or opm.coil_def_file()).astype(np.float64)
 
-    ref_gt, ref_r = run_forward_variant("bem3_5120", direct(st.subject.bem_model(g2.BEM_CONDUCTIVITY)))
+    ref_gt, ref_r = run_forward_variant("bem3_primary", direct(st.subject.bem_model(g2.BEM_CONDUCTIVITY)))
     ref_med = ratio_medians(ref_r)
-    variants = {"bem1_5120": direct(st.subject.bem_model((0.3,))),
+    variants = {"bem3_head5120": direct(st.subject.bem_model(g2.BEM_CONDUCTIVITY, head_refine=0)),  # the v1 head surface
+                "bem1_5120": direct(st.subject.bem_model((0.3,))),
                 "bem1_20480": direct(anatomy.refined_inner_skull(st.subject, 1))}
     fwd_checks = dict(subset_reference_median_log2=ref_med)
     for label, fn in variants.items():

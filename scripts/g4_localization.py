@@ -4,10 +4,9 @@
 Truth: events simulated as in scripts/g4_epilepsy_adult.py (3-layer BEM, exact positions, shared
 noise across arrays). Inverse model with bounded mismatch: 1-layer (inner skull) BEM and a
 coregistration error of 2 mm and 2 deg. The error is drawn K times (random translation direction
-and rotation axis); every array uses the same K draws and event e uses draw e mod K, so the arrays
-are compared under identical errors rather than one draw per array. With 4 events per location in
-a fixed order, each condition sees only 2 of the K = 8 draws (known limitation; draw = location
-mod K would spread all draws over every condition). Noise
+and rotation axis); location i uses draw i mod K for all its events, in every array, so the arrays
+are compared under identical errors and every condition sees all K draws (3 locations each for
+24 locations and K = 8). Noise
 covariance from 5 min of independent null data. Sources off the inverse grid: MNE/dSPM on a 5-mm
 Poisson-disk grid of usable vertices that excludes the true source vertices. Equivalent current
 dipole with MNE's fit_dipole (same BEM and transform).
@@ -156,7 +155,7 @@ def main():
     rows = []
     tol = int(round(cfg["detector"]["hit_tolerance_s"] * fs))
     for e_idx, (i, fam, s) in enumerate(events):
-        k = e_idx % n_draws  # coregistration draw, shared by all arrays for this event
+        k = i % n_draws  # coregistration draw of this location: shared by all arrays and conditions; every draw in every condition
         seg = gen.segment(4.0, rng)
         t_peak = int(round(2.0 * fs))
         # displacement the coregistration error alone produces at the true source (MRI frame)
