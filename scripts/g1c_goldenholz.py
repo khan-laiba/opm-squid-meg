@@ -182,9 +182,29 @@ def main():
             diff = ext[f"{key}/opm"] - ext[f"{key}/{lab}"]
             ext_stats[f"{key}/opm_minus_{lab}"] = dict(median_db=float(np.nanmedian(diff)),
                                                        share_opm_better=float(np.nanmean(diff > 0)))
+    # soft comparisons with the paper (docs/literature/goldenholz2009.md): source SD 1.6-1.9 nAm,
+    # Fig. 2 display range -29 ... -19 dB (clipping limits, not a reported range), medial MEG maps
+    # largely below -29 dB [inference], 3 vs 8 cm^2 patches: 10 dB in the mesial temporal lobe
+    names = np.concatenate([plotting.read_freesurfer_annot(paths.SUBJECTS_DIR / "sample" / "label" / f"{h}.aparc.annot")
+                            for h in ("lh", "rh")])
+    lobe_v, lobe_c = plotting.lobe_of(names[valid_idx]), plotting.lobe_of(names[centroids])
+    mesial_c = np.isin(names[centroids], ["entorhinal", "parahippocampal"])
+    checks = dict(source_sd_nAm={k: v["source_sd_nAm"] for k, v in results.items()}, paper_source_sd_nAm=[1.6, 1.9])
+    for bem_label, r_ in results.items():
+        for cs in CH_SETS:
+            f = r_[f"focal/model/{cs}"]
+            checks[f"{bem_label}/focal/model/{cs}"] = dict(
+                share_below_m29=float(np.mean(f < -29)), share_m29_to_m19=float(np.mean((f >= -29) & (f <= -19))),
+                share_above_m19=float(np.mean(f > -19)),
+                median_by_lobe={lb: float(np.median(f[lobe_v == lb])) for lb in plotting.DK_LOBES})
+            d = r_[f"patch16/model/{cs}"] - r_[f"patch10/model/{cs}"]
+            checks[f"{bem_label}/patch16_minus_patch10/model/{cs}"] = dict(
+                mesial_temporal_median_db=float(np.median(d[mesial_c])), n_mesial_temporal=int(mesial_c.sum()),
+                all_median_db=float(np.median(d)), by_lobe={lb: float(np.median(d[lobe_c == lb])) for lb in plotting.DK_LOBES},
+                paper_mesial_temporal_db=10.0, nominal_area_scaling_db=float(20 * np.log10(8 / 3)))
     summary.update(conductivity_runs={k: dict(source_sd_nAm=v["source_sd_nAm"], per_type_median_nAm2=v["per_type_median_nAm2"])
                                       for k, v in results.items()},
-                   distributions=stats, extension_opm=ext_stats, runtime_s=time.time() - t_start,
+                   distributions=stats, comparison_with_paper=checks, extension_opm=ext_stats, runtime_s=time.time() - t_start,
                    note="Magnetometer, gradiometer and pooled Eq. 1 values are kept separate; the paper reports only MEG "
                         "(pooling unstated) vs EEG. D = SNR_MEG - SNR_EEG is out of scope (no EEG).")
     io.write_json(summary, OUT / "g1c_summary.json")
