@@ -1,0 +1,31 @@
+# G4 epilepsy relevance (NEW): IED-like event detection, adult sample subject. Study choices [C]
+# unless tagged; the noise model is the frozen G2 model (configs/g2_adult.toml).
+
+[simulation]
+band_hz = [1.0, 40.0]            # same analysis band as G2
+decimate = 4                     # 600.6 Hz -> 150.2 Hz after the 40-Hz low-pass
+segment_s = 30.0                 # simulated in independent segments (shared across arrays)
+event_spacing_s = 2.0            # one event every 2 s, first at 1.5 s (well separated)
+opm_asd_fT_per_rtHz = 15.0       # G2 primary (A-G2-OPMNOISE)
+seed = 44
+
+[null]
+baseline_min = 10.0              # noise covariance (whitener) only
+calibration_min = 20.0           # detector normalisation and thresholds (independent of the baseline), then frozen
+heldout_min = 20.0               # verifies the false-event rate
+
+[events]
+n_locations = 72                 # stratified over depth x orientation (G2 targets, seeded)
+strengths_nAm = [10.0, 20.0, 40.0, 80.0, 160.0, 320.0]
+stretches = [0.75, 1.0, 1.5]     # spike-wave morphology (duration scale)
+patch_radius_mm = 10.0           # extended variant (fixed total = strength), stretch 1.0 only
+waveform = "Hunold et al. 2016 Fig. 2b spike-wave complex (digitised), through the analysis filter"
+
+[detector]
+dictionary = "Poisson-disk grid (dictionary_spacing_mm) on usable vertices, cortical normal; the true sources are other vertices"  # [C]
+dictionary_spacing_mm = 10.0
+refractory_s = 0.25
+hit_tolerance_s = 0.05
+operating_points_per_min = [1.0, 0.2]   # false events per minute (practical detector)
+oracle_alpha = 0.001                    # per-trial false-positive probability (oracle)
+arrays = ["squid/combined", "squid/grad", "squid/mag", "opm99/opm", "opm_dense/opm"]
