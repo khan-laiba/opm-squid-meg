@@ -796,3 +796,42 @@ Selected channel and printed SNR in Fig. 6. EEG: electrode; MM: Vectorview magne
 - **Fig. 2(d)** (0.5 s baseline visible, ≈ 2.4 ms/px): literal 4.1, peak-to-peak 6.0, printed 4.8. Not decisive.
 
 **Caveats.** Raster resolution, anti-aliasing and the 0.9 vs 1 s baseline all limit this check. It is evidence, not proof. The formula must be treated as partly unresolved (§11 B1).
+
+## Appendix F. Absolute calibration from the Fig. 6 scale bars [Dg] (added at G1B)
+
+Measured with `scripts/digitise_hunold_fig6.py` on the embedded 200-ppi raster of p. 1157 (the PDF
+is held locally and not committed).
+
+**Scale bars.** The three `[` brackets measure 24.99 px (EEG, "100 uV"), 25.36 px (MM, "5 pT") and
+25.33 px (GM, "100 pT", read as pT/m, §11 item 12), serif to serif. Time axis: 130.7 px/s.
+
+**Baselines.** Per-column centroid of the drawn line, display time < 0.90 s, averaged over the
+traces that share a channel (they share one background realization):
+
+| Block | Channel (traces) | Baseline SD [px] | Physical |
+|---|---|---|---|
+| MM | 0631 (2) | 3.08 | 0.61 pT |
+| MM | 0711 (5) | 3.15 | 0.62 pT |
+| MM | 0741 (1) | 2.91 | 0.57 pT |
+| GM | 0413 (1) | 2.64 | 10.4 pT/m |
+| GM | 0412 (4) | 2.28 | 9.0 pT/m |
+| GM | 0423 (3) | 2.66 | 10.5 pT/m |
+| EEG | FC3 (4), CCP5h (2), CP5, C5 | 3.25, 3.02, 2.84, 2.84 | 13.0, 12.1, 11.4, 11.4 uV |
+
+The superficial tangential dipole's spike on MM 0631 reaches 23.9 px = 4.7 pT (noisy trace).
+
+**Comparison with the text's background (G1B, sample subject).** Drawing our simulated background
+at the same scale and resolution and digitising it the same way (`hunold.rendered_centroid_sd`),
+the paper's baselines are 0.43x ours at the three MM channels and 0.39x at the three GM
+channels, with the background generated as the text specifies (+/-10 nAm per dipole, stationary).
+The spike of comparable sources agrees (our median 4.6 pT on the magnetometers for
+600-nAm dipoles at 24-27 mm depth and 70-80 deg in the left fronto-central cortex). The two
+sensor types give the same factor within the digitisation error, which points to the effective
+background source amplitude, not to the sensor model. The text does not determine it: a single
+normalisation over all dipoles, or filter edge transients that set each dipole's maximum, would
+both lower the stationary background; Fig. 2(a) shows one dipole trace with SD ~3.2 nAm over
+0.5 s, closer to the per-dipole reading.
+
+**Use in G1B.** A second background level (`fig6_calibrated`) scales all background moments by
+the magnetometer factor. The gradiometer factor is then an independent check, and the paper's
+Fig. 3/4 bin means are never used for calibration (U-HU-bglevel).

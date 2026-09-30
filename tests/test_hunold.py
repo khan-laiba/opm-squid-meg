@@ -52,6 +52,25 @@ class TestHunold(unittest.TestCase):
         p = np.mean(np.abs(np.fft.rfft(x, axis=1)) ** 2, axis=0)
         self.assertLess(p[f > 60].sum() / p.sum(), 1e-3)  # band-limited to the EEG bands (<= 45 Hz)
 
+    def test_background_is_stationary(self):
+        """The per-source maximum (which sets the normalisation) is not held by filter edge
+        transients: maxima fall within 300 ms of an edge about as often as uniform (10 %)."""
+        x = hunold.background_timecourses(400, 6000, 1000.0, np.random.default_rng(3))
+        at = np.abs(x).argmax(axis=1)
+        self.assertLess(np.mean((at < 300) | (at >= 5700)), 0.2)
+        np.testing.assert_allclose(x[:, :500].std(), x[:, 2750:3250].std(), rtol=0.1)
+
+    def test_rendered_centroid_sd(self):
+        """The Fig. 6 rendering emulation scales linearly with the drawing scale and reads a
+        band-limited trace a few per cent low (7.65-ms pixel columns average fast components)."""
+        x = hunold.background_timecourses(1, 6000, 1000.0, np.random.default_rng(5))[0]
+        x = x / x.std()
+        a = hunold.rendered_centroid_sd(x, 1000.0, px_per_unit=3.0)
+        b = hunold.rendered_centroid_sd(x, 1000.0, px_per_unit=6.0)
+        self.assertAlmostEqual(b / a, 2.0, delta=0.06)
+        true = 3.0 * np.sqrt(np.mean([np.var(x[i:i + 900]) for i in range(0, 5101, 900)]))
+        self.assertTrue(0.85 < a / true < 1.0, a / true)
+
     def test_background_amplitude_rayleigh(self):
         rng = np.random.default_rng(1)
         x = rng.standard_normal((5, 60000))

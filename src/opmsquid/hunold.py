@@ -72,6 +72,31 @@ PAPER_BIN_CLASS = {
 EEG_BANDS_HZ = ((0.5, 4.0), (4.0, 8.0), (8.0, 13.0), (13.0, 30.0), (30.0, 45.0))  # U-HU-bands
 BAND_WEIGHTS = (0.6, 0.55, 0.5, 0.45, 0.4)  # within the paper's 0.4-0.6 range (U-HU-bands)
 
+# Fig. 6 (p. 1157): selected channel and printed SNR per example trace (Appendix D), and the
+# figure geometry for an absolute calibration (Appendix F; scripts/digitise_hunold_fig6.py) [Dg]
+FIG6_TRACES = {
+    "eeg": {("dipole superficial", "radial"): ("FC3", 4.29), ("dipole superficial", "tangential"): ("CCP5h", 0.96),
+            ("dipole deep", "radial"): ("FC3", 2.43), ("dipole deep", "tangential"): ("CP5", 0.58),
+            ("patch superficial", "radial"): ("FC3", 3.81), ("patch superficial", "tangential"): ("CCP5h", 0.95),
+            ("patch deep", "radial"): ("FC3", 2.96), ("patch deep", "tangential"): ("C5", 1.05)},
+    "mag": {("dipole superficial", "radial"): ("0631", 1.36), ("dipole superficial", "tangential"): ("0631", 4.7),
+            ("dipole deep", "radial"): ("0711", 0.92), ("dipole deep", "tangential"): ("0711", 2.89),
+            ("patch superficial", "radial"): ("0711", 0.84), ("patch superficial", "tangential"): ("0711", 4.24),
+            ("patch deep", "radial"): ("0741", 1.04), ("patch deep", "tangential"): ("0711", 2.96)},
+    "grad": {("dipole superficial", "radial"): ("0413", 1.35), ("dipole superficial", "tangential"): ("0412", 5.82),
+             ("dipole deep", "radial"): ("0423", 1.73), ("dipole deep", "tangential"): ("0412", 2.93),
+             ("patch superficial", "radial"): ("0423", 1.72), ("patch superficial", "tangential"): ("0412", 6.22),
+             ("patch deep", "radial"): ("0423", 1.74), ("patch deep", "tangential"): ("0412", 2.53)},
+}
+FIG6_PX_PER_S = 130.7  # time axis of the embedded 200-ppi raster (0/1/2 s ticks)
+FIG6_SCALE_BAR_PX = {"eeg": 24.99, "mag": 25.36, "grad": 25.33}  # bracket serif-to-serif distance
+FIG6_SCALE_BAR = {"eeg": 100e-6, "mag": 5e-12, "grad": 100e-12}  # printed "100 uV", "5 pT", "100 pT" (read as pT/m)
+# baseline SD [px] of the per-column line centroid, display time < 0.90 s, averaged over the traces
+# that share a channel (same background realization)
+FIG6_BASELINE_SD_PX = {"eeg": {"FC3": 3.25, "CCP5h": 3.02, "CP5": 2.84, "C5": 2.84},
+                       "mag": {"0631": 3.08, "0711": 3.15, "0741": 2.91},
+                       "grad": {"0413": 2.64, "0412": 2.28, "0423": 2.66}}
+
 
 def spike_waveform(fs: float = 1000.0, peak: float = 600e-9) -> np.ndarray:
     """Spike-wave complex sampled at fs from onset (0) to 0.2 s, max = ``peak`` [A m]."""
@@ -150,14 +175,19 @@ def grow_patch(seed: int, adjacency, orient: np.ndarray, area: np.ndarray, valid
 
 
 def background_timecourses(n_sources: int, n_times: int, fs: float, rng: np.random.Generator,
-                           peak: float = 10e-9, bands=EEG_BANDS_HZ, weights=BAND_WEIGHTS) -> np.ndarray:
+                           peak: float = 10e-9, bands=EEG_BANDS_HZ, weights=BAND_WEIGHTS, pad_s: float = 3.0) -> np.ndarray:
     """Independent EEG-like background moments (n_sources, n_times) [A m]: Gaussian noise filtered
     into each band (Butterworth order 4, zero phase), scaled to unit RMS, weighted, summed and
-    normalised so that max |s| = ``peak`` for every source."""
+    normalised so that max |s| = ``peak`` for every source.
+
+    The noise is generated ``pad_s`` longer on each side and cropped after filtering, so the kept
+    segment is stationary. Without it, the 0.5-4 Hz filter's edge transients hold the maximum of
+    ~90 % of the sources and the peak normalisation shrinks the stationary part by ~1.6x."""
+    pad = int(round(pad_s * fs))
     x = np.zeros((n_sources, n_times))
     for (f1, f2), w in zip(bands, weights):
         sos = signal.butter(4, [f1, f2], btype="bandpass", fs=fs, output="sos")
-        b = signal.sosfiltfilt(sos, rng.standard_normal((n_sources, n_times)), axis=1)
+        b = signal.sosfiltfilt(sos, rng.standard_normal((n_sources, n_times + 2 * pad)), axis=1)[:, pad:pad + n_times]
         x += w * b / b.std(axis=1, keepdims=True)
     return x / np.abs(x).max(axis=1, keepdims=True) * peak
 
@@ -198,3 +228,30 @@ def bin_means(values: np.ndarray, rows: np.ndarray, cols: np.ndarray, shape) -> 
             if m.any():
                 mean[i, j] = values[m].mean()
     return mean, count
+
+
+def rendered_centroid_sd(trace: np.ndarray, fs: float, px_per_unit: float, window_s: float = 0.9,
+                         px_per_s: float = FIG6_PX_PER_S, supersample: int = 8) -> float:
+    """Baseline SD [px] that the Fig. 6 digitisation would report for ``trace`` drawn at the
+    figure's scale: an anti-aliased 1-px polyline (drawn at ``supersample`` x resolution and box
+    averaged), per-column centroid of pixels darker than 200, SD within consecutive windows of
+    ``window_s`` (window mean removed), RMS over windows."""
+    from PIL import Image, ImageDraw
+
+    y = np.asarray(trace, float) * px_per_unit
+    x = np.arange(len(y)) / fs * px_per_s
+    n_col = int(x[-1]) + 1
+    top = y.max() + 3.0
+    height = int(np.ceil(top - y.min() + 3.0))
+    s = supersample
+    img = Image.new("L", (n_col * s, height * s), 255)
+    ImageDraw.Draw(img).line(list(zip(x * s, (top - y) * s)), fill=0, width=s)
+    g = np.asarray(img, float).reshape(height, s, n_col, s).mean(axis=(1, 3))
+    rows = np.arange(height)[:, None]
+    w = np.where(g < 200, 255.0 - g, 0.0)
+    ok = w.sum(axis=0) > 0
+    cen = np.full(n_col, np.nan)
+    cen[ok] = (w * rows).sum(axis=0)[ok] / w.sum(axis=0)[ok]
+    per = int(round(window_s * px_per_s))
+    var = [np.nanvar(cen[i:i + per]) for i in range(0, n_col - per + 1, per)]
+    return float(np.sqrt(np.mean(var)))

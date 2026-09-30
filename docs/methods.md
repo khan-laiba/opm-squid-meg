@@ -69,7 +69,44 @@ on noise-normalised quantities; rank-aware whitening from the eigen-decompositio
 correlation matrix D C D; invariance to channel units verified. Paper-specific metrics are kept
 in the modules for each paper.
 
+## 6. Hunold depth-orientation spike maps (G1B, ADAPT; OPM NEW) — `opmsquid.hunold`, `scripts/g1b_hunold.py`
+
+Configuration: `configs/hunold_reference.toml` (every value tagged as printed, chosen or digitised).
+
+* Anatomy and forward: MNE sample subject, all 311,994 white-surface vertices inside the inner
+  skull, fixed cortical normals; 3-layer BEM (5120 triangles per surface, 0.33/0.0042/0.33 S/m,
+  linear collocation); the sample recording's Vectorview geometry and head position; 4-point
+  coil integration (study coils 9014/9024). The matched OPM array (99 sites) is the NEW column.
+* Descriptors: depth to the nearest scalp BEM node; orientation to the normal of the nearest
+  inner-skull BEM node, folded to 0-90 deg; the paper's 5 mm x 10 deg bins.
+* Sources: 3783 dipoles sampled per bin to the paper's counts (the "dipole traces" cannot be
+  rebuilt on new anatomy); 600 nAm PCHIP spike through the digitised Fig. 2(b) waveform. Patches
+  grown from each dipole along mesh edges within +/-10 deg until the area first exceeds 20 mm^2
+  (2895 of 3783 grow; 20.0-25.1 mm^2), uniform density with a 622-nAm median total (99 % of
+  totals <= 650 nAm).
+* Background: 31,199 random vertices (10 %), independent band-limited Gaussian moments, each
+  peak-normalised to 10 nAm over a stationary 6 s (generated with 3 s of padding each side), one
+  realization shared by all sources and arrays. Two levels: `as_specified` and `fig6_calibrated`,
+  which multiplies every background moment by 0.43, the ratio of the paper's Fig. 6 magnetometer
+  baselines to ours drawn and digitised identically (Appendix F of
+  `docs/literature/hunold2016.md`; U-HU-bglevel). The gradiometer baselines give 0.39
+  independently.
+* SNR: per sensor type, the channel with the largest noise-free spike; background amplitude
+  2 mean|hilbert| over the 1 s before onset (analytic signal of the whole trace, cropped);
+  primary numerator the noise-free peak-to-peak spike (Appendix E), variants peak and noisy peak.
+  Bin means as in the paper; unpaired per-bin tests (Student's t if both groups pass Shapiro-Wilk,
+  else rank-sum).
+* Comparison with the paper: the digitised colour classes of Figs 3-4 (midpoints) per bin:
+  Pearson r, mean ratio, and agreement on SNR >= 2.5. Calibrated, p2p: r = 0.96-0.97 (dipoles),
+  0.93-0.94 (patches); mean ratio 0.88-0.96; bins with paper SNR >= 2.5 at 0.96-1.04x; 2.5
+  classification agrees in 84-93 % of bins; GM - MM sign agrees in 98-100 % of bins with a
+  paper difference of at least one class. Weak bins (paper < 2.5) are 0.83-0.92x: the paper's
+  maps do not fall below ~1, as expected if its numerator included background at low SNR.
+  As specified, the maps keep their shape (same r) but reach only 0.38-0.41x the paper.
+* Extension (NEW): white sensor noise (SQUID brochure values; OPM 7/15/30 fT/sqrt(Hz)) added
+  to the background, spike, background and noise filtered 0.5-70 Hz (zero phase), p2p numerator.
+
 ## To be written
 
-G1A figures and toy experiment; G1B Hunold adaptation; G1C Goldenholz adaptation; G2 noise model
-(background, environment), endpoints and uncertainty; G3; G4.
+G1A figures and toy experiment; G1C Goldenholz adaptation; G2 noise model (background,
+environment), endpoints and uncertainty; G3; G4.

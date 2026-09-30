@@ -43,7 +43,7 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | HU-bins | Bins | 20-60 mm x 0-90 deg, 5 mm x 10 deg | 1150 | as printed |
 | HU-dipole | Focal strength | 600 nAm peak | 1151 | as printed (paper-specific, not physiological) |
 | HU-patch | Patches | >20 mm^2 (first exceed), +/-10 deg orientation window, totals 612-678 nAm (median 622) | 1149-1151 | as printed; density = 622 nAm / median area (U-HU-density) |
-| HU-bg | Background | random 10 % of nodes, EEG bands weighted 0.4-0.6, +/-10 nAm, 6 s at 1 kHz, one realization | 1148-1151 | as printed where stated (U-HU-bands) |
+| HU-bg | Background | random 10 % of nodes, EEG bands weighted 0.4-0.6, +/-10 nAm, 6 s at 1 kHz, one realization | 1148-1151 | as printed where stated (U-HU-bands); effective level unresolved (U-HU-bglevel) |
 | HU-noise | Sensor noise | omitted | 1158 | as printed (reference); intrinsic noise only in the labelled extension |
 | HU-snr | SNR | channel with max noise-free amplitude; 1 s pre-onset baseline; 2 mean abs(hilbert) | 1151 | as printed (U-HU-numerator) |
 | HU-thr | Threshold | 2.5 (visual, one clinician) | 1151, 1159 | reported, not used as a detector threshold |
@@ -68,6 +68,14 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | R-sigma | Absolute SQUID noise sigma_SQUID | B_max(0.8 b, h + 18 mm) = 0.35458 pT (SNR_SQUID = 1 at d = 31 mm); sigma_OPM = eta sigma_SQUID | recovered; the paper gives only eta. Absolute SNR values depend on it, ratios and d_eq do not. |
 | R-grid | Curve sampling | r_Q = linspace(0, b, 101)[1:] (d = 15 ... 94.2 mm) | recovered |
 | R-marker | Dotted d_eq line position | 27.530 mm (deepest point with SNR_OPM > SNR_SQUID on d = linspace(15, 95, 250)) vs exact root 27.665 mm | recovered; authors' exact rule not identifiable (U-J1) |
+
+## Recovered from Hunold et al. 2016 Fig. 6 (G1B; `scripts/digitise_hunold_fig6.py`)
+
+| ID | Parameter | Value | Status |
+|---|---|---|---|
+| R-HU-bars | Scale-bar brackets in the embedded 200-ppi raster (serif to serif) | EEG 24.99 px = 100 uV; MM 25.36 px = 5 pT; GM 25.33 px = "100 pT" (read as pT/m); time axis 130.7 px/s | recovered |
+| R-HU-baselines | Baseline SD of the drawn line (per-column centroid, display time < 0.90 s), per channel | MM 0631 3.08 px (0.61 pT), 0711 3.15 px (0.62 pT), 0741 2.91 px (0.57 pT); GM 0413 2.64 px (10.4 pT/m), 0412 2.28 px (9.0 pT/m), 0423 2.66 px (10.5 pT/m) | recovered; compared with our traces drawn the same way (`hunold.rendered_centroid_sd`) |
+| R-HU-spike | Spike-window extreme of the superficial tangential dipole | MM 0631 23.9 px = 4.7 pT (noisy trace) | recovered; context for U-HU-bglevel |
 
 ## Hardware
 
@@ -109,8 +117,9 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | U-J8 | Experimental OPM ~7 mm from the scalp (2-mm shell + half of a 10-mm FieldLine Gen2 cell) vs simulated OPM at xi = 0 | G1A keeps xi = 0 (paper model); G2 uses 7 mm (A-OPM-STANDOFF). |
 | U-HW1 | TRIUX specification image not available on disk | Values transcribed in GOAL.md used and flagged; to verify when the image is supplied. |
 | U-HU-trace | Hunold "dipole traces" (sulcal bottom to crown) cannot be replicated on new anatomy; algorithm partly unstated | Stratified sampling reproducing the paper's per-bin counts exactly (ADAPT). |
-| U-HU-numerator | Spike amplitude in the SNR (noise-free vs noisy, peak vs peak-to-peak) unstated; the literal reading appears ~25-30 % below published values | All three variants computed; each compared with the paper's digitised bin means. |
-| U-HU-bands | EEG band edges, weights, filter, normalisation unstated | 0.5-4 / 4-8 / 8-13 / 13-30 / 30-45 Hz, weights 0.6/0.55/0.5/0.45/0.4, Butterworth 4 zero-phase, unit-RMS per band, peak-normalised to 10 nAm. |
+| U-HU-numerator | Spike amplitude in the SNR (noise-free vs noisy, peak vs peak-to-peak) unstated; the literal reading appears ~25-30 % below published values | Primary: noise-free peak-to-peak (Fig. 6 digitisation: p2p / (2 mean abs(hilbert)) = 1.04 +/- 0.14 x printed, Appendix E); peak and noisy peak reported. With the Fig. 6-calibrated background, bins with paper SNR >= 2.5 reach 0.96-1.04 x the paper; weaker bins 0.83-0.92 x (the paper's maps floor near 1, as a noise-including numerator would at low SNR). |
+| U-HU-bands | EEG band edges, weights, filter, normalisation unstated | 0.5-4 / 4-8 / 8-13 / 13-30 / 30-45 Hz, weights 0.6/0.55/0.5/0.45/0.4, Butterworth 4 zero-phase, unit-RMS per band, peak-normalised to 10 nAm per dipole. Noise generated 3 s longer on each side and cropped, so the 6 s are stationary as the paper states (without the padding, filter edge transients hold the maximum of ~90 % of the dipoles and the stationary part shrinks ~1.6x). |
+| U-HU-bglevel | Effective background level. At the Fig. 6 channels the text's +/-10 nAm per dipole gives rendered baselines 2.3x (magnetometers) and 2.5x (gradiometers) those of the paper's traces (R-HU-bars, R-HU-baselines), while the spike of a comparable superficial tangential dipole agrees (4.6 vs 4.7 pT). Which normalisation the authors used (per dipole vs over all dipoles, filter transients) cannot be determined. | Both reported. `as_specified`: the text's level (0-17 % of bins reach 2.5). `fig6_calibrated`: one scalar on all background moments, 0.43 = mean paper/ours baseline SD over the three magnetometer channels; the gradiometer channels give 0.39 independently. The calibrated variant is compared with the paper's maps. Not fitted to the maps. |
 | U-HU-density | Patch density (implied ~30 nAm/mm^2; the discussion mentions 100 nA/mm^2) | Density set so that the median patch total is 622 nAm. |
 | U-HU-onset | Spike onset within the 6-s epoch | 3.0 s; analytic signal of the whole trace, cropped to the 1-s baseline. |
 | U-HU-bem | Galerkin vs MNE linear collocation BEM | Small differences expected (paper: MEG weakly sensitive to skull conductivity). |
