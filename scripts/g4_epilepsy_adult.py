@@ -21,6 +21,7 @@ Configuration: configs/g4_epilepsy.toml. Outputs: results/g4/.
 from __future__ import annotations
 
 import csv
+import pickle
 import sys
 import time
 import tomllib
@@ -41,6 +42,7 @@ import g2_adult_comparison as G  # noqa: E402
 from opmsquid import background, detection, environment, g2, goldenholz, ied, io  # noqa: E402
 
 OUT = ROOT / "results" / "g4"
+STATE = ROOT / "cache" / "g4" / "adult_state.pkl"
 DEPTH_BANDS = ((10.0, 20.0), (20.0, 30.0), (30.0, 45.0), (45.0, 70.0))
 ORIENT_BANDS = ((0.0, 30.0), (30.0, 60.0), (60.0, 90.1))
 
@@ -171,7 +173,6 @@ def main(overrides: dict | None = None):
             stat, _ = dets[key].statistic(seg[name][m])
             held_heights[key].append(dets[key].events(stat)[1])
     held_heights = {k: np.concatenate(v) for k, v in held_heights.items()}
-    minutes_held = cfg["null"]["heldout_min"]
     log("held-out null done")
 
     # events: all combinations, shuffled, 14 per 30-s segment, identical across arrays
@@ -200,73 +201,126 @@ def main(overrides: dict | None = None):
         if (start // per_seg) % 20 == 0:
             log(f"events {start + len(batch)}/{len(events)}")
 
-    # summaries
-    ev_arr = np.array([(i, s, x) for i, _, s, x in events], float)
-    fam_arr = np.array([f for _, f, _, _ in events])
-    depth_band = strata[ev_arr[:, 0].astype(int), 0]
-    summary = dict(status="NEW (G4 adult: IED detection, G2 noise model in the time domain)", config=cfg, fs_out=fs,
-                   n_events=len(events), n_locations=int(len(loc)), n_dictionary=int(len(cand)),
-                   locations=[dict(vertex=int(st.cortex.vertno[v]), hemi=int(st.cortex.hemi[v]), depth_mm=float(st.src.depth_mm[li]),
-                                   orientation_deg=float(st.src.orientation_deg[li]), lobe=str(st.src.lobe[li]), stratum=[int(a) for a in strata[k]])
-                              for k, (v, li) in enumerate(zip(tgt, loc))],
-                   detectors={})
-    for key in det_sets:
-        r = rec[key]
+    # checkpoint, then summaries (``--resummarise`` redoes them from the checkpoint)
+    state = dict(cfg=cfg, fs=fs, events=events, strata=strata, rec=rec, held_heights=held_heights, thr=thr, zcrit=zcrit,
+                 minutes_held=cfg["null"]["heldout_min"], n_dictionary=int(len(cand)),
+                 locations=[dict(vertex=int(st.cortex.vertno[v]), hemi=int(st.cortex.hemi[v]), depth_mm=float(st.src.depth_mm[li]),
+                                 orientation_deg=float(st.src.orientation_deg[li]), lobe=str(st.src.lobe[li]),
+                                 stratum=[int(a) for a in strata[k]]) for k, (v, li) in enumerate(zip(tgt, loc))])
+    STATE.parent.mkdir(parents=True, exist_ok=True)
+    with open(STATE, "wb") as fh:
+        pickle.dump(state, fh)
+    summarise(state)
+    log(f"done in {time.time() - t_start:.0f} s")
+
+
+def s50_from(p, strengths):
+    """Strength for 50 % detection by log interpolation (None if never reached; the weakest
+    strength if already reached there)."""
+    p = np.asarray(p, float)
+    above = np.flatnonzero(p >= 0.5)
+    if len(above) == 0:
+        return None
+    if above[0] == 0:
+        return float(strengths[0])
+    k = above[0]
+    ls = np.log(strengths)
+    return float(np.exp(np.interp(0.5, [p[k - 1], p[k]], [ls[k - 1], ls[k]])))
+
+
+def summarise(state):
+    cfg, events, strata, rec = state["cfg"], state["events"], state["strata"], state["rec"]
+    ev = cfg["events"]
+    strengths = np.array(ev["strengths_nAm"], float)
+    thr, zcrit, held, minutes = state["thr"], state["zcrit"], state["held_heights"], state["minutes_held"]
+    loc_i = np.array([e[0] for e in events])
+    fam = np.array([e[1] for e in events])
+    stren = np.array([e[2] for e in events], float)
+    stretch = np.array([e[3] for e in events], float)
+    band = strata[loc_i, 0]
+    keys = list(rec)
+
+    def detected(key, mode):
+        return rec[key]["oracle_z"] > zcrit[key] if mode == "oracle" else rec[key]["near_height"] > thr[key][mode.split("@")[1]]
+
+    modes = ["oracle"] + [f"practical@{op}" for op in thr[keys[0]]]
+    rng = np.random.default_rng(7)
+    summary = dict(status="NEW (G4 adult: IED detection, G2 noise model in the time domain)", config=cfg, fs_out=state["fs"],
+                   n_events=len(events), n_locations=len(state["locations"]), n_dictionary=state["n_dictionary"],
+                   locations=state["locations"], detectors={}, paired={})
+    for key in keys:
         out = dict(thresholds=thr[key], oracle_z_crit=zcrit[key],
-                   heldout_false_per_min={op: float(np.sum(held_heights[key] > v) / minutes_held) for op, v in thr[key].items()},
-                   curves={})
-        for fam in ("focal", "patch"):
-            for x in (ev["stretches"] if fam == "focal" else [1.0]):
+                   heldout_false_per_min={op: float(np.sum(held[key] > v) / minutes) for op, v in thr[key].items()}, curves={},
+                   strength_for_50pct_nAm={})
+        for mode in modes:
+            det = detected(key, mode)
+            for f_ in ("focal", "patch"):
                 for db in range(len(DEPTH_BANDS)):
-                    for s in ev["strengths_nAm"]:
-                        sel = (fam_arr == fam) & (ev_arr[:, 2] == x) & (ev_arr[:, 1] == s) & (depth_band == db)
-                        n = int(sel.sum())
-                        row = dict(n=n)
-                        k = int(np.sum(r["oracle_z"][sel] > zcrit[key]))
-                        row["oracle"] = dict(p=k / n if n else None, ci=wilson(k, n))
-                        for op, v in thr[key].items():
-                            k = int(np.sum(r["near_height"][sel] > v))
-                            row[f"practical@{op}"] = dict(p=k / n if n else None, ci=wilson(k, n))
-                        out["curves"][f"{fam}/stretch{x:g}/depth{db}/{s:g}nAm"] = row
-        # sensitivity vs false events per minute (focal, stretch 1, 40 and 80 nAm pooled over locations)
-        roc = {}
-        for s in (40.0, 80.0):
-            sel = (fam_arr == "focal") & (ev_arr[:, 2] == 1.0) & (ev_arr[:, 1] == s)
-            ths = np.quantile(held_heights[key], np.linspace(0.5, 0.9999, 60))
-            roc[f"{s:g}nAm"] = dict(false_per_min=[float(np.sum(held_heights[key] > t) / minutes_held) for t in ths],
-                                    sensitivity=[float(np.mean(r["near_height"][sel] > t)) for t in ths])
-        out["roc"] = roc
-        # strength for 50 % detection per depth band (focal, all stretches pooled), log interpolation
-        s50 = {}
-        for mode in ["oracle"] + [f"practical@{op}" for op in thr[key]]:
+                    for s_ in strengths:
+                        sel = (fam == f_) & (band == db) & (stren == s_)
+                        n, k = int(sel.sum()), int(det[sel].sum())
+                        out["curves"][f"{mode}/{f_}/depth{db}/{s_:g}nAm"] = dict(n=n, p=k / n if n else None, ci=wilson(k, n))
+                        if f_ == "focal":
+                            for x in ev["stretches"]:
+                                sx = sel & (stretch == x)
+                                nx, kx = int(sx.sum()), int(det[sx].sum())
+                                out["curves"][f"{mode}/focal_stretch{x:g}/depth{db}/{s_:g}nAm"] = dict(n=nx, p=kx / nx if nx else None,
+                                                                                                    ci=wilson(kx, nx))
+            # strength for 50 % detection (focal, stretches pooled) with a bootstrap over locations
+            n_loc = int(loc_i.max()) + 1
+            table = np.full((n_loc, len(strengths)), np.nan)  # detection rate per location and strength
+            for L in range(n_loc):
+                for j, s_ in enumerate(strengths):
+                    m = (fam == "focal") & (loc_i == L) & (stren == s_)
+                    if m.any():
+                        table[L, j] = det[m].mean()
             for db in range(len(DEPTH_BANDS)):
-                p = []
-                for s in ev["strengths_nAm"]:
-                    sel = (fam_arr == "focal") & (ev_arr[:, 1] == s) & (depth_band == db)
-                    crit = zcrit[key] if mode == "oracle" else thr[key][mode.split("@")[1]]
-                    val = r["oracle_z"][sel] if mode == "oracle" else r["near_height"][sel]
-                    p.append(float(np.mean(val > crit)) if sel.any() else np.nan)
-                p = np.array(p)
-                ls = np.log(ev["strengths_nAm"])
-                above = np.flatnonzero(p >= 0.5)
-                if len(above) == 0:
-                    v50 = None
-                elif above[0] == 0:
-                    v50 = float(ev["strengths_nAm"][0])  # at or below the weakest strength
-                else:
-                    k = above[0]
-                    v50 = float(np.exp(np.interp(0.5, [p[k - 1], p[k]], [ls[k - 1], ls[k]])))
-                s50[f"{mode}/depth{db}"] = v50
-        out["strength_for_50pct_nAm"] = s50
+                locs = np.unique(loc_i[band == db])
+                if len(locs) == 0:
+                    continue
+                sub = table[locs]
+                boot = np.array([(lambda v: np.inf if v is None else v)(s50_from(sub[rng.integers(0, len(locs), len(locs))].mean(axis=0), strengths))
+                                 for _ in range(1000)])
+                hi = float(np.percentile(boot, 97.5))
+                out["strength_for_50pct_nAm"][f"{mode}/depth{db}"] = dict(
+                    value=s50_from(sub.mean(axis=0), strengths), ci95=[float(np.percentile(boot, 2.5)), hi if np.isfinite(hi) else None])
+        # sensitivity vs false events per minute: thresholds at every held-out event height
+        h = np.sort(held[key])[::-1]
+        ths = h[:min(len(h), int(10 * minutes) + 1)]
+        roc = {}
+        for lab, sel in (("superficial_10-30mm_40nAm", (fam == "focal") & (band <= 1) & (stren == 40.0)),
+                         ("deep_30-70mm_160nAm", (fam == "focal") & (band >= 2) & (stren == 160.0))):
+            roc[lab] = dict(false_per_min=[float((i + 1) / minutes) for i in range(len(ths))],
+                            sensitivity=[float(np.mean(rec[key]["near_height"][sel] > t)) for t in ths], n_events=int(sel.sum()))
+        out["roc"] = roc
         summary["detectors"][key] = out
+    # paired comparisons on identical events: OPM vs each Neuromag channel set
+    for a in [k for k in keys if not k.startswith("squid")]:
+        for b in [k for k in keys if k.startswith("squid")]:
+            for mode in ("oracle", "practical@1"):
+                da, db_ = detected(a, mode), detected(b, mode)
+                res = {}
+                for band_i in range(len(DEPTH_BANDS)):
+                    sel = (fam == "focal") & (band == band_i)
+                    only_a, only_b = int(np.sum(da[sel] & ~db_[sel])), int(np.sum(~da[sel] & db_[sel]))
+                    from scipy.stats import binomtest
+
+                    pval = binomtest(only_a, only_a + only_b, 0.5).pvalue if only_a + only_b else 1.0
+                    stat_a = rec[a]["oracle_z" if mode == "oracle" else "near_height"][sel]
+                    stat_b = rec[b]["oracle_z" if mode == "oracle" else "near_height"][sel]
+                    diff = stat_a - stat_b
+                    bs = [np.median(rng.choice(diff, len(diff))) for _ in range(500)]
+                    res[f"depth{band_i}"] = dict(n=int(sel.sum()), detected_only_opm=only_a, detected_only_squid=only_b,
+                                                 mcnemar_exact_p=float(pval), median_stat_difference=float(np.median(diff)),
+                                                 ci95=[float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))])
+                summary["paired"][f"{a}_vs_{b}/{mode}"] = res
     io.write_json(summary, OUT / "g4_adult_summary.json")
     with open(OUT / "g4_adult_events.csv", "w", newline="") as fh:
         wr = csv.writer(fh)
-        wr.writerow(["location", "family", "strength_nAm", "stretch", "depth_band"] + [f"{k}_{v}" for k in det_sets for v in ("oracle_z", "near_height")])
-        for n, (i, fam, s, x) in enumerate(events):
-            wr.writerow([i, fam, s, x, int(depth_band[n])] + [f"{rec[k][v][n]:.3f}" for k in det_sets for v in ("oracle_z", "near_height")])
+        wr.writerow(["location", "family", "strength_nAm", "stretch", "depth_band"] + [f"{k}_{v}" for k in keys for v in ("oracle_z", "near_height")])
+        for n, (i, f_, s_, x) in enumerate(events):
+            wr.writerow([i, f_, s_, x, int(band[n])] + [f"{rec[k][v][n]:.3f}" for k in keys for v in ("oracle_z", "near_height")])
     figures(summary, ev)
-    log(f"done in {time.time() - t_start:.0f} s")
 
 
 def figures(summary, ev):
@@ -276,33 +330,33 @@ def figures(summary, ev):
         for db, (d0, d1) in enumerate(DEPTH_BANDS):
             ax = axs[row, db]
             for key, det in summary["detectors"].items():
-                p, lo, hi = [], [], []
-                for s in ev["strengths_nAm"]:
-                    c = det["curves"][f"focal/stretch1/depth{db}/{s:g}nAm"][mode]
-                    p.append(np.nan if c["p"] is None else c["p"])
-                    lo.append(np.nan if c["ci"][0] is None else c["ci"][0])
-                    hi.append(np.nan if c["ci"][1] is None else c["ci"][1])
+                c = [det["curves"][f"{mode}/focal/depth{db}/{s:g}nAm"] for s in ev["strengths_nAm"]]
+                p = [np.nan if x["p"] is None else x["p"] for x in c]
+                lo = [np.nan if x["ci"][0] is None else x["ci"][0] for x in c]
+                hi = [np.nan if x["ci"][1] is None else x["ci"][1] for x in c]
                 ax.plot(ev["strengths_nAm"], p, "o-", color=colors[key], label=key, ms=3)
-                ax.fill_between(ev["strengths_nAm"], lo, hi, color=colors[key], alpha=0.1)
+                ax.fill_between(ev["strengths_nAm"], lo, hi, color=colors[key], alpha=0.06 if key == "squid/combined" else 0.1, lw=0)
             ax.set_xscale("log")
-            ax.set_title(f"{mode.replace('@1', ' (1 false event/min)')}, depth {d0:g}-{d1:g} mm", fontsize=8)
+            ax.set_title(f"{mode.replace('@1', ' (1 false event/min)')}, depth {d0:g}-{d1:g} mm (n = {c[0]['n']}/point)", fontsize=8)
             ax.set_xlabel("focal source strength [nAm]")
             if db == 0:
-                ax.set_ylabel("detection probability (stretch 1.0)")
+                ax.set_ylabel("detection probability (3 morphologies pooled)")
     axs[0, 0].legend(fontsize=7)
-    fig.suptitle("G4 adult: IED detection vs strength (Wilson 95 % bands; oracle knows source and time)", fontsize=10)
+    fig.suptitle("G4 adult: IED detection vs strength (Wilson 95 % bands; the oracle knows source and time)", fontsize=10)
     fig.tight_layout()
     fig.savefig(OUT / "Figure_G4_detection.png", dpi=150)
     plt.close(fig)
     fig, axs = plt.subplots(1, 2, figsize=(11, 4.3))
-    for ax, s in zip(axs, ("40", "80")):
+    for ax, lab in zip(axs, ("superficial_10-30mm_40nAm", "deep_30-70mm_160nAm")):
         for key, det in summary["detectors"].items():
-            r = det["roc"][f"{s}nAm"]
-            ax.plot(r["false_per_min"], r["sensitivity"], "-", color=colors[key], label=key)
+            r = det["roc"][lab]
+            ax.step(r["false_per_min"], r["sensitivity"], where="post", color=colors[key], label=key)
         ax.set_xscale("log")
+        ax.set_xlim(0.05, 10)
+        ax.axvline(1.0, color="0.6", lw=0.8, ls=":")
         ax.set_xlabel("false events per minute (held-out null)")
         ax.set_ylabel("sensitivity")
-        ax.set_title(f"focal {s} nAm, stretch 1.0, all locations", fontsize=9)
+        ax.set_title(f"{lab.replace('_', ' ')} (focal, 3 morphologies; n = {r['n_events']})", fontsize=9)
         ax.legend(fontsize=7)
     fig.suptitle("G4 adult: practical detector, sensitivity vs false events per minute", fontsize=10)
     fig.tight_layout()
@@ -311,4 +365,8 @@ def figures(summary, ev):
 
 
 if __name__ == "__main__":
-    main()
+    if "--resummarise" in sys.argv:
+        with open(STATE, "rb") as fh:
+            summarise(pickle.load(fh))
+    else:
+        main()
