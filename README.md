@@ -16,28 +16,33 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G1A Jas et al. 2026 analytical benchmark | REPRO | done, independently reviewed |
 | G1B Hunold et al. 2016 depth-orientation spike SNR (MEG part) | ADAPT (+ NEW OPM column) | done, independently reviewed |
 | G1C Goldenholz et al. 2009 cortical SNR maps (MEG part) | ADAPT (+ NEW OPM extension) | done, independently reviewed |
-| G2 realistic adult OPM vs Neuromag | NEW | done, independently reviewed; frozen as `adult-baseline-v1` |
+| G2 realistic adult OPM vs Neuromag | NEW | done, independently reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2` |
 | G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B needs pediatric anatomy |
 | G4 epilepsy detection and localization | NEW | adult done; pediatric waits for G3 |
 | G5 software, reproduction, report | - | in progress (tests, `scripts/run_all.sh`, local report; clean-environment smoke test pending) |
 
-Adult findings so far, conditional on one adult head (MNE sample subject), an assumed OPM noise
-of 15 fT/sqrt(Hz), OPM sensors with no gap to the scalp and Neuromag at its measured (not best)
-head position; details and caveats in `docs/methods.md` and `results/g2/G2_report.md`:
+Adult findings so far (`adult-baseline-v2`), conditional on one adult head (MNE sample subject),
+an assumed OPM noise of 15 fT/sqrt(Hz), OPM sensors with no gap to the scalp and Neuromag at its
+measured (not best) head position; details and caveats in `docs/methods.md` and
+`results/g2/G2_report.md`:
 - With modelled brain noise (calibrated on gradiometers; it predicts 0.73x the measured
-  magnetometer brain noise), a dense on-scalp OPM array (215 single-axis sensors) has 1.21x
-  [1.19-1.23] the known-topography detectability of the Neuromag system, about 1.7x for sources
-  10-15 mm below the scalp. An OPM array at Neuromag's own 98 sites ties it (1.02x), and falls
-  behind after external-field projection (0.92x [0.85-0.95]).
-- The advantage shrinks or disappears with worse assumptions: 1.05x at an OPM noise of
-  30 fT/sqrt(Hz), 1.00x with 30 fT/sqrt(Hz) and a 3-mm scalp gap, 0.95x with a 6-mm gap, and
-  1.13x with a 1-layer head model. Without brain noise, Neuromag wins (0.77x).
-- Simulated interictal spikes: the dense array's point estimates of the strength for 50 %
-  detection are 15-35 % lower, depending on depth, with wide intervals (for example 57 [39-113]
-  vs 67 [50-145] nAm at 20-30 mm). By location, the practical detector favours the dense array
-  in every depth band; the matched array does not differ.
-- Bounded localization (24 locations, one event each): no consistent difference between arrays
-  was detected for detected spikes; differences are not excluded.
+  magnetometer brain noise), a dense on-scalp OPM array (211 single-axis sensors) has 1.13x
+  [1.10-1.16] the known-topography detectability of the Neuromag system: about 1.7x for sources
+  10-15 mm below the scalp, falling to 1.0-1.05x below 35 mm. An OPM array at Neuromag's own 97
+  sites ties it (1.00x), and falls behind after external-field projection (0.90x [0.81-0.95]).
+- The advantage disappears with worse assumptions: 1.01x at an OPM noise of 30 fT/sqrt(Hz),
+  0.97x with 30 fT/sqrt(Hz) and a 3-mm scalp gap, 0.93x with a 6-mm gap. Without brain noise,
+  Neuromag wins (0.76x). The 3- and 1-layer head models agree (1.13x and 1.12x).
+- Simulated interictal spikes: at 10-20 mm depth the dense array needs about 40 % less source
+  strength for 50 % detection (point estimates 32 [26-44] vs 53 [41-67] nAm); by location it
+  detects more at 10-30 mm (p <= 0.03) but no difference was detected below 45 mm; the matched
+  array brings no advantage and detects deep spikes less often.
+- Bounded localization (24 locations, one event each): dipole errors are similar across arrays
+  (about 5 mm, limited by a 2-mm/2-deg coregistration error); for extended 320-nAm sources the
+  distributed (dSPM) estimate is 3.7-4.8 mm more accurate with either OPM array. Differences not
+  detected are not excluded.
+- `adult-baseline-v1` reported 1.21x; that value was inflated by OPM cells reaching into the
+  coarse BEM head surface, a numerical error corrected in v2 (see PLAN.md).
 
 Labels: REPRO = reproduction with the paper's definitions; ADAPT = adaptation where original
 data or details are unavailable; NEW = new experiment or study choice.

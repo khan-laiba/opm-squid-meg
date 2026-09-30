@@ -1,0 +1,323 @@
+{
+  "status": "NEW check (pre-freeze review F2): 3-layer BEM, head surface 5,120 vs 20,480 triangles",
+  "n_sources": 300,
+  "seed": 11,
+  "arrays": {
+    "opm_matched": {
+      "n_sites": 97,
+      "n_probed_points": 2619,
+      "lowest_point_height_mm": {
+        "min": 1.0010994539634903,
+        "median": 1.6860309183477278
+      },
+      "sites_lowest_point_below_mm": {
+        "0": 0,
+        "1": 0,
+        "2": 65,
+        "3": 90
+      },
+      "point_error_by_height": [
+        {
+          "lo_mm": 0.2,
+          "hi_mm": 0.5,
+          "n_points": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        },
+        {
+          "lo_mm": 0.5,
+          "hi_mm": 1.0,
+          "n_points": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        },
+        {
+          "lo_mm": 1.0,
+          "hi_mm": 1.5,
+          "n_points": 45,
+          "median": 0.03467202836239508,
+          "p95": 0.5402680600271239,
+          "max": 15.72823501677686
+        },
+        {
+          "lo_mm": 1.5,
+          "hi_mm": 2.0,
+          "n_points": 148,
+          "median": 0.02670911371890483,
+          "p95": 0.3454484642366677,
+          "max": 10.20466772786641
+        },
+        {
+          "lo_mm": 2.0,
+          "hi_mm": 2.5,
+          "n_points": 199,
+          "median": 0.013514681184160084,
+          "p95": 0.15771599753085605,
+          "max": 4.7983765641240845
+        },
+        {
+          "lo_mm": 2.5,
+          "hi_mm": 3.0,
+          "n_points": 190,
+          "median": 0.009326346441320061,
+          "p95": 0.10421490787996418,
+          "max": 1.9267592892574301
+        },
+        {
+          "lo_mm": 3.0,
+          "hi_mm": 4.0,
+          "n_points": 216,
+          "median": 0.006501393031927207,
+          "p95": 0.07216337808601118,
+          "max": 1.5246557232265485
+        },
+        {
+          "lo_mm": 4.0,
+          "hi_mm": 6.0,
+          "n_points": 336,
+          "median": 0.0012234050282055268,
+          "p95": 0.030330932243891846,
+          "max": 1.4809253776621614
+        },
+        {
+          "lo_mm": 6.0,
+          "hi_mm": 20.0,
+          "n_points": 1485,
+          "median": 0.00032792615165312433,
+          "p95": 0.004422997815747539,
+          "max": 0.31841331393446376
+        }
+      ],
+      "centre_error": {
+        "median": 0.0006433872639275167,
+        "p95": 0.007213392918484514,
+        "max": 0.14378484027903266
+      },
+      "channel_error_scaled": {
+        "median": 0.0009005638541777065,
+        "p95": 0.011750251681472049,
+        "max": 0.25424269499992663
+      },
+      "channel_error_relative": {
+        "n_channels_above_1pct": 48,
+        "n_channels_above_2pct": 26,
+        "max": 0.07686673729838689
+      },
+      "worst_channels": [
+        {
+          "channel": 95,
+          "lowest_point_height_mm": 1.4557887151373654,
+          "max_relative_error": 0.07686673729838689
+        },
+        {
+          "channel": 92,
+          "lowest_point_height_mm": 1.4529944025258974,
+          "max_relative_error": 0.05776694117619763
+        },
+        {
+          "channel": 50,
+          "lowest_point_height_mm": 1.2578351286811924,
+          "max_relative_error": 0.05529622293218095
+        },
+        {
+          "channel": 52,
+          "lowest_point_height_mm": 1.8578013414476304,
+          "max_relative_error": 0.05337988138228322
+        },
+        {
+          "channel": 58,
+          "lowest_point_height_mm": 1.5936834042931824,
+          "max_relative_error": 0.05305888418061344
+        },
+        {
+          "channel": 62,
+          "lowest_point_height_mm": 2.1514114264359354,
+          "max_relative_error": 0.05287140472740537
+        },
+        {
+          "channel": 61,
+          "lowest_point_height_mm": 1.0499924169308692,
+          "max_relative_error": 0.05183846453054697
+        },
+        {
+          "channel": 71,
+          "lowest_point_height_mm": 1.3855301246014373,
+          "max_relative_error": 0.05167317703796348
+        },
+        {
+          "channel": 77,
+          "lowest_point_height_mm": 1.3756291634544964,
+          "max_relative_error": 0.04455008531042082
+        },
+        {
+          "channel": 3,
+          "lowest_point_height_mm": 1.4067346346713607,
+          "max_relative_error": 0.044526784108430695
+        }
+      ]
+    },
+    "opm_dense": {
+      "n_sites": 211,
+      "n_probed_points": 5697,
+      "lowest_point_height_mm": {
+        "min": 0.871634591863871,
+        "median": 1.6926127329196876
+      },
+      "sites_lowest_point_below_mm": {
+        "0": 0,
+        "1": 4,
+        "2": 137,
+        "3": 194
+      },
+      "point_error_by_height": [
+        {
+          "lo_mm": 0.2,
+          "hi_mm": 0.5,
+          "n_points": 0,
+          "median": null,
+          "p95": null,
+          "max": null
+        },
+        {
+          "lo_mm": 0.5,
+          "hi_mm": 1.0,
+          "n_points": 4,
+          "median": 0.05019373163391826,
+          "p95": 0.6347981408124587,
+          "max": 6.528957880120086
+        },
+        {
+          "lo_mm": 1.0,
+          "hi_mm": 1.5,
+          "n_points": 99,
+          "median": 0.047520279130980655,
+          "p95": 0.6553605469564974,
+          "max": 11.509991578227245
+        },
+        {
+          "lo_mm": 1.5,
+          "hi_mm": 2.0,
+          "n_points": 312,
+          "median": 0.022631695177183032,
+          "p95": 0.2695107511972498,
+          "max": 5.36240298966563
+        },
+        {
+          "lo_mm": 2.0,
+          "hi_mm": 2.5,
+          "n_points": 409,
+          "median": 0.016204931339427575,
+          "p95": 0.17903939873055214,
+          "max": 4.92595819091893
+        },
+        {
+          "lo_mm": 2.5,
+          "hi_mm": 3.0,
+          "n_points": 383,
+          "median": 0.010420262263983293,
+          "p95": 0.1427362727840906,
+          "max": 4.0323271854071585
+        },
+        {
+          "lo_mm": 3.0,
+          "hi_mm": 4.0,
+          "n_points": 468,
+          "median": 0.007196545588622184,
+          "p95": 0.08677028640536985,
+          "max": 3.8776216248520243
+        },
+        {
+          "lo_mm": 4.0,
+          "hi_mm": 6.0,
+          "n_points": 735,
+          "median": 0.0012858706680810858,
+          "p95": 0.029189229734579776,
+          "max": 5.008796224588443
+        },
+        {
+          "lo_mm": 6.0,
+          "hi_mm": 20.0,
+          "n_points": 3287,
+          "median": 0.00037137267130811383,
+          "p95": 0.005443828243790484,
+          "max": 2.6987599065396224
+        }
+      ],
+      "centre_error": {
+        "median": 0.0007055786830936534,
+        "p95": 0.00839599199143887,
+        "max": 0.21352966009121135
+      },
+      "channel_error_scaled": {
+        "median": 0.0008279865034619108,
+        "p95": 0.010545798978292092,
+        "max": 0.3455621007972199
+      },
+      "channel_error_relative": {
+        "n_channels_above_1pct": 88,
+        "n_channels_above_2pct": 47,
+        "max": 0.1789691876956222
+      },
+      "worst_channels": [
+        {
+          "channel": 145,
+          "lowest_point_height_mm": 1.3628674274179822,
+          "max_relative_error": 0.1789691876956222
+        },
+        {
+          "channel": 18,
+          "lowest_point_height_mm": 1.5682156655882522,
+          "max_relative_error": 0.13626665001428695
+        },
+        {
+          "channel": 89,
+          "lowest_point_height_mm": 1.3366144840383716,
+          "max_relative_error": 0.135908859392317
+        },
+        {
+          "channel": 95,
+          "lowest_point_height_mm": 1.9756444895183776,
+          "max_relative_error": 0.1268512211697581
+        },
+        {
+          "channel": 42,
+          "lowest_point_height_mm": 1.343307054913094,
+          "max_relative_error": 0.0916018257656317
+        },
+        {
+          "channel": 129,
+          "lowest_point_height_mm": 1.4817218684496274,
+          "max_relative_error": 0.08528043921102801
+        },
+        {
+          "channel": 134,
+          "lowest_point_height_mm": 1.3527091518710443,
+          "max_relative_error": 0.07969913910135284
+        },
+        {
+          "channel": 163,
+          "lowest_point_height_mm": 1.3135145024749875,
+          "max_relative_error": 0.07903077432621364
+        },
+        {
+          "channel": 136,
+          "lowest_point_height_mm": 1.4607754511397364,
+          "max_relative_error": 0.06904236288555432
+        },
+        {
+          "channel": 118,
+          "lowest_point_height_mm": 1.5405829807233873,
+          "max_relative_error": 0.06748694191732485
+        }
+      ]
+    }
+  },
+  "runtime_s": 425.99242901802063,
+  "provenance": {
+    "commit": "26985d4",
+    "mne_version": "1.13.2",
+    "numpy_version": "2.5.3"
+  }
+}

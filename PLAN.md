@@ -17,9 +17,9 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | G1A Jas analytical benchmark | done; independently reviewed (approve with notes; notes addressed) | `scripts/g1a_jas_benchmark.py` -> `results/g1a/`; Eq. 1 vs Sarvas 2-D maximum 4.7e-15, vs MNE sphere 5.4e-8; d_eq(eta 3) = 27.665 mm |
 | G1B Hunold depth-orientation spikes | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule and a realization-averaged Fig. 6 calibration | `scripts/g1b_hunold.py` -> `results/g1b/`; calibrated background (scalar 0.47; one realization alone 0.44-0.52), p2p: bin means 0.78-0.91x the paper (0.68-1.01x over the calibration range), noisy p2p 0.97-1.04x, r 0.91-0.97, 2.5-classification agreement 80-93 %, GM-MM sign agreement 100 % |
 | G1C Goldenholz cortical SNR maps | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.76 nAm at 4,000 sources (paper 1.6-1.9); focal median -22.1 dB, 56 % inside the paper's -29/-19 dB range; deep medial cortex darkest |
-| G2 realistic adult OPM-Neuromag comparison | done; independently reviewed (F1-F9 addressed: parcel bootstrap, joint noise x gap grid, OPM axes, 4-mm rule, array geometry); frozen as `adult-baseline-v1` | `scripts/g2_adult_comparison.py` -> `results/g2/` (`G2_report.md`); with brain noise the dense 215-site OPM array is 1.21x [1.19-1.23] Neuromag combined (1.05-1.36x for OPM noise 30-7 fT/sqrt(Hz), 0.95-1.21x jointly with a 0-6 mm scalp gap (the gap variants rebuild the dense array: 215-231 sites), 1.13x with a 1-layer BEM), the matched 98-site array 1.02x (a tie); 1.4-1.7x for sources within 20 mm of the scalp; without brain noise Neuromag wins (dense 0.77x) |
+| G2 realistic adult OPM-Neuromag comparison | done; independently reviewed; `adult-baseline-v1` (1.21x) corrected in `adult-baseline-v2` (near-surface BEM error, see below) | `scripts/g2_adult_comparison.py` -> `results/g2/` (`G2_report.md`); with modelled brain noise the dense 211-site OPM array is 1.13x [1.10-1.16] Neuromag combined (1.01-1.27x for OPM noise 30-7 fT/sqrt(Hz), 0.93-1.13x jointly with a 0-6 mm scalp gap; 3- and 1-layer BEM agree), the matched 97-site array 1.00x (a tie); 1.4-1.7x for sources within 20 mm of the scalp, 1.0-1.05x below 35 mm; without brain noise Neuromag wins (dense 0.76x) |
 | G3 pediatric extension | G3A done (REPRO size benchmark); G3B blocked: pediatric anatomy needs an owner decision (see Inputs) | `scripts/g3a_jas_size_benchmark.py` -> `results/g3a/`; normalized d_eq at eta = 3: newborn 49.6 % (printed 50 %), adult 15.8 % (15 %) |
-| G4 epilepsy detection and localization | adult done (detection; bounded localization); pediatric waits for G3 | `scripts/g4_epilepsy_adult.py`, `scripts/g4_localization.py` -> `results/g4/`; 50 % detection at 1 false event/min: dense OPM 32 vs Neuromag combined 49 nAm (10-20 mm), 205 vs 279 nAm (45-70 mm); practical detector: dense better at every depth by location (sign-flip p <= 0.02; oracle: p = 0.16 at 30-45 mm), matched no different |
+| G4 epilepsy detection and localization | adult done (detection; bounded localization); pediatric waits for G3 | `scripts/g4_epilepsy_adult.py`, `scripts/g4_localization.py` -> `results/g4/`; 50 % detection at 1 false event/min: dense OPM 32 vs Neuromag combined 53 nAm (10-20 mm), 285 vs 310 nAm (45-70 mm); practical detector: dense better by location at 10-30 mm (p <= 0.03), not below 45 mm; matched no advantage (worse at 45-70 mm); localization: ECD similar (~5 mm), dSPM of extended sources 3.7-4.8 mm better with OPM |
 | G5 repository, tests, report | private repository `khan-laiba/opm-squid-meg` (no Pages, verified); unittest suite; `scripts/run_all.sh`; local report (`scripts/build_site.py` -> `site/_build/`, link-checked, not deployed); clean-environment smoke test pending (needs download approval) | |
 
 ## Decisions log
@@ -89,8 +89,8 @@ Done (`scripts/g1b_hunold.py`, methods section 6, `configs/hunold_reference.toml
    baselines (20 realizations); both levels reported (U-HU-bglevel). Calibrated, p2p: strong
    bins 0.87-0.92x the paper, weak bins 0.73-0.90x; noisy p2p 0.97-1.04x (the paper lies between
    the two numerators). GM > MM superficially, convergence with depth: reproduced.
-5. [x] OPM (matched 98 sites, NEW): brain noise only, OPM > MM for superficial sources (1.4x at
-   20-25 mm), equal near 40-45 mm, <= MM deeper (0.9x), < GM everywhere (0.70-0.82x, best
+5. [x] OPM (matched 97 sites, NEW): brain noise only, OPM > MM for superficial sources (1.4x at
+   20-25 mm), equal near 40-45 mm, <= MM deeper (0.9x), < GM everywhere (0.70-0.80x, best
    single channel); intrinsic sensor noise (3.5-30 fT/sqrt(Hz)) is negligible against this
    background.
 6. [x] Independent review (approve with notes). Fixes: stationary background, calibration range and
@@ -162,21 +162,22 @@ venv has no pytest), cached forward models keyed by input hashes, fixed seeds, r
 clean-environment smoke test (needs a package download; ask first), local static report in
 `site/` (jinja2), never deployed without approval.
 
-## Known limitations of `adult-baseline-v1` (pre-freeze review; v2 work)
+## `adult-baseline-v2`: fixes of the `adult-baseline-v1` review items
 
-1. Sensor-side near-mesh BEM error: OPM cell integration points within 1 mm of, or inside, the
-   BEM head surface at 43 dense / 15 matched sites (up to 72 % on single channels; headline
-   ratios change by <= 0.8 % with point sensors). Fix: a verified integration-point clearance
-   (or a refined head mesh) and a per-channel cell-vs-point convergence test; recompute the OPM
-   lead fields and rerun G1B, G1C, G2 and G4.
-2. Scalp-gap variants rebuild the arrays (215/223/231 dense sites): shift the primary sites
-   outward by the gap instead.
-3. G4 localization uses 2 of the 8 coregistration draws per condition: draw = location mod 8.
-4. Provenance: record the simulation commit in the G4 detection summary; check full-resolution
-   lead-field columns in G1B/G1C as G2 does.
-5. Array tests pin counts and bounds only: add a coordinate hash, the 6-mm MRI-scalp clearance,
-   gap variants and a cell-vs-point check.
-6. Medial-wall targets: 4 of the 72 G4 detection locations lie on the medial wall ('unknown').
+1. [x] Sensor-side BEM accuracy. v1's OPM cells reached into the 5,120-triangle head surface
+   (integration points up to 2.4 mm inside), where the 3-layer BEM field is not converged on this
+   head (an exact sphere test shows the code itself is accurate near a regular surface). v2 refines
+   the 3-layer head surface to 20,480 triangles (A-BEM-SKIN) and keeps every integration point
+   >= 1 mm outside it (A-OPM-CLEAR). Effect: the dense-array headline fell from 1.21x to 1.13x;
+   the 3- and 1-layer models now agree (1.127x vs 1.124x) and cell vs point differs by <= 1.2 %.
+2. [x] Scalp-gap variants move the primary sites outward (same sites) instead of rebuilding.
+3. [x] G4 localization: location i uses coregistration draw i mod 8 (all draws in every condition).
+4. [x] Provenance: full-resolution lead fields carry fingerprint sidecars (sensors, transforms,
+   BEM conductivities and geometry) checked on every load (G1B, G1C, G2, G4); the G4 detection
+   summary records its simulation commit.
+5. [x] Tests: array composition (97/204/211), cell clearance, MRI-scalp clearance, gap variants,
+   lead-field fingerprints.
+6. [x] G4 locations are never on the medial wall.
 
 ## Open questions and risks
 
