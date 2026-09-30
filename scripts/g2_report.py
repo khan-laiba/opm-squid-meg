@@ -21,7 +21,9 @@ REFS = ("combined", "grad", "mag")
 
 
 def ratio(v):
-    return f"{2 ** v['median_log2']:.2f}x [{2 ** v['ci95'][0]:.2f}-{2 ** v['ci95'][1]:.2f}], OPM higher for {100 * v['share_opm_better']:.0f} %"
+    share = f", {100 * v['share_parcels_opm_better']:.0f} % of parcels" if "share_parcels_opm_better" in v else ""
+    return (f"{2 ** v['median_log2']:.2f}x [{2 ** v['ci95'][0]:.2f}-{2 ** v['ci95'][1]:.2f}], OPM higher for "
+            f"{100 * v['share_opm_better']:.0f} % of targets{share}")
 
 
 def depth_table(d, key):
@@ -68,8 +70,9 @@ def main():
                  + f", {geo.get('axes', '102 sites with 1 magnetometer + 2 planar gradiometers')}; scalp-to-sensor distance median "
                  f"{br['median']:.1f} mm (5-95 %: {br['p5']:.1f}-{br['p95']:.1f} mm)"
                  + (f"; role: {geo['role']}" if geo.get("role") else "") + ".")
-        L.append(("- Retained rank of the full array: " if name == "squid" else "- Retained rank: ")
-                 + ", ".join(f"{c} {d['retained_rank'][f'{name}/{c}']}" for c in conds) + ".")
+        rk = f"squid_{cs}" if name == "squid" and cs != "combined" else name
+        L.append("- Retained rank: " + ", ".join(f"{c} {d['retained_rank'].get(f'{rk}/{c}', d['retained_rank'][f'{name}/{c}'])}" for c in conds)
+                 + (" (channel subset after the full-array projection)." if rk.startswith("squid_") else "."))
         comp_key = name if name != "squid" else f"squid_{cs}" if cs != "combined" else None
         if comp_key and comp_key in d["noise_composition"]:
             c = d["noise_composition"][comp_key]
@@ -81,7 +84,7 @@ def main():
             L.append(f"\nDetectability vs depth, {cond}:\n")
             L.append(depth_table(d, f"{name}/{cs}/{cond}"))
         if name != "squid":
-            L.append("\nOPM / Neuromag, median detectability ratio (bootstrap 95 % CI over targets):\n")
+            L.append("\nOPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortical parcels):\n")
             L.append("| condition | vs combined | vs gradiometers | vs magnetometers |\n|---|---|---|---|")
             for cond in conds:
                 L.append(f"| {cond} | " + " | ".join(ratio(d["primary"]["oracle"][f"{name}/{ref}/{cond}"]) for ref in REFS) + " |")
@@ -92,7 +95,13 @@ def main():
             L.append("- Patches vs Neuromag combined (intrinsic+brain): " + ", ".join(
                 f"{r:g} mm {2 ** pa[f'{name}/combined/intrinsic+brain/{r:g}mm']['median_log2']:.2f}x" for r in d["patches"]["radii_mm"]) + ".")
             s = d["sensitivity"]
-            L.append("- Sensitivity (vs combined, intrinsic+brain): " + "; ".join(
+            if name in ("opm_matched", "opm_dense") and "sensitivity_joint_asd_gap" in d:
+                L.append("- Joint OPM noise x scalp gap (vs combined, intrinsic+brain): " + "; ".join(
+                    f"{k.replace('/', ', ')} {v[name]['ratio']:.2f}x" for k, v in d["sensitivity_joint_asd_gap"].items()) + ".")
+            if "break_even_opm_asd_fT" in d:
+                L.append("- Intrinsic noise only, break-even OPM noise (ratio = 1): " + ", ".join(
+                    f"vs {ref} {d['break_even_opm_asd_fT'][f'{name}/{ref}']:.1f} fT/sqrt(Hz)" for ref in REFS) + ".")
+            L.append("- Sensitivity, one factor at a time (vs combined, intrinsic+brain): " + "; ".join(
                 f"{k.replace('_', ' ')} {2 ** s[k][f'{name}/combined/intrinsic+brain']['median_log2']:.2f}x" for k in s
                 if f"{name}/combined/intrinsic+brain" in s[k]) + ".")
             lobes = d["by_lobe"].get(f"{name}/combined/intrinsic+brain")

@@ -55,14 +55,31 @@ def log(msg):
 
 # ----------------------------------------------------------------------------------------------
 # statistics helpers
-def compare(d_a, d_b, rng, n_boot=1000):
-    """Median log2(d_a / d_b) over targets with a bootstrap 95 % CI, and the share with d_a > d_b."""
+GROUPS = None  # parcel label per target, set in main(): the bootstrap resamples parcels (targets are correlated)
+
+
+def compare(d_a, d_b, rng, n_boot=1000, groups=None):
+    """Median log2(d_a / d_b) over targets with a 95 % CI from a bootstrap over cortical parcels
+    (Desikan-Killiany regions resampled with replacement; neighbouring targets are not
+    independent), the share of targets and of parcels (parcel median) with d_a > d_b."""
     lr = np.log2(np.asarray(d_a) / np.asarray(d_b))
-    lr = lr[np.isfinite(lr)]
-    idx = rng.integers(0, len(lr), (n_boot, len(lr)))
-    boot = np.median(lr[idx], axis=1)
-    return dict(median_log2=float(np.median(lr)), ci95=[float(np.percentile(boot, 2.5)), float(np.percentile(boot, 97.5))],
-                share_opm_better=float(np.mean(lr > 0)), n=int(len(lr)))
+    g = GROUPS if groups is None else groups
+    ok = np.isfinite(lr)
+    lr = lr[ok]
+    out = dict(median_log2=float(np.median(lr)), share_opm_better=float(np.mean(lr > 0)), n=int(len(lr)))
+    if g is None or len(g) != len(ok):
+        idx = rng.integers(0, len(lr), (n_boot, len(lr)))
+        boot = np.median(lr[idx], axis=1)
+        out["ci_method"] = "targets"
+    else:
+        g = np.asarray(g)[ok]
+        labels = np.unique(g)
+        per = [lr[g == lab] for lab in labels]
+        boot = np.array([np.median(np.concatenate([per[j] for j in rng.integers(0, len(per), len(per))])) for _ in range(n_boot)])
+        out["ci_method"] = f"parcels ({len(labels)})"
+        out["share_parcels_opm_better"] = float(np.mean([np.median(x) > 0 for x in per]))
+    out["ci95"] = [float(np.percentile(boot, 2.5)), float(np.percentile(boot, 97.5))]
+    return out
 
 
 def binned(values, x, edges, min_n=10, stat=np.median):
@@ -164,6 +181,8 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     mne.set_log_level("WARNING")
     st = Study(cfg)
+    global GROUPS
+    GROUPS = st.src.region
     conds, headline = cfg["conditions"]["all"], cfg["conditions"]["headline"]
     bads = cfg["sensors"]["bads"]
     log(f"targets {st.nt}, background grid {len(st.src.grid)} sources, ENBW {st.enbw:.2f} Hz")
@@ -223,6 +242,10 @@ def main():
         for cond in conds:
             c = nz.covariance(cond)
             ranks[f"{name}/{cond}"] = int(metrics.whitener(c).rank)
+            if name == "squid":  # channel subsets after the full-array projection
+                for k in ("mag", "grad"):
+                    m = squid.kinds == k
+                    ranks[f"squid_{k}/{cond}"] = int(metrics.whitener(c[np.ix_(m, m)]).rank)
     comp = {name: dict(intrinsic_rms=float(np.sqrt(np.median(nz.intrinsic_var))), brain_rms=float(np.sqrt(np.median(np.diag(nz.brain_cov)))),
                        env_rms=float(np.sqrt(np.median(np.diag(nz.env_cov)))))
             for name, nz in noise_nom.items() if name != "squid"}
@@ -263,14 +286,37 @@ def main():
                     for n, r in res.items() for (cs, cond) in r}
     ratio_vs_depth = {f"{a}/{ref}/{cond}": binned(np.log2(detect_of(res, a, None, cond) / detect_of(res, "squid", ref, cond)), depth, DEPTH_EDGES)
                       for a in OPMS for ref in REFS for cond in conds}
+    # the projection's cost: noise-normalised signal norm retained, detectability projected / with the room field
+    projection = {}
+    for name, a in arrays.items():
+        nz = noise_nom[name]
+        s_ = G_t[name] * st.q
+        d_ = 1.0 / np.sqrt(nz.intrinsic_var)[:, None]
+        kept = np.linalg.norm(d_ * (nz.projector() @ s_), axis=0) / np.linalg.norm(d_ * s_, axis=0)
+        cs = "combined" if name == "squid" else "opm"
+        projection[name] = dict(retained_signal_norm_median=float(np.median(kept)),
+                                detect_projected_over_env_median=float(np.median(res[name][(cs, "projected")]["detect"]
+                                                                                 / res[name][(cs, "intrinsic+brain+env")]["detect"])))
+    # intrinsic noise only: the ratio scales exactly as 1 / OPM ASD, so the break-even noise level follows
+    break_even = {f"{a}/{ref}": float(st.opm_asd * 1e15 * 2 ** primary["oracle"][f"{a}/{ref}/intrinsic"]["median_log2"])
+                  for a in OPMS for ref in REFS}
+    strata = {}
+    for a in OPMS:
+        for cond in headline:
+            lr = np.log2(detect_of(res, a, None, cond) / detect_of(res, "squid", "combined", cond))
+            for lab, x, edges in (("dist_inner_skull_mm", st.src.dist_inner_skull_mm, (4.0, 5.0, 6.0, 10.0, 100.0)),
+                                  ("orientation_deg", st.src.orientation_deg, (0.0, 30.0, 60.0, 90.1))):
+                strata[f"{a}/combined/{cond}/{lab}"] = [dict(lo=lo, hi=hi, n=int(np.sum((x >= lo) & (x < hi))),
+                                                             ratio=float(2 ** np.median(lr[(x >= lo) & (x < hi)])))
+                                                        for lo, hi in zip(edges[:-1], edges[1:])]
     bridge = bridge_to_sphere(st, amp, depth, geometry_distances(st, arrays))
     by_lobe = {}
     for a in OPMS:
         for ref in REFS:
             for cond in headline:
                 lr = np.log2(detect_of(res, a, None, cond) / detect_of(res, "squid", ref, cond))
-                by_lobe[f"{a}/{ref}/{cond}"] = {lb: compare(2 ** lr[lobe == lb], np.ones((lobe == lb).sum()), st.rng)
-                                                for lb in plotting.DK_LOBES}
+                by_lobe[f"{a}/{ref}/{cond}"] = {lb: compare(2 ** lr[lobe == lb], np.ones((lobe == lb).sum()), st.rng,
+                                                        groups=st.src.region[lobe == lb]) for lb in plotting.DK_LOBES}
     log("primary comparisons done")
 
     # --- extended sources (full-resolution lead fields) -----------------------------------------
@@ -328,41 +374,60 @@ def main():
             r2[a] = {k: v2 for k, v2 in res[a].items() if k[1] in headline}
         sens[f"head_{vname}"] = comparisons(st, r2, headline, n_boot=200)
         log(f"sensitivity: head position {vname} done")
-    # scalp gap (OPM only)
+    # scalp gap (OPM only), and the joint OPM noise x scalp gap grid (intrinsic+brain, not one factor at a time)
+    joint = {}
+    sq_ref = {"squid": {k: v2 for k, v2 in res["squid"].items() if k[1] == "intrinsic+brain"}}
     for gap in cfg["sensors"]["opm_scalp_gap_mm"]:
-        if not gap:
-            continue
         r2 = {"squid": {k: v2 for k, v2 in res["squid"].items() if k[1] in headline}}
-        gap_geo = {}
+        gap_geo, gap_gains = {}, {}
         for a in OPMS:
-            arr = g2.matched_opm(st.subject, st.dig, gap * 1e-3) if a == "opm_matched" else g2.dense_opm(st.subject, st.dig, a, gap * 1e-3)
-            gt, gg = st.gains(arr, fullres=False)
-            nz = st.noise(arr, gg, brain_scale, env)
-            r2[a] = evaluate_all(gt * st.q, arr, nz, headline)
-            gap_geo[a] = arr.n
-        sens[f"gap_{gap:g}mm"] = comparisons(st, r2, headline, n_boot=200)
-        sens[f"gap_{gap:g}mm"]["channels"] = gap_geo
+            if gap:
+                arr = g2.matched_opm(st.subject, st.dig, gap * 1e-3) if a == "opm_matched" else g2.dense_opm(st.subject, st.dig, a, gap * 1e-3)
+                gt, gg = st.gains(arr, fullres=False)
+                nz = st.noise(arr, gg, brain_scale, env)
+                r2[a] = evaluate_all(gt * st.q, arr, nz, headline)
+                gap_geo[a] = arr.n
+            else:
+                arr, gt, gg = arrays[a], G_t[a], G_g[a]
+            gap_gains[a] = (arr, gt, gg)
+        if gap:
+            sens[f"gap_{gap:g}mm"] = comparisons(st, r2, headline, n_boot=200)
+            sens[f"gap_{gap:g}mm"]["channels"] = gap_geo
+        for asd in (15.0, 20.0, 30.0):
+            r3 = dict(sq_ref)
+            for a in ("opm_matched", "opm_dense"):
+                arr, gt, gg = gap_gains[a]
+                r3[a] = evaluate_all(gt * st.q, arr, st.noise(arr, gg, brain_scale, env, asd=asd * 1e-15), ["intrinsic+brain"])
+            c3 = comparisons(st, r3, ["intrinsic+brain"], n_boot=200)
+            joint[f"gap{gap:g}mm/asd{asd:g}fT"] = {a: dict(ratio=float(2 ** c3[f"{a}/combined/intrinsic+brain"]["median_log2"]),
+                                                          ci95=[float(2 ** x) for x in c3[f"{a}/combined/intrinsic+brain"]["ci95"]])
+                                                   for a in ("opm_matched", "opm_dense")}
         log(f"sensitivity: gap {gap:g} mm done")
+    sens_joint = joint
 
     # --- convergence -----------------------------------------------------------------------------
     conv = convergence(st, arrays, G_t, G_g, noise_nom, res, brain_scale, target_var, grads, env, headline, cfg)
     log("convergence done")
 
     # --- outputs (checkpointed: `--replot` redraws figures and rewrites outputs without recomputing)
-    patches.pop("_det", None)
+    patch_det = patches.pop("_det", None)
     summary = dict(
         status="NEW (realistic adult OPM vs Neuromag comparison, MNE sample subject)",
         config=cfg, arrays=geometry, head_positions=head_positions, n_targets=st.nt, n_background_grid=int(len(st.src.grid)),
         enbw_hz=st.enbw, n_estimate_samples=n_est, noise_validation=validation, noise_composition=comp, retained_rank=ranks,
         primary=primary, plugin_over_oracle_median=plugin_loss, amplitude_vs_depth=amp_vs_depth, detectability_vs_depth=snr_vs_depth,
-        log2_ratio_vs_depth=ratio_vs_depth, by_lobe=by_lobe, bridge_to_sphere=bridge, patches=patches, sensitivity=sens, convergence=conv,
+        log2_ratio_vs_depth=ratio_vs_depth, by_lobe=by_lobe, strata=strata, projection=projection, break_even_opm_asd_fT=break_even,
+        bridge_to_sphere=bridge, patches=patches, sensitivity=sens, sensitivity_joint_asd_gap=sens_joint, convergence=conv,
         runtime_s=time.time() - t_start,
-        notes=["Bootstrap CIs resample cortical target locations of one anatomy; they do not include model or between-subject "
-               "uncertainty, which the sensitivity analyses bound.",
+        notes=["Bootstrap CIs resample Desikan-Killiany parcels of one anatomy (targets within a parcel are correlated); they do "
+               "not include model or between-subject uncertainty. Sensitivity analyses vary one factor at a time except the "
+               "joint OPM noise x scalp gap grid; they show the dependence, they do not bound it.",
+               "The 'projected' condition removes the simulated room field exactly (it lies in the removed 8-dim subspace); it "
+               "measures the projection's cost (rank, signal attenuation), not residual interference.",
                "Head-position variants move the head in the fixed Neuromag helmet; the room field is kept in head coordinates "
                "(8-term model; the change over a 5-mm move is second order).",
                "Detectability is a known-topography matched-filter SNR, not an event detection rate or localization accuracy."])
-    state = dict(summary=summary, arrays=arrays, res=res, amp=amp)
+    state = dict(summary=summary, arrays=arrays, res=res, amp=amp, patch_det=patch_det)
     STATE.parent.mkdir(parents=True, exist_ok=True)
     with open(STATE, "wb") as fh:
         pickle.dump(state, fh)
@@ -374,8 +439,17 @@ def outputs(st, state):
     s = state["summary"]
     cfg = s["config"]
     figures(st, state["arrays"], state["res"], state["amp"], st.src.depth_mm, st.src.orientation_deg, st.src.lobe, s["patches"],
-            s["sensitivity"], s["primary"], cfg["conditions"]["headline"], cfg["conditions"]["all"], s["bridge_to_sphere"])
+            s["sensitivity"], s["primary"], cfg["conditions"]["headline"], cfg["conditions"]["all"], s["bridge_to_sphere"],
+            state.get("patch_det"))
     write_targets_csv(st, state["res"], state["amp"], cfg["conditions"]["all"])
+    if state.get("patch_det"):
+        keys = sorted(k for k in state["patch_det"] if k[4] == "fixed_total")
+        with open(OUT / "g2_patch_targets.csv", "w", newline="") as fh:
+            wr = csv.writer(fh)
+            wr.writerow(["hemi", "vertno", "depth_mm"] + [f"detect_{n}_{cs}_{cond}_{r:g}mm_fixed_total" for n, cs, cond, r, _ in keys])
+            for i, v in enumerate(st.src.target):
+                wr.writerow([int(st.cortex.hemi[v]), int(st.cortex.vertno[v]), f"{st.src.depth_mm[i]:.2f}"]
+                            + [f"{state['patch_det'][k][i]:.4f}" for k in keys])
     io.write_json(s, OUT / "g2_summary.json")
 
 
@@ -615,7 +689,7 @@ def write_targets_csv(st, res, amp, conds):
                          st.src.lobe[i]] + [f"{amp[k][i]:.4e}" for k in amp] + [f"{res[n][(cs, cond)]['detect'][i]:.4f}" for n, cs, cond in cols])
 
 
-def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, headline, conds, bridge):
+def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, headline, conds, bridge, patch_det=None):
     # 1. amplitude and detectability vs depth
     fig, axs = plt.subplots(1, 3, figsize=(15, 4.6))
     centers = 0.5 * (DEPTH_EDGES[:-1] + DEPTH_EDGES[1:])
@@ -704,6 +778,27 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
     fig.tight_layout()
     fig.savefig(OUT / "Figure_G2_heatmaps.png", dpi=150)
     plt.close(fig)
+    # the dense array against each Neuromag channel set, and 10-mm patches against the combined system
+    panels = [(f"{ref}", lambda cond, ref=ref: np.log2(res["opm_dense"][("opm", cond)]["detect"] / res["squid"][(ref, cond)]["detect"]))
+              for ref in ("grad", "mag")]
+    if patch_det:
+        panels.append(("combined, 10-mm patches", lambda cond: np.log2(patch_det[("opm_dense", "opm", cond, 10.0, "fixed_total")]
+                                                                          / patch_det[("squid", "combined", cond, 10.0, "fixed_total")])))
+    fig, axs = plt.subplots(len(headline), len(panels), figsize=(4.4 * len(panels), 4.2 * len(headline)), squeeze=False)
+    for i, cond in enumerate(headline):
+        for j, (lab, fn) in enumerate(panels):
+            h = heat(fn(cond), depth, orient)
+            im = axs[i, j].imshow(h, origin="upper", aspect="auto", cmap="RdBu_r", vmin=-1, vmax=1,
+                                  extent=[0, 90, DEPTH_EDGES[-1], DEPTH_EDGES[0]])
+            axs[i, j].set_ylim(65, 10)
+            axs[i, j].set_title(f"log2 OPM dense / Neuromag {lab}, {cond}", fontsize=8)
+            axs[i, j].set_xlabel("orientation [deg] (0 radial)")
+            axs[i, j].set_ylabel("depth [mm]")
+            fig.colorbar(im, ax=axs[i, j], fraction=0.046)
+    fig.suptitle("G2: dense OPM vs each Neuromag comparator, and extended sources", fontsize=10)
+    fig.tight_layout()
+    fig.savefig(OUT / "Figure_G2_heatmaps_comparators.png", dpi=150)
+    plt.close(fig)
 
     # 3. cortical maps
     hemis = plotting.inflated_views(st.subject.subjects_dir, "sample", st.subject.src)
@@ -713,14 +808,29 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
     n_lh = st.subject.src[0]["nuse"]
     for cond in headline:
         rows = []
-        for a in OPMS:
-            for ref in ("combined", "grad"):
+        for a, ref in (("opm_matched", "combined"), ("opm_matched", "grad"), ("opm_dense", "combined"), ("opm_dense", "grad"),
+                       ("opm_dense", "mag")):
+            v = np.full(len(oct_global), np.nan)
+            v[ok] = np.log2(res[a][("opm", cond)]["detect"] / res["squid"][(ref, cond)]["detect"])
+            rows.append((f"{LABEL[a]}\nvs {LABEL[ref]}", v))
+        if patch_det:
+            for a in ("opm_matched", "opm_dense"):
                 v = np.full(len(oct_global), np.nan)
-                v[ok] = np.log2(res[a][("opm", cond)]["detect"] / res["squid"][(ref, cond)]["detect"])
-                rows.append((f"{LABEL[a]}\nvs {LABEL[ref]}", v))
+                v[ok] = np.log2(patch_det[(a, "opm", cond, 10.0, "fixed_total")] / patch_det[("squid", "combined", cond, 10.0, "fixed_total")])
+                rows.append((f"{LABEL[a]} vs\nNeuromag combined,\n10-mm patches", v))
         plotting.cortex_map_figure(hemis, rows, n_lh, plt.get_cmap("RdBu_r"), plt.Normalize(-1, 1),
                                    f"G2: log2 detectability ratio OPM / Neuromag, {cond} (red: OPM higher)", "log2 ratio",
                                    OUT / f"Figure_G2_maps_{cond.replace('+', '_')}.png", contour_level=0.0)
+
+    # 3b. absolute detectability maps (10 nAm, first headline condition)
+    rows = []
+    for n, cs in (("squid", "combined"), ("squid", "grad"), ("squid", "mag"), ("opm_matched", "opm"), ("opm_dense", "opm")):
+        v = np.full(len(oct_global), np.nan)
+        v[ok] = np.log10(res[n][(cs, headline[0])]["detect"])
+        rows.append((LABEL[cs if n == "squid" else n], v))
+    plotting.cortex_map_figure(hemis, rows, n_lh, plt.get_cmap("viridis"), plt.Normalize(-1.5, 0.5),
+                               f"G2: log10 detectability of a 10-nAm dipole, {headline[0]}", "log10 detectability",
+                               OUT / "Figure_G2_maps_absolute.png")
 
     # 4. patches
     radii = patches["radii_mm"]

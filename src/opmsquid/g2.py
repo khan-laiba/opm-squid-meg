@@ -123,6 +123,8 @@ class Sources:
     depth_mm: np.ndarray  # target depth below the dense scalp
     orientation_deg: np.ndarray  # angle to the local inner-skull normal (0 radial ... 90 tangential)
     lobe: np.ndarray
+    region: np.ndarray  # Desikan-Killiany parcel of each target ('unknown' on the medial wall)
+    dist_inner_skull_mm: np.ndarray
 
 
 def make_sources(subject, cortex, rng) -> Sources:
@@ -138,7 +140,9 @@ def make_sources(subject, cortex, rng) -> Sources:
     orient = anatomy.orientation_angle(cortex.rr[target], cortex.nn[target], subject.inner_skull)
     names = np.concatenate([plotting.read_freesurfer_annot(paths.SUBJECTS_DIR / subject.name / "label" / f"{h}.aparc.annot")
                             for h in ("lh", "rh")])
-    return Sources(target, grid, grid_area, depth, orient, plotting.lobe_of(names[target]))
+    region = np.array([f"{'lh' if cortex.hemi[v] == 0 else 'rh'}.{names[v]}" for v in target], dtype=object)
+    return Sources(target, grid, grid_area, depth, orient, plotting.lobe_of(names[target]), region,
+                   cortex.dist_inner_skull[target] * 1e3)
 
 
 def gains(array: Array, subject, cortex, points: np.ndarray, fullres_job: str | None = None,

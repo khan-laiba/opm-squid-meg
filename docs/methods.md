@@ -259,6 +259,43 @@ bootstrap 95 % CIs narrower than +/-0.01 in the ratio; OPM 15 fT/sqrt(Hz))
   (dense). The idealised benchmark's large OPM advantage assumes sensor-noise-limited SNR; with
   realistic brain noise, which on-scalp sensors also see more strongly, it shrinks to ~1.2x.
 
+## 9. Epilepsy relevance, adult (G4, NEW) — `opmsquid.ied`, `opmsquid.detection`, `opmsquid.localization`, `scripts/g4_*.py`
+
+Configuration: `configs/g4_epilepsy.toml`; assumptions A-G4-* in the register. The pediatric part
+waits for G3 anatomy.
+
+Detection design (`scripts/g4_epilepsy_adult.py`)
+* Recordings: the G2 noise model in the time domain (A-G4-TS), one realization per 30-s segment
+  shared by Neuromag, the matched 99-site OPM and the dense 216-site OPM array (OPM 15
+  fT/sqrt(Hz)); 1-40 Hz, 150 Hz after decimation. Identical events (source, strength, morphology,
+  time) in every array: 72 locations stratified by depth (10-20, 20-30, 30-45, 45-70 mm) and
+  orientation, focal dipoles at 10-320 nAm with three spike-wave morphologies, and 10-mm patches;
+  1,728 events, one every 2 s.
+* Detectors, per array and Neuromag channel set: a known-source/onset oracle (per-trial
+  false-positive probability 0.001) and a practical scanner that knows neither time nor source
+  (three waveform templates x 734 cortical candidates distinct from the true sources). Whitener from
+  10 min of baseline null data; thresholds for 1 and 0.2 false events per minute from 20 min of
+  independent calibration null data, frozen; held-out null (20 min) gives 0.8-1.5 and 0.1-0.4
+  false events per minute. A hit is the scan statistic above threshold within +/-50 ms of the true
+  spike peak.
+
+Detection results (focal, three morphologies pooled; 50 % detection strength with a bootstrap over
+locations; practical detector at 1 false event per minute)
+* Strength for 50 % detection, Neuromag combined vs dense OPM vs matched OPM: 47 vs 33 vs 41 nAm
+  at 10-20 mm, 65 vs 62 vs 71 nAm at 20-30 mm, 186 vs 154 vs 184 nAm at 30-45 mm, 258 vs 229 vs
+  266 nAm at 45-70 mm (bootstrap intervals overlap within each band). The oracle needs about half
+  the strength (26 vs 16 vs 18 nAm at 10-20 mm): searching over time and sources costs roughly a
+  factor 2.
+* Paired on identical events (exact McNemar test, events detected by only one system): dense OPM
+  vs Neuromag combined 18/1, 11/3, 13/3 and 11/0 across the four depth bands (p < 0.001, 0.057,
+  0.02, 0.001); matched OPM vs Neuromag combined 13/6, 7/9, 3/7, 1/3 (no significant difference;
+  with the oracle, matched OPM is better superficially, 20/5, p = 0.004, and worse at 45-70 mm,
+  4/17, p = 0.007, as in G2).
+* Sensitivity at 1 false event per minute: superficial (10-30 mm) 40-nAm spikes 0.25 (Neuromag),
+  0.31 (matched OPM), 0.42 (dense OPM); deep (30-70 mm) 160-nAm spikes 0.27, 0.26, 0.36.
+* Detection supports the G2 conclusion: a modest advantage for the full OPM system, concentrated
+  in superficial cortex, and none for a matched-site OPM array.
+
 ## To be written
 
-G3; G4.
+G3; G4 localization results (bounded subset, running); G4 pediatric.
