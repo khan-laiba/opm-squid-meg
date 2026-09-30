@@ -31,6 +31,36 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | J-eta-meas | Measured noise ratio (not stated) | ~4.6 (Fig. 8B, sigma_OPM / sigma_SQUID at the closest runs) | derived from the figure | derived | context |
 | J-toy | Toy experiment (Fig. 6) | target r_Q = 0.6 b; noise dipoles 0.4 b and 0.8 b; all 30 nAm +y; SNR = ratio of peak fields; xi 0-60 mm | pp. 9, 16-17 | reproduced (G1A) | G1A |
 
+## Hunold et al. 2016 (G1B)
+
+| ID | Parameter | Value as printed | Page | Status |
+|---|---|---|---|---|
+| HU-anat | Anatomy | 2 subjects, FreeSurfer white surface, ~300k nodes | 1148 | replaced by MNE sample subject (311,994 valid vertices; mean vertex area 0.648 mm^2 vs 0.654 implied) |
+| HU-bem | Head model | 3 shells, 5120 triangles, 0.33 / 0.0042 / 0.33 S/m (brain/skull/scalp), Galerkin BEM | 1148, 1151 | conductivities used as printed; MNE linear collocation (U-HU-bem) |
+| HU-coil | Coil integration | 4-point per sensor | 1151 | study coils 9014/9024 = MNE 'normal' rule (0.6-0.8 % vs accurate) |
+| HU-depth | Depth | distance to the nearest scalp BEM node | 1148 | as printed |
+| HU-orient | Orientation | angle to the normal of the nearest inner-skull BEM node, 0-90 deg | 1148 | as printed (folded with abs(cos)) |
+| HU-bins | Bins | 20-60 mm x 0-90 deg, 5 mm x 10 deg | 1150 | as printed |
+| HU-dipole | Focal strength | 600 nAm peak | 1151 | as printed (paper-specific, not physiological) |
+| HU-patch | Patches | >20 mm^2 (first exceed), +/-10 deg orientation window, totals 612-678 nAm (median 622) | 1149-1151 | as printed; density = 622 nAm / median area (U-HU-density) |
+| HU-bg | Background | random 10 % of nodes, EEG bands weighted 0.4-0.6, +/-10 nAm, 6 s at 1 kHz, one realization | 1148-1151 | as printed where stated (U-HU-bands) |
+| HU-noise | Sensor noise | omitted | 1158 | as printed (reference); intrinsic noise only in the labelled extension |
+| HU-snr | SNR | channel with max noise-free amplitude; 1 s pre-onset baseline; 2 mean abs(hilbert) | 1151 | as printed (U-HU-numerator) |
+| HU-thr | Threshold | 2.5 (visual, one clinician) | 1151, 1159 | reported, not used as a detector threshold |
+| HU-counts | Sources per bin | 3783 dipoles (Fig. 3c) | 1151-1152 | reproduced exactly by stratified sampling |
+
+## Goldenholz et al. 2009 (G1C)
+
+| ID | Parameter | Value as printed | Page | Status |
+|---|---|---|---|---|
+| GO-focal | Focal dipole | 10 nAm, every vertex, cortical normal | 1078 | as printed |
+| GO-patch | Patches | geodesic radius 10 / 16 mm (3 / 8 cm^2), 50 pAm/mm^2 | 1078 | as printed; Dijkstra on the full mesh, centroids = oct-6 vertices (U-GO-patch) |
+| GO-bem | Conductivities | 0.3 / 0.06 / 0.3 S/m (brain/skull/scalp) | 1078 | run as printed AND with 0.006 (probable intended MNE default; U-GO-skull) |
+| GO-eq1 | SNR | 10 log10[(a^2/N) sum_k b_k^2/s_k^2] | 1079 | as printed; mag, grad and pooled reported separately (U-GO-pool) |
+| GO-noise | Modelled noise | independent cortex-normal sources, ~7 mm grid, s_k^2 = s_s^2 (AA^T)_kk | 1079-1080 | as printed; 7-mm Poisson-disk grid (U-GO-grid) |
+| GO-cal | Calibration | per type median(recorded/(AA^T)), channel-weighted mean; s_s = 1.6-1.9 nAm | 1080 | as printed (EEG term absent) |
+| GO-rec | Recorded noise | 2 min spontaneous, 0.5-100 Hz, magnetometer SSP | 1078-1079 | ADAPT: pre-stimulus baselines of the sample task recording, sample SSP |
+
 ## Recovered from the published Fig. 3 raster (legacy replica)
 
 | ID | Parameter | Value | Status |
@@ -78,3 +108,14 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | U-J7 | sigma_N20 defined as trial SD (p. 12) vs "standard error of mean" (Fig. 8) | Experimental context only (no recordings available). |
 | U-J8 | Experimental OPM ~7 mm from the scalp (2-mm shell + half of a 10-mm FieldLine Gen2 cell) vs simulated OPM at xi = 0 | G1A keeps xi = 0 (paper model); G2 uses 7 mm (A-OPM-STANDOFF). |
 | U-HW1 | TRIUX specification image not available on disk | Values transcribed in GOAL.md used and flagged; to verify when the image is supplied. |
+| U-HU-trace | Hunold "dipole traces" (sulcal bottom to crown) cannot be replicated on new anatomy; algorithm partly unstated | Stratified sampling reproducing the paper's per-bin counts exactly (ADAPT). |
+| U-HU-numerator | Spike amplitude in the SNR (noise-free vs noisy, peak vs peak-to-peak) unstated; the literal reading appears ~25-30 % below published values | All three variants computed; each compared with the paper's digitised bin means. |
+| U-HU-bands | EEG band edges, weights, filter, normalisation unstated | 0.5-4 / 4-8 / 8-13 / 13-30 / 30-45 Hz, weights 0.6/0.55/0.5/0.45/0.4, Butterworth 4 zero-phase, unit-RMS per band, peak-normalised to 10 nAm. |
+| U-HU-density | Patch density (implied ~30 nAm/mm^2; the discussion mentions 100 nA/mm^2) | Density set so that the median patch total is 622 nAm. |
+| U-HU-onset | Spike onset within the 6-s epoch | 3.0 s; analytic signal of the whole trace, cropped to the 1-s baseline. |
+| U-HU-bem | Galerkin vs MNE linear collocation BEM | Small differences expected (paper: MEG weakly sensitive to skull conductivity). |
+| U-GO-skull | Printed skull 0.06 S/m (1:5) vs probable 0.006 (MNE default; manual v2.5 prints 0.06 beside "1/50") | Both run and labelled; MEG differences reported. |
+| U-GO-pool | Whether Eq. 1 pooled all 306 MEG channels | Magnetometers (N=102), gradiometers (N=204) and pooled (N=306) reported separately. |
+| U-GO-grid | Noise-source count and decimation unstated | 7-mm Poisson-disk grid; the calibration rule makes absolute SNR nearly independent of the density. |
+| U-GO-patch | Centroid set, surface and element weighting for patches unstated | oct-6 vertices as centroids; white surface; moment = density x vertex area; signed sum. |
+| U-OPM-PACK | OPM package footprint (no verified device data) | Minimum sensing-centre spacing 17 mm (10-mm cell in a ~12-17 mm package); densest feasible single-axis array on the sample head: 221 sites; 306 single-axis channels infeasible. |

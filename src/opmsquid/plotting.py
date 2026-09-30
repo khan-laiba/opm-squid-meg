@@ -37,6 +37,59 @@ def read_freesurfer_curv(fname) -> np.ndarray:
         return np.fromfile(fh, ">f4", n_vert).astype(float)
 
 
+def read_freesurfer_annot(fname) -> np.ndarray:
+    """Region name for every vertex of a FreeSurfer .annot file ('unknown' where unlabelled).
+    Supports the old and the version-2 colour-table formats (as nibabel does)."""
+    dt = ">i4"
+    with open(fname, "rb") as fh:
+        vnum = int(np.fromfile(fh, dt, 1)[0])
+        data = np.fromfile(fh, dt, 2 * vnum).reshape(vnum, 2)
+        if not int(np.fromfile(fh, dt, 1)[0]):
+            raise ValueError("annotation without colour table")
+        n_entries = int(np.fromfile(fh, dt, 1)[0])
+        value_to_name = {}
+
+        def read_entry():
+            n = int(np.fromfile(fh, dt, 1)[0])
+            name = fh.read(n).rstrip(b"\x00").decode()
+            r, g, b, _ = np.fromfile(fh, dt, 4)
+            value_to_name[int(r) + int(g) * 256 + int(b) * 65536] = name
+
+        if n_entries > 0:  # old format
+            fh.read(int(np.fromfile(fh, dt, 1)[0]))
+            for _ in range(n_entries):
+                read_entry()
+        else:
+            if -n_entries != 2:
+                raise ValueError(f"unsupported .annot version {-n_entries}")
+            np.fromfile(fh, dt, 1)  # max index
+            fh.read(int(np.fromfile(fh, dt, 1)[0]))  # original colour-table path
+            for _ in range(int(np.fromfile(fh, dt, 1)[0])):
+                np.fromfile(fh, dt, 1)  # entry index
+                read_entry()
+    names = np.full(vnum, "unknown", dtype=object)
+    names[data[:, 0]] = [value_to_name.get(int(v), "unknown") for v in data[:, 1]]
+    return names
+
+
+DK_LOBES = {
+    "frontal": ("superiorfrontal", "rostralmiddlefrontal", "caudalmiddlefrontal", "parsopercularis", "parstriangularis",
+                "parsorbitalis", "lateralorbitofrontal", "medialorbitofrontal", "precentral", "paracentral", "frontalpole"),
+    "parietal": ("superiorparietal", "inferiorparietal", "supramarginal", "postcentral", "precuneus"),
+    "temporal": ("superiortemporal", "middletemporal", "inferiortemporal", "bankssts", "fusiform", "transversetemporal",
+                 "entorhinal", "temporalpole", "parahippocampal"),
+    "occipital": ("lateraloccipital", "lingual", "cuneus", "pericalcarine"),
+    "cingulate": ("rostralanteriorcingulate", "caudalanteriorcingulate", "posteriorcingulate", "isthmuscingulate"),
+    "insula": ("insula",),
+}
+
+
+def lobe_of(region_names) -> np.ndarray:
+    """Desikan-Killiany region -> lobe (standard grouping; 'other' for unknown/corpus callosum)."""
+    lut = {r: lobe for lobe, regions in DK_LOBES.items() for r in regions}
+    return np.array([lut.get(n, "other") for n in region_names], dtype=object)
+
+
 def inflated_views(subjects_dir, subject, src):
     """Per hemisphere: (inflated vertices of the source-space vertices, triangles in source-space
     indices, gyral mask) for rendering source-space values."""

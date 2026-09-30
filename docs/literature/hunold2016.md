@@ -32,7 +32,7 @@ The paper contains **no numbered or displayed equations**. Every formula below i
   - Jena University Hospital (Biomagnetic Center)
 - **Funding.** BMBF 03IPT605A, DAAD 57163007, Academy of Finland 290018 (p. 1160).
 - **Keywords.** EEG, MEG, epilepsy, dipole, cortical patch, forward modeling, interictal spike (p. 1147).
-- **Aim (paraphrased).** The study simulates interictal spikes from cortically constrained single dipoles and ~20 mm² patches in two individual three-shell BEM models, adding a distributed EEG-like background. It asks how source depth (below the scalp) and orientation (relative to the local inner-skull normal) set the spike SNR in the best single channel of 128-channel EEG, 102 Vectorview magnetometers and 204 planar gradiometers (pp. 1146, 1148). It extends Haueisen et al (2012) with a more realistic background model and an SNR evaluated per channel, as in clinical review (p. 1148).
+- **Aim (paraphrased).** The study simulates interictal spikes from cortically constrained single dipoles and ~20 mm² patches in two individual three-shell BEM models, adding a distributed EEG-like background. It asks how source depth (below the scalp) and orientation (relative to the local inner-skull normal) set the spike SNR in the best single channel of 128-channel EEG, 102 Vectorview magnetometers and 204 gradiometers (pp. 1146, 1148). These are the Vectorview planar gradiometers; the paper itself never uses the word "planar". It extends Haueisen et al (2012) with a more realistic background model and an SNR evaluated per channel, as in clinical review (p. 1148).
 
 ---
 
@@ -71,7 +71,7 @@ The paper contains **no numbered or displayed equations**. Every formula below i
 
 ### 3.1 Locations, orientation constraint, mesh
 
-- **Locations.** Sources sit at the nodes of the full-resolution FreeSurfer mesh of the white–gray matter boundary, i.e. the white surface (p. 1148).
+- **Locations.** Sources sit at the mesh nodes of the FreeSurfer white–gray matter boundary, i.e. the white surface (p. 1148). That this is the full-resolution mesh (≈300 000 elements) is our inference [D] (pp. 1148, 1156).
 - **Orientation constraint.** Every dipole (spike, patch and background) is fixed perpendicular to the cortical surface (p. 1148).
   - The polarity convention (outward or inward normal) is [NS].
   - How node normals are computed is [NS].
@@ -84,7 +84,7 @@ The paper contains **no numbered or displayed equations**. Every formula below i
 ### 3.2 Depth
 
 - For each cortical node, the closest node of the scalp mesh was found. Depth is the Euclidean distance between the two (p. 1148).
-- The scalp is the outer (skin) surface of the 5120-triangle BEM (p. 1148). The abstract describes depths as below the skin surface (p. 1146).
+- The scalp mesh is the skin surface. That the 5120-triangle BEM scalp mesh (every boundary surface was downsampled to 5120 triangles) is the one used for depth is our inference [D] (pp. 1148, 1159). The abstract describes depths as below the skin surface (p. 1146).
 - Depth is therefore measured to the skin, not to the sensors and not to the inner skull.
 - Depth is measured **node to node**, not node to nearest surface point. The authors say this can overestimate depth but call the error negligible, given ~6 mm scalp triangles and depths of 20 mm or more (p. 1159).
   - [D] For a lateral offset of ≤3.5 mm at 20 mm depth, the overestimate is ≲0.3 mm.
@@ -162,11 +162,11 @@ The paper contains **no numbered or displayed equations**. Every formula below i
   - Each patch's represented area was taken into account individually.
   - Patch strength was scaled to about 600 nAm, following Murakami and Okada (2006).
   - A single dipole-moment **density** was set so that patch strengths ranged **612–678 nAm, median 622 nAm**.
-  - Activation is **uniform** over the patch (Badier et al 2007): every patch dipole carries the same spike waveform (p. 1150).
+  - Activation is **uniform** over the patch (Badier et al 2007) (p. 1151). Every patch dipole carries the same spike waveform (p. 1150).
   - [D] The implied density is about 30–31 nAm/mm² (612 nAm ÷ ≥ 20 mm²; the median 622 nAm corresponds to about 20.4 mm² at 30.5 nAm/mm²). The exact density is [NS].
   - [NS] Whether each dipole's moment is density × the area of its node, and how node or patch area is computed (vertex area vs triangles), is not stated.
-- **What "strength" means.** 612–678 nAm is the sum of the dipole moment magnitudes. The dipoles follow the local normals, so a patch's net (vector) "total strength" was often **smaller** than a single 600 nAm dipole, giving lower patch SNRs (p. 1158).
-- **Conflicting density value.** The Discussion describes triangle-mesh patch designs using a preset current density of 100 nA mm⁻² (value as printed; Hämäläinen et al 1993) (p. 1159). This conflicts with the implied ~30 nAm/mm², and the units differ; see §11.
+- **What "strength" means.** The paper never defines patch "strength". [D] Reading 612–678 nAm as the sum of the dipole moment magnitudes fits p. 1158 and the Table 1 areas. The dipoles follow the local normals, so a patch's net (vector) "total strength" was often **smaller** than a single 600 nAm dipole, giving lower patch SNRs (p. 1158).
+- **Conflicting density value.** The Discussion describes triangle-mesh patch designs using a preset current density of 100 nA mm⁻² (value as printed; Hämäläinen et al 1993) (p. 1159). Grammatically this sentence refers to earlier approaches, but it could be read as describing this study too. If so, it conflicts with the implied ~30 nAm/mm², and the units differ; see §11.
 - **[NS] details:** growth order (breadth-first by adjacency or by distance), tie-breaking, and whether patches may overlap background dipoles.
 
 ### 4.3 Background dipoles
@@ -181,7 +181,7 @@ The paper contains **no numbered or displayed equations**. Every formula below i
 | Patch | Fixed moment density; totals 612–678 nAm |
 | Background | Each realization scaled to the range ±10 nAm (p. 1150) |
 
-No other normalization is used. There is no rescaling to a target SNR and no per-sensor-type normalization.
+No other normalization is described: nothing rescales to a target SNR, and nothing normalizes per sensor type.
 
 ---
 
@@ -253,7 +253,7 @@ No other normalization is used. There is no rescaling to a target SNR and no per
 
 **MEG**
 
-- **System.** Elekta Neuromag **Vectorview** (Elekta Neuromag Oy, Helsinki), simulated at **102 magnetometer** and **204 planar-gradiometer** positions (pp. 1146, 1151). TRIUX is not mentioned.
+- **System.** Elekta Neuromag **Vectorview** (Elekta Neuromag Oy, Helsinki), simulated at **102 magnetometer** and **204 gradiometer** positions (pp. 1146, 1151). The Vectorview gradiometers are planar; the paper does not use that word. TRIUX is not mentioned.
 - **Coil model.** The extent of each MEG sensor is modelled by **4-point numerical integration** (p. 1151).
   - Coil type (T1/T2/T3), coil size and gradiometer baseline: [NS].
   - [MNE] In MNE 1.13.2 `coil_def.dat`, `accuracy='normal'` uses 4 integration points for Vectorview magnetometers 3022/3023/3024 and for planar gradiometers 3012/3013/3014 (2 per loop); `'accurate'` uses 16 and 8.
@@ -348,7 +348,7 @@ $$\mathrm{SNR} = A_\mathrm{spike} / A_\mathrm{bg}, \qquad A_\mathrm{spike} = \te
 ### 8.6 Channel-selection check (EEG only)
 
 - For the **64-electrode EEG** only, the authors checked whether the noise-free max-amplitude channel is also the max-SNR channel in the noisy simulation (pp. 1158–1159).
-- Of **10 200** simulations (both subjects, all dipole traces), **9703 (95.1%)** agreed and **497 (4.9%)** had the maximum in a neighbouring channel.
+- Of **10 200** simulations (printed as "102 00", a typesetting split; [D] 9703 + 497 = 10 200) (both subjects, all dipole traces), **9703 (95.1%)** agreed and **497 (4.9%)** had the maximum in a neighbouring channel.
 - Above the 2.5 threshold, the selected channel always had the highest SNR.
 - No such check is reported for MEG.
 
@@ -483,7 +483,7 @@ The full table is in Appendix D.
 | GM | −2.89 (49.6%) | −3.69 (59.3%) |
 
 - **Effect of depth, EEG radial sources:** −1.86 (43.4%) for the dipole and −0.85 (22.3%) for the patch (p. 1156).
-- **Threshold claim.** The authors say that for four of the eight examples the SNR fell below 2.5: the MEG radial and EEG tangential cases, independent of depth (p. 1156). See §11: the EEG deep radial dipole at 2.43 is also below 2.5.
+- **Threshold claim.** The authors say that for four of the eight examples the SNR fell below 2.5: the MEG radial and EEG tangential cases, independent of depth (p. 1156). See §11: by Fig. 6, 13 of the 24 source–modality traces are below 2.5, including the EEG deep radial dipole at 2.43.
 
 ### 9.7 Additional simulations (pp. 1158–1159)
 
@@ -495,7 +495,7 @@ The full table is in Appendix D.
 
 ## 10. Limitations and discussion of SNR definitions (pp. 1158–1160)
 
-1. **Best-single-channel SNR.** Most sensitivity analyses use whole sensor arrays (e.g. Goldenholz et al 2009); this study uses the best single sensor (p. 1158).
+1. **Best-single-channel SNR.** Sensitivity analyses are often done on whole sensor arrays (e.g. Goldenholz et al 2009); this study uses the best single sensor (p. 1158).
    - Defining SNR across all channels, as Goldenholz et al did, would give different values.
    - The numbers are therefore **not directly comparable** with Goldenholz et al (2009) or Ahlfors et al (2010a) (p. 1158).
 2. **Clinical justification.** Single-channel SNR follows standard clinical evaluation and was used before by de Jongh et al (2005). The authors say this makes the results directly usable by clinicians (p. 1159).
@@ -515,7 +515,7 @@ The full table is in Appendix D.
    - The literature uses circular patches 1–50 mm or 20–80 mm in diameter, and 4 cm² or 6 cm² patches.
    - Cancellation matters for large patches.
    - Data-driven patch designs exist.
-10. **Dipoles vs patches** (p. 1158). Patch SNRs are lower because the net strength is reduced by orientation spread. The dipole–patch differences at 20–25 mm and 30–70° reflect n < 10.
+10. **Dipoles vs patches** (p. 1158). Patch SNRs are lower because the net strength is reduced by orientation spread. The dipole–patch differences at 20–25 mm and 30–70° were likely due to n < 10.
 11. **Background model** (p. 1160).
     - Strengths: the novel asymmetry-ratio-based model plus random dipole distribution is closer to reality than white noise, and gives EEG and MEG unbiased noise shares.
     - Limitations: no regional weighting of bands, which would make detectability less homogeneous across regions; independent realizations per source; no resting-state network structure.
@@ -528,7 +528,7 @@ The full table is in Appendix D.
 
 ### A. Internal inconsistencies and text/figure mismatches
 
-1. **Dipole total.** The abstract says 5600 dipoles (p. 1146). The methods give 127 + 128 traces × 20 dipoles = 5100 (p. 1149). The 10 200 channel-check simulations (p. 1158) equal 2 × 5100, possibly dipoles plus seed patches.
+1. **Dipole total.** The abstract says 5600 dipoles (p. 1146). The methods give 127 + 128 traces × 20 dipoles = 5100 (p. 1149). The 10 200 channel-check simulations (printed "102 00", p. 1158) equal 2 × 5100. That they are dipoles plus seed patches is our conjecture.
 2. **Per-bin sample-size statistics** (p. 1153) do not match Fig. 3(c),(d).
    - Dipoles: the text gives 13–117 (48.6 ± 30.6); the figure gives 15–177 (52.5 ± 30.0).
    - Patches: the range matches; the mean ± SD is 37.2 ± 34.8 in the text vs 40.4 ± 35.7 from the figure.
@@ -539,17 +539,17 @@ The full table is in Appendix D.
    - The Table 1 "deep" examples lie at 39.3–44.7 mm, i.e. *intermediate* (p. 1156).
 4. **Depth-limit statements disagree.** Below threshold beyond 40 mm (MM) and 50 mm (GM, EEG) on p. 1155, vs beyond 55 mm (MEG) and 60 mm (EEG) on p. 1160.
    - [Dg] Digitized maps: MM bins reach ≥ 2.5 only down to 35–40 mm. GM reaches 2.5–3.0 in tangential bins down to 50–55 mm. EEG reaches 2.5–3.0 in one 55–60 mm bin.
-5. **Discussion vs results on EEG vs MEG at depth.** The Discussion says EEG was slightly higher than MEG at 40–60 mm (p. 1156). The results report GM significantly above EEG at 70–90° and 40–50 mm (p. 1155). The Discussion statement fits MM, not GM.
+5. **Discussion vs results on EEG vs MEG at depth.** The Discussion says EEG was slightly higher than MEG at 40–60 mm (p. 1156). The abstract says deeper sources give higher EEG SNR for all orientations (p. 1147). The results report GM significantly above EEG at 70–90° and 40–50 mm (p. 1155), and [F] Fig. 4(b) shows this in the "deep" 45–50 mm row. These summary statements fit MM, not GM.
 6. **Wrong panel references.** The EEG−GM difference maps are cited as Figs 4(a)/5(a) (p. 1155) but are in panels (b). The Fig. 3 caption uses A–D while the figure uses (a)–(d).
-7. **GM > EEG range.** The text lists "40–90°, 20–35 mm" (p. 1155), overlapping the 20–25 mm item. The figure shows 40–90° at 25–35 mm.
+7. **GM > EEG range (minor).** The text lists "40–90°, 20–35 mm" (p. 1155), which overlaps the "30–90°, 20–25 mm" item. It is redundant, not contradictory: [F] Fig. 4(b) shows significance from 30° at 20–25 mm and from 40° at 25–35 mm.
 8. **SNR sentence wording.** The defining sentence literally reads as background-to-spike, i.e. inverted (p. 1151). All numbers are spike/background.
-9. **Threshold claim for the examples.** The claim covers only MEG radial and EEG tangential cases (p. 1156), but the EEG deep radial dipole is also below 2.5 (2.43; Fig. 6, p. 1157).
+9. **Threshold claim for the examples.** The paper says four of the eight examples fall below 2.5 and names the MEG radial and EEG tangential cases (p. 1156). Its own parenthetical does not add up to four. [F] Fig. 6 (p. 1157) shows 13 of 24 traces below 2.5: 4 MM radial, 4 GM radial, 4 EEG tangential, and the EEG deep radial dipole at 2.43, which the parenthetical does not cover.
 10. **Fig. 6 trace vs label** [Dg]. The EEG FC3 "patch, deep, radial" trace is labelled SNR 2.96 but shows a visibly *smaller* spike than the "dipole, deep, radial" trace (SNR 2.43), with the same channel and background. Digitized spike peaks are ≈ 8 vs ≈ 13 px against the same ≈ 3.2 px baseline SD. The printed values agree with the text (p. 1156), so the trace or label may be swapped.
-11. **Fig. 6 caption vs methods.** The caption says the sensors with the **highest SNR** are shown (p. 1157). The methods select the channel with the **largest noise-free amplitude** (p. 1151). They usually coincide (§8.6).
+11. **Fig. 6 caption vs methods.** The caption says the sensors with the **highest SNR** are shown (p. 1157). The methods select the channel with the **largest noise-free amplitude** (p. 1151). For 64-channel EEG the two coincided in 95.1% of cases (§8.6); this was not checked for MEG.
 12. **Fig. 6 gradiometer unit.** The scale bar reads "100 pT"; the unit should be T/m (e.g. pT/m). The EEG bar reads "100 uV" (p. 1157).
 13. **Fig. 2(c) markers.** The caption says MEG sensors are blue squares; the drawing shows circles or ellipses (p. 1150).
 14. **Discussion colour description.** It equates the blue-to-green colours of Fig. 3 with SNR < 2.5 (p. 1159). [F] On the Fig. 3 scale, the green-ish class is 2.5–3.0, and the colours below 2.5 run from blue to cyan.
-15. **Patch density.** The Discussion cites a preset current density of 100 nA mm⁻² (p. 1159). The printed strengths imply about 30 nAm/mm² (p. 1151), and the units differ. Treat 612–678 nAm (median 622) as authoritative.
+15. **Patch density.** The Discussion cites a preset current density of 100 nA mm⁻² (p. 1159). Grammatically this belongs to earlier triangle-mesh approaches, but the paper calls its own design consistent with them. The printed strengths imply about 30 nAm/mm² (p. 1151), and the units differ. Treat 612–678 nAm (median 622) as authoritative.
 16. **Fig. 3 saturation.** The Fig. 3 SNR scale tops out at 6. The MM dipole bin at 20–25 mm, 70–80° is 6.0–6.5 on the Fig. 4 scale. Use Fig. 4/5 for values above 5.5.
 17. **Duplicate label "MF".** The same initials label both the second head model and the clinician who set the threshold (pp. 1148, 1151, 1159).
 
@@ -594,7 +594,7 @@ The full table is in Appendix D.
 | BEM mesh | 5120 triangles per surface | 1148 | `ico=4` |
 | Conductivity brain/skull/scalp | 0.33 / 0.0042 / 0.33 S m⁻¹ | 1151 | Ratio ≈ 1:78.6; 1:50 and 1:25 gave similar results (p. 1159) |
 | BEM formulation | Galerkin, linear basis, isolated source approach; Helsinki BEM library (Matlab) | 1151 | MNE uses linear collocation + isolated skull |
-| MEG system | Elekta Neuromag Vectorview: 102 magnetometers, 204 planar gradiometers | 1151 | Coil type [NS]; T1 3022/3012 or T3 3024/3014 |
+| MEG system | Elekta Neuromag Vectorview: 102 magnetometer and 204 gradiometer positions | 1151 | Coil type [NS]; T1 3022/3012 or T3 3024/3014 |
 | Coil integration | 4-point numerical integration per sensor | 1151 | [MNE] `accuracy='normal'` (4 points for both types) |
 | Sensor–head registration | [NS] | – | Use real device-to-head transform |
 | Sensor noise | Omitted | 1158 | Brain-noise-only reference |
@@ -636,7 +636,7 @@ The full table is in Appendix D.
 | Bin statistic | Mean SNR per bin | 1152–1154 | Unweighted means reproduce text summaries |
 | Tests | Student's *t* or Wilcoxon rank sum; \* p < 0.05, \*\* p < 0.01 | 1151–1154 | No correction reported |
 | Analysed sources | 3783 dipoles; 2264 patches | 1151 | Match Fig. 3(c),(d) sums |
-| Channel-check (EEG 64) | 10 200 sims: 9703 (95.1%) same channel, 497 (4.9%) neighbouring | 1158–1159 | Not done for MEG |
+| Channel-check (EEG 64) | "102 00" (= 10 200) sims: 9703 (95.1%) same channel, 497 (4.9%) neighbouring | 1158–1159 | Not done for MEG |
 
 ---
 

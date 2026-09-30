@@ -190,6 +190,62 @@ def resolve_clearance(pos: np.ndarray, axis: np.ndarray, scalp, min_clearance: f
     return pos, extra, ok
 
 
+MIN_CENTER_SPACING = 0.017  # m, packing assumption A-OPM-PACK (10-mm cell in a ~12-17 mm package)
+
+
+def prune_to_spacing(centres: np.ndarray, min_dist: float, candidates: np.ndarray | None = None) -> np.ndarray:
+    """Greedy pruning so that no two kept sensing centres are closer than ``min_dist``: repeatedly
+    drop the site with the most violations (ties: the later one). Returns a keep mask."""
+    keep = np.ones(len(centres), bool) if candidates is None else candidates.copy()
+    while True:
+        idx = np.flatnonzero(keep)
+        if len(idx) < 2:
+            return keep
+        d = np.linalg.norm(centres[idx][:, None] - centres[idx][None], axis=-1) + np.eye(len(idx)) * 1e9
+        viol = (d < min_dist).sum(axis=1)
+        if viol.max() == 0:
+            return keep
+        worst = np.flatnonzero(viol == viol.max())[-1]
+        keep[idx[worst]] = False
+
+
+def dense_array(scalp, trans: mne.transforms.Transform, digitisation: mne.Info, min_spacing_m: float,
+                max_sites: int | None = None, standoff: float = STANDOFF, scalp_gap: float = 0.0,
+                normal_radius: float = 0.010, brow_offset: float = 0.030, seed_point=None,
+                min_center_spacing: float = MIN_CENTER_SPACING) -> tuple[OPMArray, dict]:
+    """Scalp-normal single-axis OPM array filling the coverage region (above the brow plane) by
+    farthest-point sampling of the MRI scalp: sites are added in order of largest distance to the
+    already placed ones until that distance falls below ``min_spacing_m`` (or ``max_sites`` is
+    reached). Sensing centres at scalp_gap + standoff along the smoothed normal, with clearance
+    resolution as for the matched array, then pruned so that sensing centres are at least
+    ``min_center_spacing`` apart (physical packing, A-OPM-PACK)."""
+    mri_head = np.linalg.inv(trans["trans"])
+    rr_head = scalp.rr @ mri_head[:3, :3].T + mri_head[:3, 3]
+    cover = above_brow_plane(rr_head, fiducials_head(digitisation), brow_offset)
+    cand = np.flatnonzero(cover)
+    pts = scalp.rr[cand]
+    start = int(np.argmax(pts[:, 2])) if seed_point is None else int(cKDTree(pts).query(seed_point)[1])
+    chosen = [start]
+    dmin = np.linalg.norm(pts - pts[start], axis=1)
+    while True:
+        k = int(np.argmax(dmin))
+        if dmin[k] < min_spacing_m or (max_sites is not None and len(chosen) >= max_sites):
+            break
+        chosen.append(k)
+        dmin = np.minimum(dmin, np.linalg.norm(pts - pts[k], axis=1))
+    sp_mri = pts[chosen]
+    nrm = smoothed_normals(scalp.rr, scalp.nn, sp_mri, normal_radius)
+    centres = sp_mri + (scalp_gap + standoff) * nrm
+    centres, extra, feasible = resolve_clearance(centres, nrm, scalp, standoff - 0.001)
+    keep = feasible & prune_to_spacing(centres, min_center_spacing, feasible)
+    arr = OPMArray(pos=centres[keep] @ mri_head[:3, :3].T + mri_head[:3, 3], axis=nrm[keep] @ mri_head[:3, :3].T,
+                   scalp_point=sp_mri[keep] @ mri_head[:3, :3].T + mri_head[:3, 3], site_id=np.arange(int(keep.sum())),
+                   standoff=standoff, scalp_gap=scalp_gap, label=f"dense OPM ({keep.sum()} sites, >= {min_spacing_m * 1e3:g} mm)")
+    report = dict(n_sites=int(keep.sum()), min_spacing_mm=float(min_spacing(arr.pos).min() * 1e3),
+                  median_spacing_mm=float(np.median(min_spacing(arr.pos)) * 1e3), n_moved_out=int(np.sum(extra[keep] > 0)))
+    return arr, report
+
+
 def matched_to_neuromag(squid_info: mne.Info, trans: mne.transforms.Transform, scalp, digitisation: mne.Info,
                         standoff: float = STANDOFF, scalp_gap: float = 0.0, normal_radius: float = 0.010,
                         brow_offset: float = 0.030, min_clearance: float | None = None) -> tuple[OPMArray, dict]:
