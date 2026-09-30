@@ -313,10 +313,17 @@ def summarise(state):
                     stat_a = rec[a]["oracle_z" if mode == "oracle" else "near_height"][sel]
                     stat_b = rec[b]["oracle_z" if mode == "oracle" else "near_height"][sel]
                     diff = stat_a - stat_b
-                    bs = [np.median(rng.choice(diff, len(diff))) for _ in range(500)]
-                    res[f"depth{band_i}"] = dict(n=int(sel.sum()), detected_only_opm=only_a, detected_only_squid=only_b,
-                                                 mcnemar_exact_p=float(pval), median_stat_difference=float(np.median(diff)),
-                                                 ci95=[float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))])
+                    # events share locations (6 strengths x 3 morphologies each): the location is the unit
+                    loc_s = loc_i[sel]
+                    locs = np.unique(loc_s)
+                    d_loc = np.array([np.sum((da & ~db_)[sel][loc_s == L]) - np.sum((~da & db_)[sel][loc_s == L]) for L in locs])
+                    per = [diff[loc_s == L] for L in locs]
+                    bs = [np.median(np.concatenate([per[j] for j in rng.integers(0, len(per), len(per))])) for _ in range(1000)]
+                    res[f"depth{band_i}"] = dict(n=int(sel.sum()), n_locations=int(len(locs)), detected_only_opm=only_a,
+                                                 detected_only_squid=only_b, locations_favouring_opm=int(np.sum(d_loc > 0)),
+                                                 locations_favouring_squid=int(np.sum(d_loc < 0)), location_sign_flip_p=detection.sign_flip_p(d_loc),
+                                                 mcnemar_exact_p_event_level=float(pval), median_stat_difference=float(np.median(diff)),
+                                                 ci95_location_bootstrap=[float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))])
                 summary["paired"][f"{a}_vs_{b}/{mode}"] = res
     io.write_json(summary, OUT / "g4_adult_summary.json")
     with open(OUT / "g4_adult_events.csv", "w", newline="") as fh:

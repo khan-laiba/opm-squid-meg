@@ -140,3 +140,17 @@ def match_events(peaks: np.ndarray, heights: np.ndarray, truth: np.ndarray, tol:
         j = np.clip(pos + off, 0, len(sel) - 1)
         near = np.minimum(near, np.abs(sel[j] - truth))
     return near <= tol
+
+
+def sign_flip_p(x, n_mc=20000, seed=0):
+    """Two-sided p for a zero mean of per-location paired differences, by flipping each
+    location's sign (exact up to 20 non-zero locations, Monte Carlo beyond)."""
+    x = np.asarray(x, float)
+    x = x[x != 0]
+    if len(x) == 0:
+        return 1.0
+    if len(x) <= 20:
+        signs = 1 - 2 * ((np.arange(2 ** len(x))[:, None] >> np.arange(len(x))) & 1).astype(np.int8)
+    else:
+        signs = np.random.default_rng(seed).choice(np.array([-1, 1], np.int8), (n_mc, len(x)))
+    return float(np.mean(np.abs(signs @ x) >= abs(x.sum()) - 1e-9))

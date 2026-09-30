@@ -76,5 +76,20 @@ class TestDetection(unittest.TestCase):
         np.testing.assert_array_equal(hit, [True, False, False, False])
 
 
+class TestSignFlip(unittest.TestCase):
+    def test_exact_values(self):
+        # 5 locations all favouring one side: only the all-same-sign patterns reach |sum| = 5
+        self.assertAlmostEqual(detection.sign_flip_p([1, 1, 1, 1, 1]), 2 / 32)
+        self.assertAlmostEqual(detection.sign_flip_p([2, 0, 0, 1]), 2 / 4)  # zeros carry no sign
+        self.assertEqual(detection.sign_flip_p([1, -1]), 1.0)
+        self.assertEqual(detection.sign_flip_p([0, 0]), 1.0)
+
+    def test_monte_carlo_agrees_with_exact(self):
+        x = np.random.default_rng(0).normal(0.3, 1.0, 22)  # 22 > 20 locations: Monte Carlo branch
+        signs = 1 - 2 * ((np.arange(2 ** 22)[:, None] >> np.arange(22)) & 1).astype(np.int8)
+        exact = np.mean(np.abs(signs @ x) >= abs(x.sum()) - 1e-9)
+        self.assertAlmostEqual(detection.sign_flip_p(x, n_mc=50000), exact, delta=0.01)
+
+
 if __name__ == "__main__":
     unittest.main()
