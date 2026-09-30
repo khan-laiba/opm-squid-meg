@@ -87,6 +87,18 @@ class Subject:
         return out
 
 
+def refined_inner_skull(subject: "Subject", times: int = 1, sigma: float = 0.3) -> list:
+    """Single-layer BEM surface list with the inner skull subdivided ``times`` (same shape,
+    4^times more triangles): a discretisation check of the 5120-triangle model."""
+    from mne.surface import complete_surface_info
+
+    inner = next(s for s in subject.bem_surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_BRAIN)
+    fine = Surface(inner["rr"], inner["tris"], inner["nn"]).subdivided(times)
+    surf = dict(id=FIFF.FIFFV_BEM_SURF_ID_BRAIN, sigma=float(sigma), coord_frame=inner["coord_frame"], rr=fine.rr,
+                tris=fine.tris, np=len(fine.rr), ntri=len(fine.tris))
+    return [complete_surface_info(surf, copy=False, verbose=False)]
+
+
 def load_sample(spacing: str = "oct6") -> Subject:
     """The MNE sample subject. ``spacing``: 'oct6' (stored source space, 2 x 4098) or 'all'."""
     sd = paths.require(paths.SUBJECTS_DIR, "MNE sample subjects directory")

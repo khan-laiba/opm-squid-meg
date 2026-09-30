@@ -1,0 +1,51 @@
+# G2 realistic adult OPM vs Neuromag comparison (NEW). Values are study choices [C] unless tagged
+# (HW-*, A-*, D-* entries of docs/provenance_register.md).
+
+[anatomy]
+subject = "sample"                        # D-ANAT; measured head position in the Vectorview helmet
+bem_conductivity = [0.3, 0.006, 0.3]      # scalp, skull, brain (MNE default 3-layer)
+
+[band]
+l_freq_hz = 1.0                           # common analysis filter for signal and every noise term
+h_freq_hz = 40.0
+order = 4                                 # Butterworth, zero phase (composite |H|^4 in the ENBW)
+
+[sensors]
+squid_asd = { mag_fT_per_rtHz = 3.5, grad_fT_per_cm_rtHz = 3.6 }   # HW-mag-noise, HW-grad-noise (typical)
+opm_asd_fT_per_rtHz = [7.0, 10.0, 15.0, 20.0, 30.0]               # A-OPM-NOISE declared sweep
+opm_asd_primary_fT_per_rtHz = 15.0                                # middle of the sweep (not a device value)
+opm_scalp_gap_mm = [0.0, 3.0, 6.0]                                # A-OPM-GAP sweep; 0 = primary
+bads = ["MEG 2443"]                                               # D-BADCH (measured-noise terms only)
+
+[sources]
+focal_nAm = 10.0                          # all SNR metrics scale linearly with the moment
+patch_radii_mm = [5.0, 10.0, 20.0]        # geodesic radius on the white surface
+patch_total_nAm = 10.0                    # fixed-total convention (scalar moment = density x area)
+patch_density_nAm_per_mm2 = 0.25          # fixed-density convention
+seed = 2026
+
+[background]
+grid_spacing_mm = 7.0                     # Poisson-disk grid; area-scaled moment variance (mesh invariant)
+correlation_lengths_mm = [0.0, 5.0, 10.0] # 0 = independent baseline; bounded correlated extension
+calibration = "median over good gradiometers of (baseline - empty room) variance in the band"
+
+[environment]
+r0_head_m = [0.0, 0.0, 0.04]              # expansion point of the 8-term room field
+fit = "empty-room recording of the sample dataset, weighted least squares, bad channels left out"
+
+[covariance]
+estimate_seconds = [10.0, 60.0]           # plug-in covariance from 2 x bandwidth x T independent samples
+shrinkage = "ledoit-wolf"
+
+[head_position]
+translation_mm = 5.0                      # +/- along each device axis
+pitch_deg = 5.0
+fit_clearance_mm = 20.0                   # 'well fitted': 18-mm Dewar spacing (HW-18mm) + 2 mm
+dewar_spacing_mm = 18.0
+
+[conditions]
+all = ["intrinsic", "intrinsic+brain", "intrinsic+brain+env", "projected"]
+headline = ["intrinsic+brain", "projected"]
+
+[convergence]
+subset_targets = 1000

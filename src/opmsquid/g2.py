@@ -133,25 +133,31 @@ def gains(array: Array, subject, cortex, points: np.ndarray, fullres_job: str | 
     matrix if one exists for this array, else computed (cached) with the BEM. A full-resolution
     matrix is used only after ``n_check`` of its columns agree with a direct computation for
     this array (so a stale or mismatched matrix is never picked up silently)."""
-    if fullres_job is not None:
-        f = paths.CACHE / "fullres" / f"{fullres_job}.npy"
-        if f.exists():
-            valid_idx = np.load(paths.CACHE / "fullres" / "valid_index.npy")
-            col = np.full(cortex.n, -1)
-            col[valid_idx] = np.arange(len(valid_idx))
-            if np.any(col[points] < 0):
-                raise ValueError("points outside the valid full-resolution set")
-            full = np.load(f, mmap_mode="r")
-            chk = np.asarray(points)[np.linspace(0, len(points) - 1, n_check).astype(int)]
-            direct = forward.chunked_discrete_gain(array.info, subject.trans, cortex.rr[chk], cortex.nn[chk],
-                                                   subject.bem_model(conductivity), coil_def=opm.coil_def_file())
-            stored = np.asarray(full[:, col[chk]], dtype=np.float64)
-            if stored.shape != direct.shape or not np.allclose(stored, direct, rtol=1e-4, atol=1e-4 * np.abs(direct).max()):
-                raise ValueError(f"{fullres_job}.npy does not match array {array.name}")
-            return np.asarray(full[:, col[points]], dtype=np.float64)
+    if fullres_job is not None and (paths.CACHE / "fullres" / f"{fullres_job}.npy").exists():
+        full, col = fullres_matrix(array, subject, cortex, fullres_job, conductivity, n_check)
+        if np.any(col[points] < 0):
+            raise ValueError("points outside the valid full-resolution set")
+        return np.asarray(full[:, col[points]], dtype=np.float64)
     return forward.chunked_discrete_gain(array.info, subject.trans, cortex.rr[points], cortex.nn[points],
                                          subject.bem_model(conductivity), coil_def=opm.coil_def_file(),
                                          label=array.name).astype(np.float64)
+
+
+def fullres_matrix(array: Array, subject, cortex, job: str, conductivity=BEM_CONDUCTIVITY, n_check: int = 12):
+    """Memory-mapped full-resolution lead field (n_channels, n_valid) of ``array`` and the map from
+    global vertex index to its column (-1 if not valid), after checking ``n_check`` columns against
+    a direct computation for this array."""
+    full = np.load(paths.CACHE / "fullres" / f"{job}.npy", mmap_mode="r")
+    valid_idx = np.load(paths.CACHE / "fullres" / "valid_index.npy")
+    col = np.full(cortex.n, -1)
+    col[valid_idx] = np.arange(len(valid_idx))
+    chk = valid_idx[np.linspace(0, len(valid_idx) - 1, n_check).astype(int)]
+    direct = forward.chunked_discrete_gain(array.info, subject.trans, cortex.rr[chk], cortex.nn[chk],
+                                           subject.bem_model(conductivity), coil_def=opm.coil_def_file())
+    stored = np.asarray(full[:, col[chk]], dtype=np.float64)
+    if stored.shape != direct.shape or not np.allclose(stored, direct, rtol=1e-4, atol=1e-4 * np.abs(direct).max()):
+        raise ValueError(f"{job}.npy does not match array {array.name}")
+    return full, col
 
 
 FULLRES_JOBS = {"squid": "neuromag_bem006", "opm99": "opm_bem006", "opm204": "opm204_bem006", "opm_dense": "opm_dense_bem006"}

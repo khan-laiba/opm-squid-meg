@@ -59,8 +59,20 @@ def _save(key: str, gain: np.ndarray, meta: dict) -> None:
     tmp.replace(f)
 
 
+_SOLUTIONS: dict = {}
+
+
 def _solution(bem_surfaces: list):
-    return mne.make_bem_solution(bem_surfaces, verbose=False)
+    """BEM solution, memoised in-process by surface ids, conductivities and geometry."""
+    h = hashlib.sha1()
+    for s in bem_surfaces:
+        _hash_update(h, int(s["id"]), float(s["sigma"]), s["rr"], s["tris"])
+    key = h.hexdigest()
+    if key not in _SOLUTIONS:
+        if len(_SOLUTIONS) >= 4:
+            _SOLUTIONS.pop(next(iter(_SOLUTIONS)))
+        _SOLUTIONS[key] = mne.make_bem_solution(bem_surfaces, verbose=False)
+    return _SOLUTIONS[key]
 
 
 def fixed_gain(info: mne.Info, trans, src: mne.SourceSpaces, bem_surfaces: list,
