@@ -94,10 +94,14 @@ def figure4(d, b_opm, b_sq, sigma_sq) -> list[str]:
     ax.plot(etas, grid, color="0.6", lw=2.5, label="paper grid rule (b/100 steps)")
     ax.plot(etas, exact, "k-", lw=1.2, label="exact root of Eq. 3")
     eta0, eta1 = sphere.centre_limit_ratio(H, 0.0, XI), sphere.signal_ratio(H - B)[0]
+    # OPM ahead above the curve (shallower than d_eq); everywhere for eta < eta0; nowhere for eta > eta1
+    shade_to = np.where(etas < eta0, H * 1e3, np.where(np.isfinite(exact), exact, (H - B) * 1e3))
+    ax.fill_between(etas, (H - B) * 1e3, shade_to, color="tab:blue", alpha=0.12, lw=0, label="OPM SNR > SQUID SNR")
     for e, lab in ((eta0, "η0"), (eta1, "η1")):
         ax.axvline(e, color="k", ls=":", lw=0.8)
-        ax.text(e + 0.06, 45 if lab == "η0" else 32, f"{lab} = {e:.4f}\n(printed {1.7 if lab == 'η0' else 5.3})",
-                fontsize=7)
+        top = lab == "η0"  # eta0 label in the empty band above the brain surface, eta1 beyond the curve
+        ax.text(e + 0.06, 8 if top else 32, f"{lab} = {e:.4f} (printed 1.7)" if top else f"{lab} = {e:.4f}\n(printed 5.3)",
+                fontsize=7, va="center")
     ax.axhline((H - B) * 1e3, color="k", ls="-.", lw=0.8)
     ax.set_ylim(95, 0)
     ax.set_xlim(0.8, 6.3)
