@@ -20,6 +20,7 @@ Configuration: configs/g2_adult.toml. Outputs: results/g2/.
 from __future__ import annotations
 
 import csv
+import pickle
 import sys
 import time
 import tomllib
@@ -39,6 +40,7 @@ from opmsquid import (anatomy, background, forward, g2, goldenholz, io, metrics,
                       noisemodel, opm, paths, plotting)
 
 OUT = ROOT / "results" / "g2"
+STATE = ROOT / "cache" / "g2" / "state.pkl"
 OPMS = ("opm99", "opm204", "opm_dense")
 REFS = ("combined", "grad", "mag")
 LABEL = {"squid": "Neuromag", "opm99": "OPM matched (99)", "opm204": "OPM 204", "opm_dense": "OPM dense (216)",
@@ -251,7 +253,7 @@ def main():
                    for name, rr in res.items() for (cs, cond), r in rr.items() for lab in n_est}
 
     # raw amplitudes (T, T/m) and absolute detectability vs depth
-    depth, orient, lobe = st.src.depth_mm, st.src.orientation_deg, st.src.lobe
+    depth, lobe = st.src.depth_mm, st.src.lobe
     amp = {"squid_mag": np.abs(G_t["squid"][squid.kinds == "mag"] * st.q).max(axis=0),
            "squid_grad": np.abs(G_t["squid"][squid.kinds == "grad"] * st.q).max(axis=0)}
     for a in OPMS:
@@ -261,6 +263,7 @@ def main():
                     for n, r in res.items() for (cs, cond) in r}
     ratio_vs_depth = {f"{a}/{ref}/{cond}": binned(np.log2(detect_of(res, a, None, cond) / detect_of(res, "squid", ref, cond)), depth, DEPTH_EDGES)
                       for a in OPMS for ref in REFS for cond in conds}
+    bridge = bridge_to_sphere(st, amp, depth, geometry_distances(st, arrays))
     by_lobe = {}
     for a in OPMS:
         for ref in REFS:
@@ -335,23 +338,91 @@ def main():
     conv = convergence(st, arrays, G_t, G_g, noise_nom, res, brain_scale, target_var, grads, env, headline, cfg)
     log("convergence done")
 
-    # --- outputs -------------------------------------------------------------------------------
-    figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, headline, conds)
-    write_targets_csv(st, res, amp, conds)
+    # --- outputs (checkpointed: `--replot` redraws figures and rewrites outputs without recomputing)
+    patches.pop("_det", None)
     summary = dict(
         status="NEW (realistic adult OPM vs Neuromag comparison, MNE sample subject)",
         config=cfg, arrays=geometry, head_positions=head_positions, n_targets=st.nt, n_background_grid=int(len(st.src.grid)),
         enbw_hz=st.enbw, n_estimate_samples=n_est, noise_validation=validation, noise_composition=comp, retained_rank=ranks,
         primary=primary, plugin_over_oracle_median=plugin_loss, amplitude_vs_depth=amp_vs_depth, detectability_vs_depth=snr_vs_depth,
-        log2_ratio_vs_depth=ratio_vs_depth, by_lobe=by_lobe, patches=patches, sensitivity=sens, convergence=conv,
+        log2_ratio_vs_depth=ratio_vs_depth, by_lobe=by_lobe, bridge_to_sphere=bridge, patches=patches, sensitivity=sens, convergence=conv,
         runtime_s=time.time() - t_start,
         notes=["Bootstrap CIs resample cortical target locations of one anatomy; they do not include model or between-subject "
                "uncertainty, which the sensitivity analyses bound.",
                "Head-position variants move the head in the fixed Neuromag helmet; the room field is kept in head coordinates "
                "(8-term model; the change over a 5-mm move is second order).",
                "Detectability is a known-topography matched-filter SNR, not an event detection rate or localization accuracy."])
-    io.write_json(summary, OUT / "g2_summary.json")
+    state = dict(summary=summary, arrays=arrays, res=res, amp=amp)
+    STATE.parent.mkdir(parents=True, exist_ok=True)
+    with open(STATE, "wb") as fh:
+        pickle.dump(state, fh)
+    outputs(st, state)
     log(f"done in {time.time() - t_start:.0f} s")
+
+
+def outputs(st, state):
+    s = state["summary"]
+    cfg = s["config"]
+    figures(st, state["arrays"], state["res"], state["amp"], st.src.depth_mm, st.src.orientation_deg, st.src.lobe, s["patches"],
+            s["sensitivity"], s["primary"], cfg["conditions"]["headline"], cfg["conditions"]["all"], s["bridge_to_sphere"])
+    write_targets_csv(st, state["res"], state["amp"], cfg["conditions"]["all"])
+    io.write_json(s, OUT / "g2_summary.json")
+
+
+# ----------------------------------------------------------------------------------------------
+def geometry_distances(st, arrays):
+    """Scalp-to-sensor distances [m]: Neuromag magnetometer coils (Euclidean to the nearest scalp
+    point) and OPM sensing centres, head frame."""
+    from scipy.spatial import cKDTree
+
+    mri_head = np.linalg.inv(st.subject.trans["trans"])
+    tree = cKDTree(st.subject.scalp.rr @ mri_head[:3, :3].T + mri_head[:3, 3])
+    out = {}
+    for name, a in arrays.items():
+        pos = np.array([c["loc"][:3] for c in a.info["chs"]])
+        if name == "squid":
+            t = a.info["dev_head_t"]["trans"]
+            pos = (pos @ t[:3, :3].T + t[:3, 3])[a.kinds == "mag"]
+        out[name] = tree.query(pos)[0]
+    return out
+
+
+def bridge_to_sphere(st, amp, depth, dist):
+    """Realistic vs idealized benchmark. In the sphere (Jas Eq. 1-3) the OPM/SQUID peak-field ratio
+    falls with depth and the equal-SNR depth solves ratio = eta. The realistic analogue is the
+    median over targets of max|B_OPM| / max|B_mag| (10-nAm cortical-normal dipoles, 3-layer BEM,
+    real sensor positions and orientations), and d_eq(eta) is where that median crosses eta
+    (intrinsic white noise only, peak-channel SNR, as in the benchmark)."""
+    from opmsquid import sphere
+
+    centers = 0.5 * (DEPTH_EDGES[:-1] + DEPTH_EDGES[1:])
+    out = dict(sensor_distance_mm={k: dict(median=float(np.median(v) * 1e3), p5=float(np.percentile(v, 5) * 1e3),
+                                           p95=float(np.percentile(v, 95) * 1e3)) for k, v in dist.items()})
+    xi_sq = float(np.median(dist["squid"]))
+    etas = np.round(np.arange(1.0, 6.01, 0.25), 2)
+    sph = {"jas_xi0_18": (0.0, 0.018), "realistic_standoffs": (float(np.median(dist["opm99"])), xi_sq)}
+    out["sphere_ratio_vs_depth"] = {k: [float(x) for x in sphere.signal_ratio(centers * 1e-3, 0.095, *xi)] for k, xi in sph.items()}
+    out["sphere_d_eq_mm"] = {k: {f"{e:g}": float(sphere.equal_snr_depth(e, 0.095, 0.080, *xi) * 1e3) for e in etas} for k, xi in sph.items()}
+    out["depth_centers_mm"] = centers.tolist()
+    for a in OPMS:
+        ratio = amp[a] / amp["squid_mag"]
+        b = binned(ratio, depth, DEPTH_EDGES)
+        med = np.array([x["median"] if x["median"] is not None else np.nan for x in b], float)
+        out[f"{a}_ratio_vs_depth"] = b
+        d_eq = {}
+        for e in etas:  # first depth where the median ratio falls below eta (linear interpolation)
+            ok = np.isfinite(med)
+            c, m = centers[ok], med[ok]
+            below = np.flatnonzero(m < e)
+            if len(below) == 0:
+                d_eq[f"{e:g}"] = None  # OPM ahead at every depth bin
+            elif below[0] == 0:
+                d_eq[f"{e:g}"] = 0.0  # SQUID ahead already in the shallowest bin
+            else:
+                i = below[0]
+                d_eq[f"{e:g}"] = float(np.interp(e, [m[i], m[i - 1]], [c[i], c[i - 1]]))
+        out[f"{a}_d_eq_mm"] = d_eq
+    return out
 
 
 # ----------------------------------------------------------------------------------------------
@@ -531,7 +602,7 @@ def write_targets_csv(st, res, amp, conds):
                          st.src.lobe[i]] + [f"{amp[k][i]:.4e}" for k in amp] + [f"{res[n][(cs, cond)]['detect'][i]:.4f}" for n, cs, cond in cols])
 
 
-def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, headline, conds):
+def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, headline, conds, bridge):
     # 1. amplitude and detectability vs depth
     fig, axs = plt.subplots(1, 3, figsize=(15, 4.6))
     centers = 0.5 * (DEPTH_EDGES[:-1] + DEPTH_EDGES[1:])
@@ -569,6 +640,39 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
     fig.suptitle("G2 (NEW): signal and detectability vs depth (median and IQR over cortical targets; OPM 15 fT/sqrt(Hz))", fontsize=10)
     fig.tight_layout()
     fig.savefig(OUT / "Figure_G2_depth.png", dpi=150)
+    plt.close(fig)
+
+    # 1b. bridge to the idealized sphere benchmark (G1A)
+    fig, axs = plt.subplots(1, 2, figsize=(12, 4.6))
+    c = np.array(bridge["depth_centers_mm"])
+    for k, lab, ls in (("jas_xi0_18", "sphere, standoffs 0 / 18 mm (Jas)", "--"),
+                       ("realistic_standoffs", "sphere, median real standoffs", ":")):
+        axs[0].plot(c, bridge["sphere_ratio_vs_depth"][k], ls, color="k", label=lab)
+    for a in ("opm99", "opm_dense"):
+        b = bridge[f"{a}_ratio_vs_depth"]
+        med = np.array([x["median"] if x["median"] is not None else np.nan for x in b], float)
+        lo = np.array([x["q25"] if x["q25"] is not None else np.nan for x in b], float)
+        hi = np.array([x["q75"] if x["q75"] is not None else np.nan for x in b], float)
+        axs[0].plot(c, med, "-", color=colors[a], label=f"{LABEL[a]} / Neuromag mag (median, IQR)")
+        axs[0].fill_between(c, lo, hi, color=colors[a], alpha=0.15)
+    axs[0].set_yscale("log")
+    axs[0].set_xlabel("depth below scalp [mm]")
+    axs[0].set_ylabel("peak |B| ratio OPM / SQUID magnetometer")
+    axs[0].legend(fontsize=7)
+    axs[0].set_title("signal ratio vs depth (equal-SNR where it equals eta)", fontsize=9)
+    etas = [float(e) for e in bridge["sphere_d_eq_mm"]["jas_xi0_18"]]
+    for k, ls in (("jas_xi0_18", "--"), ("realistic_standoffs", ":")):
+        axs[1].plot(etas, [bridge["sphere_d_eq_mm"][k][f"{e:g}"] for e in etas], ls, color="k", label=k.replace("_", " "))
+    for a in ("opm99", "opm_dense"):
+        y = [bridge[f"{a}_d_eq_mm"][f"{e:g}"] for e in etas]
+        axs[1].plot(etas, [np.nan if v is None else v for v in y], "o-", ms=3, color=colors[a], label=LABEL[a])
+    axs[1].set_xlabel("eta = sigma_OPM / sigma_SQUID-mag (intrinsic noise only)")
+    axs[1].set_ylabel("equal-SNR depth [mm]")
+    axs[1].legend(fontsize=7)
+    axs[1].set_title("equal peak-channel SNR depth: sphere vs realistic head", fontsize=9)
+    fig.suptitle("G2 bridge to the idealized benchmark (G1A): same metric, realistic geometry", fontsize=10)
+    fig.tight_layout()
+    fig.savefig(OUT / "Figure_G2_bridge.png", dpi=150)
     plt.close(fig)
 
     # 2. depth-orientation heatmaps of log2 detectability ratios
@@ -676,4 +780,11 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
 
 
 if __name__ == "__main__":
-    main()
+    if "--replot" in sys.argv:
+        with open(STATE, "rb") as fh:
+            saved = pickle.load(fh)
+        mne.set_log_level("WARNING")
+        OUT.mkdir(parents=True, exist_ok=True)
+        outputs(Study(saved["summary"]["config"]), saved)
+    else:
+        main()
