@@ -19,7 +19,7 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G2 realistic adult OPM vs Neuromag | NEW | done, independently reviewed; frozen as `adult-baseline-v1` |
 | G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B needs pediatric anatomy |
 | G4 epilepsy detection and localization | NEW | adult done; pediatric waits for G3 |
-| G5 software, reproduction, report | - | in progress (tests, `scripts/run_all.sh`; local report pending) |
+| G5 software, reproduction, report | - | in progress (tests, `scripts/run_all.sh`, local report; clean-environment smoke test pending) |
 
 Adult findings so far, conditional on one adult head (MNE sample subject), an assumed OPM noise
 of 15 fT/sqrt(Hz), OPM sensors with no gap to the scalp and Neuromag at its measured (not best)
@@ -49,7 +49,8 @@ data or details are unavailable; NEW = new experiment or study choice.
 | `src/opmsquid/` | package: sphere model, sensors (Neuromag, OPM), anatomy, forward models (cached), noise, metrics, background, environment, paper-specific modules (`hunold`, `goldenholz`), G2 comparison |
 | `scripts/` | one driver per milestone (`g1a_*`, `g1b_*`, `g1c_*`, `g2_*`, `g3a_*`, `g4_*`), full-resolution forward jobs, Fig. 6 digitiser, `run_all.sh` |
 | `configs/` | paper and study configurations, every value tagged as printed, chosen or digitised |
-| `tests/` | `unittest` suite (physics, units, metrics, geometry, noise) |
+| `tests/` | `unittest` suite (physics, units, metrics, geometry, noise, statistics, report builder) |
+| `site/` | templates and style of the local report (`scripts/build_site.py`; output in `site/_build/`, not committed) |
 | `results/` | figures, CSV and JSON per milestone (JSON records the code commit and versions) |
 | `docs/` | methods, provenance register, audit, structured literature extractions |
 | `legacy/` | earlier Fig. 3 replication work, kept unchanged |
@@ -67,6 +68,16 @@ Each driver writes `results/<milestone>/` and records the code commit it ran in 
 
 The sample data must end up in `data/external/MNE-sample-data` (`src/opmsquid/paths.py`;
 override with `OPMSQUID_DATA`). Caches go to `cache/` (`OPMSQUID_CACHE`).
+
+## Local report
+
+`.venv/bin/python scripts/build_site.py` builds a static report into `site/_build/` (git-ignored;
+open `site/_build/index.html`) from the committed result files, in the order the goal asks for:
+adult benchmarks, realistic adult results, pediatric extension, epilepsy, then methods,
+parameters and reproduction. Every number is read from `results/`; the downloads list each file's
+size, SHA-256 and the code commit recorded in it; the build fails on any broken link. Nothing is
+deployed: repository visibility and GitHub Pages stay unchanged until the owner approves a
+release (release-ready and publicly deployed are separate statuses).
 
 ## Data and privacy
 

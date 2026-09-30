@@ -19,3 +19,4 @@ $PY scripts/g4_epilepsy_adult.py                         # G4   IED detection, a
 $PY scripts/g4_localization.py                           # G4   bounded localization, adult
 # after the adult baseline (adult-baseline-v1):
 $PY scripts/g3a_jas_size_benchmark.py                    # G3A  Jas Table 1 / Fig. 5 (REPRO)
+$PY scripts/build_site.py                                # G5   local report in site/_build (not deployed)
