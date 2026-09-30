@@ -1,0 +1,36 @@
+{
+  "sigma_opm_pT": 1.0637353192284051,
+  "sigma_squid_pT": 0.3545784397428018,
+  "d_eq_grid_mm": 27.53012048192771,
+  "d_eq_exact_mm": 27.66502451908113,
+  "dtheta_deg": 0.05,
+  "max_rel_err_forward": 5.920706072037793e-08,
+  "max_rel_err_peak": 9.875944061414911e-08,
+  "max_lobe_asymmetry": 3.5935724584151696e-08,
+  "eta": 3.0,
+  "head_radius_mm": 95.0,
+  "brain_radius_mm": 80.0,
+  "xi_squid_mm": 18.0,
+  "dipole_nAm": 30.0,
+  "n_curve_samples": 100,
+  "noise_reference_radius_mm": 64.0,
+  "deq_marker": "published",
+  "raster_registration_png": true,
+  "signal_at_brain_surface_pT": {
+    "OPM": 4.700750480790908,
+    "SQUID": 0.8855026728724623
+  },
+  "snr_at_brain_surface": {
+    "OPM": 4.419097867503977,
+    "SQUID": 2.4973393010437226
+  },
+  "font": "Myriad Pro (/Applications/Adobe Acrobat DC/Adobe Acrobat.app/Contents/Resources/Resource/Font)",
+  "mne_version": "1.13.2",
+  "matplotlib_version": "3.11.2",
+  "outputs": {
+    "png": "/Volumes/T9/OPM_SQUID Claude/results/g1a/fig3/Figure3_replicated.png",
+    "pdf": "/Volumes/T9/OPM_SQUID Claude/results/g1a/fig3/Figure3_replicated.pdf",
+    "svg": "/Volumes/T9/OPM_SQUID Claude/results/g1a/fig3/Figure3_replicated.svg"
+  },
+  "d_eq_paper_caption_mm": 28.0
+}

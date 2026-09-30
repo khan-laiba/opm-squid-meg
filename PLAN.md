@@ -14,7 +14,7 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | Milestone | Status | Evidence |
 |---|---|---|
 | G0 audit, provenance, plan | in progress | this file; `docs/audit.md`; `docs/literature/` |
-| G1A Jas analytical benchmark | not started (Fig. 3 already reproduced in `legacy/`) | |
+| G1A Jas analytical benchmark | done (awaiting independent review) | `scripts/g1a_jas_benchmark.py` -> `results/g1a/`; Eq. 1 vs Sarvas 2-D maximum 4.7e-15, vs MNE sphere 5.4e-8; d_eq(eta 3) = 27.665 mm |
 | G1B Hunold depth-orientation spikes | not started | |
 | G1C Goldenholz cortical SNR maps | not started | |
 | G2 realistic adult OPM-Neuromag comparison | not started | |
@@ -45,7 +45,7 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | Neuromag 3-D geometry, `dev_head_t`, head-MRI trans | G2 | MNE sample data (MGH Vectorview: 204 grads coil 3012 T1, 102 mags coil 3024 T3) |
 | Measured SQUID noise | G2 measured-noise scenario | MNE sample `ernoise_raw.fif` (empty room) and baseline covariance |
 | Adult anatomy | G1B, G1C, G2 | MNE `sample` subject (3-layer BEM surfaces, oct-6 source space); fsaverage (sibling folder, read-only) |
-| School-aged anatomy (FreeSurfer surfaces, BEM surfaces, scalp) | G3 | **missing**. FreeSurfer is not installed; MNE only packages infant templates (up to 2 years). Owner decision needed at G3. |
+| School-aged anatomy (FreeSurfer surfaces, BEM surfaces, scalp) | G3 | **missing**. FreeSurfer is not installed; MNE only packages infant templates (up to 2 years, Neurodevelopmental MRI Database via `mne.datasets.fetch_infant_template`). Candidate routes (owner decision + download approval at G3): (a) age-specific average templates of the Neurodevelopmental MRI Database (registration required); (b) an OpenNeuro school-aged dataset that ships FreeSurfer outputs (e.g. fMRIPrep `sourcedata/freesurfer`); (c) the 2-year infant template as an additional young-child anatomy; (d) scaled adult surfaces as a labelled size-only control only. |
 | Original Hunold/Goldenholz participant data and recordings | exact reproduction | unavailable; G1B and G1C are adaptations |
 | Jas SEF recordings | experimental validation | unavailable; used as context only |
 

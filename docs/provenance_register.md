@@ -24,8 +24,12 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | J-eta | Relative RMS noise ratio sigma_OPM / sigma_SQUID | 1-6 (3 in Fig. 3) | paper | verified | G1A |
 | J-eq1 | Peak radial field of a tangential dipole (Eq. 1) | closed form, see `opmsquid.sphere.bmax_radial` | paper Eq. 1 | verified vs independent Sarvas maximum (< 1e-8) | G1A |
 | J-deq | Equal-SNR depth at eta = 3 | 27.665 mm (paper: "approximately 28 mm") | Eq. 3, computed | verified | G1A |
-| J-opm-standoff | OPM sensing-centre distance from the helmet inner surface | ~7 mm | paper p. 10 (as stated in GOAL.md) | transcribed | G2 (A-OPM-STANDOFF) |
-| J-opm-cell | OPM vapour-cell size | 10-mm cube | paper p. 10 (as stated in GOAL.md) | transcribed | G2 (A-OPM-CELL) |
+| J-opm-standoff | OPM sensing-centre distance from the helmet inner surface | ~7 mm (2-mm helmet shell + half of a 10-mm cell) | paper p. 10 | verified (extraction) | G2 (A-OPM-STANDOFF) |
+| J-opm-cell | OPM vapour-cell size | 10-mm cube, FieldLine Gen2, single axis, normal component | paper p. 10 | verified (extraction) | G2 (A-OPM-CELL) |
+| J-table1 | Head models (h, b) | newborn (55, 48), 1 y (70, 62), 8 y (85, 73), adult (95, 80) mm | paper Table 1, p. 7 | verified (extraction) | G3 size benchmark |
+| J-noise-lit | Literature intrinsic noise | SQUID 2-5 fT/sqrt(Hz), OPM 7-30 fT/sqrt(Hz) (Brookes et al. 2022) | paper p. 4 | verified (extraction) | A-OPM-NOISE sweep range |
+| J-eta-meas | Measured noise ratio (not stated) | ~4.6 (Fig. 8B, sigma_OPM / sigma_SQUID at the closest runs) | derived from the figure | derived | context |
+| J-toy | Toy experiment (Fig. 6) | target r_Q = 0.6 b; noise dipoles 0.4 b and 0.8 b; all 30 nAm +y; SNR = ratio of peak fields; xi 0-60 mm | pp. 9, 16-17 | reproduced (G1A) | G1A |
 
 ## Recovered from the published Fig. 3 raster (legacy replica)
 
@@ -66,4 +70,11 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | ID | Item | Handling |
 |---|---|---|
 | U-J1 | Jas Fig. 3 d_eq marker at 27.53 mm vs Eq. 3 root 27.665 mm vs "28 mm" in the text | Both values reported; exact root used in analyses. |
+| U-J2 | Fig. 4B d_eq printed 34 mm, drawn ~35.0 mm, exact 35.67 mm; Fig. 4C printed 19 mm, drawn ~19.8, exact 19.82 | Exact roots used; printed and drawn values listed in `results/g1a/g1a_benchmark.json`. |
+| U-J3 | eta0 / eta1 printed 1.7 / 5.3; exact 1.6829 / 5.3086 (a deep crossing exists for 1.683 < eta < 1.7) | Exact values used. |
+| U-J4 | Fig. 5B "normalized d_eq" = (d_eq - (h - b))/b (depth below the brain surface as a fraction of b), not d_eq/b; text speaks of brain *volume* | G3 reproduces the radial fraction as plotted and reports the true volume fraction separately (adult 40.4 %, newborn 87.2 % at eta = 3). |
+| U-J5 | Fig. 5 uses s = h + 18 mm for every head (size-following shell) | Reproduced as the "size-following, constant-standoff benchmark"; the fixed-helmet experiment is separate (G3). |
+| U-J6 | Fig. 6 depths: text 32/48/64 mm (these are r_Q = 0.4b/0.6b/0.8b) vs caption 63/47/31 mm; noise-dipole moments unstated (30 nAm reproduces the figure) | Caption values and 30 nAm used. |
+| U-J7 | sigma_N20 defined as trial SD (p. 12) vs "standard error of mean" (Fig. 8) | Experimental context only (no recordings available). |
+| U-J8 | Experimental OPM ~7 mm from the scalp (2-mm shell + half of a 10-mm FieldLine Gen2 cell) vs simulated OPM at xi = 0 | G1A keeps xi = 0 (paper model); G2 uses 7 mm (A-OPM-STANDOFF). |
 | U-HW1 | TRIUX specification image not available on disk | Values transcribed in GOAL.md used and flagged; to verify when the image is supplied. |
