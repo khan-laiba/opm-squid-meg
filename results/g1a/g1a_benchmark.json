@@ -170,9 +170,9 @@
     "results/g1a/Figure_G1A_toy_fig6.pdf",
     "results/g1a/g1a_curves.csv"
   ],
-  "runtime_s": 4.566151857376099,
+  "runtime_s": 4.436917066574097,
   "provenance": {
-    "commit": "6aed20d+dirty",
+    "commit": "d513070+dirty",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }
