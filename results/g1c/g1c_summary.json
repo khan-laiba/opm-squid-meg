@@ -1,0 +1,572 @@
+{
+  "status": "ADAPT (Goldenholz et al. 2009, MEG part, MNE sample subject); OPM rows NEW",
+  "config": {
+    "anatomy": {
+      "subject": "sample",
+      "signal_sources": "every white-surface vertex, cortical normal",
+      "exclude_outside_inner_skull": true
+    },
+    "head_model": {
+      "variants": {
+        "as_printed": [
+          0.3,
+          0.06,
+          0.3
+        ],
+        "probable_default": [
+          0.3,
+          0.006,
+          0.3
+        ]
+      },
+      "bem_triangles_per_surface": 5120
+    },
+    "sensors": {
+      "system": "Neuromag Vectorview geometry of the MNE sample recording, T3 coils, MNE accurate integration",
+      "channel_sets": [
+        "mag (N = 102)",
+        "grad (N = 203)",
+        "pooled MEG (N = 305)"
+      ],
+      "exclude": "channels marked bad in the recording (MEG 2443: baseline RMS 23x the gradiometer median)"
+    },
+    "sources": {
+      "focal_nAm": 10.0,
+      "patch_radii_mm": [
+        10.0,
+        16.0
+      ],
+      "patch_density_pAm_per_mm2": 50.0,
+      "patch_geodesic": "Dijkstra along full-resolution white-mesh edges",
+      "patch_centroids": "oct-6 vertices of the sample source space",
+      "patch_elements": "every full-resolution vertex within the radius, moment = density x vertex area, signed sum of cortical-normal dipoles"
+    },
+    "noise_model": {
+      "sources": "independent, cortex-normal, Poisson-disk grid with 7 mm minimum spacing on the white surface",
+      "calibration": "s_s^2 = channel-count-weighted mean over sensor types of median_k(recorded_var_k / (A A^T)_kk)",
+      "sensor_noise": "none"
+    },
+    "recorded_noise": {
+      "data": "pre-stimulus baselines (-200 to 0 ms) of sample_audvis_raw.fif, sample SSP (3 empty-room PCA vectors) applied",
+      "band_hz": [
+        0.5,
+        100.0
+      ],
+      "filter": "Butterworth order 4, zero phase",
+      "statistic": "per-channel variance (diagonal only)",
+      "ssp_on_gains": true
+    },
+    "snr": {
+      "equation": "SNR = 10 log10[(a^2/N) sum_k b_k^2 / s_k^2]"
+    }
+  },
+  "n_valid_vertices": 311994,
+  "n_noise_sources": 1838,
+  "n_centroids": 8193,
+  "channels": {
+    "mag": 102,
+    "grad": 203,
+    "pooled": 305,
+    "excluded": [
+      "MEG 2443"
+    ]
+  },
+  "recorded_noise": {
+    "n_samples": 38357,
+    "ssp_rank": 3
+  },
+  "conductivity_runs": {
+    "probable_default": {
+      "source_sd_nAm": 2.6271177421319267,
+      "per_type_median_nAm2": {
+        "grad": 7.48817920995456e-18,
+        "mag": 5.7346338023691325e-18
+      }
+    },
+    "as_printed": {
+      "source_sd_nAm": 2.5243290129946585,
+      "per_type_median_nAm2": {
+        "grad": 6.926307153617866e-18,
+        "mag": 5.269528650968456e-18
+      }
+    }
+  },
+  "distributions": {
+    "focal/model/mag": {
+      "median_db": -21.996250743982536,
+      "p5_db": -36.007396461281154,
+      "p95_db": -16.280387491000216,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.34696991999773186,
+        "p95_abs": 3.4274603943380066,
+        "max_abs": 20.382473929289812
+      }
+    },
+    "patch10/model/mag": {
+      "median_db": -27.28687731115045,
+      "p5_db": -38.915539657011465,
+      "p95_db": -18.703181919054142,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.3458175172628337,
+        "p95_abs": 3.7696861783673903,
+        "max_abs": 14.136253273154999
+      }
+    },
+    "patch16/model/mag": {
+      "median_db": -22.28108017073548,
+      "p5_db": -32.76718712782726,
+      "p95_db": -14.685826678006139,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.36978923294391564,
+        "p95_abs": 4.091570424388901,
+        "max_abs": 16.38730477959441
+      }
+    },
+    "focal/model/grad": {
+      "median_db": -21.963817129377468,
+      "p5_db": -34.751868613677715,
+      "p95_db": -16.433236595791467,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.43328454461914223,
+        "p95_abs": 3.762279150780642,
+        "max_abs": 23.367037969248116
+      }
+    },
+    "patch10/model/grad": {
+      "median_db": -27.217332202684883,
+      "p5_db": -38.02763585389163,
+      "p95_db": -19.10990008549489,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.46135922008820884,
+        "p95_abs": 4.093918118600709,
+        "max_abs": 12.00151611977818
+      }
+    },
+    "patch16/model/grad": {
+      "median_db": -22.136182904403682,
+      "p5_db": -31.68833676331757,
+      "p95_db": -15.013053957099403,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.48622072000398475,
+        "p95_abs": 4.226781784165232,
+        "max_abs": 14.181497621548544
+      }
+    },
+    "focal/model/pooled": {
+      "median_db": -21.9376515553689,
+      "p5_db": -35.025428597181744,
+      "p95_db": -16.415696622546676,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.4014215240773158,
+        "p95_abs": 3.591037056580035,
+        "max_abs": 22.713378473265003
+      }
+    },
+    "patch10/model/pooled": {
+      "median_db": -27.192585709346034,
+      "p5_db": -38.226149137963006,
+      "p95_db": -19.00782268470267,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.42556605819466853,
+        "p95_abs": 3.9067062287379306,
+        "max_abs": 12.329000442986626
+      }
+    },
+    "patch16/model/pooled": {
+      "median_db": -22.18514924507525,
+      "p5_db": -31.98128586160846,
+      "p95_db": -14.983606194113113,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.45024608272366606,
+        "p95_abs": 4.142357502082173,
+        "max_abs": 14.642539639002255
+      }
+    },
+    "focal/recorded/mag": {
+      "median_db": -21.634339057071713,
+      "p5_db": -36.18445682139088,
+      "p95_db": -15.221851567771235,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.24081736787000096,
+        "p95_abs": 3.3606547303003746,
+        "max_abs": 20.750338029258586
+      }
+    },
+    "patch10/recorded/mag": {
+      "median_db": -26.776706795703824,
+      "p5_db": -38.93374519072181,
+      "p95_db": -17.850521957636694,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.23446414795769854,
+        "p95_abs": 3.7551243545185207,
+        "max_abs": 14.23478104406469
+      }
+    },
+    "patch16/recorded/mag": {
+      "median_db": -21.756903919287772,
+      "p5_db": -32.879280656954066,
+      "p95_db": -13.804953220862062,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.26116142478180393,
+        "p95_abs": 4.027985603696041,
+        "max_abs": 16.268401388853928
+      }
+    },
+    "focal/recorded/grad": {
+      "median_db": -22.67398475545471,
+      "p5_db": -35.92314961121855,
+      "p95_db": -16.589553447454257,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.3392580258476059,
+        "p95_abs": 3.6864154010928525,
+        "max_abs": 23.637934801784645
+      }
+    },
+    "patch10/recorded/grad": {
+      "median_db": -27.85638373032615,
+      "p5_db": -39.198805554810725,
+      "p95_db": -19.198638943532774,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.37468191093561387,
+        "p95_abs": 4.01837425642325,
+        "max_abs": 13.55977162231489
+      }
+    },
+    "patch16/recorded/grad": {
+      "median_db": -22.673229682363036,
+      "p5_db": -32.926313372044184,
+      "p95_db": -15.308280481528964,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.4070228911351741,
+        "p95_abs": 4.232446605294504,
+        "max_abs": 15.331009969777092
+      }
+    },
+    "focal/recorded/pooled": {
+      "median_db": -22.24883570425144,
+      "p5_db": -35.9199841213038,
+      "p95_db": -16.106067178476348,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.3021343797193632,
+        "p95_abs": 3.513715297388477,
+        "max_abs": 22.921042239468626
+      }
+    },
+    "patch10/recorded/pooled": {
+      "median_db": -27.45916514246148,
+      "p5_db": -39.0253507749996,
+      "p95_db": -18.717058413018574,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.32193078144888787,
+        "p95_abs": 3.9286376482042367,
+        "max_abs": 13.68811700033384
+      }
+    },
+    "patch16/recorded/pooled": {
+      "median_db": -22.336662945749932,
+      "p5_db": -32.89971426971693,
+      "p95_db": -14.818183097233835,
+      "skull_0p06_minus_0p006_db": {
+        "median": 0.35727427361202757,
+        "p95_abs": 4.150275318591526,
+        "max_abs": 15.621597390930567
+      }
+    },
+    "patch16_minus_patch10/model/mag": {
+      "median_db": 5.445827092274751,
+      "p5": -2.4508581863056036,
+      "p95": 11.054774614170725,
+      "flat_area_scaling_db": 8.164799306236992
+    },
+    "patch16_minus_patch10/model/grad": {
+      "median_db": 5.459492258029314,
+      "p5": -2.3148728416952764,
+      "p95": 10.975471201627022,
+      "flat_area_scaling_db": 8.164799306236992
+    },
+    "patch16_minus_patch10/model/pooled": {
+      "median_db": 5.444492284972373,
+      "p5": -2.322226121149007,
+      "p95": 10.958982101302636,
+      "flat_area_scaling_db": 8.164799306236992
+    },
+    "patch16_minus_patch10/recorded/mag": {
+      "median_db": 5.481945296246526,
+      "p5": -2.461669897691516,
+      "p95": 11.063371471171717,
+      "flat_area_scaling_db": 8.164799306236992
+    },
+    "patch16_minus_patch10/recorded/grad": {
+      "median_db": 5.476289258065446,
+      "p5": -2.33375183026123,
+      "p95": 11.031368339692552,
+      "flat_area_scaling_db": 8.164799306236992
+    },
+    "patch16_minus_patch10/recorded/pooled": {
+      "median_db": 5.474054911883307,
+      "p5": -2.3501522825649515,
+      "p95": 10.990426429845847,
+      "flat_area_scaling_db": 8.164799306236992
+    }
+  },
+  "comparison_with_paper": {
+    "source_sd_nAm": {
+      "probable_default": 2.6271177421319267,
+      "as_printed": 2.5243290129946585
+    },
+    "paper_source_sd_nAm": [
+      1.6,
+      1.9
+    ],
+    "source_sd_nAm_at_4000_sources": {
+      "probable_default": 1.7808293114320894,
+      "as_printed": 1.7111525022061904
+    },
+    "probable_default/focal/model/mag": {
+      "share_below_m29": 0.19945255357474823,
+      "share_m29_to_m19": 0.5295197984576626,
+      "share_above_m19": 0.2710276479675891,
+      "median_by_lobe": {
+        "frontal": -21.192990518568525,
+        "parietal": -19.437045857731476,
+        "temporal": -23.588575111324396,
+        "occipital": -20.666088013681076,
+        "cingulate": -31.558876051718954,
+        "insula": -29.900458999742064
+      }
+    },
+    "probable_default/patch16_minus_patch10/model/mag": {
+      "mesial_temporal_median_db": 5.941747494847849,
+      "n_mesial_temporal": 127,
+      "all_median_db": 5.445827092274751,
+      "by_lobe": {
+        "frontal": 5.0121286935811575,
+        "parietal": 4.661069161243161,
+        "temporal": 5.23752919088224,
+        "occipital": 5.2223706071693226,
+        "cingulate": 8.451015329054183,
+        "insula": 6.516542946739868
+      },
+      "paper_mesial_temporal_db": 10.0,
+      "nominal_area_scaling_db": 8.519374645445621
+    },
+    "probable_default/focal/model/grad": {
+      "share_below_m29": 0.18144259184471495,
+      "share_m29_to_m19": 0.5547254113861164,
+      "share_above_m19": 0.26383199676916863,
+      "median_by_lobe": {
+        "frontal": -21.410542234076786,
+        "parietal": -19.753597016876764,
+        "temporal": -22.660947110643097,
+        "occipital": -20.60885831737377,
+        "cingulate": -30.77403160333733,
+        "insula": -29.615319607708667
+      }
+    },
+    "probable_default/patch16_minus_patch10/model/grad": {
+      "mesial_temporal_median_db": 5.908835890037999,
+      "n_mesial_temporal": 127,
+      "all_median_db": 5.459492258029314,
+      "by_lobe": {
+        "frontal": 5.170508680629911,
+        "parietal": 4.566293606773223,
+        "temporal": 5.272964227132244,
+        "occipital": 5.038270544383456,
+        "cingulate": 8.534282687085335,
+        "insula": 6.685756734250255
+      },
+      "paper_mesial_temporal_db": 10.0,
+      "nominal_area_scaling_db": 8.519374645445621
+    },
+    "probable_default/focal/model/pooled": {
+      "share_below_m29": 0.18489137611620737,
+      "share_m29_to_m19": 0.547831048032975,
+      "share_above_m19": 0.26727757585081763,
+      "median_by_lobe": {
+        "frontal": -21.259702718342567,
+        "parietal": -19.640378931869204,
+        "temporal": -22.897928487413495,
+        "occipital": -20.601687835046114,
+        "cingulate": -30.964256624896425,
+        "insula": -29.68641214421607
+      }
+    },
+    "probable_default/patch16_minus_patch10/model/pooled": {
+      "mesial_temporal_median_db": 5.797934697412472,
+      "n_mesial_temporal": 127,
+      "all_median_db": 5.444492284972373,
+      "by_lobe": {
+        "frontal": 5.124016361723392,
+        "parietal": 4.599188451017481,
+        "temporal": 5.279193754079461,
+        "occipital": 5.108394286578923,
+        "cingulate": 8.558480673899279,
+        "insula": 6.582999165086072
+      },
+      "paper_mesial_temporal_db": 10.0,
+      "nominal_area_scaling_db": 8.519374645445621
+    },
+    "as_printed/focal/model/mag": {
+      "share_below_m29": 0.18654525407539888,
+      "share_m29_to_m19": 0.5074873234741694,
+      "share_above_m19": 0.30596742245043174,
+      "median_by_lobe": {
+        "frontal": -20.832363484069056,
+        "parietal": -19.178539574202492,
+        "temporal": -23.0455834675654,
+        "occipital": -20.26848995943088,
+        "cingulate": -31.039801325205225,
+        "insula": -29.359612520258942
+      }
+    },
+    "as_printed/patch16_minus_patch10/model/mag": {
+      "mesial_temporal_median_db": 5.1329380311807355,
+      "n_mesial_temporal": 127,
+      "all_median_db": 5.537314461385574,
+      "by_lobe": {
+        "frontal": 5.192048961661342,
+        "parietal": 4.671364017961512,
+        "temporal": 5.558836587049497,
+        "occipital": 5.237296642084255,
+        "cingulate": 8.411371134837779,
+        "insula": 6.515101895487188
+      },
+      "paper_mesial_temporal_db": 10.0,
+      "nominal_area_scaling_db": 8.519374645445621
+    },
+    "as_printed/focal/model/grad": {
+      "share_below_m29": 0.1626153067046161,
+      "share_m29_to_m19": 0.535487861946063,
+      "share_above_m19": 0.3018968313493208,
+      "median_by_lobe": {
+        "frontal": -20.875365947061724,
+        "parietal": -19.42254406921998,
+        "temporal": -22.405153308184556,
+        "occipital": -20.173756931069843,
+        "cingulate": -29.244070230462235,
+        "insula": -29.02286706416418
+      }
+    },
+    "as_printed/patch16_minus_patch10/model/grad": {
+      "mesial_temporal_median_db": 5.243209164978943,
+      "n_mesial_temporal": 127,
+      "all_median_db": 5.527453901996708,
+      "by_lobe": {
+        "frontal": 5.2386066448142365,
+        "parietal": 4.5895136555758285,
+        "temporal": 5.55859663682025,
+        "occipital": 4.968701629469045,
+        "cingulate": 8.51718566001629,
+        "insula": 6.465643734257004
+      },
+      "paper_mesial_temporal_db": 10.0,
+      "nominal_area_scaling_db": 8.519374645445621
+    },
+    "as_printed/focal/model/pooled": {
+      "share_below_m29": 0.1685481131047392,
+      "share_m29_to_m19": 0.5266415379782945,
+      "share_above_m19": 0.30481034891696634,
+      "median_by_lobe": {
+        "frontal": -20.799921189515594,
+        "parietal": -19.33232451119784,
+        "temporal": -22.586366885767788,
+        "occipital": -20.19962532032332,
+        "cingulate": -29.686589051444347,
+        "insula": -29.08486720931978
+      }
+    },
+    "as_printed/patch16_minus_patch10/model/pooled": {
+      "mesial_temporal_median_db": 5.198201747571172,
+      "n_mesial_temporal": 127,
+      "all_median_db": 5.528590223358229,
+      "by_lobe": {
+        "frontal": 5.24249665271903,
+        "parietal": 4.61001954103725,
+        "temporal": 5.557552283519804,
+        "occipital": 5.001575535485198,
+        "cingulate": 8.485076749060385,
+        "insula": 6.493054643182015
+      },
+      "paper_mesial_temporal_db": 10.0,
+      "nominal_area_scaling_db": 8.519374645445621
+    }
+  },
+  "extension_opm": {
+    "focal/opm": {
+      "median_db": -22.282107506594087,
+      "p5_db": -34.63934720454305,
+      "p95_db": -16.62223331663321
+    },
+    "patch10/opm": {
+      "median_db": -27.52467498576303,
+      "p5_db": -37.78985140943503,
+      "p95_db": -19.476859102682404
+    },
+    "patch16/opm": {
+      "median_db": -22.355988227002385,
+      "p5_db": -31.603795791101202,
+      "p95_db": -15.537330738998905
+    },
+    "focal/mag": {
+      "median_db": -22.14312088560933,
+      "p5_db": -36.16126043949716,
+      "p95_db": -16.428680360545574
+    },
+    "patch10/mag": {
+      "median_db": -27.438163240203224,
+      "p5_db": -39.07335904859907,
+      "p95_db": -18.845644621602144
+    },
+    "patch16/mag": {
+      "median_db": -22.423981057262758,
+      "p5_db": -32.904163376567375,
+      "p95_db": -14.83070583815166
+    },
+    "focal/grad": {
+      "median_db": -23.956084519562616,
+      "p5_db": -37.029061468406866,
+      "p95_db": -18.24851943221695
+    },
+    "patch10/grad": {
+      "median_db": -29.18722395443174,
+      "p5_db": -40.23322702107816,
+      "p95_db": -20.89089330380141
+    },
+    "patch16/grad": {
+      "median_db": -24.136009388005096,
+      "p5_db": -33.88310377235325,
+      "p95_db": -16.895920777561045
+    },
+    "focal/opm_minus_mag": {
+      "median_db": -0.06906463277339725,
+      "share_opm_better": 0.46868850041987986
+    },
+    "focal/opm_minus_grad": {
+      "median_db": 1.6775554482593211,
+      "share_opm_better": 0.9732783322756207
+    },
+    "patch10/opm_minus_mag": {
+      "median_db": -0.16201505661850746,
+      "share_opm_better": 0.4328084950567558
+    },
+    "patch10/opm_minus_grad": {
+      "median_db": 1.655537816840848,
+      "share_opm_better": 0.9786403026974246
+    },
+    "patch16/opm_minus_mag": {
+      "median_db": -0.14470624481685235,
+      "share_opm_better": 0.4446478701330404
+    },
+    "patch16/opm_minus_grad": {
+      "median_db": 1.6742073712727894,
+      "share_opm_better": 0.9835225192237276
+    }
+  },
+  "runtime_s": 14.199872016906738,
+  "note": "Magnetometer, gradiometer and pooled Eq. 1 values are kept separate; the paper reports only MEG (pooling unstated) vs EEG. D = SNR_MEG - SNR_EEG is out of scope (no EEG).",
+  "provenance": {
+    "commit": "9e1d245",
+    "mne_version": "1.13.2",
+    "numpy_version": "2.5.3"
+  }
+}
