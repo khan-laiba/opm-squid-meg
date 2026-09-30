@@ -41,11 +41,16 @@ def git_commit() -> str:
         return "unknown"
 
 
+# The code this process loaded: taken once at import, so a long run whose code is edited or committed
+# while it runs still records the commit it actually ran.
+RUN_COMMIT = git_commit()
+
+
 def write_json(obj: dict, path: Path) -> None:
     import mne
 
     obj = dict(obj)
-    obj.setdefault("provenance", dict(commit=git_commit(), mne_version=mne.__version__, numpy_version=np.__version__))
+    obj.setdefault("provenance", dict(commit=RUN_COMMIT, mne_version=mne.__version__, numpy_version=np.__version__))
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w") as fh:
         json.dump(json_safe(obj), fh, indent=2, allow_nan=False)
