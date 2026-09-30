@@ -29,3 +29,18 @@ hit_tolerance_s = 0.05
 operating_points_per_min = [1.0, 0.2]   # false events per minute (practical detector)
 oracle_alpha = 0.001                    # per-trial false-positive probability (oracle)
 arrays = ["squid/combined", "squid/grad", "squid/mag", "opm99/opm", "opm_dense/opm"]
+
+[localization]                   # bounded subset (scripts/g4_localization.py)
+arrays = ["squid", "opm99", "opm_dense"]
+n_locations = 24                 # 2 per depth x orientation stratum
+strengths_nAm = [80.0, 320.0]
+grid_spacing_mm = 5.0            # MNE/dSPM source grid (Poisson disk, excludes the true vertices: off-grid truth)
+coreg_shift_mm = 2.0             # bounded coregistration error in the inverse model
+coreg_angle_deg = 2.0
+inverse_bem = "1-layer inner skull (truth: 3-layer)"
+baseline_min = 5.0               # noise covariance for the inverse and the detector whitener
+calibration_min = 10.0           # detector thresholds (1 false event per minute)
+snr = 3.0                        # MNE lambda^2 = 1 / snr^2
+depth = 0.8
+ecd_min_gof_pct = 30.0           # ECD fits below this goodness of fit are counted as failed
+seed = 45
