@@ -6,6 +6,7 @@ __pycache__/
 .pytest_cache/
 .DS_Store
 .omc/
+.claude/
 
 # external data (MNE sample data, anatomy) and computed caches: never committed
 data/

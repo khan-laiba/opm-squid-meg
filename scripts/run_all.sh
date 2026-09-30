@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Reproduce every milestone in order (see README.md). Requires the MNE sample data in
-# data/external/MNE-sample-data. Full-resolution lead fields take ~3-10 min each; the whole run
-# takes roughly 1.5-2 h on a laptop. Each driver writes its outputs to results/<milestone>/ with the
-# code commit and package versions in its JSON.
+# data/external/MNE-sample-data. Full-resolution lead fields take ~6 min each; the whole run
+# takes roughly 2 h on a laptop (about 40 min of it for the lead fields). Each driver writes its
+# outputs to results/<milestone>/ with the code commit and package versions in its JSON.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 PY=.venv/bin/python

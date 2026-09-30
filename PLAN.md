@@ -13,13 +13,13 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 
 | Milestone | Status | Evidence |
 |---|---|---|
-| G0 audit, provenance, plan | done except the first push (private repository) | this file; `docs/audit.md`; `docs/literature/`; `docs/provenance_register.md` |
+| G0 audit, provenance, plan | done; private repository `khan-laiba/opm-squid-meg`, tag `g0` | this file; `docs/audit.md`; `docs/literature/`; `docs/provenance_register.md` |
 | G1A Jas analytical benchmark | done; independently reviewed (approve with notes; notes addressed) | `scripts/g1a_jas_benchmark.py` -> `results/g1a/`; Eq. 1 vs Sarvas 2-D maximum 4.7e-15, vs MNE sphere 5.4e-8; d_eq(eta 3) = 27.665 mm |
-| G1B Hunold depth-orientation spikes | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule and a realization-averaged Fig. 6 calibration | `scripts/g1b_hunold.py` -> `results/g1b/`; calibrated background (scalar 0.47; one realization alone 0.45-0.53), p2p: bin means 0.78-0.91x the paper (0.68-1.01x over the calibration range), noisy p2p 0.97-1.04x, r 0.91-0.97, 2.5-classification agreement 80-93 %, GM-MM sign agreement 100 % |
+| G1B Hunold depth-orientation spikes | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule and a realization-averaged Fig. 6 calibration | `scripts/g1b_hunold.py` -> `results/g1b/`; calibrated background (scalar 0.47; one realization alone 0.44-0.52), p2p: bin means 0.78-0.91x the paper (0.68-1.01x over the calibration range), noisy p2p 0.97-1.04x, r 0.91-0.97, 2.5-classification agreement 80-93 %, GM-MM sign agreement 100 % |
 | G1C Goldenholz cortical SNR maps | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.76 nAm at 4,000 sources (paper 1.6-1.9); focal median -22.1 dB, 56 % inside the paper's -29/-19 dB range; deep medial cortex darkest |
-| G2 realistic adult OPM-Neuromag comparison | done; independently reviewed (F1-F9 addressed: parcel bootstrap, joint noise x gap grid, OPM axes, 4-mm rule, array geometry); frozen as `adult-baseline-v1` | `scripts/g2_adult_comparison.py` -> `results/g2/` (`G2_report.md`); with brain noise the dense 215-site OPM array is 1.21x [1.19-1.23] Neuromag combined (1.05-1.36x for OPM noise 30-7 fT/sqrt(Hz), 0.95-1.21x jointly with a 0-6 mm scalp gap, 1.13x with a 1-layer BEM), the matched 98-site array 1.02x (a tie); 1.4-1.7x for sources within 20 mm of the scalp; without brain noise Neuromag wins (dense 0.77x) |
+| G2 realistic adult OPM-Neuromag comparison | done; independently reviewed (F1-F9 addressed: parcel bootstrap, joint noise x gap grid, OPM axes, 4-mm rule, array geometry); frozen as `adult-baseline-v1` | `scripts/g2_adult_comparison.py` -> `results/g2/` (`G2_report.md`); with brain noise the dense 215-site OPM array is 1.21x [1.19-1.23] Neuromag combined (1.05-1.36x for OPM noise 30-7 fT/sqrt(Hz), 0.95-1.21x jointly with a 0-6 mm scalp gap (the gap variants rebuild the dense array: 215-231 sites), 1.13x with a 1-layer BEM), the matched 98-site array 1.02x (a tie); 1.4-1.7x for sources within 20 mm of the scalp; without brain noise Neuromag wins (dense 0.77x) |
 | G3 pediatric extension | not started; needs pediatric anatomy (see Inputs) | |
-| G4 epilepsy detection and localization | adult done (detection; bounded localization); pediatric waits for G3 | `scripts/g4_epilepsy_adult.py`, `scripts/g4_localization.py` -> `results/g4/`; 50 % detection at 1 false event/min: dense OPM 32 vs Neuromag combined 49 nAm (10-20 mm), 205 vs 279 nAm (45-70 mm); dense better at every depth by location (sign-flip p <= 0.02), matched no different |
+| G4 epilepsy detection and localization | adult done (detection; bounded localization); pediatric waits for G3 | `scripts/g4_epilepsy_adult.py`, `scripts/g4_localization.py` -> `results/g4/`; 50 % detection at 1 false event/min: dense OPM 32 vs Neuromag combined 49 nAm (10-20 mm), 205 vs 279 nAm (45-70 mm); practical detector: dense better at every depth by location (sign-flip p <= 0.02; oracle: p = 0.16 at 30-45 mm), matched no different |
 | G5 repository, tests, report | private repository `khan-laiba/opm-squid-meg` (no Pages); unittest suite; `scripts/run_all.sh`; local report builder and clean-environment smoke test pending | |
 
 ## Decisions log
@@ -160,6 +160,22 @@ Modular package `src/opmsquid`, scripts per milestone, `configs/`, `tests/` (uni
 venv has no pytest), cached forward models keyed by input hashes, fixed seeds, resumable runs,
 clean-environment smoke test (needs a package download; ask first), local static report in
 `site/` (jinja2), never deployed without approval.
+
+## Known limitations of `adult-baseline-v1` (pre-freeze review; v2 work)
+
+1. Sensor-side near-mesh BEM error: OPM cell integration points within 1 mm of, or inside, the
+   BEM head surface at 43 dense / 15 matched sites (up to 72 % on single channels; headline
+   ratios change by <= 0.8 % with point sensors). Fix: a verified integration-point clearance
+   (or a refined head mesh) and a per-channel cell-vs-point convergence test; recompute the OPM
+   lead fields and rerun G1B, G1C, G2 and G4.
+2. Scalp-gap variants rebuild the arrays (215/223/231 dense sites): shift the primary sites
+   outward by the gap instead.
+3. G4 localization uses 2 of the 8 coregistration draws per condition: draw = location mod 8.
+4. Provenance: record the simulation commit in the G4 detection summary; check full-resolution
+   lead-field columns in G1B/G1C as G2 does.
+5. Array tests pin counts and bounds only: add a coordinate hash, the 6-mm MRI-scalp clearance,
+   gap variants and a cell-vs-point check.
+6. Medial-wall targets: 4 of the 72 G4 detection locations lie on the medial wall ('unknown').
 
 ## Open questions and risks
 

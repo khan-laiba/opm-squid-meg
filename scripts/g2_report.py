@@ -43,7 +43,12 @@ def main():
     v = d["noise_validation"]
     L = []
     L.append("# G2 report: realistic adult OPM vs Neuromag comparison (NEW)\n")
-    L.append(f"Generated from `results/g2/g2_summary.json` (code commit {d['provenance']['commit']}, MNE {d['provenance']['mne_version']}). "
+    prov = f"code commit {d['provenance']['commit']}"
+    if d.get("replotted_at_commit"):
+        prov += f", figures replotted at {d['replotted_at_commit']}"
+    if bands:
+        prov += f"; band supplement `g2_band_sensitivity.json` at {bands.get('provenance', {}).get('commit', '-')}"
+    L.append(f"Generated from `results/g2/g2_summary.json` ({prov}; MNE {d['provenance']['mne_version']}). "
              "Methods: `docs/methods.md` section 8; assumptions in `docs/provenance_register.md`. This is a proposed study; "
              "no author of the reproduced papers has reviewed it.\n")
     L.append("## Common setup\n")
@@ -96,7 +101,7 @@ def main():
                 f"{r:g} mm {2 ** pa[f'{name}/combined/intrinsic+brain/{r:g}mm']['median_log2']:.2f}x" for r in d["patches"]["radii_mm"]) + ".")
             s = d["sensitivity"]
             if name in ("opm_matched", "opm_dense") and "sensitivity_joint_asd_gap" in d:
-                L.append("- Joint OPM noise x scalp gap (vs combined, intrinsic+brain): " + "; ".join(
+                L.append("- Joint OPM noise x scalp gap (vs combined, intrinsic+brain; the arrays are rebuilt for each gap): " + "; ".join(
                     f"{k.replace('/', ', ')} {v[name]['ratio']:.2f}x" for k, v in d["sensitivity_joint_asd_gap"].items()) + ".")
             if "break_even_opm_asd_fT" in d:
                 L.append("- Intrinsic noise only, break-even OPM noise (ratio = 1): " + ", ".join(
@@ -122,8 +127,10 @@ def main():
     L.append("## Convergence\n")
     c = d["convergence"]
     L.append(f"- Background grid vs every usable vertex: median log2 ratios change by <= {c['background_grid_vs_fullres']['max_abs_change_log2']:.3f}.")
-    L.append(f"- BEM 5,120 vs 20,480 triangles (1 layer): <= {c['bem']['refinement_max_abs_change_log2']:.3f}; 3 vs 1 layer: "
-             f"<= {c['bem']['bem1_5120']['max_abs_change_log2']:.3f}.")
+    L.append(f"- BEM 5,120 vs 20,480 triangles (1 layer): <= {c['bem']['refinement_max_abs_change_log2']:.4f}; 3 vs 1 layer: "
+             f"<= {c['bem']['bem1_5120']['max_abs_change_log2']:.3f} (dense/combined "
+             f"{2 ** c['bem']['subset_reference_median_log2']['opm_dense/combined/intrinsic+brain']:.2f}x with 3 layers, "
+             f"{2 ** c['bem']['bem1_5120']['median_log2']['opm_dense/combined/intrinsic+brain']:.2f}x with 1 layer).")
     L.append(f"- Oct-6 vs random full-resolution targets: <= {c['target_sampling']['max_abs_change_log2']:.3f}; Neuromag 4-point vs "
              f"accurate integration: {100 * c['coil_integration']['squid_4pt_vs_accurate_rel_diff_median']:.1f} % in the gains.")
     L.append("\n## Limitations\n")
@@ -132,6 +139,10 @@ def main():
     L.append("- One adult anatomy and one measured head position; between-subject variability is not represented.")
     L.append("- OPM intrinsic noise is a declared sweep, not a device specification; OPM movement artefacts, cross-talk and "
              "calibration errors are not modelled.")
+    L.append("- Scalp-gap variants rebuild the OPM arrays (sites farther out pack more easily: 215, 223 and 231 dense sites at 0, "
+             "3 and 6 mm), so they mix the gap with extra sensors (about 1 %).")
+    L.append("- Known sensor-side BEM error (v2 fix planned): some OPM cell integration points lie within 1 mm of, or inside, the "
+             "3-layer BEM head surface; single channels err by up to 72 %, the headline ratios by <= 0.8 % (methods section 8).")
     (OUT / "G2_report.md").write_text("\n".join(L) + "\n")
     print(f"wrote {OUT / 'G2_report.md'} ({len(L)} lines)")
 

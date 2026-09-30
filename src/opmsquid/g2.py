@@ -8,7 +8,7 @@ Arrays (sample subject, measured head position in the Neuromag helmet):
   opm204       204 sites spread evenly over the dense array (channel-budget control vs the 204
                gradiometers)
   opm_dense    a dense single-axis OPM array under the 17-mm packing rule, greedy farthest-point
-               construction ("full system"; 216 sites on the sample head). Not proven maximal;
+               construction ("full system"; 215 sites on the sample head). Not proven maximal;
                306 single-axis channels appear infeasible on this head (A-OPM-PACK).
 OPM sensitive axes follow the smooth BEM head-surface normal (A-OPM-AXIS). Sites avoid the ears,
 the ear pinna and the edge of the MRI field of view (A-OPM-COVER); a package may sit at most 5 mm

@@ -21,13 +21,23 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G4 epilepsy detection and localization | NEW | adult done; pediatric waits for G3 |
 | G5 software, reproduction, report | - | in progress (tests, `scripts/run_all.sh`; local report pending) |
 
-Adult findings so far (details and caveats in `docs/methods.md` and `results/g2/G2_report.md`):
-with realistic brain noise, a dense on-scalp OPM array (215 single-axis sensors) has about 1.2x
-the known-topography detectability of the Neuromag system (about 1.7x for sources 10-15 mm below
-the scalp; 1.05x at an OPM noise of 30 fT/sqrt(Hz); 1.13x with a 1-layer head model), while an
-OPM array at Neuromag's own 98 sites ties it; without brain noise, Neuromag wins. For simulated
-interictal spikes the dense array needs 15-35 % less source strength for 50 % detection,
-depending on depth, while the localization accuracy of detected spikes is similar across arrays.
+Adult findings so far, conditional on one adult head (MNE sample subject), an assumed OPM noise
+of 15 fT/sqrt(Hz), OPM sensors with no gap to the scalp and Neuromag at its measured (not best)
+head position; details and caveats in `docs/methods.md` and `results/g2/G2_report.md`:
+- With modelled brain noise (calibrated on gradiometers; it predicts 0.73x the measured
+  magnetometer brain noise), a dense on-scalp OPM array (215 single-axis sensors) has 1.21x
+  [1.19-1.23] the known-topography detectability of the Neuromag system, about 1.7x for sources
+  10-15 mm below the scalp. An OPM array at Neuromag's own 98 sites ties it (1.02x), and falls
+  behind after external-field projection (0.92x [0.85-0.95]).
+- The advantage shrinks or disappears with worse assumptions: 1.05x at an OPM noise of
+  30 fT/sqrt(Hz), 1.00x with 30 fT/sqrt(Hz) and a 3-mm scalp gap, 0.95x with a 6-mm gap, and
+  1.13x with a 1-layer head model. Without brain noise, Neuromag wins (0.77x).
+- Simulated interictal spikes: the dense array's point estimates of the strength for 50 %
+  detection are 15-35 % lower, depending on depth, with wide intervals (for example 57 [39-113]
+  vs 67 [50-145] nAm at 20-30 mm). By location, the practical detector favours the dense array
+  in every depth band; the matched array does not differ.
+- Bounded localization (24 locations, one event each): no consistent difference between arrays
+  was detected for detected spikes; differences are not excluded.
 
 Labels: REPRO = reproduction with the paper's definitions; ADAPT = adaptation where original
 data or details are unavailable; NEW = new experiment or study choice.
@@ -50,7 +60,7 @@ data or details are unavailable; NEW = new experiment or study choice.
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -c "import mne; mne.datasets.sample.data_path(path='data/external')"  # ~1.6 GB download
-bash scripts/run_all.sh     # tests, then every milestone in order (~2-3 h; lead fields ~6 min each)
+bash scripts/run_all.sh     # tests, then every milestone in order (~2 h, of which ~40 min for lead fields)
 ```
 
 Each driver writes `results/<milestone>/` and records the code commit it ran in its JSON.
@@ -62,6 +72,9 @@ override with `OPMSQUID_DATA`). Caches go to `cache/` (`OPMSQUID_CACHE`).
 
 - Not committed: the reference PDFs, the MNE sample data and anatomy (`data/`), computed caches
   (`cache/`). Results contain only derived quantities of the public MNE sample dataset.
-- Some G1A figure PDFs embed licensed font subsets to match the original artwork
-  (`results/g1a/fig3/README.md`); regenerate with open fonts before any public release.
+- Before any public release: PDFs in `results/g1a/` and `legacy/` embed licensed font subsets
+  (Myriad Pro, Times New Roman) to match the original artwork (`results/g1a/fig3/README.md`), so
+  regenerate them with open fonts; the published Jas et al. Fig. 3 raster used by the legacy
+  replica is CC-BY 4.0 and needs attribution; commit metadata carries the author's name and
+  institutional e-mail, and a few tracked files contain local absolute paths.
 - The repository is private. No website is deployed; publication needs explicit owner approval.

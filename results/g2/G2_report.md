@@ -1,6 +1,6 @@
 # G2 report: realistic adult OPM vs Neuromag comparison (NEW)
 
-Generated from `results/g2/g2_summary.json` (code commit 2aa6a2a, MNE 1.13.2). Methods: `docs/methods.md` section 8; assumptions in `docs/provenance_register.md`. This is a proposed study; no author of the reproduced papers has reviewed it.
+Generated from `results/g2/g2_summary.json` (code commit 2aa6a2a, figures replotted at 977c57b; band supplement `g2_band_sensitivity.json` at 8e4c9e9; MNE 1.13.2). Methods: `docs/methods.md` section 8; assumptions in `docs/provenance_register.md`. This is a proposed study; no author of the reproduced papers has reviewed it.
 
 ## Common setup
 
@@ -98,7 +98,7 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 
 - Estimated (plug-in) covariance, detectability relative to oracle: intrinsic+brain: 0.95 (10 s), 0.99 (60 s), projected: 0.95 (10 s), 0.99 (60 s).
 - Patches vs Neuromag combined (intrinsic+brain): 5 mm 1.02x, 10 mm 1.02x, 20 mm 1.02x.
-- Joint OPM noise x scalp gap (vs combined, intrinsic+brain): gap0mm, asd15fT 1.02x; gap0mm, asd20fT 0.99x; gap0mm, asd30fT 0.93x; gap3mm, asd15fT 0.99x; gap3mm, asd20fT 0.96x; gap3mm, asd30fT 0.89x; gap6mm, asd15fT 0.96x; gap6mm, asd20fT 0.92x; gap6mm, asd30fT 0.84x.
+- Joint OPM noise x scalp gap (vs combined, intrinsic+brain; the arrays are rebuilt for each gap): gap0mm, asd15fT 1.02x; gap0mm, asd20fT 0.99x; gap0mm, asd30fT 0.93x; gap3mm, asd15fT 0.99x; gap3mm, asd20fT 0.96x; gap3mm, asd30fT 0.89x; gap6mm, asd15fT 0.96x; gap6mm, asd20fT 0.92x; gap6mm, asd30fT 0.84x.
 - Intrinsic noise only, break-even OPM noise (ratio = 1): vs combined 8.0 fT/sqrt(Hz), vs grad 34.4 fT/sqrt(Hz), vs mag 8.3 fT/sqrt(Hz).
 - Sensitivity, one factor at a time (vs combined, intrinsic+brain): opm asd 7fT 1.10x; opm asd 10fT 1.06x; opm asd 15fT 1.02x; opm asd 20fT 0.99x; opm asd 30fT 0.93x; background corr 5mm 1.02x; background corr 10mm 1.03x; background mag calibrated 1.02x; head x+5mm 1.01x; head x-5mm 1.02x; head y+5mm 1.02x; head y-5mm 1.01x; head z+5mm 1.00x; head z-5mm 1.04x; head pitch+5deg 1.01x; head pitch-5deg 1.02x; head well fitted 1.00x; gap 3mm 0.99x; gap 6mm 0.96x.
 - By lobe (vs combined, intrinsic+brain): frontal 1.04x, parietal 1.04x, temporal 0.99x, occipital 1.02x, cingulate 1.00x, insula 0.96x.
@@ -169,7 +169,7 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 
 - Estimated (plug-in) covariance, detectability relative to oracle: intrinsic+brain: 0.91 (10 s), 0.98 (60 s), projected: 0.91 (10 s), 0.98 (60 s).
 - Patches vs Neuromag combined (intrinsic+brain): 5 mm 1.21x, 10 mm 1.20x, 20 mm 1.18x.
-- Joint OPM noise x scalp gap (vs combined, intrinsic+brain): gap0mm, asd15fT 1.21x; gap0mm, asd20fT 1.14x; gap0mm, asd30fT 1.05x; gap3mm, asd15fT 1.15x; gap3mm, asd20fT 1.08x; gap3mm, asd30fT 1.00x; gap6mm, asd15fT 1.09x; gap6mm, asd20fT 1.03x; gap6mm, asd30fT 0.95x.
+- Joint OPM noise x scalp gap (vs combined, intrinsic+brain; the arrays are rebuilt for each gap): gap0mm, asd15fT 1.21x; gap0mm, asd20fT 1.14x; gap0mm, asd30fT 1.05x; gap3mm, asd15fT 1.15x; gap3mm, asd20fT 1.08x; gap3mm, asd30fT 1.00x; gap6mm, asd15fT 1.09x; gap6mm, asd20fT 1.03x; gap6mm, asd30fT 0.95x.
 - Intrinsic noise only, break-even OPM noise (ratio = 1): vs combined 11.6 fT/sqrt(Hz), vs grad 49.8 fT/sqrt(Hz), vs mag 11.9 fT/sqrt(Hz).
 - Sensitivity, one factor at a time (vs combined, intrinsic+brain): opm asd 7fT 1.36x; opm asd 10fT 1.29x; opm asd 15fT 1.21x; opm asd 20fT 1.14x; opm asd 30fT 1.05x; background corr 5mm 1.21x; background corr 10mm 1.22x; background mag calibrated 1.21x; head x+5mm 1.19x; head x-5mm 1.21x; head y+5mm 1.22x; head y-5mm 1.19x; head z+5mm 1.17x; head z-5mm 1.24x; head pitch+5deg 1.19x; head pitch-5deg 1.22x; head well fitted 1.17x; gap 3mm 1.15x; gap 6mm 1.09x.
 - By lobe (vs combined, intrinsic+brain): frontal 1.26x, parietal 1.16x, temporal 1.19x, occipital 1.17x, cingulate 1.21x, insula 1.17x.
@@ -179,7 +179,7 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 ## Convergence
 
 - Background grid vs every usable vertex: median log2 ratios change by <= 0.006.
-- BEM 5,120 vs 20,480 triangles (1 layer): <= 0.002; 3 vs 1 layer: <= 0.119.
+- BEM 5,120 vs 20,480 triangles (1 layer): <= 0.0023; 3 vs 1 layer: <= 0.119 (dense/combined 1.21x with 3 layers, 1.13x with 1 layer).
 - Oct-6 vs random full-resolution targets: <= 0.032; Neuromag 4-point vs accurate integration: 0.6 % in the gains.
 
 ## Limitations
@@ -190,3 +190,5 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 - Detectability is a known-topography matched-filter SNR, not an event detection rate or localization accuracy.
 - One adult anatomy and one measured head position; between-subject variability is not represented.
 - OPM intrinsic noise is a declared sweep, not a device specification; OPM movement artefacts, cross-talk and calibration errors are not modelled.
+- Scalp-gap variants rebuild the OPM arrays (sites farther out pack more easily: 215, 223 and 231 dense sites at 0, 3 and 6 mm), so they mix the gap with extra sensors (about 1 %).
+- Known sensor-side BEM error (v2 fix planned): some OPM cell integration points lie within 1 mm of, or inside, the 3-layer BEM head surface; single channels err by up to 72 %, the headline ratios by <= 0.8 % (methods section 8).

@@ -10,8 +10,12 @@ Sensor model (study assumptions, labelled in docs/provenance_register.md)
 * Placement: the sensing centre lies ``standoff`` = 7 mm from the helmet's inner surface
   (Jas et al. 2026 experimental geometry, as stated in GOAL.md) plus a separate, declared
   ``scalp_gap`` between the helmet's inner surface and the MRI scalp (default 0 mm; swept).
-* Sites are defined on the scalp and oriented along a smoothed scalp normal (helmet-scale
-  smoothing radius, default 10 mm), which is also the sensitive axis.
+* Sites are defined on the MRI scalp; the sensitive axis is the normal of a smooth reference
+  surface averaged within ``normal_radius`` (G2: the BEM head surface within 15 mm; without
+  ``axis_surface``, the MRI scalp itself). Clearance, coverage and packing rules are documented
+  in the builders below (A-OPM-CLEAR, A-OPM-COVER, A-OPM-PACK). Known limitation: the clearance
+  rules check the sensing centre, not the cell's integration points, which can come within 1 mm
+  of the BEM head surface (docs/methods.md section 8).
 
 In MNE 1.13.2, ``mne.use_coil_def(fname)`` *adds* the coils defined in ``fname`` to the standard
 ``coil_def.dat`` (``_read_coil_defs``), and its parser rejects blank lines. ``coil_def_file``

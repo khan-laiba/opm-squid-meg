@@ -5,7 +5,9 @@ Truth: events simulated as in scripts/g4_epilepsy_adult.py (3-layer BEM, exact p
 noise across arrays). Inverse model with bounded mismatch: 1-layer (inner skull) BEM and a
 coregistration error of 2 mm and 2 deg. The error is drawn K times (random translation direction
 and rotation axis); every array uses the same K draws and event e uses draw e mod K, so the arrays
-are compared under identical errors averaged over K draws rather than one draw per array. Noise
+are compared under identical errors rather than one draw per array. With 4 events per location in
+a fixed order, each condition sees only 2 of the K = 8 draws (known limitation; draw = location
+mod K would spread all draws over every condition). Noise
 covariance from 5 min of independent null data. Sources off the inverse grid: MNE/dSPM on a 5-mm
 Poisson-disk grid of usable vertices that excludes the true source vertices. Equivalent current
 dipole with MNE's fit_dipole (same BEM and transform).
