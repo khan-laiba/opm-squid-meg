@@ -145,6 +145,24 @@ def make_info(array: OPMArray, sfreq: float = 1000.0) -> mne.Info:
     return info
 
 
+def farthest_point_subset(pos: np.ndarray, n: int, start: int | None = None) -> np.ndarray:
+    """Indices of ``n`` points chosen by farthest-point sampling (Euclidean), starting from
+    ``start`` (default: the highest point, max z). Spreads a subset evenly over an array."""
+    k = int(np.argmax(pos[:, 2])) if start is None else int(start)
+    chosen = [k]
+    dmin = np.linalg.norm(pos - pos[k], axis=1)
+    while len(chosen) < n:
+        k = int(np.argmax(dmin))
+        chosen.append(k)
+        dmin = np.minimum(dmin, np.linalg.norm(pos - pos[k], axis=1))
+    return np.sort(np.array(chosen))
+
+
+def subset(arr: "OPMArray", idx: np.ndarray, label: str) -> "OPMArray":
+    return OPMArray(pos=arr.pos[idx], axis=arr.axis[idx], scalp_point=arr.scalp_point[idx], site_id=arr.site_id[idx],
+                    standoff=arr.standoff, scalp_gap=arr.scalp_gap, label=label)
+
+
 def min_spacing(pos: np.ndarray) -> np.ndarray:
     """Distance from each sensing centre to its nearest neighbour [m]."""
     d, _ = cKDTree(pos).query(pos, k=2)

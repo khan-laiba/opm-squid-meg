@@ -4,7 +4,8 @@ Arrays (sample subject, measured head position in the Neuromag helmet):
   squid    Neuromag T3, 102 magnetometers + 204 planar gradiometers (comparators: 'mag', 'grad',
            'combined')
   opm99    matched-site OPM array (coverage control; 99 of 102 Neuromag sites feasible)
-  opm204   dense single-axis OPM array with 204 sites (channel-budget control vs the gradiometers)
+  opm204   204 sites spread evenly over the densest feasible array (channel-budget control vs the
+           204 gradiometers)
   opm221   densest feasible single-axis OPM array under the 17-mm packing rule ("full system")
 A 306-channel single-axis OPM array does not fit on this head (A-OPM-PACK); it is reported as
 infeasible rather than simulated.
@@ -45,15 +46,36 @@ def build_arrays(subject: anatomy.Subject, digitisation: mne.Info, scalp_gap: fl
             squid_info["dev_head_t"] = mne.transforms.Transform("meg", "head", dev_head_t)
     arrays = {"squid": Array("squid", squid_info, neuromag.channel_kinds(squid_info), None,
                              dict(sites=102, channels=306, axes="1 mag + 2 planar grad per site"))}
+    arrays["opm99"] = matched_opm(subject, digitisation, scalp_gap)
+    for name in DENSE:
+        arrays[name] = dense_opm(subject, digitisation, name, scalp_gap)
+    return arrays
+
+
+# dense single-axis arrays: (farthest-point scalp spacing [m] of the densest feasible array,
+# number of sites taken from it by farthest-point sampling (None = all), role)
+DENSE = {"opm204": (0.015, 204, "channel-budget control vs 204 gradiometers"),
+         "opm221": (0.015, None, "densest feasible single-axis array (full system)")}
+
+
+def matched_opm(subject: anatomy.Subject, digitisation: mne.Info, scalp_gap: float = 0.0) -> Array:
     arr, rep = opm.matched_to_neuromag(neuromag.load_info("T3"), subject.trans, subject.scalp, digitisation,
                                        scalp_gap=scalp_gap)
-    arrays["opm99"] = _opm_array("opm99", arr, dict(role="matched-site coverage control", **_rep(rep)))
-    for name, n_sites, role in (("opm204", 204, "channel-budget control vs 204 gradiometers"),
-                                ("opm221", None, "densest feasible single-axis array (full system)")):
-        arr, rep = opm.dense_array(subject.scalp, subject.trans, digitisation, 0.015 if n_sites is None else 0.017,
-                                   max_sites=n_sites, scalp_gap=scalp_gap)
-        arrays[name] = _opm_array(name, arr, dict(role=role, **rep))
-    return arrays
+    return _opm_array("opm99", arr, dict(role="matched-site coverage control", **_rep(rep)))
+
+
+def dense_opm(subject: anatomy.Subject, digitisation: mne.Info, name: str, scalp_gap: float = 0.0) -> Array:
+    """Densest feasible single-axis array (17-mm packing rule), or an evenly spread subset of it
+    with a fixed channel count (farthest-point sampling of the sensing centres)."""
+    spacing, n_sites, role = DENSE[name]
+    arr, rep = opm.dense_array(subject.scalp, subject.trans, digitisation, spacing, scalp_gap=scalp_gap)
+    if n_sites is not None:
+        if n_sites > len(arr.pos):
+            raise ValueError(f"{name}: only {len(arr.pos)} feasible sites")
+        arr = opm.subset(arr, opm.farthest_point_subset(arr.pos, n_sites), f"dense OPM subset ({n_sites} sites)")
+        rep = dict(rep, n_sites=n_sites, min_spacing_mm=float(opm.min_spacing(arr.pos).min() * 1e3),
+                   median_spacing_mm=float(np.median(opm.min_spacing(arr.pos)) * 1e3), subset_of=rep["n_sites"])
+    return _opm_array(name, arr, dict(role=role, **rep))
 
 
 def _rep(rep):

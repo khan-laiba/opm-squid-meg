@@ -87,5 +87,19 @@ class TestOPMCoil(unittest.TestCase):
         self.assertAlmostEqual(effects[0], 0.0188, delta=0.001)
 
 
+
+class TestArrayHelpers(unittest.TestCase):
+    def test_farthest_point_subset_spreads_and_keeps_spacing(self):
+        rng = np.random.default_rng(0)
+        pos = rng.normal(size=(300, 3))
+        pos /= np.linalg.norm(pos, axis=1, keepdims=True)
+        idx = opm.farthest_point_subset(pos, 120)
+        self.assertEqual(len(np.unique(idx)), 120)
+        self.assertEqual(int(idx[np.argmax(pos[idx, 2])]), int(np.argmax(pos[:, 2])))  # starts at the top
+        self.assertGreaterEqual(opm.min_spacing(pos[idx]).min(), opm.min_spacing(pos).min())
+        # every left-out point is closer to the subset than the subset's own typical spacing
+        d = np.min(np.linalg.norm(pos[:, None] - pos[idx][None], axis=-1), axis=1)
+        self.assertLess(d.max(), 1.5 * np.median(opm.min_spacing(pos[idx])))
+
 if __name__ == "__main__":
     unittest.main()

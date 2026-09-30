@@ -10,6 +10,8 @@ opm_hunold          matched OPM array (99 sites), BEM 0.33/0.0042/0.33 S/m
 neuromag_bem006     Neuromag T3 (MNE accurate rule), BEM 0.3/0.006/0.3 S/m (MNE default)
 opm_bem006          matched OPM array, BEM 0.3/0.006/0.3 S/m
 neuromag_bem06      Neuromag T3, BEM 0.3/0.06/0.3 S/m (Goldenholz et al. as printed)
+opm204_bem006       dense OPM array, 204 sites (G2 channel-budget control), BEM 0.3/0.006/0.3 S/m
+opm221_bem006       densest feasible OPM array, 221 sites (G2 full system), BEM 0.3/0.006/0.3 S/m
 
 Usage: python scripts/compute_fullres_forwards.py [job ...]   (default: all, in this order)
 """
@@ -25,7 +27,7 @@ sys.path.insert(0, str(ROOT / "src"))
 import numpy as np  # noqa: E402
 import mne  # noqa: E402
 
-from opmsquid import anatomy, forward, neuromag, opm, paths  # noqa: E402
+from opmsquid import anatomy, forward, g2, neuromag, opm, paths  # noqa: E402
 
 BEMS = {"hunold": (0.33, 0.0042, 0.33), "bem006": (0.3, 0.006, 0.3), "bem06": (0.3, 0.06, 0.3)}
 JOBS = {
@@ -34,14 +36,17 @@ JOBS = {
     "neuromag_bem006": ("T3", "bem006"),
     "opm_bem006": ("opm", "bem006"),
     "neuromag_bem06": ("T3", "bem06"),
+    "opm204_bem006": ("opm204", "bem006"),
+    "opm221_bem006": ("opm221", "bem006"),
 }
 
 
 def array_info(kind: str, subject) -> mne.Info:
+    dig = mne.io.read_info(paths.SAMPLE_MEG / neuromag.RAW_FILE, verbose=False)
     if kind == "opm":
-        dig = mne.io.read_info(paths.SAMPLE_MEG / neuromag.RAW_FILE, verbose=False)
-        arr, _ = opm.matched_to_neuromag(neuromag.load_info("T3"), subject.trans, subject.scalp, dig)
-        return opm.make_info(arr)
+        return g2.matched_opm(subject, dig).info
+    if kind in g2.DENSE:
+        return g2.dense_opm(subject, dig, kind).info
     return neuromag.load_info(kind)
 
 
