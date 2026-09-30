@@ -1,0 +1,20 @@
+# environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.pytest_cache/
+.DS_Store
+.omc/
+
+# external data (MNE sample data, anatomy) and computed caches: never committed
+data/
+cache/
+
+# reference papers are not redistributed
+/2026.08.17.744953.full.pdf
+/Hunold_2016_Physiol._Meas._37_1146.pdf
+/Human Brain Mapping - 2008 - Goldenholz*.pdf
+
+# locally built website (published only with explicit owner approval)
+site/_build/
