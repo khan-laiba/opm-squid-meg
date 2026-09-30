@@ -18,7 +18,7 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | G1B Hunold depth-orientation spikes | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule and a realization-averaged Fig. 6 calibration | `scripts/g1b_hunold.py` -> `results/g1b/`; calibrated background (scalar 0.47; one realization alone 0.44-0.52), p2p: bin means 0.78-0.91x the paper (0.68-1.01x over the calibration range), noisy p2p 0.97-1.04x, r 0.91-0.97, 2.5-classification agreement 80-93 %, GM-MM sign agreement 100 % |
 | G1C Goldenholz cortical SNR maps | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.76 nAm at 4,000 sources (paper 1.6-1.9); focal median -22.1 dB, 56 % inside the paper's -29/-19 dB range; deep medial cortex darkest |
 | G2 realistic adult OPM-Neuromag comparison | done; independently reviewed (F1-F9 addressed: parcel bootstrap, joint noise x gap grid, OPM axes, 4-mm rule, array geometry); frozen as `adult-baseline-v1` | `scripts/g2_adult_comparison.py` -> `results/g2/` (`G2_report.md`); with brain noise the dense 215-site OPM array is 1.21x [1.19-1.23] Neuromag combined (1.05-1.36x for OPM noise 30-7 fT/sqrt(Hz), 0.95-1.21x jointly with a 0-6 mm scalp gap (the gap variants rebuild the dense array: 215-231 sites), 1.13x with a 1-layer BEM), the matched 98-site array 1.02x (a tie); 1.4-1.7x for sources within 20 mm of the scalp; without brain noise Neuromag wins (dense 0.77x) |
-| G3 pediatric extension | not started; needs pediatric anatomy (see Inputs) | |
+| G3 pediatric extension | G3A done (REPRO size benchmark); G3B blocked: pediatric anatomy needs an owner decision (see Inputs) | `scripts/g3a_jas_size_benchmark.py` -> `results/g3a/`; normalized d_eq at eta = 3: newborn 49.6 % (printed 50 %), adult 15.8 % (15 %) |
 | G4 epilepsy detection and localization | adult done (detection; bounded localization); pediatric waits for G3 | `scripts/g4_epilepsy_adult.py`, `scripts/g4_localization.py` -> `results/g4/`; 50 % detection at 1 false event/min: dense OPM 32 vs Neuromag combined 49 nAm (10-20 mm), 205 vs 279 nAm (45-70 mm); practical detector: dense better at every depth by location (sign-flip p <= 0.02; oracle: p = 0.16 at 30-45 mm), matched no different |
 | G5 repository, tests, report | private repository `khan-laiba/opm-squid-meg` (no Pages); unittest suite; `scripts/run_all.sh`; local report builder and clean-environment smoke test pending | |
 
@@ -136,7 +136,8 @@ GATE G1: all three run reproducibly; each output states REPRO/ADAPT status and a
 
 ## G3 — pediatric extension (NEW; size benchmark REPRO)
 
-1. REPRO Jas Table 1 / Fig. 5 size-following benchmark (s = h + 18 mm).
+1. [x] REPRO Jas Table 1 / Fig. 5 size-following benchmark (s = h + 18 mm), plus an idealised
+   concentric fixed-shell contrast (NEW).
 2. Fixed adult Neuromag helmet vs OPM refit per head; physically scaled pediatric anatomy
    (school-aged first) - **input missing**; scaled adult only as a labelled size-only control.
 3. Neutral and bounded translated/rotated SQUID placements chosen source-blind; regional

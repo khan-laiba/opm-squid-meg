@@ -17,7 +17,7 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G1B Hunold et al. 2016 depth-orientation spike SNR (MEG part) | ADAPT (+ NEW OPM column) | done, independently reviewed |
 | G1C Goldenholz et al. 2009 cortical SNR maps (MEG part) | ADAPT (+ NEW OPM extension) | done, independently reviewed |
 | G2 realistic adult OPM vs Neuromag | NEW | done, independently reviewed; frozen as `adult-baseline-v1` |
-| G3 pediatric extension | NEW (size benchmark REPRO) | not started (needs pediatric anatomy) |
+| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B needs pediatric anatomy |
 | G4 epilepsy detection and localization | NEW | adult done; pediatric waits for G3 |
 | G5 software, reproduction, report | - | in progress (tests, `scripts/run_all.sh`; local report pending) |
 

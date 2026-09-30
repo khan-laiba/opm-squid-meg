@@ -1,0 +1,409 @@
+head,shell,eta,d_eq_exact_mm,d_eq_grid_mm,normalized_exact_pct,volume_fraction_pct
+Infant (newborn),size-following,1.00,nan,54.520,nan,100.00
+Infant (newborn),size-following,1.10,nan,54.520,nan,100.00
+Infant (newborn),size-following,1.20,nan,54.520,nan,100.00
+Infant (newborn),size-following,1.30,nan,54.520,nan,100.00
+Infant (newborn),size-following,1.40,nan,54.520,nan,100.00
+Infant (newborn),size-following,1.50,nan,54.520,nan,100.00
+Infant (newborn),size-following,1.60,nan,54.520,nan,100.00
+Infant (newborn),size-following,1.70,nan,54.520,nan,100.00
+Infant (newborn),size-following,1.80,nan,54.520,nan,100.00
+Infant (newborn),size-following,1.90,nan,54.520,nan,100.00
+Infant (newborn),size-following,2.00,nan,54.520,nan,100.00
+Infant (newborn),size-following,2.10,nan,54.520,nan,100.00
+Infant (newborn),size-following,2.20,nan,54.520,nan,100.00
+Infant (newborn),size-following,2.30,nan,54.520,nan,100.00
+Infant (newborn),size-following,2.40,47.148,46.840,83.64,99.56
+Infant (newborn),size-following,2.50,42.353,42.040,73.65,98.17
+Infant (newborn),size-following,2.60,39.042,38.680,66.75,96.33
+Infant (newborn),size-following,2.70,36.433,36.280,61.32,94.21
+Infant (newborn),size-following,2.80,34.269,33.880,56.81,91.94
+Infant (newborn),size-following,2.90,32.421,31.960,52.96,89.59
+Infant (newborn),size-following,3.00,30.814,30.520,49.61,87.21
+Infant (newborn),size-following,3.10,29.397,29.080,46.66,84.82
+Infant (newborn),size-following,3.20,28.135,28.120,44.03,82.47
+Infant (newborn),size-following,3.30,27.001,26.680,41.67,80.15
+Infant (newborn),size-following,3.40,25.976,25.720,39.53,77.89
+Infant (newborn),size-following,3.50,25.042,24.760,37.59,75.69
+Infant (newborn),size-following,3.60,24.188,23.800,35.81,73.55
+Infant (newborn),size-following,3.70,23.404,23.320,34.17,71.48
+Infant (newborn),size-following,3.80,22.679,22.360,32.67,69.47
+Infant (newborn),size-following,3.90,22.009,21.880,31.27,67.53
+Infant (newborn),size-following,4.00,21.385,20.920,29.97,65.66
+Infant (newborn),size-following,4.10,20.804,20.440,28.76,63.84
+Infant (newborn),size-following,4.20,20.261,19.960,27.63,62.09
+Infant (newborn),size-following,4.30,19.752,19.480,26.57,60.40
+Infant (newborn),size-following,4.40,19.274,19.000,25.57,58.77
+Infant (newborn),size-following,4.50,18.824,18.520,24.63,57.19
+Infant (newborn),size-following,4.60,18.400,18.040,23.75,55.67
+Infant (newborn),size-following,4.70,17.998,17.560,22.91,54.19
+Infant (newborn),size-following,4.80,17.619,17.560,22.12,52.77
+Infant (newborn),size-following,4.90,17.258,17.080,21.37,51.39
+Infant (newborn),size-following,5.00,16.916,16.600,20.66,50.05
+Infant (newborn),size-following,5.10,16.591,16.120,19.98,48.76
+Infant (newborn),size-following,5.20,16.281,16.120,19.33,47.51
+Infant (newborn),size-following,5.30,15.985,15.640,18.72,46.30
+Infant (newborn),size-following,5.40,15.702,15.640,18.13,45.13
+Infant (newborn),size-following,5.50,15.432,15.160,17.57,43.99
+Infant (newborn),size-following,5.60,15.174,15.160,17.03,42.88
+Infant (newborn),size-following,5.70,14.926,14.680,16.51,41.81
+Infant (newborn),size-following,5.80,14.688,14.680,16.02,40.77
+Infant (newborn),size-following,5.90,14.460,14.200,15.54,39.75
+Infant (newborn),size-following,6.00,14.241,14.200,15.08,38.77
+Infant (newborn),fixed-adult,1.00,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,1.10,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,1.20,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,1.30,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,1.40,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,1.50,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,1.60,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,1.70,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,1.80,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,1.90,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,2.00,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,2.10,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,2.20,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,2.30,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,2.40,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,2.50,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,2.60,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,2.70,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,2.80,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,2.90,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,3.00,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,3.10,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,3.20,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,3.30,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,3.40,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,3.50,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,3.60,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,3.70,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,3.80,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,3.90,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,4.00,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,4.10,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,4.20,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,4.30,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,4.40,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,4.50,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,4.60,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,4.70,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,4.80,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,4.90,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,5.00,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,5.10,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,5.20,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,5.30,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,5.40,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,5.50,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,5.60,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,5.70,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,5.80,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,5.90,nan,54.520,nan,100.00
+Infant (newborn),fixed-adult,6.00,nan,54.520,nan,100.00
+Infant (1-yr),size-following,1.00,nan,69.380,nan,100.00
+Infant (1-yr),size-following,1.10,nan,69.380,nan,100.00
+Infant (1-yr),size-following,1.20,nan,69.380,nan,100.00
+Infant (1-yr),size-following,1.30,nan,69.380,nan,100.00
+Infant (1-yr),size-following,1.40,nan,69.380,nan,100.00
+Infant (1-yr),size-following,1.50,nan,69.380,nan,100.00
+Infant (1-yr),size-following,1.60,nan,69.380,nan,100.00
+Infant (1-yr),size-following,1.70,nan,69.380,nan,100.00
+Infant (1-yr),size-following,1.80,nan,69.380,nan,100.00
+Infant (1-yr),size-following,1.90,nan,69.380,nan,100.00
+Infant (1-yr),size-following,2.00,64.560,64.420,91.23,99.93
+Infant (1-yr),size-following,2.10,54.104,53.880,74.36,98.31
+Infant (1-yr),size-following,2.20,48.403,48.300,65.17,95.77
+Infant (1-yr),size-following,2.30,44.194,43.960,58.38,92.79
+Infant (1-yr),size-following,2.40,40.845,40.240,52.98,89.60
+Infant (1-yr),size-following,2.50,38.078,37.760,48.51,86.35
+Infant (1-yr),size-following,2.60,35.736,35.280,44.74,83.12
+Infant (1-yr),size-following,2.70,33.721,33.420,41.49,79.96
+Infant (1-yr),size-following,2.80,31.963,31.560,38.65,76.91
+Infant (1-yr),size-following,2.90,30.413,30.320,36.15,73.97
+Infant (1-yr),size-following,3.00,29.034,28.460,33.93,71.15
+Infant (1-yr),size-following,3.10,27.798,27.220,31.93,68.46
+Infant (1-yr),size-following,3.20,26.684,26.600,30.13,65.90
+Infant (1-yr),size-following,3.30,25.672,25.360,28.50,63.45
+Infant (1-yr),size-following,3.40,24.749,24.740,27.02,61.12
+Infant (1-yr),size-following,3.50,23.904,23.500,25.65,58.90
+Infant (1-yr),size-following,3.60,23.126,22.880,24.40,56.79
+Infant (1-yr),size-following,3.70,22.408,22.260,23.24,54.77
+Infant (1-yr),size-following,3.80,21.742,21.640,22.16,52.84
+Infant (1-yr),size-following,3.90,21.123,21.020,21.17,51.01
+Infant (1-yr),size-following,4.00,20.546,20.400,20.24,49.25
+Infant (1-yr),size-following,4.10,20.007,19.780,19.37,47.57
+Infant (1-yr),size-following,4.20,19.501,19.160,18.55,45.97
+Infant (1-yr),size-following,4.30,19.027,18.540,17.78,44.43
+Infant (1-yr),size-following,4.40,18.580,18.540,17.06,42.95
+Infant (1-yr),size-following,4.50,18.158,17.920,16.38,41.54
+Infant (1-yr),size-following,4.60,17.760,17.300,15.74,40.18
+Infant (1-yr),size-following,4.70,17.383,17.300,15.13,38.88
+Infant (1-yr),size-following,4.80,17.025,16.680,14.56,37.62
+Infant (1-yr),size-following,4.90,16.685,16.680,14.01,36.41
+Infant (1-yr),size-following,5.00,16.362,16.060,13.49,35.25
+Infant (1-yr),size-following,5.10,16.055,15.440,12.99,34.13
+Infant (1-yr),size-following,5.20,15.761,15.440,12.52,33.05
+Infant (1-yr),size-following,5.30,15.481,15.440,12.07,32.01
+Infant (1-yr),size-following,5.40,15.213,14.820,11.63,31.00
+Infant (1-yr),size-following,5.50,14.957,14.820,11.22,30.03
+Infant (1-yr),size-following,5.60,14.712,14.200,10.83,29.09
+Infant (1-yr),size-following,5.70,14.476,14.200,10.45,28.18
+Infant (1-yr),size-following,5.80,14.250,14.200,10.08,27.30
+Infant (1-yr),size-following,5.90,14.033,13.580,9.73,26.44
+Infant (1-yr),size-following,6.00,13.824,13.580,9.39,25.62
+Infant (1-yr),fixed-adult,1.00,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,1.10,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,1.20,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,1.30,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,1.40,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,1.50,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,1.60,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,1.70,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,1.80,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,1.90,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,2.00,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,2.10,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,2.20,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,2.30,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,2.40,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,2.50,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,2.60,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,2.70,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,2.80,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,2.90,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,3.00,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,3.10,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,3.20,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,3.30,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,3.40,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,3.50,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,3.60,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,3.70,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,3.80,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,3.90,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,4.00,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,4.10,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,4.20,nan,69.380,nan,100.00
+Infant (1-yr),fixed-adult,4.30,62.347,61.940,87.66,99.81
+Infant (1-yr),fixed-adult,4.40,59.013,58.840,82.28,99.44
+Infant (1-yr),fixed-adult,4.50,56.511,56.360,78.24,98.97
+Infant (1-yr),fixed-adult,4.60,54.439,53.880,74.90,98.42
+Infant (1-yr),fixed-adult,4.70,52.645,52.640,72.01,97.81
+Infant (1-yr),fixed-adult,4.80,51.053,50.780,69.44,97.15
+Infant (1-yr),fixed-adult,4.90,49.616,49.540,67.12,96.45
+Infant (1-yr),fixed-adult,5.00,48.304,48.300,65.01,95.71
+Infant (1-yr),fixed-adult,5.10,47.096,47.060,63.06,94.96
+Infant (1-yr),fixed-adult,5.20,45.976,45.820,61.25,94.18
+Infant (1-yr),fixed-adult,5.30,44.932,44.580,59.57,93.39
+Infant (1-yr),fixed-adult,5.40,43.954,43.340,57.99,92.59
+Infant (1-yr),fixed-adult,5.50,43.035,42.720,56.51,91.77
+Infant (1-yr),fixed-adult,5.60,42.169,42.100,55.11,90.96
+Infant (1-yr),fixed-adult,5.70,41.350,40.860,53.79,90.13
+Infant (1-yr),fixed-adult,5.80,40.574,40.240,52.54,89.31
+Infant (1-yr),fixed-adult,5.90,39.837,39.620,51.35,88.49
+Infant (1-yr),fixed-adult,6.00,39.135,39.000,50.22,87.66
+Child (8-yr),size-following,1.00,nan,84.270,nan,100.00
+Child (8-yr),size-following,1.10,nan,84.270,nan,100.00
+Child (8-yr),size-following,1.20,nan,84.270,nan,100.00
+Child (8-yr),size-following,1.30,nan,84.270,nan,100.00
+Child (8-yr),size-following,1.40,nan,84.270,nan,100.00
+Child (8-yr),size-following,1.50,nan,84.270,nan,100.00
+Child (8-yr),size-following,1.60,nan,84.270,nan,100.00
+Child (8-yr),size-following,1.70,nan,84.270,nan,100.00
+Child (8-yr),size-following,1.80,75.618,75.510,87.15,99.79
+Child (8-yr),size-following,1.90,62.425,62.370,69.08,97.04
+Child (8-yr),size-following,2.00,54.926,54.340,58.80,93.01
+Child (8-yr),size-following,2.10,49.464,49.230,51.32,88.46
+Child (8-yr),size-following,2.20,45.193,44.850,45.47,83.79
+Child (8-yr),size-following,2.30,41.725,41.200,40.72,79.17
+Child (8-yr),size-following,2.40,38.836,38.280,36.76,74.71
+Child (8-yr),size-following,2.50,36.385,36.090,33.40,70.46
+Child (8-yr),size-following,2.60,34.274,33.900,30.51,66.45
+Child (8-yr),size-following,2.70,32.435,31.710,27.99,62.66
+Child (8-yr),size-following,2.80,30.815,30.250,25.77,59.11
+Child (8-yr),size-following,2.90,29.378,28.790,23.80,55.76
+Child (8-yr),size-following,3.00,28.091,28.060,22.04,52.62
+Child (8-yr),size-following,3.10,26.933,26.600,20.46,49.67
+Child (8-yr),size-following,3.20,25.884,25.870,19.02,46.89
+Child (8-yr),size-following,3.30,24.929,24.410,17.71,44.28
+Child (8-yr),size-following,3.40,24.056,23.680,16.51,41.81
+Child (8-yr),size-following,3.50,23.253,22.950,15.42,39.48
+Child (8-yr),size-following,3.60,22.514,22.220,14.40,37.28
+Child (8-yr),size-following,3.70,21.829,21.490,13.46,35.20
+Child (8-yr),size-following,3.80,21.194,20.760,12.59,33.22
+Child (8-yr),size-following,3.90,20.602,20.030,11.78,31.35
+Child (8-yr),size-following,4.00,20.050,20.030,11.03,29.57
+Child (8-yr),size-following,4.10,19.533,19.300,10.32,27.87
+Child (8-yr),size-following,4.20,19.047,18.570,9.65,26.26
+Child (8-yr),size-following,4.30,18.591,18.570,9.03,24.72
+Child (8-yr),size-following,4.40,18.161,17.840,8.44,23.24
+Child (8-yr),size-following,4.50,17.756,17.110,7.88,21.84
+Child (8-yr),size-following,4.60,17.372,17.110,7.36,20.49
+Child (8-yr),size-following,4.70,17.008,16.380,6.86,19.20
+Child (8-yr),size-following,4.80,16.663,16.380,6.39,17.97
+Child (8-yr),size-following,4.90,16.335,15.650,5.94,16.78
+Child (8-yr),size-following,5.00,16.023,15.650,5.51,15.64
+Child (8-yr),size-following,5.10,15.726,15.650,5.10,14.54
+Child (8-yr),size-following,5.20,15.442,14.920,4.72,13.49
+Child (8-yr),size-following,5.30,15.171,14.920,4.34,12.47
+Child (8-yr),size-following,5.40,14.912,14.190,3.99,11.50
+Child (8-yr),size-following,5.50,14.664,14.190,3.65,10.55
+Child (8-yr),size-following,5.60,14.426,14.190,3.32,9.64
+Child (8-yr),size-following,5.70,14.197,14.190,3.01,8.76
+Child (8-yr),size-following,5.80,13.978,13.460,2.71,7.91
+Child (8-yr),size-following,5.90,13.767,13.460,2.42,7.09
+Child (8-yr),size-following,6.00,13.564,13.460,2.14,6.29
+Child (8-yr),fixed-adult,1.00,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,1.10,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,1.20,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,1.30,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,1.40,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,1.50,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,1.60,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,1.70,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,1.80,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,1.90,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,2.00,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,2.10,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,2.20,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,2.30,nan,84.270,nan,100.00
+Child (8-yr),fixed-adult,2.40,74.081,74.050,85.04,99.67
+Child (8-yr),fixed-adult,2.50,66.222,66.020,74.28,98.30
+Child (8-yr),fixed-adult,2.60,60.958,60.910,67.07,96.43
+Child (8-yr),fixed-adult,2.70,56.844,56.530,61.43,94.26
+Child (8-yr),fixed-adult,2.80,53.444,52.880,56.77,91.92
+Child (8-yr),fixed-adult,2.90,50.548,49.960,52.81,89.49
+Child (8-yr),fixed-adult,3.00,48.032,47.770,49.36,87.01
+Child (8-yr),fixed-adult,3.10,45.817,45.580,46.32,84.54
+Child (8-yr),fixed-adult,3.20,43.844,43.390,43.62,82.08
+Child (8-yr),fixed-adult,3.30,42.073,41.930,41.20,79.67
+Child (8-yr),fixed-adult,3.40,40.471,40.470,39.00,77.30
+Child (8-yr),fixed-adult,3.50,39.014,39.010,37.01,75.00
+Child (8-yr),fixed-adult,3.60,37.682,37.550,35.18,72.77
+Child (8-yr),fixed-adult,3.70,36.457,36.090,33.50,70.60
+Child (8-yr),fixed-adult,3.80,35.327,34.630,31.96,68.49
+Child (8-yr),fixed-adult,3.90,34.281,33.900,30.52,66.46
+Child (8-yr),fixed-adult,4.00,33.309,33.170,29.19,64.50
+Child (8-yr),fixed-adult,4.10,32.403,31.710,27.95,62.60
+Child (8-yr),fixed-adult,4.20,31.556,30.980,26.79,60.76
+Child (8-yr),fixed-adult,4.30,30.762,30.250,25.70,58.99
+Child (8-yr),fixed-adult,4.40,30.017,29.520,24.68,57.27
+Child (8-yr),fixed-adult,4.50,29.315,28.790,23.72,55.61
+Child (8-yr),fixed-adult,4.60,28.654,28.060,22.81,54.01
+Child (8-yr),fixed-adult,4.70,28.028,27.330,21.96,52.47
+Child (8-yr),fixed-adult,4.80,27.436,27.330,21.15,50.97
+Child (8-yr),fixed-adult,4.90,26.875,26.600,20.38,49.52
+Child (8-yr),fixed-adult,5.00,26.341,25.870,19.65,48.12
+Child (8-yr),fixed-adult,5.10,25.834,25.140,18.95,46.76
+Child (8-yr),fixed-adult,5.20,25.351,25.140,18.29,45.44
+Child (8-yr),fixed-adult,5.30,24.890,24.410,17.66,44.17
+Child (8-yr),fixed-adult,5.40,24.450,24.410,17.05,42.93
+Child (8-yr),fixed-adult,5.50,24.029,23.680,16.48,41.74
+Child (8-yr),fixed-adult,5.60,23.626,22.950,15.93,40.57
+Child (8-yr),fixed-adult,5.70,23.240,22.950,15.40,39.45
+Child (8-yr),fixed-adult,5.80,22.870,22.220,14.89,38.35
+Child (8-yr),fixed-adult,5.90,22.514,22.220,14.40,37.29
+Child (8-yr),fixed-adult,6.00,22.173,21.490,13.94,36.25
+Adult,size-following,1.00,nan,94.200,nan,100.00
+Adult,size-following,1.10,nan,94.200,nan,100.00
+Adult,size-following,1.20,nan,94.200,nan,100.00
+Adult,size-following,1.30,nan,94.200,nan,100.00
+Adult,size-following,1.40,nan,94.200,nan,100.00
+Adult,size-following,1.50,nan,94.200,nan,100.00
+Adult,size-following,1.60,nan,94.200,nan,100.00
+Adult,size-following,1.70,84.778,84.600,87.22,99.79
+Adult,size-following,1.80,68.351,67.800,66.69,96.30
+Adult,size-following,1.90,59.363,59.000,55.45,91.16
+Adult,size-following,2.00,52.937,52.600,47.42,85.46
+Adult,size-following,2.10,47.990,47.800,41.24,79.71
+Adult,size-following,2.20,44.025,43.800,36.28,74.13
+Adult,size-following,2.30,40.759,40.600,32.20,68.83
+Adult,size-following,2.40,38.015,37.400,28.77,63.86
+Adult,size-following,2.50,35.671,35.000,25.84,59.21
+Adult,size-following,2.60,33.644,33.400,23.31,54.89
+Adult,size-following,2.70,31.871,31.800,21.09,50.86
+Adult,size-following,2.80,30.306,30.200,19.13,47.12
+Adult,size-following,2.90,28.913,28.600,17.39,43.63
+Adult,size-following,3.00,27.665,27.000,15.83,40.37
+Adult,size-following,3.10,26.539,26.200,14.42,37.33
+Adult,size-following,3.20,25.518,25.400,13.15,34.48
+Adult,size-following,3.30,24.587,23.800,11.98,31.82
+Adult,size-following,3.40,23.735,23.000,10.92,29.31
+Adult,size-following,3.50,22.951,22.200,9.94,26.95
+Adult,size-following,3.60,22.228,22.200,9.04,24.73
+Adult,size-following,3.70,21.559,21.400,8.20,22.63
+Adult,size-following,3.80,20.937,20.600,7.42,20.65
+Adult,size-following,3.90,20.357,19.800,6.70,18.77
+Adult,size-following,4.00,19.816,19.800,6.02,16.99
+Adult,size-following,4.10,19.309,19.000,5.39,15.30
+Adult,size-following,4.20,18.833,18.200,4.79,13.69
+Adult,size-following,4.30,18.385,18.200,4.23,12.16
+Adult,size-following,4.40,17.963,17.400,3.70,10.70
+Adult,size-following,4.50,17.564,17.400,3.21,9.31
+Adult,size-following,4.60,17.187,16.600,2.73,7.98
+Adult,size-following,4.70,16.830,16.600,2.29,6.71
+Adult,size-following,4.80,16.491,15.800,1.86,5.49
+Adult,size-following,4.90,16.168,15.800,1.46,4.32
+Adult,size-following,5.00,15.861,15.800,1.08,3.19
+Adult,size-following,5.10,15.569,15.000,0.71,2.12
+Adult,size-following,5.20,15.289,15.000,0.36,1.08
+Adult,size-following,5.30,15.022,15.000,0.03,0.08
+Adult,size-following,5.40,nan,nan,nan,0.00
+Adult,size-following,5.50,nan,nan,nan,0.00
+Adult,size-following,5.60,nan,nan,nan,0.00
+Adult,size-following,5.70,nan,nan,nan,0.00
+Adult,size-following,5.80,nan,nan,nan,0.00
+Adult,size-following,5.90,nan,nan,nan,0.00
+Adult,size-following,6.00,nan,nan,nan,0.00
+Adult,fixed-adult,1.00,nan,94.200,nan,100.00
+Adult,fixed-adult,1.10,nan,94.200,nan,100.00
+Adult,fixed-adult,1.20,nan,94.200,nan,100.00
+Adult,fixed-adult,1.30,nan,94.200,nan,100.00
+Adult,fixed-adult,1.40,nan,94.200,nan,100.00
+Adult,fixed-adult,1.50,nan,94.200,nan,100.00
+Adult,fixed-adult,1.60,nan,94.200,nan,100.00
+Adult,fixed-adult,1.70,84.778,84.600,87.22,99.79
+Adult,fixed-adult,1.80,68.351,67.800,66.69,96.30
+Adult,fixed-adult,1.90,59.363,59.000,55.45,91.16
+Adult,fixed-adult,2.00,52.937,52.600,47.42,85.46
+Adult,fixed-adult,2.10,47.990,47.800,41.24,79.71
+Adult,fixed-adult,2.20,44.025,43.800,36.28,74.13
+Adult,fixed-adult,2.30,40.759,40.600,32.20,68.83
+Adult,fixed-adult,2.40,38.015,37.400,28.77,63.86
+Adult,fixed-adult,2.50,35.671,35.000,25.84,59.21
+Adult,fixed-adult,2.60,33.644,33.400,23.31,54.89
+Adult,fixed-adult,2.70,31.871,31.800,21.09,50.86
+Adult,fixed-adult,2.80,30.306,30.200,19.13,47.12
+Adult,fixed-adult,2.90,28.913,28.600,17.39,43.63
+Adult,fixed-adult,3.00,27.665,27.000,15.83,40.37
+Adult,fixed-adult,3.10,26.539,26.200,14.42,37.33
+Adult,fixed-adult,3.20,25.518,25.400,13.15,34.48
+Adult,fixed-adult,3.30,24.587,23.800,11.98,31.82
+Adult,fixed-adult,3.40,23.735,23.000,10.92,29.31
+Adult,fixed-adult,3.50,22.951,22.200,9.94,26.95
+Adult,fixed-adult,3.60,22.228,22.200,9.04,24.73
+Adult,fixed-adult,3.70,21.559,21.400,8.20,22.63
+Adult,fixed-adult,3.80,20.937,20.600,7.42,20.65
+Adult,fixed-adult,3.90,20.357,19.800,6.70,18.77
+Adult,fixed-adult,4.00,19.816,19.800,6.02,16.99
+Adult,fixed-adult,4.10,19.309,19.000,5.39,15.30
+Adult,fixed-adult,4.20,18.833,18.200,4.79,13.69
+Adult,fixed-adult,4.30,18.385,18.200,4.23,12.16
+Adult,fixed-adult,4.40,17.963,17.400,3.70,10.70
+Adult,fixed-adult,4.50,17.564,17.400,3.21,9.31
+Adult,fixed-adult,4.60,17.187,16.600,2.73,7.98
+Adult,fixed-adult,4.70,16.830,16.600,2.29,6.71
+Adult,fixed-adult,4.80,16.491,15.800,1.86,5.49
+Adult,fixed-adult,4.90,16.168,15.800,1.46,4.32
+Adult,fixed-adult,5.00,15.861,15.800,1.08,3.19
+Adult,fixed-adult,5.10,15.569,15.000,0.71,2.12
+Adult,fixed-adult,5.20,15.289,15.000,0.36,1.08
+Adult,fixed-adult,5.30,15.022,15.000,0.03,0.08
+Adult,fixed-adult,5.40,nan,nan,nan,0.00
+Adult,fixed-adult,5.50,nan,nan,nan,0.00
+Adult,fixed-adult,5.60,nan,nan,nan,0.00
+Adult,fixed-adult,5.70,nan,nan,nan,0.00
+Adult,fixed-adult,5.80,nan,nan,nan,0.00
+Adult,fixed-adult,5.90,nan,nan,nan,0.00
+Adult,fixed-adult,6.00,nan,nan,nan,0.00

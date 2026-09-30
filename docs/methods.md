@@ -411,6 +411,25 @@ dense OPM)
   model the arrays differ more in detection than in the accuracy of detected events, where the
   coregistration error sets a floor for the dipole.
 
+## 10. Pediatric extension (G3) — `scripts/g3a_jas_size_benchmark.py`; G3B pending
+
+### G3A: head-size benchmark (REPRO; NEW fixed-shell contrast)
+* Jas et al. Table 1 heads (h, b): newborn (55, 48), 1 year (70, 62), 8 years (85, 73) and adult
+  (95, 80) mm; OPM on the scalp; SQUID on a size-following shell s = h + 18 mm for every head, the
+  paper's "size-following, constant-standoff benchmark" (U-J5). Equal-SNR depth from Eq. 3 (exact
+  root) and from the paper's grid rule; "normalized d_eq" = depth below the brain surface / b, as
+  plotted in Fig. 5B (U-J4); the brain volume where OPM is ahead is reported separately.
+* Results at eta = 3 (newborn, 1 year, 8 years, adult): d_eq 30.8, 29.0, 28.1 and 27.7 mm;
+  normalized d_eq 49.6, 33.9, 22.0 and 15.8 % (grid rule 49.0, 33.0, 22.0 and 15.0 %; printed:
+  50 % newborn, 15 % adult); brain volume with OPM ahead 87.2, 71.2, 52.6 and 40.4 %.
+* NEW, idealised: every head concentric in one adult shell (s = 113 mm; gaps 58, 43, 28, 18 mm).
+  OPM is ahead throughout the newborn and 1-year brains up to eta = 8.7 and 4.2; for the 8-year
+  head normalized d_eq is 49.4 % (87 % of the volume). This concentric sphere is not a helmet
+  fit: real heads sit off-centre in a fixed helmet, which G3B models with pediatric anatomy.
+
+### G3B: fixed adult helmet vs head-adaptive OPM (NEW)
+Blocked on pediatric anatomy (GOAL: school-aged first; a scaled adult is a size-only control).
+
 ## To be written
 
-G3 (pediatric anatomy pending); G4 pediatric.
+G3B; G4 pediatric.
