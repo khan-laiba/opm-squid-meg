@@ -238,7 +238,7 @@ No other normalization is described: nothing rescales to a target SNR, and nothi
   - [NS] Whether amplitudes are weighted by each dipole's represented area. Nothing indicates area weighting.
 - **Spatial correlation.** None at source level: each background dipole gets its own independent realization (p. 1150). The authors list this as a limitation and suggest resting-state-network correlations (p. 1160). They also note that the frequency bands are not weighted by region (p. 1160).
 - **Realizations across spike simulations: [NS].**
-  - [Dg] In Fig. 6, traces from different example sources on the **same channel** have practically identical baselines (correlation of digitized baselines r ≥ 0.97, mostly 0.99–1.00), and the spike appears at the same latency (p. 1157).
+  - [Dg] In Fig. 6, traces from different example sources on the **same channel** have practically identical baselines (correlation of digitized baselines r ≥ 0.95, mostly 0.99–1.00), and the spike appears at the same latency (p. 1157).
   - At least for these examples, then, one fixed background realization and onset time were reused across source simulations.
 - **Scaling relative to the spike.**
   - Both are absolute: a 600 nAm spike peak (or 612–678 nAm patch) against ≈30 000 background dipoles of ≤ 10 nAm each. No rescaling to a target SNR (pp. 1150–1151).
@@ -791,11 +791,23 @@ Selected channel and printed SNR in Fig. 6. EEG: electrode; MM: Vectorview magne
 | Spike peak-to-peak / (2⟨e⟩) | 1.04 ± 0.14 (0.66–1.31) | 0.99–1.07 |
 | Noisy peak / ⟨e⟩ | 1.42 ± 0.22 | – |
 
-- **Baseline sharing.** Same-channel baselines are practically identical across sources (r ≥ 0.97). This supports a fixed background realization (§6).
+- **Baseline sharing.** Same-channel baselines are practically identical across sources (r ≥ 0.95). This supports a fixed background realization (§6).
 - **Low-SNR traces.** Printed values of 0.58–1.05 are compatible with either numerator: with no visible spike, the maximum of the background in the spike window alone gives values of about 1.
 - **Fig. 2(d)** (0.5 s baseline visible, ≈ 2.4 ms/px): literal 4.1, peak-to-peak 6.0, printed 4.8. Not decisive.
 
 **Caveats.** Raster resolution, anti-aliasing and the 0.9 vs 1 s baseline all limit this check. It is evidence, not proof. The formula must be treated as partly unresolved (§11 B1).
+
+**Reproducible re-check (G1B review, `scripts/digitise_hunold_fig6.py`).** The table above mixed conventions (drawn-line spike extremes with a centroid-based σ). With one convention throughout, for the 8 MEG traces with printed SNR > 2.4:
+
+| Candidate / printed | Mean ± SD |
+|---|---|
+| Noisy peak, centroid / (2⟨e⟩) | 0.61 ± 0.07 |
+| Noisy peak, drawn-line extremes / (2⟨e⟩) | 0.73 ± 0.07 |
+| Peak-to-peak, centroid / (2⟨e⟩) | 0.95 ± 0.07 |
+| Peak-to-peak, centroid / (2⟨e⟩), σ corrected for the centroid's 7.5 % low bias | 0.87 ± 0.06 |
+| Peak-to-peak, drawn-line extremes / (2⟨e⟩) | 1.10 ± 0.10 |
+
+Peak-to-peak remains the best numerator under every handling, within about ±13 % (0.87–1.10); the literal reading stays at 0.61–0.73.
 
 ## Appendix F. Absolute calibration from the Fig. 6 scale bars [Dg] (added at G1B)
 
@@ -822,16 +834,28 @@ The superficial tangential dipole's spike on MM 0631 reaches 23.9 px = 4.7 pT (n
 
 **Comparison with the text's background (G1B, sample subject).** Drawing our simulated background
 at the same scale and resolution and digitising it the same way (`hunold.rendered_centroid_sd`),
-the paper's baselines are 0.43x ours at the three MM channels and 0.39x at the three GM
-channels, with the background generated as the text specifies (+/-10 nAm per dipole, stationary).
-The spike of comparable sources agrees (our median 4.6 pT on the magnetometers for
-600-nAm dipoles at 24-27 mm depth and 70-80 deg in the left fronto-central cortex). The two
-sensor types give the same factor within the digitisation error, which points to the effective
-background source amplitude, not to the sensor model. The text does not determine it: a single
-normalisation over all dipoles, or filter edge transients that set each dipole's maximum, would
-both lower the stationary background; Fig. 2(a) shows one dipole trace with SD ~3.2 nAm over
-0.5 s, closer to the per-dipole reading.
+the paper's baselines are 0.43x ours at the three MM channels and 0.40x at the three GM channels,
+with the background generated as the text specifies (+/-10 nAm per dipole, stationary). Other
+reasonable channel choices give 0.52 (MM) and 0.44 (GM) against the median over all channels,
+and the review found 0.41-0.47 across background seeds, so the effective factor is about
+0.40-0.52 (bin means scale inversely).
+
+What the factor means is not determined. It is an effective background level at the sensors:
+- The magnetometer spike of the superficial tangential example agrees (ours 6.5 pT median for
+  600-nAm dipoles at 24-27 mm depth and 70-80 deg in the left precentral, caudal middle frontal
+  and pars opercularis cortex; paper 6.5 pT centroid, 7.3 pT drawn line), but our gradiometer
+  spike is 1.6-1.8x the paper's (214 vs 119-134 pT/m). The GM/MM ratio of the example (ours
+  ~33 per m, paper ~18 per m) suggests a larger source-sensor distance in the paper, so head
+  position relative to the helmet (not reported) and anatomy are candidate explanations.
+- The MM and GM baselines of Fig. 6 come from one background realization (correlated), so the
+  two factors are not independent checks.
+- Implementation variants of the text's normalisation would also lower the level: one
+  normalisation over all dipoles (~0.6x), peak normalisation dominated by unpadded filter edge
+  transients (~0.63x), or both (~0.3x) (review estimates).
+- Fig. 2(a) shows one background dipole with SD ~3.2-3.5 nAm over 0.5 s, close to the
+  per-dipole level of the text's model (2.9 nAm), which argues against a smaller per-dipole
+  amplitude as the only cause.
 
 **Use in G1B.** A second background level (`fig6_calibrated`) scales all background moments by
 the magnetometer factor. The gradiometer factor is then an independent check, and the paper's
-Fig. 3/4 bin means are never used for calibration (U-HU-bglevel).
+Figs 4-5 bin means are never used for calibration (U-HU-bglevel).

@@ -162,7 +162,7 @@ def fullres_matrix(array: Array, subject, cortex, job: str, conductivity=BEM_CON
 
 
 FULLRES_JOBS = {"squid": "neuromag_bem006", "opm99": "opm_bem006", "opm204": "opm204_bem006", "opm_dense": "opm_dense_bem006"}
-ER_FILE = "ernoise_raw.fif"
+ER_FILE = neuromag.ER_FILE
 
 
 def measured_noise(squid_info: mne.Info, filt, bads, window=(-0.2, 0.0), trim_s: float = 2.0) -> dict:

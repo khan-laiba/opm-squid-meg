@@ -42,7 +42,7 @@ band_weights = [0.6, 0.55, 0.5, 0.45, 0.4]                    # [C] within the p
 peak_nAm = 10.0                         # [P] p. 1151 (peak normalisation [C])
 pad_s = 3.0                             # [C] noise generated 3 s longer each side, cropped (stationary, as printed p. 1150)
 levels = ["fig6_calibrated", "as_specified"]  # [C]/[Dg] U-HU-bglevel: one scalar from the Fig. 6 magnetometer baselines
-realizations = 1                        # [Dg]/[C] not stated; one fixed realization inferred from Fig. 6 (baselines r >= 0.97)
+realizations = 1                        # [Dg]/[C] not stated; one fixed realization inferred from Fig. 6 (baselines r >= 0.95)
 
 [snr]
 channel = "largest noise-free spike amplitude, per sensor type"   # [P] p. 1151

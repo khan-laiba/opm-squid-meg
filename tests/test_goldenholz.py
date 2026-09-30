@@ -35,6 +35,13 @@ class TestGoldenholz(unittest.TestCase):
         w = rng.uniform(1, 2, 40)
         ref = np.stack([g[:, m].astype(np.float64) @ w[m] for m in members], axis=1)
         np.testing.assert_allclose(goldenholz.patch_topographies(g, members, np.arange(40), w), ref, rtol=1e-12)
+        # global vertex indices mapped to gain columns (as with the valid-vertex full-resolution matrices)
+        col_of = np.full(100, -1)
+        col_of[np.arange(0, 80, 2)] = np.arange(40)  # vertex 2k -> column k
+        members_global = [2 * m for m in members]
+        np.testing.assert_allclose(goldenholz.patch_topographies(g, members_global, col_of, np.repeat(w, 2)[:100]),
+                                   np.stack([g[:, m].astype(np.float64) @ np.repeat(w, 2)[:100][2 * m] for m in members], axis=1),
+                                   rtol=1e-12)
 
     def test_eq1_chunking_and_scale(self):
         rng = np.random.default_rng(1)
@@ -55,6 +62,12 @@ class TestGoldenholz(unittest.TestCase):
         (m,) = goldenholz.geodesic_patches(adj, np.array([centre]), 0.005, np.ones(n * n, bool))
         # Manhattan (edge-path) ball of radius 5 edges: 2*5*6 + 1 = 61 vertices
         self.assertEqual(len(m), 61)
+        # invalid vertices are never members (they may still carry the path)
+        valid = np.ones(n * n, bool)
+        valid[idx[20, 21:23]] = False
+        (m2,) = goldenholz.geodesic_patches(adj, np.array([centre]), 0.005, valid)
+        self.assertEqual(len(m2), 59)
+        self.assertFalse(np.any(np.isin(idx[20, 21:23], m2)))
 
 
 if __name__ == "__main__":

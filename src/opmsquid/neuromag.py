@@ -28,6 +28,7 @@ T3_COILS = {"grad": int(FIFF.FIFFV_COIL_VV_PLANAR_T3), "mag": int(FIFF.FIFFV_COI
 GRAD_TYPES = {int(FIFF.FIFFV_COIL_VV_PLANAR_T1), int(FIFF.FIFFV_COIL_VV_PLANAR_T2), int(FIFF.FIFFV_COIL_VV_PLANAR_T3)}
 MAG_TYPES = {int(FIFF.FIFFV_COIL_VV_MAG_T1), int(FIFF.FIFFV_COIL_VV_MAG_T2), int(FIFF.FIFFV_COIL_VV_MAG_T3)}
 RAW_FILE = "sample_audvis_raw.fif"
+ER_FILE = "ernoise_raw.fif"  # empty-room recording of the sample dataset
 TRANS_FILE = "sample_audvis_raw-trans.fif"
 
 
