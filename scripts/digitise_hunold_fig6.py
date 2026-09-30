@@ -65,18 +65,35 @@ def bracket_height(g: np.ndarray, block: str) -> float:
     return centre[1] - centre[0]
 
 
-def trace_centroids(g: np.ndarray, axis_row: float, side: str) -> tuple[np.ndarray, np.ndarray]:
+def trace_centroids(g: np.ndarray, axis_row: float, side: str) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Per pixel column: time [s], darkness-weighted centroid, and the upper and lower edge of the
+    drawn line (up = positive, px)."""
     xa, xb, x0 = SIDES[side]
     top, bot = int(axis_row - 46), int(axis_row - 2)
-    t, c = [], []
+    t, c, hi, lo = [], [], [], []
     for x in range(xa, xb):
         col = g[top:bot, x]
         ys = np.flatnonzero(col < 200)
         if len(ys):
             w = 255.0 - col[ys]
             t.append((x - x0) / hunold.FIG6_PX_PER_S)
-            c.append(-float(np.sum((ys + top) * w) / w.sum()))  # up = positive
-    return np.array(t), np.array(c)
+            c.append(-float(np.sum((ys + top) * w) / w.sum()))
+            hi.append(-float(ys.min() + top))
+            lo.append(-float(ys.max() + top))
+    return np.array(t), np.array(c), np.array(hi), np.array(lo)
+
+
+def centroid_sd_bias() -> float:
+    """Rendered-centroid SD / true SD for a Hunold-spectrum background drawn at ~3 px SD (the
+    paper's baselines): the per-column centroid averages 7.65 ms and reads the SD low."""
+    x = hunold.background_timecourses(8, 6000, 1000.0, np.random.default_rng(0))
+    ratios = []
+    for tr in x:
+        tr = tr / tr.std()
+        per = 900
+        true = np.sqrt(np.mean([np.var(tr[i:i + per]) for i in range(0, 6000 - per + 1, per)]))
+        ratios.append(hunold.rendered_centroid_sd(tr, 1000.0, px_per_unit=3.0) / (3.0 * true))
+    return float(np.mean(ratios))
 
 
 def main(pdf: Path):
@@ -86,16 +103,35 @@ def main(pdf: Path):
     bars = {b: round(bracket_height(g, b), 2) for b in BLOCKS}
     print("scale-bar brackets [px]:", bars)
     per_channel: dict[tuple[str, str], list[float]] = {}
-    print(f"{'block':5s} {'source':20s} {'side':10s} {'channel':7s} {'SNR':>5s} {'sd_px':>6s} {'spike_px':>8s}")
+    bias = centroid_sd_bias()
+    cand = {"noisy peak (centroid) / 2<e>": [], "p2p (centroid) / 2<e>": [], "p2p (centroid) / 2<e>, SD bias-corrected": [],
+            "p2p (drawn-line extremes) / 2<e>": [], "noisy peak (drawn-line extremes) / 2<e>": []}
+    print(f"{'block':5s} {'source':20s} {'side':10s} {'channel':7s} {'SNR':>5s} {'sd_px':>6s} {'peak_px':>8s} {'p2p_px':>7s} "
+          f"{'p2p_line':>8s}")
     for b, block in enumerate(BLOCKS):
         for r, src in enumerate(ROWS):
             for side in SIDES:
-                t, c = trace_centroids(g, rows[4 * b + r], side)
+                t, c, hi, lo = trace_centroids(g, rows[4 * b + r], side)
                 base = c[t < 0.90]
-                spike = c[(t >= 0.90) & (t < 1.15)] - base.mean()
+                w = (t >= 0.90) & (t < 1.15)
+                mu, sd = base.mean(), base.std()
+                peak, p2p = np.abs(c[w] - mu).max(), c[w].max() - c[w].min()
+                p2p_line = hi[w].max() - lo[w].min()
+                peak_line = max(hi[w].max() - mu, mu - lo[w].min())
                 ch, snr = hunold.FIG6_TRACES[block][(src, side)]
-                per_channel.setdefault((block, ch), []).append(base.std())
-                print(f"{block:5s} {src:20s} {side:10s} {ch:7s} {snr:5.2f} {base.std():6.2f} {np.abs(spike).max():8.1f}")
+                per_channel.setdefault((block, ch), []).append(sd)
+                print(f"{block:5s} {src:20s} {side:10s} {ch:7s} {snr:5.2f} {sd:6.2f} {peak:8.1f} {p2p:7.1f} {p2p_line:8.1f}")
+                if block != "eeg" and snr > 2.4:
+                    e2 = 2 * sd * np.sqrt(np.pi / 2)  # 2 <|hilbert|> for a Gaussian baseline
+                    cand["noisy peak (centroid) / 2<e>"].append(peak / e2 / snr)
+                    cand["p2p (centroid) / 2<e>"].append(p2p / e2 / snr)
+                    cand["p2p (centroid) / 2<e>, SD bias-corrected"].append(p2p / (e2 / bias) / snr)
+                    cand["p2p (drawn-line extremes) / 2<e>"].append(p2p_line / e2 / snr)
+                    cand["noisy peak (drawn-line extremes) / 2<e>"].append(peak_line / e2 / snr)
+    print(f"candidate SNR / printed SNR, MEG traces with printed SNR > 2.4 (n = {len(cand['p2p (centroid) / 2<e>'])}); "
+          f"centroid SD bias factor {bias:.3f}:")
+    for k, v in cand.items():
+        print(f"  {k:42s} {np.mean(v):.2f} +/- {np.std(v):.2f}")
     print("per channel: mean baseline sd [px] over the traces sharing that channel's background")
     for (block, ch), v in per_channel.items():
         unit = hunold.FIG6_SCALE_BAR[block] / bars[block]

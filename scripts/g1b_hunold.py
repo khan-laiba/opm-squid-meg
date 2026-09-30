@@ -37,11 +37,11 @@ import mne  # noqa: E402
 from mne.io.constants import FIFF  # noqa: E402
 from scipy import stats  # noqa: E402
 
-from opmsquid import anatomy, hunold, io, neuromag, noise, paths  # noqa: E402
+from opmsquid import anatomy, hunold, io, neuromag, noise, paths, plotting  # noqa: E402
 
 OUT = ROOT / "results" / "g1b"
 ARRAYS = ("mag", "grad", "opm")
-NUMERATORS = ("p2p", "peak", "noisy_peak")  # p2p primary
+NUMERATORS = ("p2p", "peak", "noisy_peak", "noisy_p2p")  # p2p primary
 VARIANTS = ("fig6_calibrated", "as_specified")
 SENSOR_ASD = {"mag": 3.5e-15, "grad": 3.6e-13}  # brochure typical white noise (HW-mag/grad-noise)
 OPM_ASD = (7e-15, 15e-15, 30e-15)  # declared sweep (A-OPM-NOISE)
@@ -99,6 +99,33 @@ def fig6_calibration(bg, names, fs):
         out[k] = dict(channels=chans, mean_ratio=float(np.mean([c["ratio_paper_to_ours"] for c in chans.values()])),
                       ratio_to_all_channel_median=float(np.mean(list(hunold.FIG6_BASELINE_SD_PX[k].values())) / np.median(every)))
     out["scale"] = out["mag"]["mean_ratio"]
+    out["alternatives"] = {"mag_by_channel_name": out["mag"]["mean_ratio"], "grad_by_channel_name": out["grad"]["mean_ratio"],
+                           "mag_all_channel_median": out["mag"]["ratio_to_all_channel_median"],
+                           "grad_all_channel_median": out["grad"]["ratio_to_all_channel_median"]}
+    out["scale_range"] = [min(out["alternatives"].values()), max(out["alternatives"].values())]
+    return out
+
+
+def fig6_spike_comparison(gains, cortex, depth, orient, region, w_unit):
+    """Noise-free spike peak-to-peak on the best (largest-amplitude) channel for 600-nAm dipoles
+    resembling the Table 1 tangential examples (depth +/- 1.5 mm, orientation +/- 5 deg, left
+    posterior frontal cortex: DK precentral, caudal middle frontal, pars opercularis), against the
+    paper's Fig. 6 traces (centroid and drawn-line p2p, scale bars)."""
+    p2p_unit = w_unit.max() - w_unit.min()
+    out = {}
+    for src, (d0, o0) in ((k, v["tangential"]) for k, v in hunold.FIG6_EXAMPLES.items()):
+        m = (cortex.usable & (cortex.hemi == 0) & np.isin(region, hunold.POSTERIOR_FRONTAL)
+             & (np.abs(depth - d0) <= 1.5) & (np.abs(orient - o0) <= 5.0))
+        cols = np.flatnonzero(m[cortex.valid])  # positions in the valid-vertex gain columns
+        row = dict(n_sources=int(len(cols)))
+        for k, unit, lab in (("mag", 1e12, "pT"), ("grad", 1e12, "pT/m")):
+            amp = np.abs(gains[k][:, cols]).max(axis=0) * 600e-9 * p2p_unit * unit
+            cen, line = hunold.FIG6_SPIKE_P2P_PX[k][(src, "tangential")]
+            to_si = hunold.FIG6_SCALE_BAR[k] / hunold.FIG6_SCALE_BAR_PX[k] * unit
+            row[k] = dict(unit=lab, ours_median=float(np.median(amp)) if len(amp) else None,
+                          ours_iqr=[float(x) for x in np.percentile(amp, [25, 75])] if len(amp) else None,
+                          paper_centroid=cen * to_si, paper_drawn_line=line * to_si)
+        out[src] = row
     return out
 
 
@@ -129,12 +156,20 @@ def paper_map(kind, family):
 
 
 def compare_with_paper(ours, kind, family):
+    """Bin means vs the paper's digitised classes (midpoint = lower edge + 0.25): correlation,
+    mean ratio (overall, for bins whose paper class is >= 2.5 ('strong') and below ('weak')),
+    agreement on SNR >= 2.5 (paper class lower edge), and the share inside the paper's class."""
     paper = paper_map(kind, family)
     ok = np.isfinite(ours) & np.isfinite(paper)
     o, p = ours[ok], paper[ok]
+    lower = p - 0.25
+    strong = lower >= 2.5
     return dict(pearson_r=float(np.corrcoef(o, p)[0, 1]), mean_ratio_ours_to_paper=float(np.mean(o / p)),
                 median_ratio_ours_to_paper=float(np.median(o / p)), mean_abs_diff=float(np.mean(np.abs(o - p))),
-                within_half_class=float(np.mean(np.abs(o - p) <= 0.5)), n_bins=int(ok.sum()))
+                mean_ratio_strong_bins=float(np.mean(o[strong] / p[strong])), mean_ratio_weak_bins=float(np.mean(o[~strong] / p[~strong])),
+                threshold_2p5_agreement=float(np.mean((o >= 2.5) == strong)), share_ge_2p5_ours=float(np.mean(o >= 2.5)),
+                share_ge_2p5_paper=float(np.mean(strong)), within_paper_class=float(np.mean((o >= lower) & (o < lower + 0.5))),
+                n_bins=int(ok.sum()))
 
 
 def gm_minus_mm_sign_agreement(maps, family):
@@ -215,8 +250,9 @@ def plot_vs_paper(all_maps, calib, fname):
         if r == 0:
             ax.legend(fontsize=6.5, loc="upper left")
     fig.colorbar(im, ax=fig.axes[:4], fraction=0.02, pad=0.01)
-    fig.suptitle("G1B vs Hunold et al. (2016) Figs 3-4 (digitised classes): p2p numerator, background calibrated with one scalar "
-                 f"({calib['scale']:.2f}) to the Fig. 6 magnetometer baselines", fontsize=10)
+    fig.suptitle("G1B vs Hunold et al. (2016) Figs 4-5 (digitised classes): p2p numerator, background calibrated with one scalar "
+                 f"({calib['scale']:.2f}; {calib['scale_range'][0]:.2f}-{calib['scale_range'][1]:.2f} over channel choices) "
+                 "to the Fig. 6 baselines", fontsize=10)
     fig.savefig(fname, dpi=150)
     plt.close(fig)
 
@@ -237,8 +273,10 @@ def main():
     base = slice(onset - int(cfg["snr"]["baseline_s"] * fs), onset)
 
     # background: random 10 % of valid nodes, one fixed realization shared by all arrays and sources
-    n_bg = int(round(cfg["background"]["fraction_of_nodes"] * len(valid_idx)))
-    bg_cols = np.sort(rng.choice(len(valid_idx), n_bg, replace=False))
+    usable_pos = np.flatnonzero(cortex.usable[valid_idx])  # A-BEM-DIST: >= 2 mm from the inner-skull mesh
+    usable_idx = valid_idx[usable_pos]
+    n_bg = int(round(cfg["background"]["fraction_of_nodes"] * len(usable_idx)))
+    bg_cols = np.sort(rng.choice(usable_pos, n_bg, replace=False))
     t0 = time.time()
     bg_spec = simulate_background(gains, n_bg, bg_cols, n_t, fs, rng, cfg["background"]["pad_s"])
     print(f"background: {n_bg} dipoles ({cortex.area[valid_idx][bg_cols].mean() * 1e6 * 10:.2f} mm2 per dipole incl. the "
@@ -249,13 +287,13 @@ def main():
     bgs = {"as_specified": bg_spec, "fig6_calibrated": {k: v * calib["scale"] for k, v in bg_spec.items()}}
 
     # sources: stratified to the paper's per-bin counts
-    dip, achieved = hunold.sample_by_bins(depth, orient, valid_idx, hunold.PAPER_DIPOLE_COUNTS, rng)
+    dip, achieved = hunold.sample_by_bins(depth, orient, usable_idx, hunold.PAPER_DIPOLE_COUNTS, rng)
     w_unit = hunold.spike_waveform(fs, peak=1.0)
     topo = {"dipole": {k: g[:, col_of[dip]].astype(np.float64) * 600e-9 for k, g in gains.items()}}
     # patches: grown from every sampled dipole; fixed density giving a median total of 622 nAm
     patches, keep = [], []
     for s in dip:
-        m = hunold.grow_patch(int(s), cortex.adjacency, orient, cortex.area, cortex.valid,
+        m = hunold.grow_patch(int(s), cortex.adjacency, orient, cortex.area, cortex.usable,
                               target_area=cfg["sources"]["patch_target_area_mm2"] * 1e-6,
                               window=cfg["sources"]["patch_orientation_window_deg"])
         if m is not None:
@@ -287,7 +325,7 @@ def main():
                       for a, b in (("grad", "mag"), ("opm", "mag"), ("opm", "grad"))}
                 key = f"{fam}/{num}"
                 summary_bins[key] = dict(counts=counts, mean_snr=maps,
-                                         share_of_bins_ge_2p5={k: float(np.nanmean(maps[k] >= 2.5)) for k in ARRAYS})
+                                         share_of_bins_ge_2p5={k: float(np.mean(maps[k][np.isfinite(maps[k])] >= 2.5)) for k in ARRAYS})
                 comparisons[key] = {k: compare_with_paper(maps[k], k, fam) for k in ("mag", "grad")}
                 gm_mm[key] = gm_minus_mm_sign_agreement(maps, fam)
                 significance[key] = {f"{a}-{b}": pv[(a, b)] for a, b in pv}
@@ -299,6 +337,16 @@ def main():
             print(var, key, {k: (round(v["pearson_r"], 3), round(v["mean_ratio_ours_to_paper"], 2)) for k, v in comp.items()},
                   "GM-MM sign agreement", gm_mm[key]["agree"])
     plot_vs_paper(all_maps, calib, OUT / "Figure_G1B_vs_paper.png")
+    # the calibration scalar is uncertain (channel choice): noise-free numerators scale as 1/k
+    calib_sens = {}
+    for alt, k_alt in calib["alternatives"].items():
+        f = calib["scale"] / k_alt
+        calib_sens[alt] = dict(scalar=k_alt, factor=f, **{
+            f"{fam}/{num}/{k}": float(variants_out["fig6_calibrated"]["comparison_with_paper"][f"{fam}/{num}"][k]["mean_ratio_ours_to_paper"] * f)
+            for fam in ("dipole", "patch") for num in ("p2p", "peak") for k in ("mag", "grad")})
+    regions = np.concatenate([plotting.read_freesurfer_annot(paths.SUBJECTS_DIR / "sample" / "label" / f"{h}.aparc.annot")
+                              for h in ("lh", "rh")])
+    spike_cmp = fig6_spike_comparison(gains, cortex, depth, orient, regions, w_unit)
 
     # extension: intrinsic sensor noise, common 0.5-70 Hz filter on spike, background and noise
     filt = noise.AnalysisFilter(fs=fs, l_freq=0.5, h_freq=70.0, order=4)
@@ -326,13 +374,13 @@ def main():
                                           ("patch", np.array(keep), p_area * 1e6, p_total * 1e9)):
             d, o = fam_desc[fam]
             for i, v in enumerate(verts):
-                wr.writerow([fam, int(cortex.vertno[v]), int(cortex.hemi[v]), f"{d[i]:.2f}", f"{o[i]:.2f}", f"{areas[i]:.2f}",
+                wr.writerow([fam, int(cortex.vertno[v]), int(cortex.hemi[v]), f"{d[i]:.4f}", f"{o[i]:.4f}", f"{areas[i]:.3f}",
                              f"{totals[i]:.1f}"]
                             + [f"{results[(var, fam)][k][vv][i]:.4f}" for var in VARIANTS for k in ARRAYS for vv in NUMERATORS])
 
     summary = dict(
         status="ADAPT (MEG part of Hunold et al. 2016 on the MNE sample subject); OPM columns are a NEW extension",
-        config=cfg, n_valid_vertices=int(len(valid_idx)), n_background_dipoles=int(n_bg),
+        config=cfg, n_valid_vertices=int(len(valid_idx)), n_usable_vertices=int(len(usable_idx)), n_background_dipoles=int(n_bg),
         dipoles=dict(requested=int(hunold.PAPER_DIPOLE_COUNTS.sum()), achieved=int(achieved.sum()),
                      achieved_per_bin=achieved, shortfall_bins=int(np.sum(achieved < hunold.PAPER_DIPOLE_COUNTS))),
         patches=dict(seeds=int(len(dip)), grown=int(len(patches)), density_nAm_per_mm2=density * 1e9 / 1e6,
@@ -341,8 +389,10 @@ def main():
                      n_dipoles=dict(min=int(min(map(len, patches))), median=float(np.median(list(map(len, patches)))),
                                     max=int(max(map(len, patches))))),
         numerators=dict(primary="p2p", variants=list(NUMERATORS[1:]),
-                        basis="Fig. 6 digitisation: p2p / (2 mean|hilbert|) = 1.04 +/- 0.14 x printed (Appendix E)"),
-        fig6_calibration=calib, variants=variants_out,
+                        basis=("Fig. 6 digitisation (scripts/digitise_hunold_fig6.py, 8 MEG traces with printed SNR > 2.4): "
+                               "p2p / (2 mean|hilbert|) = 0.87-1.10 x printed depending on digitisation handling; literal "
+                               "noisy peak 0.61-0.73 x")),
+        fig6_calibration=calib, calibration_sensitivity=calib_sens, fig6_spike_comparison=spike_cmp, variants=variants_out,
         extension_intrinsic_noise=dict(description="0.5-70 Hz zero-phase Butterworth (order 4) on spike, background and white "
                                                    "sensor noise; SQUID brochure noise; OPM 7/15/30 fT/sqrt(Hz); p2p numerator",
                                        mean_snr=ext),

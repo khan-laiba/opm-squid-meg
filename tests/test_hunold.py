@@ -85,6 +85,38 @@ class TestHunold(unittest.TestCase):
         np.testing.assert_array_equal(out["channel"], [1, 0])
         np.testing.assert_allclose(out["peak"], [2.0 * 600e-9 / 2.0, 3.0 * 600e-9 / 1.0])
         np.testing.assert_allclose(out["noisy_peak"], out["peak"])  # zero background
+        p2p = (w.max() - w.min()) / w.max()  # 853/600 for the digitised complex
+        np.testing.assert_allclose(out["p2p"], out["peak"] * p2p)
+        np.testing.assert_allclose(out["noisy_p2p"], out["p2p"])
+        self.assertAlmostEqual(p2p, 853 / 600, delta=0.01)
+
+    def test_bin_means_and_stratified_sampling(self):
+        rng = np.random.default_rng(4)
+        depth = rng.uniform(20, 60, 5000)
+        orient = rng.uniform(0, 90, 5000)
+        counts = np.full((8, 9), 3)
+        counts[0, 0] = 10_000  # more than available: capped
+        idx, achieved = hunold.sample_by_bins(depth, orient, np.arange(5000), counts, rng)
+        r, c = hunold.bin_index(depth[idx], orient[idx])
+        self.assertEqual(achieved[0, 0], int(np.sum((r == 0) & (c == 0))))
+        self.assertTrue(np.all(achieved[1:, :] == 3) and len(np.unique(idx)) == len(idx))
+        vals = np.arange(len(idx), dtype=float)
+        mean, count = hunold.bin_means(vals, r, c, (8, 9))
+        np.testing.assert_array_equal(count, achieved)
+        np.testing.assert_allclose(mean[3, 4], vals[(r == 3) & (c == 4)].mean())
+
+    def test_bem_node_descriptors(self):
+        """Radial source under a flat 'scalp' plane: depth = distance to the nearest node,
+        orientation = angle to the nearest inner-skull node normal, folded to 0-90 deg."""
+        g = np.stack(np.meshgrid(np.arange(-5, 6) * 0.005, np.arange(-5, 6) * 0.005), -1).reshape(-1, 2)
+        scalp = np.c_[g, np.full(len(g), 0.10)]
+        skull = np.c_[g, np.full(len(g), 0.09)]
+        skull_nn = np.tile([0.0, 0.0, 1.0], (len(g), 1))
+        pts = np.array([[0.0, 0.0, 0.07], [0.0, 0.0, 0.07], [0.0, 0.0, 0.07]])
+        nrm = np.array([[0.0, 0.0, 1.0], [1.0, 0.0, 0.0], [0.0, np.sin(np.radians(30)), -np.cos(np.radians(30))]])
+        d, o = hunold.bem_node_descriptors(pts, nrm, scalp, skull, skull_nn)
+        np.testing.assert_allclose(d, 30.0)
+        np.testing.assert_allclose(o, [0.0, 90.0, 30.0], atol=1e-9)
 
     def test_bins(self):
         r, c = hunold.bin_index(np.array([19.9, 20.0, 24.99, 59.9, 60.0]), np.array([0.0, 9.99, 10.0, 90.0, 45.0]))

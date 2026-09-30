@@ -93,6 +93,18 @@ FIG6_SCALE_BAR_PX = {"eeg": 24.99, "mag": 25.36, "grad": 25.33}  # bracket serif
 FIG6_SCALE_BAR = {"eeg": 100e-6, "mag": 5e-12, "grad": 100e-12}  # printed "100 uV", "5 pT", "100 pT" (read as pT/m)
 # baseline SD [px] of the per-column line centroid, display time < 0.90 s, averaged over the traces
 # that share a channel (same background realization)
+# spike-window (display 0.90-1.15 s) peak-to-peak [px] of the tangential example traces:
+# (per-column centroid, drawn-line extremes); the radial traces are dominated by background
+FIG6_SPIKE_P2P_PX = {
+    "mag": {("dipole superficial", "tangential"): (32.7, 37.0), ("dipole deep", "tangential"): (21.1, 25.0),
+            ("patch superficial", "tangential"): (30.7, 35.0), ("patch deep", "tangential"): (21.8, 26.0)},
+    "grad": {("dipole superficial", "tangential"): (30.1, 34.0), ("dipole deep", "tangential"): (15.6, 18.0),
+             ("patch superficial", "tangential"): (31.4, 36.0), ("patch deep", "tangential"): (16.6, 20.0)},
+}
+# Table 1 (p. 1156): example dipole descriptors (depth mm, orientation deg); posterior frontal lobe
+FIG6_EXAMPLES = {"dipole superficial": {"radial": (23.1, 6.4), "tangential": (25.6, 74.8)},
+                 "dipole deep": {"radial": (44.7, 4.2), "tangential": (39.3, 74.9)}}
+POSTERIOR_FRONTAL = ("precentral", "caudalmiddlefrontal", "parsopercularis")  # Desikan-Killiany (study definition)
 FIG6_BASELINE_SD_PX = {"eeg": {"FC3": 3.25, "CCP5h": 3.02, "CP5": 2.84, "C5": 2.84},
                        "mag": {"0631": 3.08, "0711": 3.15, "0741": 2.91},
                        "grad": {"0413": 2.64, "0412": 2.28, "0423": 2.66}}
@@ -210,13 +222,15 @@ def spike_snr(topographies: np.ndarray, waveform: np.ndarray, background: np.nda
 
     Channel c* = the channel with the largest noise-free spike amplitude. Numerators:
     'peak' = noise-free max |spike|; 'p2p' = noise-free peak-to-peak; 'noisy_peak' = max |spike +
-    background| in the 200-ms spike window. Denominator: a_bg[c*] (1 s before onset)."""
+    background| and 'noisy_p2p' = max - min of spike + background, both in the spike window (the
+    waveform's length). Denominator: a_bg[c*] (1 s before onset)."""
     wmax, wp2p = np.abs(waveform).max(), waveform.max() - waveform.min()
     c = np.argmax(np.abs(topographies), axis=0)
     g = topographies[c, np.arange(topographies.shape[1])]
     seg = background[c, onset:onset + len(waveform)]  # (n_sources, n_w)
-    noisy = np.abs(g[:, None] * waveform[None, :] + seg).max(axis=1)
-    return dict(channel=c, peak=np.abs(g) * wmax / a_bg[c], p2p=np.abs(g) * wp2p / a_bg[c], noisy_peak=noisy / a_bg[c])
+    x = g[:, None] * waveform[None, :] + seg
+    return dict(channel=c, peak=np.abs(g) * wmax / a_bg[c], p2p=np.abs(g) * wp2p / a_bg[c],
+                noisy_peak=np.abs(x).max(axis=1) / a_bg[c], noisy_p2p=(x.max(axis=1) - x.min(axis=1)) / a_bg[c])
 
 
 def bin_means(values: np.ndarray, rows: np.ndarray, cols: np.ndarray, shape) -> tuple[np.ndarray, np.ndarray]:
