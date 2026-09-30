@@ -28,6 +28,20 @@ class TestGoldenholz(unittest.TestCase):
         self.assertGreaterEqual(d.min(), 0.007)
         self.assertGreater(len(keep), 50)
 
+    def test_patch_topographies_match_explicit_sum(self):
+        rng = np.random.default_rng(0)
+        g = rng.normal(size=(5, 40)).astype(np.float32)
+        members = [np.array([1, 5, 7]), np.array([0]), np.arange(10, 30)]
+        w = rng.uniform(1, 2, 40)
+        ref = np.stack([g[:, m].astype(np.float64) @ w[m] for m in members], axis=1)
+        np.testing.assert_allclose(goldenholz.patch_topographies(g, members, np.arange(40), w), ref, rtol=1e-12)
+
+    def test_eq1_chunking_and_scale(self):
+        rng = np.random.default_rng(1)
+        t = rng.normal(size=(6, 50))
+        v = rng.uniform(1, 2, 6)
+        np.testing.assert_allclose(goldenholz.eq1_snr_db(t, v, scale=3.0, chunk=7), goldenholz.eq1_snr_db(3.0 * t, v))
+
     def test_geodesic_patches_on_grid(self):
         n, h = 41, 0.001
         idx = np.arange(n * n).reshape(n, n)

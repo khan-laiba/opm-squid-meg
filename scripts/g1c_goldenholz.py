@@ -49,8 +49,8 @@ def recorded_noise_variance(ch_names, projector, filt) -> tuple[np.ndarray, int]
     return np.mean(seg**2, axis=1), seg.shape[1]
 
 
-def channel_sets(kinds):
-    return {"mag": kinds == "mag", "grad": kinds == "grad", "pooled": np.ones(len(kinds), bool)}
+def channel_sets(kinds, good):
+    return {"mag": good & (kinds == "mag"), "grad": good & (kinds == "grad"), "pooled": good.copy()}
 
 
 def main():
@@ -65,13 +65,15 @@ def main():
     col_of[valid_idx] = np.arange(len(valid_idx))
     info = neuromag.load_info("T3")
     kinds = neuromag.channel_kinds(info)
-    sets = channel_sets(kinds)
     raw_info = mne.io.read_info(paths.SAMPLE_MEG / neuromag.RAW_FILE, verbose=False)
-    proj, n_proj, _ = mne.proj.make_projector(raw_info["projs"], info.ch_names)
+    good = np.array([n not in raw_info["bads"] for n in info.ch_names])  # MEG 2443 is bad in the recording
+    sets = channel_sets(kinds, good)
+    proj, n_proj = neuromag.ssp_projector(raw_info["projs"], info.ch_names)
     filt = noise.AnalysisFilter(fs=raw_info["sfreq"], l_freq=0.5, h_freq=100.0, order=4)
     rec_var, n_rec = recorded_noise_variance(info.ch_names, proj, filt)
     print(f"recorded noise: {n_rec} baseline samples, SSP rank {n_proj}; median RMS mag "
-          f"{np.median(np.sqrt(rec_var[kinds == 'mag'])) * 1e15:.1f} fT, grad {np.median(np.sqrt(rec_var[kinds == 'grad'])) * 1e13:.1f} fT/cm")
+          f"{np.median(np.sqrt(rec_var[sets['mag']])) * 1e15:.1f} fT, grad {np.median(np.sqrt(rec_var[sets['grad']])) * 1e13:.1f} fT/cm; "
+          f"excluded bad channels: {[n for n, ok in zip(info.ch_names, good) if not ok]}")
 
     rng = np.random.default_rng(2009)
     noise_cols = goldenholz.poisson_disk(cortex.rr[valid_idx], 0.007, rng)  # positions in valid_idx
@@ -90,38 +92,45 @@ def main():
 
     results, summary = {}, dict(status="ADAPT (Goldenholz et al. 2009, MEG part, MNE sample subject); OPM rows NEW",
                                 config=cfg, n_valid_vertices=int(len(valid_idx)), n_noise_sources=int(len(noise_cols)),
-                                n_centroids=int(len(centroids)), recorded_noise=dict(n_samples=int(n_rec), ssp_rank=int(n_proj)))
+                                n_centroids=int(len(centroids)), channels=dict({cs: int(m.sum()) for cs, m in sets.items()},
+                                excluded=[n for n, ok in zip(info.ch_names, good) if not ok]),
+                                recorded_noise=dict(n_samples=int(n_rec), ssp_rank=int(n_proj)))
+    weights = density * cortex.area
+    focal_am = cfg["sources"]["focal_nAm"] * 1e-9
+    g_sq = p_sq = None
     for bem_label, fname in (("probable_default", "neuromag_bem006"), ("as_printed", "neuromag_bem06")):
         g = proj.astype(np.float32) @ np.load(paths.CACHE / "fullres" / f"{fname}.npy")
         aat = np.sum(g[:, noise_cols].astype(np.float64) ** 2, axis=1)
-        s_s2, per_type = goldenholz.calibrate_source_variance(rec_var, aat, kinds)
+        s_s2, per_type = goldenholz.calibrate_source_variance(rec_var[good], aat[good], kinds[good])
         model_var = s_s2 * aat
+        topo_p = {r: goldenholz.patch_topographies(g, mem, col_of, weights) for r, mem in members.items()}
         res = dict(source_sd_nAm=float(np.sqrt(s_s2) * 1e9), per_type_median_nAm2=per_type)
         for noise_name, var in (("model", model_var), ("recorded", rec_var)):
             for cs in CH_SETS:
                 m = sets[cs]
-                focal = goldenholz.eq1_snr_db(g[m] * cfg["sources"]["focal_nAm"] * 1e-9, var[m])
-                res[f"focal/{noise_name}/{cs}"] = focal
-                for r, mem in members.items():
-                    topo = np.stack([g[m][:, col_of[mm]].astype(np.float64) @ (density * cortex.area[mm]) for mm in mem], axis=1)
-                    res[f"patch{r:g}/{noise_name}/{cs}"] = goldenholz.eq1_snr_db(topo, var[m])
+                res[f"focal/{noise_name}/{cs}"] = goldenholz.eq1_snr_db(g[m], var[m], scale=focal_am)
+                for r in members:
+                    res[f"patch{r:g}/{noise_name}/{cs}"] = goldenholz.eq1_snr_db(topo_p[r][m], var[m])
         results[bem_label] = res
         print(f"{bem_label}: noise-source SD {res['source_sd_nAm']:.2f} nAm (paper: 1.6-1.9 nAm per source)")
+        if bem_label == "probable_default":
+            g_sq, p_sq = g, topo_p
+        else:
+            del g
 
     # NEW extension: OPM with the same calibrated brain-noise model plus intrinsic noise (and SQUIDs with brochure noise)
-    g_sq = proj.astype(np.float32) @ np.load(paths.CACHE / "fullres" / "neuromag_bem006.npy")
     g_opm = np.load(paths.CACHE / "fullres" / "opm_bem006.npy")
+    p_opm = {r: goldenholz.patch_topographies(g_opm, mem, col_of, weights) for r, mem in members.items()}
     s_s2 = results["probable_default"]["source_sd_nAm"] ** 2 * 1e-18
     enbw = filt.enbw()
     ext = {}
-    for label, gg, intrinsic in (("opm", g_opm, np.full(g_opm.shape[0], OPM_ASD**2 * enbw)),
-                                 ("mag", g_sq[sets["mag"]], np.full(sets["mag"].sum(), SQUID_ASD["mag"] ** 2 * enbw)),
-                                 ("grad", g_sq[sets["grad"]], np.full(sets["grad"].sum(), SQUID_ASD["grad"] ** 2 * enbw))):
-        var = s_s2 * np.sum(gg[:, noise_cols].astype(np.float64) ** 2, axis=1) + intrinsic
-        ext[f"focal/{label}"] = goldenholz.eq1_snr_db(gg * 10e-9, var)
-        for r, mem in members.items():
-            topo = np.stack([gg[:, col_of[mm]].astype(np.float64) @ (density * cortex.area[mm]) for mm in mem], axis=1)
-            ext[f"patch{r:g}/{label}"] = goldenholz.eq1_snr_db(topo, var)
+    for label, gg, pp, m in (("opm", g_opm, p_opm, np.ones(g_opm.shape[0], bool)), ("mag", g_sq, p_sq, sets["mag"]),
+                             ("grad", g_sq, p_sq, sets["grad"])):
+        asd = OPM_ASD if label == "opm" else SQUID_ASD[label]
+        var = s_s2 * np.sum(gg[m][:, noise_cols].astype(np.float64) ** 2, axis=1) + asd**2 * enbw
+        ext[f"focal/{label}"] = goldenholz.eq1_snr_db(gg[m], var, scale=10e-9)
+        for r in members:
+            ext[f"patch{r:g}/{label}"] = goldenholz.eq1_snr_db(pp[r][m], var)
 
     # maps on the inflated surface (oct-6 vertices; focal values sampled there)
     hemis = plotting.inflated_views(subject.subjects_dir, "sample", subject.src)

@@ -15,7 +15,8 @@ bem_triangles_per_surface = 5120         # [P] p. 1078
 
 [sensors]
 system = "Neuromag Vectorview geometry of the MNE sample recording, T3 coils, MNE accurate integration"  # [P] Vectorview; rest [C]
-channel_sets = ["mag (N = 102)", "grad (N = 204)", "pooled MEG (N = 306)"]   # [C] pooling [NS]; all reported
+channel_sets = ["mag (N = 102)", "grad (N = 203)", "pooled MEG (N = 305)"]   # [C] pooling [NS]; all reported
+exclude = "channels marked bad in the recording (MEG 2443: baseline RMS 23x the gradiometer median)"   # [C]
 
 [sources]
 focal_nAm = 10.0                         # [P] p. 1078

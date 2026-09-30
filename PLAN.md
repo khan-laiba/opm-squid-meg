@@ -13,10 +13,10 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 
 | Milestone | Status | Evidence |
 |---|---|---|
-| G0 audit, provenance, plan | in progress | this file; `docs/audit.md`; `docs/literature/` |
+| G0 audit, provenance, plan | done except the first push (private repository) | this file; `docs/audit.md`; `docs/literature/`; `docs/provenance_register.md` |
 | G1A Jas analytical benchmark | done (awaiting independent review) | `scripts/g1a_jas_benchmark.py` -> `results/g1a/`; Eq. 1 vs Sarvas 2-D maximum 4.7e-15, vs MNE sphere 5.4e-8; d_eq(eta 3) = 27.665 mm |
-| G1B Hunold depth-orientation spikes | not started | |
-| G1C Goldenholz cortical SNR maps | not started | |
+| G1B Hunold depth-orientation spikes | done (awaiting independent review) | `scripts/g1b_hunold.py` -> `results/g1b/`; Fig. 6-calibrated background, p2p: bin means 0.88-0.96x the paper, r 0.93-0.97, 2.5-classification agreement 84-93 %, GM-MM sign 98-100 % |
+| G1C Goldenholz cortical SNR maps | in progress (full-resolution forwards done) | `scripts/g1c_goldenholz.py` |
 | G2 realistic adult OPM-Neuromag comparison | not started | |
 | G3 pediatric extension | not started; needs pediatric anatomy (see Inputs) | |
 | G4 epilepsy detection and localization | not started | |
@@ -31,6 +31,8 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | 2026-09-30 | Real Neuromag geometry from the MNE sample dataset (`MNE-sample-data-processed.tar.gz`, 1.58 GB, osf.io via `mne.datasets.sample`), stored in `data/external/` (not committed). | owner |
 | 2026-09-30 | Earlier scripts/outputs moved unchanged to `legacy/`; the conformal dense arrays are labelled an idealized baseline. | GOAL G0 |
 | 2026-09-30 | Primary adult anatomy for G1B/G1C/G2: MNE `sample` subject (individual adult MRI, BEM surfaces, real head position in a Vectorview helmet). fsaverage is a secondary template. | NEW (see Inputs) |
+| 2026-09-30 | G1B: p2p numerator primary (Fig. 6 digitisation); two background levels (as specified; one scalar from the Fig. 6 magnetometer baselines, gradiometers as independent check); paper maps never used for calibration. | NEW (U-HU-numerator, U-HU-bglevel) |
+| 2026-09-30 | Channels marked bad in the sample recording (MEG 2443) are excluded wherever recorded noise enters (G1C; G2 measured-noise calibration). | NEW |
 
 ## Inputs and availability
 
@@ -53,10 +55,10 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 
 - [x] Goal files, condensed goal, git repository, pinned `requirements.txt`.
 - [x] Legacy work moved to `legacy/` with a status table (`legacy/README.md`).
-- [ ] Full-text extractions: `docs/literature/{jas2026,hunold2016,goldenholz2009}.md`.
-- [ ] `docs/audit.md`: validated vs unverified legacy claims; reusable components.
-- [ ] `docs/provenance_register.md`: paper-reported (J, HU, GO), hardware (HW), new assumptions (A), decisions (D); unresolved ambiguities listed.
-- [ ] `docs/methods.md` skeleton.
+- [x] Full-text extractions: `docs/literature/{jas2026,hunold2016,goldenholz2009}.md` (each independently verified).
+- [x] `docs/audit.md`: validated vs unverified legacy claims; reusable components.
+- [x] `docs/provenance_register.md`: paper-reported (J, HU, GO), hardware (HW), recovered (R), new assumptions (A), decisions (D); unresolved ambiguities listed.
+- [x] `docs/methods.md` (living document).
 - [ ] Private repository created, first push, tag `g0`.
 
 ## G1 — adult foundations
@@ -76,15 +78,20 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 
 ### G1B Hunold depth-orientation spike simulations (ADAPT; OPM part NEW)
 
-To be finalised from `docs/literature/hunold2016.md`. Planned:
-1. `sample` subject, cortical-normal focal sources; depth to scalp; orientation = angle to the
-   nearby inner-skull normal; the paper's depth/orientation bins.
-2. ~20 mm^2 area-defined patches (distinct from radius-defined patches); the paper's 600 nAm
-   focal reference and background conventions in `configs/hunold_reference.toml`.
-3. ~80 ms spike waveform, distributed background activity, no intrinsic sensor noise in the
-   reference branch.
-4. SNR: channel with the largest noise-free spike amplitude; Hilbert envelope; preceding baseline.
-5. Verify SQUID magnetometer vs planar gradiometer comparison first; then add OPM (NEW).
+Done (`scripts/g1b_hunold.py`, methods section 6, `configs/hunold_reference.toml`):
+1. [x] Sample subject, full-resolution white surface, 3-layer BEM with the paper's conductivities,
+   4-point coil integration; depth/orientation from BEM nodes; the paper's bins; 3783 dipoles
+   stratified to the paper's per-bin counts; 20-mm^2 patches (2895 grow).
+2. [x] Background: 10 % of vertices, band-limited, stationary (edge-transient defect fixed),
+   +/-10 nAm per dipole; one realization shared by sources and arrays.
+3. [x] SNR as printed; p2p primary (Fig. 6 digitisation), peak and noisy peak as variants.
+4. [x] Absolute level: the paper's Fig. 6 baselines are 0.43x (MM) / 0.39x (GM) ours; both levels
+   reported (U-HU-bglevel). Calibrated: strong bins 0.96-1.04x the paper; weak bins
+   0.83-0.92x (paper floor near 1). GM > MM superficially, convergence with depth: reproduced.
+5. [x] OPM (matched 99 sites, NEW): brain noise only, OPM > MM for superficial sources, <= MM
+   below ~45 mm, < GM everywhere; intrinsic sensor noise (3.5-30 fT/sqrt(Hz)) is negligible
+   against this background.
+6. [ ] Independent review.
 
 ### G1C Goldenholz cortical SNR maps (ADAPT)
 
@@ -151,3 +158,5 @@ clean-environment smoke test (needs a package download; ask first), local static
 3. OPM device noise: no single verified device specification; a declared 7-30 fT/sqrt(Hz)
    sweep is used instead.
 4. Clean-environment smoke test requires installing packages into a fresh venv (download).
+5. MEG 2443 is bad in the sample recording (baseline RMS 23x the gradiometer median): exclude it from
+   every measured-noise computation (G2 brain-noise calibration, empty-room fit).

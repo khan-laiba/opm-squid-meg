@@ -9,15 +9,21 @@ channels of recorded_var_k / (A A^T)_kk, averaged with channel-count weights (p.
 from __future__ import annotations
 
 import numpy as np
+from scipy import sparse
 from scipy.sparse.csgraph import dijkstra
 from scipy.spatial import cKDTree
 
 
-def eq1_snr_db(topographies: np.ndarray, noise_var: np.ndarray) -> np.ndarray:
+def eq1_snr_db(topographies: np.ndarray, noise_var: np.ndarray, scale: float = 1.0, chunk: int = 20000) -> np.ndarray:
     """Goldenholz Eq. 1 for topographies (n_channels, n_sources) = a b_k (source amplitude
-    times unit gain), with the 1/N factor over the given channels."""
-    t = np.asarray(topographies, dtype=np.float64)
-    ratio = np.einsum("ks,k->s", t**2, 1.0 / np.asarray(noise_var, float)) / t.shape[0]
+    times unit gain; ``scale`` multiplies them), with the 1/N factor over the given channels.
+    Evaluated in float64, ``chunk`` sources at a time."""
+    w = 1.0 / np.asarray(noise_var, float)
+    n_ch, n_src = topographies.shape
+    ratio = np.empty(n_src)
+    for s in range(0, n_src, chunk):
+        t = np.asarray(topographies[:, s:s + chunk], dtype=np.float64) * scale
+        ratio[s:s + chunk] = np.einsum("ks,k->s", t**2, w) / n_ch
     with np.errstate(divide="ignore"):
         return 10.0 * np.log10(ratio)
 
@@ -78,3 +84,12 @@ def geodesic_patches(adjacency, centroids: np.ndarray, radius: float, valid: np.
 
 def nearest_indices(points: np.ndarray, targets: np.ndarray) -> np.ndarray:
     return cKDTree(points).query(targets)[1]
+
+
+def patch_topographies(g, members, col_of, weights):
+    """(n_channels, n_patches) topographies: signed sum of member lead fields x (density x area),
+    as one sparse product (float64 accumulation)."""
+    rows = np.concatenate([col_of[mm] for mm in members])
+    cols = np.concatenate([np.full(len(mm), i) for i, mm in enumerate(members)])
+    w = sparse.csc_matrix((np.concatenate([weights[mm] for mm in members]), (rows, cols)), shape=(g.shape[1], len(members)))
+    return np.asarray((w.T @ np.asarray(g, dtype=np.float64).T).T)

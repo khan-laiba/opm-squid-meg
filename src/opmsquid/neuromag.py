@@ -69,6 +69,27 @@ def channel_kinds(info: mne.Info) -> np.ndarray:
                      if ch["kind"] == FIFF.FIFFV_MEG_CH])
 
 
+def ssp_projector(projs, ch_names) -> tuple[np.ndarray, int]:
+    """SSP projector I - U U^T over ``ch_names`` from all projection items (active or not), built
+    as MNE does (vectors restricted to the channels, normalised, re-orthogonalised by SVD, singular
+    values below 1 % of the largest dropped). Returns (projector, number of vectors kept)."""
+    pos = {n: i for i, n in enumerate(ch_names)}
+    vecs = []
+    for p in projs:
+        cols = [(pos[n], j) for j, n in enumerate(p["data"]["col_names"]) if n in pos]
+        for row in np.atleast_2d(p["data"]["data"]):
+            v = np.zeros(len(ch_names))
+            for i, j in cols:
+                v[i] = row[j]
+            if np.linalg.norm(v) > 0:
+                vecs.append(v / np.linalg.norm(v))
+    if not vecs:
+        return np.eye(len(ch_names)), 0
+    u, s, _ = np.linalg.svd(np.array(vecs).T, full_matrices=False)
+    u = u[:, s / s[0] > 1e-2]
+    return np.eye(len(ch_names)) - u @ u.T, u.shape[1]
+
+
 def head_mri_trans() -> mne.transforms.Transform:
     return mne.read_trans(paths.require(paths.SAMPLE_MEG / TRANS_FILE, "sample head-MRI transform"))
 
