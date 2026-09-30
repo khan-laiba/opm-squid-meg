@@ -173,8 +173,8 @@ def main():
     squid = arrays["squid"]
     good = ~np.isin(squid.info.ch_names, bads)
     grads, mags = good & (squid.kinds == "grad"), good & (squid.kinds == "mag")
-    geometry = {name: dict(channels=a.n, **{k: v for k, v in a.meta.items() if not isinstance(v, (list, np.ndarray)) or k == "excluded_sites"})
-                for name, a in arrays.items()}
+    geometry = {name: {**{k: v for k, v in a.meta.items() if not isinstance(v, (list, np.ndarray)) or k == "excluded_sites"},
+                       "channels": a.n} for name, a in arrays.items()}
 
     # --- measured noise, environment, background calibration ------------------------------------
     meas = g2.measured_noise(squid.info, st.filt, bads)
