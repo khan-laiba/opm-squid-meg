@@ -86,7 +86,7 @@ def main(overrides: dict | None = None):
     sim, ev, dc = cfg["simulation"], cfg["events"], cfg["detector"]
     st = G.Study(cfg2)
     rng = np.random.default_rng(sim["seed"])
-    arrays = {k: v for k, v in g2.build_arrays(st.subject, st.dig).items() if k in ("squid", "opm99", "opm_dense")}
+    arrays = {k: v for k, v in g2.build_arrays(st.subject, st.dig).items() if k in ("squid", "opm_matched", "opm_dense")}
     squid = arrays["squid"]
     bads = cfg2["sensors"]["bads"]
     good = ~np.isin(squid.info.ch_names, bads)
@@ -324,7 +324,7 @@ def summarise(state):
 
 
 def figures(summary, ev):
-    colors = {"squid/combined": "k", "squid/grad": "tab:red", "squid/mag": "tab:blue", "opm99/opm": "tab:green", "opm_dense/opm": "tab:purple"}
+    colors = {"squid/combined": "k", "squid/grad": "tab:red", "squid/mag": "tab:blue", "opm_matched/opm": "tab:green", "opm_dense/opm": "tab:purple"}
     fig, axs = plt.subplots(2, len(DEPTH_BANDS), figsize=(16, 7.5), sharey=True)
     for row, mode in enumerate(("oracle", "practical@1")):
         for db, (d0, d1) in enumerate(DEPTH_BANDS):

@@ -28,10 +28,10 @@ refractory_s = 0.25
 hit_tolerance_s = 0.05
 operating_points_per_min = [1.0, 0.2]   # false events per minute (practical detector)
 oracle_alpha = 0.001                    # per-trial false-positive probability (oracle)
-arrays = ["squid/combined", "squid/grad", "squid/mag", "opm99/opm", "opm_dense/opm"]
+arrays = ["squid/combined", "squid/grad", "squid/mag", "opm_matched/opm", "opm_dense/opm"]
 
 [localization]                   # bounded subset (scripts/g4_localization.py)
-arrays = ["squid", "opm99", "opm_dense"]
+arrays = ["squid", "opm_matched", "opm_dense"]
 n_locations = 24                 # 2 per depth x orientation stratum
 strengths_nAm = [80.0, 320.0]
 grid_spacing_mm = 5.0            # MNE/dSPM source grid (Poisson disk, excludes the true vertices: off-grid truth)

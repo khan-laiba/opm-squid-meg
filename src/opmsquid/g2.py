@@ -1,15 +1,17 @@
 """Realistic adult OPM-Neuromag comparison (G2): arrays, sources, noise models, metrics.
 
 Arrays (sample subject, measured head position in the Neuromag helmet):
-  squid    Neuromag T3, 102 magnetometers + 204 planar gradiometers (comparators: 'mag', 'grad',
-           'combined')
-  opm99    matched-site OPM array (coverage control; 99 of 102 Neuromag sites feasible)
-  opm204   204 sites spread evenly over the densest feasible array (channel-budget control vs the
-           204 gradiometers)
-  opm_dense  densest feasible single-axis OPM array under the 17-mm packing rule ("full system";
-           216 sites on the sample head)
-A 306-channel single-axis OPM array does not fit on this head (A-OPM-PACK); it is reported as
-infeasible rather than simulated.
+  squid        Neuromag T3, 102 magnetometers + 204 planar gradiometers (comparators: 'mag',
+               'grad', 'combined')
+  opm_matched  matched-site OPM array (coverage control; the Neuromag sites that fit the OPM
+               placement rules, 98 of 102 on the sample head)
+  opm204       204 sites spread evenly over the dense array (channel-budget control vs the 204
+               gradiometers)
+  opm_dense    a dense single-axis OPM array under the 17-mm packing rule, greedy farthest-point
+               construction ("full system"; 220 sites on the sample head). Not proven maximal;
+               306 single-axis channels appear infeasible on this head (A-OPM-PACK).
+OPM sensitive axes follow the smooth BEM head-surface normal (A-OPM-AXIS); sites avoid the ears
+(A-OPM-COVER).
 """
 from __future__ import annotations
 
@@ -48,7 +50,7 @@ def build_arrays(subject: anatomy.Subject, digitisation: mne.Info, scalp_gap: fl
             squid_info["dev_head_t"] = mne.transforms.Transform("meg", "head", dev_head_t)
     arrays = {"squid": Array("squid", squid_info, neuromag.channel_kinds(squid_info), None,
                              dict(sites=102, channels=306, axes="1 mag + 2 planar grad per site"))}
-    arrays["opm99"] = matched_opm(subject, digitisation, scalp_gap)
+    arrays["opm_matched"] = matched_opm(subject, digitisation, scalp_gap)
     for name in DENSE:
         arrays[name] = dense_opm(subject, digitisation, name, scalp_gap)
     return arrays
@@ -60,10 +62,20 @@ DENSE = {"opm204": (0.015, 204, "channel-budget control vs 204 gradiometers"),
          "opm_dense": (0.015, None, "densest feasible single-axis array (full system)")}
 
 
+AXIS_RADIUS = 0.015  # A-OPM-AXIS: sensitive axis = BEM head-surface normal averaged within 15 mm
+EAR_CLEARANCE = 0.020  # A-OPM-COVER: no site within 20 mm of the preauricular points
+
+
+def skin_surface(subject: anatomy.Subject) -> anatomy.Surface:
+    """The smooth BEM head surface (MRI frame, outward normals), used for OPM sensitive axes."""
+    return anatomy._outward(next(s for s in subject.bem_surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_HEAD))
+
+
 def matched_opm(subject: anatomy.Subject, digitisation: mne.Info, scalp_gap: float = 0.0) -> Array:
     arr, rep = opm.matched_to_neuromag(neuromag.load_info("T3"), subject.trans, subject.scalp, digitisation,
-                                       scalp_gap=scalp_gap)
-    return _opm_array("opm99", arr, dict(role="matched-site coverage control", **_rep(rep)))
+                                       scalp_gap=scalp_gap, normal_radius=AXIS_RADIUS, axis_surface=skin_surface(subject),
+                                       ear_clearance=EAR_CLEARANCE)
+    return _opm_array("opm_matched", arr, dict(role="matched-site coverage control", **_rep(rep)))
 
 
 def dense_opm(subject: anatomy.Subject, digitisation: mne.Info, name: str, scalp_gap: float = 0.0) -> Array:
@@ -71,7 +83,8 @@ def dense_opm(subject: anatomy.Subject, digitisation: mne.Info, name: str, scalp
     with a fixed channel count (farthest-point sampling of the sensing centres)."""
     spacing, n_sites, role = DENSE[name]
     skin = next(s for s in subject.bem_surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_HEAD)
-    arr, rep = opm.dense_array(subject.scalp, subject.trans, digitisation, spacing, scalp_gap=scalp_gap, outer_skin=skin)
+    arr, rep = opm.dense_array(subject.scalp, subject.trans, digitisation, spacing, scalp_gap=scalp_gap, outer_skin=skin,
+                               normal_radius=AXIS_RADIUS, axis_surface=skin_surface(subject), ear_clearance=EAR_CLEARANCE)
     if n_sites is not None:
         if n_sites > len(arr.pos):
             raise ValueError(f"{name}: only {len(arr.pos)} feasible sites")
@@ -161,7 +174,7 @@ def fullres_matrix(array: Array, subject, cortex, job: str, conductivity=BEM_CON
     return full, col
 
 
-FULLRES_JOBS = {"squid": "neuromag_bem006", "opm99": "opm_bem006", "opm204": "opm204_bem006", "opm_dense": "opm_dense_bem006"}
+FULLRES_JOBS = {"squid": "neuromag_bem006", "opm_matched": "opm_bem006", "opm204": "opm204_bem006", "opm_dense": "opm_dense_bem006"}
 ER_FILE = neuromag.ER_FILE
 
 

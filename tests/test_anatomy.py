@@ -19,7 +19,7 @@ class TestFullResCortex(unittest.TestCase):
         self.assertTrue(np.all(c.valid[c.usable]))
         self.assertGreaterEqual(c.dist_inner_skull[c.usable].min(), anatomy.MIN_BEM_DISTANCE)
         dropped = np.mean(~c.usable[c.valid])
-        self.assertTrue(0.005 < dropped < 0.03, dropped)  # ~1.3 % of the valid vertices
+        self.assertTrue(0.05 < dropped < 0.12, dropped)  # ~8.7 % of the valid vertices (4 mm)
 
     def test_inner_skull_distance_is_accurate(self):
         """Distance to the subdivided mesh vs exact point-to-triangle distance on a few vertices."""
@@ -27,10 +27,11 @@ class TestFullResCortex(unittest.TestCase):
 
         inner = next(s for s in self.subject.bem_surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_BRAIN)
         rng = np.random.default_rng(0)
-        idx = rng.choice(np.flatnonzero(self.cortex.dist_inner_skull < 0.004), 20, replace=False)
+        idx = rng.choice(np.flatnonzero(self.cortex.dist_inner_skull < 0.006), 20, replace=False)
         pts = self.cortex.rr[idx]
         exact = np.array([_point_mesh_distance(p, inner["rr"], inner["tris"]) for p in pts])
-        np.testing.assert_allclose(self.cortex.dist_inner_skull[idx], exact, atol=2e-4)
+        diff = self.cortex.dist_inner_skull[idx] - exact
+        self.assertTrue(np.all(diff > -1e-6) and np.all(diff < 4e-4), diff)  # never below, at most 0.4 mm above
 
 
 def _point_mesh_distance(p, rr, tris):

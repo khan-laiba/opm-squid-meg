@@ -241,7 +241,7 @@ def dense_array(scalp, trans: mne.transforms.Transform, digitisation: mne.Info, 
                 max_sites: int | None = None, standoff: float = STANDOFF, scalp_gap: float = 0.0,
                 normal_radius: float = 0.010, brow_offset: float = 0.030, seed_point=None,
                 min_center_spacing: float = MIN_CENTER_SPACING, outer_skin: dict | None = None,
-                max_depth_below_skin: float = 0.002) -> tuple[OPMArray, dict]:
+                max_depth_below_skin: float = 0.002, axis_surface=None, ear_clearance: float = 0.0) -> tuple[OPMArray, dict]:
     """Scalp-normal single-axis OPM array filling the coverage region (above the brow plane) by
     farthest-point sampling of the MRI scalp: sites are added in order of largest distance to the
     already placed ones until that distance falls below ``min_spacing_m`` (or ``max_sites`` is
@@ -251,10 +251,16 @@ def dense_array(scalp, trans: mne.transforms.Transform, digitisation: mne.Info, 
 
     With ``outer_skin`` (the MNE BEM head surface, MRI frame), scalp points lying more than
     ``max_depth_below_skin`` inside that smooth surface (ear canals, pinna folds: not reachable
-    by a sensor package) are not used as sites (A-OPM-COVER)."""
+    by a sensor package) are not used as sites, nor points within ``ear_clearance`` of the
+    preauricular points (A-OPM-COVER). With ``axis_surface`` (a smooth closed surface, e.g. the
+    BEM head surface with outward normals) the sensitive axes are its normals averaged within
+    ``normal_radius`` (A-OPM-AXIS), instead of the dense scalp's."""
     mri_head = np.linalg.inv(trans["trans"])
     rr_head = scalp.rr @ mri_head[:3, :3].T + mri_head[:3, 3]
-    cover = above_brow_plane(rr_head, fiducials_head(digitisation), brow_offset)
+    fids = fiducials_head(digitisation)
+    cover = above_brow_plane(rr_head, fids, brow_offset)
+    if ear_clearance > 0:
+        cover &= np.minimum(np.linalg.norm(rr_head - fids["lpa"], axis=1), np.linalg.norm(rr_head - fids["rpa"], axis=1)) >= ear_clearance
     if outer_skin is not None:
         cover &= ~deep_below_surface(scalp.rr, outer_skin, max_depth_below_skin)
     cand = np.flatnonzero(cover)
@@ -269,7 +275,8 @@ def dense_array(scalp, trans: mne.transforms.Transform, digitisation: mne.Info, 
         chosen.append(k)
         dmin = np.minimum(dmin, np.linalg.norm(pts - pts[k], axis=1))
     sp_mri = pts[chosen]
-    nrm = smoothed_normals(scalp.rr, scalp.nn, sp_mri, normal_radius)
+    ref = axis_surface if axis_surface is not None else scalp
+    nrm = smoothed_normals(ref.rr, ref.nn, sp_mri, normal_radius)
     centres = sp_mri + (scalp_gap + standoff) * nrm
     centres, extra, feasible = resolve_clearance(centres, nrm, scalp, standoff - 0.001)
     keep = feasible & prune_to_spacing(centres, min_center_spacing, feasible)
@@ -283,7 +290,8 @@ def dense_array(scalp, trans: mne.transforms.Transform, digitisation: mne.Info, 
 
 def matched_to_neuromag(squid_info: mne.Info, trans: mne.transforms.Transform, scalp, digitisation: mne.Info,
                         standoff: float = STANDOFF, scalp_gap: float = 0.0, normal_radius: float = 0.010,
-                        brow_offset: float = 0.030, min_clearance: float | None = None) -> tuple[OPMArray, dict]:
+                        brow_offset: float = 0.030, min_clearance: float | None = None, axis_surface=None,
+                        ear_clearance: float = 0.0) -> tuple[OPMArray, dict]:
     """Matched-site OPM array: every Neuromag sensor location (magnetometer coil centre and
     normal, MRI frame) is projected along its inward normal onto the scalp. A site is kept if
     that scalp point lies above the brow plane; its sensing centre is placed at
@@ -297,10 +305,14 @@ def matched_to_neuromag(squid_info: mne.Info, trans: mne.transforms.Transform, s
     dist = neuromag.ray_mesh_distance(geo.pos[mags], -geo.normal[mags], scalp.rr, scalp.tris)
     hit = np.isfinite(dist)
     scalp_pts = geo.pos[mags] - np.nan_to_num(dist)[:, None] * geo.normal[mags]
-    nrm = smoothed_normals(scalp.rr, scalp.nn, scalp_pts, normal_radius)
+    ref = axis_surface if axis_surface is not None else scalp
+    nrm = smoothed_normals(ref.rr, ref.nn, scalp_pts, normal_radius)
     mri_head = np.linalg.inv(trans["trans"])
     pts_head = scalp_pts @ mri_head[:3, :3].T + mri_head[:3, 3]
-    keep = hit & above_brow_plane(pts_head, fiducials_head(digitisation), brow_offset)
+    fids = fiducials_head(digitisation)
+    keep = hit & above_brow_plane(pts_head, fids, brow_offset)
+    if ear_clearance > 0:
+        keep &= np.minimum(np.linalg.norm(pts_head - fids["lpa"], axis=1), np.linalg.norm(pts_head - fids["rpa"], axis=1)) >= ear_clearance
     centres = scalp_pts + (scalp_gap + standoff) * nrm
     min_clearance = standoff - 0.001 if min_clearance is None else min_clearance
     centres, extra, feasible = resolve_clearance(centres, nrm, scalp, min_clearance)

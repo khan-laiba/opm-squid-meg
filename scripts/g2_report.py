@@ -14,9 +14,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "results" / "g2"
 CONFIGS = [("squid", "mag", "Neuromag magnetometers (102)"), ("squid", "grad", "Neuromag planar gradiometers (204)"),
-           ("squid", "combined", "Neuromag combined (306)"), ("opm99", "opm", "OPM matched sites (99)"),
-           ("opm204", "opm", "OPM channel-budget control (204)"), ("opm_dense", "opm", "OPM densest feasible array (216)")]
-OPMS = ("opm99", "opm204", "opm_dense")
+           ("squid", "combined", "Neuromag combined (306)"), ("opm_matched", "opm", "OPM matched sites"),
+           ("opm204", "opm", "OPM channel-budget control (204)"), ("opm_dense", "opm", "OPM dense array (full system)")]
+OPMS = ("opm_matched", "opm204", "opm_dense")
 REFS = ("combined", "grad", "mag")
 
 

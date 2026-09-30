@@ -107,7 +107,7 @@ def main():
         print(f"{key}: ENBW {enbw:.1f} Hz, brain grad {row['brain_rms_grad_fT_cm']:.1f} fT/cm, OPM gain {g_opm:.3f}, var check "
               f"{row['simulated_over_predicted_variance']:.3f}; dense/combined {row['ideal']['opm_dense/combined/intrinsic+brain']['ratio']:.3f}"
               f" (with response {row['opm_response']['opm_dense/combined/intrinsic+brain']['ratio']:.3f}), matched "
-              f"{row['ideal']['opm99/combined/intrinsic+brain']['ratio']:.3f}", flush=True)
+              f"{row['ideal']['opm_matched/combined/intrinsic+brain']['ratio']:.3f}", flush=True)
     out["runtime_s"] = time.time() - t0
     io.write_json(out, OUT / "g2_band_sensitivity.json")
 
@@ -115,11 +115,11 @@ def main():
     keys = list(out["bands"])
     x = np.arange(len(keys))
     for ax, cond in zip(axs, headline):
-        for j, (a, ref, mk) in enumerate((("opm99", "combined", "o"), ("opm_dense", "combined", "s"), ("opm_dense", "grad", "^"),
+        for j, (a, ref, mk) in enumerate((("opm_matched", "combined", "o"), ("opm_dense", "combined", "s"), ("opm_dense", "grad", "^"),
                                            ("opm_dense", "mag", "v"))):
             for resp, alpha in (("ideal", 1.0), ("opm_response", 0.45)):
                 y = [out["bands"][k][resp][f"{a}/{ref}/{cond}"]["ratio"] for k in keys]
-                ax.plot(x + 0.06 * (j - 1.5), y, mk, color={"opm99": "tab:green", "opm_dense": "tab:purple"}[a],
+                ax.plot(x + 0.06 * (j - 1.5), y, mk, color={"opm_matched": "tab:green", "opm_dense": "tab:purple"}[a],
                         alpha=alpha, mfc="none" if resp == "opm_response" else None,
                         label=f"{G.LABEL[a]} / {G.LABEL[ref]}" + (" (100-Hz OPM response)" if resp == "opm_response" else ""))
         ax.axhline(1, color="0.5", lw=0.8)

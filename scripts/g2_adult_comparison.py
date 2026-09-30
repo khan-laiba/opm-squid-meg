@@ -3,7 +3,7 @@
 
 MNE sample subject in its measured Vectorview head position. Arrays (src/opmsquid/g2.py):
 Neuromag T3 (102 magnetometers + 204 planar gradiometers; channel sets mag, grad, combined), the
-matched-site OPM array (opm99, coverage control), 204 OPM sites spread over the densest feasible
+matched-site OPM array (opm_matched, coverage control), 204 OPM sites spread over the densest feasible
 array (opm204, channel-budget control) and the densest feasible single-axis array (opm_dense, full
 system). Common target sources (10-nAm cortical-normal dipoles at the valid oct-6 vertices and
 geodesic patches) and common noise for every array (src/opmsquid/noisemodel.py): intrinsic white
@@ -41,9 +41,9 @@ from opmsquid import (anatomy, background, forward, g2, goldenholz, io, metrics,
 
 OUT = ROOT / "results" / "g2"
 STATE = ROOT / "cache" / "g2" / "state.pkl"
-OPMS = ("opm99", "opm204", "opm_dense")
+OPMS = ("opm_matched", "opm204", "opm_dense")
 REFS = ("combined", "grad", "mag")
-LABEL = {"squid": "Neuromag", "opm99": "OPM matched (99)", "opm204": "OPM 204", "opm_dense": "OPM dense (216)",
+LABEL = {"squid": "Neuromag", "opm_matched": "OPM matched", "opm204": "OPM 204", "opm_dense": "OPM dense",
          "combined": "Neuromag combined", "grad": "Neuromag grad", "mag": "Neuromag mag"}
 DEPTH_EDGES = np.arange(10.0, 85.0, 5.0)
 ORIENT_EDGES = np.arange(0.0, 90.1, 10.0)
@@ -335,7 +335,7 @@ def main():
         r2 = {"squid": {k: v2 for k, v2 in res["squid"].items() if k[1] in headline}}
         gap_geo = {}
         for a in OPMS:
-            arr = g2.matched_opm(st.subject, st.dig, gap * 1e-3) if a == "opm99" else g2.dense_opm(st.subject, st.dig, a, gap * 1e-3)
+            arr = g2.matched_opm(st.subject, st.dig, gap * 1e-3) if a == "opm_matched" else g2.dense_opm(st.subject, st.dig, a, gap * 1e-3)
             gt, gg = st.gains(arr, fullres=False)
             nz = st.noise(arr, gg, brain_scale, env)
             r2[a] = evaluate_all(gt * st.q, arr, nz, headline)
@@ -410,7 +410,7 @@ def bridge_to_sphere(st, amp, depth, dist):
                                            p95=float(np.percentile(v, 95) * 1e3)) for k, v in dist.items()})
     xi_sq = float(np.median(dist["squid"]))
     etas = np.round(np.arange(1.0, 6.01, 0.25), 2)
-    sph = {"jas_xi0_18": (0.0, 0.018), "realistic_standoffs": (float(np.median(dist["opm99"])), xi_sq)}
+    sph = {"jas_xi0_18": (0.0, 0.018), "realistic_standoffs": (float(np.median(dist["opm_matched"])), xi_sq)}
     out["sphere_ratio_vs_depth"] = {k: [float(x) for x in sphere.signal_ratio(centers * 1e-3, 0.095, *xi)] for k, xi in sph.items()}
     out["sphere_d_eq_mm"] = {k: {f"{e:g}": float(sphere.equal_snr_depth(e, 0.095, 0.080, *xi) * 1e3) for e in etas} for k, xi in sph.items()}
     out["depth_centers_mm"] = centers.tolist()
@@ -531,7 +531,7 @@ def convergence(st, arrays, G_t, G_g, noise_nom, res, brain_scale, target_var, g
 
     def run_forward_variant(label, gain_fn):
         gt, gg = {}, {}
-        for name in ("squid", "opm99", "opm_dense"):
+        for name in ("squid", "opm_matched", "opm_dense"):
             g = gain_fn(arrays[name])
             gt[name], gg[name] = g[:, :ns], g[:, ns:]
         bs = background.calibrate(st.unit_brain(gg["squid"]), grads, target_var)
@@ -569,7 +569,7 @@ def convergence(st, arrays, G_t, G_g, noise_nom, res, brain_scale, target_var, g
     g_acc = direct(st.subject.bem_model(g2.BEM_CONDUCTIVITY))(squid)
     g_4pt = direct(st.subject.bem_model(g2.BEM_CONDUCTIVITY), info=info4)(squid)
     coil["squid_4pt_vs_accurate_rel_diff_median"] = float(np.median(np.linalg.norm(g_4pt - g_acc, axis=0) / np.linalg.norm(g_acc, axis=0)))
-    for name in ("opm99", "opm_dense"):
+    for name in ("opm_matched", "opm_dense"):
         gp = direct(st.subject.bem_model(g2.BEM_CONDUCTIVITY), coil_def=opm.coil_def_file(cell_size=1e-6))(arrays[name])
         gc = direct(st.subject.bem_model(g2.BEM_CONDUCTIVITY))(arrays[name])
         rel = np.abs(np.abs(gc[:, :ns]).max(axis=0) / np.abs(gp[:, :ns]).max(axis=0) - 1)
@@ -628,10 +628,10 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
         ax.plot(centers, med, label=label, **kw)
         ax.fill_between(centers, lo, hi, alpha=0.15, color=kw.get("color"))
 
-    colors = {"squid_mag": "tab:blue", "squid_grad": "tab:red", "opm99": "tab:green", "opm204": "tab:olive", "opm_dense": "tab:purple",
+    colors = {"squid_mag": "tab:blue", "squid_grad": "tab:red", "opm_matched": "tab:green", "opm204": "tab:olive", "opm_dense": "tab:purple",
               "combined": "k", "grad": "tab:red", "mag": "tab:blue"}
-    for k in ("squid_mag", "opm99", "opm_dense"):
-        curve(axs[0], amp[k] * 1e15, {"squid_mag": "Neuromag mag", "opm99": LABEL["opm99"], "opm_dense": LABEL["opm_dense"]}[k], color=colors[k])
+    for k in ("squid_mag", "opm_matched", "opm_dense"):
+        curve(axs[0], amp[k] * 1e15, {"squid_mag": "Neuromag mag", "opm_matched": LABEL["opm_matched"], "opm_dense": LABEL["opm_dense"]}[k], color=colors[k])
     axs[0].set_yscale("log")
     axs[0].set_ylabel("peak |B| of a 10-nAm dipole [fT]")
     ax2 = axs[0].twinx()
@@ -661,7 +661,7 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
     for k, lab, ls in (("jas_xi0_18", "sphere, standoffs 0 / 18 mm (Jas)", "--"),
                        ("realistic_standoffs", "sphere, median real standoffs", ":")):
         axs[0].plot(c, bridge["sphere_ratio_vs_depth"][k], ls, color="k", label=lab)
-    for a in ("opm99", "opm_dense"):
+    for a in ("opm_matched", "opm_dense"):
         b = bridge[f"{a}_ratio_vs_depth"]
         med = np.array([x["median"] if x["median"] is not None else np.nan for x in b], float)
         lo = np.array([x["q25"] if x["q25"] is not None else np.nan for x in b], float)
@@ -676,7 +676,7 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
     etas = [float(e) for e in bridge["sphere_d_eq_mm"]["jas_xi0_18"]]
     for k, ls in (("jas_xi0_18", "--"), ("realistic_standoffs", ":")):
         axs[1].plot(etas, [bridge["sphere_d_eq_mm"][k][f"{e:g}"] for e in etas], ls, color="k", label=k.replace("_", " "))
-    for a in ("opm99", "opm_dense"):
+    for a in ("opm_matched", "opm_dense"):
         y = [bridge[f"{a}_d_eq_mm"][f"{e:g}"] for e in etas]
         axs[1].plot(etas, [np.nan if v is None else v for v in y], "o-", ms=3, color=colors[a], label=LABEL[a])
     axs[1].set_xlabel("eta = sigma_OPM / sigma_SQUID-mag (intrinsic noise only)")
@@ -748,10 +748,10 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
     fig.savefig(OUT / "Figure_G2_patches.png", dpi=150)
     plt.close(fig)
 
-    # 5. sensitivity forest plot (opm_dense and opm99 vs Neuromag combined, headline conditions)
+    # 5. sensitivity forest plot (opm_dense and opm_matched vs Neuromag combined, headline conditions)
     labels = []
-    vals = {a: {c: [] for c in headline} for a in ("opm99", "opm_dense")}
-    cis = {a: {c: [] for c in headline} for a in ("opm99", "opm_dense")}
+    vals = {a: {c: [] for c in headline} for a in ("opm_matched", "opm_dense")}
+    cis = {a: {c: [] for c in headline} for a in ("opm_matched", "opm_dense")}
     entries = [("primary (oracle)", primary["oracle"])] + [(f"plug-in {k.split('_')[1]}", primary[k]) for k in primary if k.startswith("plugin_")]
     entries += [(k.replace("_", " "), v) for k, v in sens.items()]
     for lab, comp in entries:
@@ -764,7 +764,7 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
     fig, axs = plt.subplots(1, 2, figsize=(12, 0.28 * len(labels) + 1.5), sharey=True)
     y = np.arange(len(labels))[::-1]
     for ax, c in zip(axs, headline):
-        for a, mk in (("opm99", "o"), ("opm_dense", "s")):
+        for a, mk in (("opm_matched", "o"), ("opm_dense", "s")):
             v, ci = np.array(vals[a][c]), np.array(cis[a][c])
             ax.errorbar(v, y, xerr=[v - ci[:, 0], ci[:, 1] - v], fmt=mk, color=colors[a], label=LABEL[a], ms=4, capsize=2)
         ax.axvline(0, color="0.5", lw=0.8)

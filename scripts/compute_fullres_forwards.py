@@ -6,12 +6,12 @@ for G1B, G1C and G2. Resumable: every 20k-source chunk is cached by content hash
 Jobs
 ----
 neuromag4pt_hunold  Neuromag T3 with the 4-point rule (Hunold), BEM 0.33/0.0042/0.33 S/m
-opm_hunold          matched OPM array (99 sites), BEM 0.33/0.0042/0.33 S/m
+opm_hunold          matched OPM array, BEM 0.33/0.0042/0.33 S/m
 neuromag_bem006     Neuromag T3 (MNE accurate rule), BEM 0.3/0.006/0.3 S/m (MNE default)
 opm_bem006          matched OPM array, BEM 0.3/0.006/0.3 S/m
 neuromag_bem06      Neuromag T3, BEM 0.3/0.06/0.3 S/m (Goldenholz et al. as printed)
 opm204_bem006       dense OPM array, 204 sites (G2 channel-budget control), BEM 0.3/0.006/0.3 S/m
-opm_dense_bem006    densest feasible OPM array (216 sites; G2 full system), BEM 0.3/0.006/0.3 S/m
+opm_dense_bem006    dense OPM array (G2 full system), BEM 0.3/0.006/0.3 S/m
 
 Usage: python scripts/compute_fullres_forwards.py [job ...]   (default: all, in this order)
 """

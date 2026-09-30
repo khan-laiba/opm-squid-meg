@@ -186,7 +186,7 @@ def main():
                     support_recovery_median=float(np.nanmedian([r["support"] for r in sel])) if fam == "patch" else None)
     io.write_json(summary, OUT / "g4_localization_summary.json")
     fig, axs = plt.subplots(1, 2, figsize=(12, 4.4))
-    colors = {"squid": "k", "opm99": "tab:green", "opm_dense": "tab:purple"}
+    colors = {"squid": "k", "opm_matched": "tab:green", "opm_dense": "tab:purple"}
     for ax, meth in zip(axs, ("dspm", "ecd")):
         for k_, name in enumerate(arrays):
             for m_, (fam, s) in enumerate([(f, s) for f in ("focal", "patch") for s in lc["strengths_nAm"]]):

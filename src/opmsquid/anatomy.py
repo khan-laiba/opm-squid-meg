@@ -134,7 +134,7 @@ def orientation_angle(points: np.ndarray, normals: np.ndarray, inner_skull: Surf
     return out
 
 
-MIN_BEM_DISTANCE = 0.002  # [m] A-BEM-DIST: sources closer to the 5120-triangle inner skull are not used
+MIN_BEM_DISTANCE = 0.004  # [m] A-BEM-DIST: sources closer to the 5120-triangle inner skull are not used
 
 
 @dataclass
@@ -142,10 +142,11 @@ class FullResCortex:
     """Full-resolution white surface of both hemispheres (sources at every vertex, as in Hunold
     et al. 2016 and Goldenholz et al. 2009). Vertices outside the inner-skull BEM surface are
     marked invalid (MNE cannot place BEM sources there). ``usable`` further drops vertices within
-    MIN_BEM_DISTANCE of the inner-skull mesh: there the linear-collocation BEM lead fields are
-    numerical artefacts (up to ~4000x the energy of neighbouring vertices within 0.5 mm; no
-    anomaly beyond 2 mm). Forward matrices keep a column for every valid vertex; sources are
-    chosen among usable vertices."""
+    MIN_BEM_DISTANCE (4 mm) of the 5120-triangle inner-skull mesh, where the linear-collocation
+    lead fields are not converged: refining the mesh to 20,480 triangles changes the Neuromag gains
+    by a median 14 % (90th percentile 67 %) at 2-3 mm, 2.5 % (13 %) at 3-4 mm and 0.8 % (3.6 %) at
+    4-5 mm (OPM about half). This drops 8.7 % of the cortex, mostly gyral crowns nearest the skull.
+    Forward matrices keep a column for every valid vertex; sources are chosen among usable ones."""
 
     rr: np.ndarray  # (n, 3) MRI [m]
     nn: np.ndarray  # (n, 3) unit normals (outward from white matter)
@@ -168,7 +169,8 @@ class FullResCortex:
 
 def inner_skull_distance(subject: "Subject", points: np.ndarray) -> np.ndarray:
     """Distance [m] from each point to the subject's 5120-triangle inner-skull BEM surface (to the
-    surface subdivided three times, ~1-mm vertex spacing, so the error is below ~0.1 mm)."""
+    surface subdivided three times: nearest-vertex distance, which exceeds the exact point-to-surface
+    distance by at most ~0.4 mm)."""
     inner = next(s for s in subject.bem_surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_BRAIN)
     fine = Surface(inner["rr"], inner["tris"], inner["nn"]).subdivided(3)
     return cKDTree(fine.rr).query(points)[0]
