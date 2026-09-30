@@ -6,7 +6,8 @@ Arrays (sample subject, measured head position in the Neuromag helmet):
   opm99    matched-site OPM array (coverage control; 99 of 102 Neuromag sites feasible)
   opm204   204 sites spread evenly over the densest feasible array (channel-budget control vs the
            204 gradiometers)
-  opm221   densest feasible single-axis OPM array under the 17-mm packing rule ("full system")
+  opm_dense  densest feasible single-axis OPM array under the 17-mm packing rule ("full system";
+           216 sites on the sample head)
 A 306-channel single-axis OPM array does not fit on this head (A-OPM-PACK); it is reported as
 infeasible rather than simulated.
 """
@@ -17,6 +18,7 @@ from pathlib import Path
 
 import numpy as np
 import mne
+from mne.io.constants import FIFF
 
 from . import anatomy, background, environment, forward, goldenholz, metrics, neuromag, noisemodel, opm, paths
 
@@ -55,7 +57,7 @@ def build_arrays(subject: anatomy.Subject, digitisation: mne.Info, scalp_gap: fl
 # dense single-axis arrays: (farthest-point scalp spacing [m] of the densest feasible array,
 # number of sites taken from it by farthest-point sampling (None = all), role)
 DENSE = {"opm204": (0.015, 204, "channel-budget control vs 204 gradiometers"),
-         "opm221": (0.015, None, "densest feasible single-axis array (full system)")}
+         "opm_dense": (0.015, None, "densest feasible single-axis array (full system)")}
 
 
 def matched_opm(subject: anatomy.Subject, digitisation: mne.Info, scalp_gap: float = 0.0) -> Array:
@@ -68,7 +70,8 @@ def dense_opm(subject: anatomy.Subject, digitisation: mne.Info, name: str, scalp
     """Densest feasible single-axis array (17-mm packing rule), or an evenly spread subset of it
     with a fixed channel count (farthest-point sampling of the sensing centres)."""
     spacing, n_sites, role = DENSE[name]
-    arr, rep = opm.dense_array(subject.scalp, subject.trans, digitisation, spacing, scalp_gap=scalp_gap)
+    skin = next(s for s in subject.bem_surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_HEAD)
+    arr, rep = opm.dense_array(subject.scalp, subject.trans, digitisation, spacing, scalp_gap=scalp_gap, outer_skin=skin)
     if n_sites is not None:
         if n_sites > len(arr.pos):
             raise ValueError(f"{name}: only {len(arr.pos)} feasible sites")

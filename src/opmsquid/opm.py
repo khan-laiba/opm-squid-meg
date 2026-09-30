@@ -145,6 +145,16 @@ def make_info(array: OPMArray, sfreq: float = 1000.0) -> mne.Info:
     return info
 
 
+def deep_below_surface(points: np.ndarray, surf: dict, depth: float) -> np.ndarray:
+    """True for points inside the closed MNE surface ``surf`` (same frame) and farther than
+    ``depth`` from it (distance to the surface subdivided three times, ~1-mm vertex spacing)."""
+    from mne.surface import _CheckInside
+    from .anatomy import Surface
+
+    fine = Surface(surf["rr"], surf["tris"], surf["nn"]).subdivided(3)
+    return _CheckInside(surf)(points) & (cKDTree(fine.rr).query(points)[0] > depth)
+
+
 def farthest_point_subset(pos: np.ndarray, n: int, start: int | None = None) -> np.ndarray:
     """Indices of ``n`` points chosen by farthest-point sampling (Euclidean), starting from
     ``start`` (default: the highest point, max z). Spreads a subset evenly over an array."""
@@ -230,16 +240,23 @@ def prune_to_spacing(centres: np.ndarray, min_dist: float, candidates: np.ndarra
 def dense_array(scalp, trans: mne.transforms.Transform, digitisation: mne.Info, min_spacing_m: float,
                 max_sites: int | None = None, standoff: float = STANDOFF, scalp_gap: float = 0.0,
                 normal_radius: float = 0.010, brow_offset: float = 0.030, seed_point=None,
-                min_center_spacing: float = MIN_CENTER_SPACING) -> tuple[OPMArray, dict]:
+                min_center_spacing: float = MIN_CENTER_SPACING, outer_skin: dict | None = None,
+                max_depth_below_skin: float = 0.002) -> tuple[OPMArray, dict]:
     """Scalp-normal single-axis OPM array filling the coverage region (above the brow plane) by
     farthest-point sampling of the MRI scalp: sites are added in order of largest distance to the
     already placed ones until that distance falls below ``min_spacing_m`` (or ``max_sites`` is
     reached). Sensing centres at scalp_gap + standoff along the smoothed normal, with clearance
     resolution as for the matched array, then pruned so that sensing centres are at least
-    ``min_center_spacing`` apart (physical packing, A-OPM-PACK)."""
+    ``min_center_spacing`` apart (physical packing, A-OPM-PACK).
+
+    With ``outer_skin`` (the MNE BEM head surface, MRI frame), scalp points lying more than
+    ``max_depth_below_skin`` inside that smooth surface (ear canals, pinna folds: not reachable
+    by a sensor package) are not used as sites (A-OPM-COVER)."""
     mri_head = np.linalg.inv(trans["trans"])
     rr_head = scalp.rr @ mri_head[:3, :3].T + mri_head[:3, 3]
     cover = above_brow_plane(rr_head, fiducials_head(digitisation), brow_offset)
+    if outer_skin is not None:
+        cover &= ~deep_below_surface(scalp.rr, outer_skin, max_depth_below_skin)
     cand = np.flatnonzero(cover)
     pts = scalp.rr[cand]
     start = int(np.argmax(pts[:, 2])) if seed_point is None else int(cKDTree(pts).query(seed_point)[1])

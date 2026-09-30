@@ -98,7 +98,7 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | A-OPM-STANDOFF | Sensing centre from helmet inner surface | 7 mm | J-opm-standoff |
 | A-OPM-GAP | Helmet inner surface to MRI scalp | 0 mm baseline; swept (e.g. 0, 3, 6 mm) | Hair and helmet fit are not modelled otherwise. |
 | A-OPM-AXIS | OPM sensitive axis | smoothed scalp normal (10-mm radius), single axis | Multi-axis OPMs are a secondary extension. |
-| A-OPM-COVER | OPM coverage | scalp above the plane through LPA, RPA and nasion + 3 cm | Excludes face and neck; sample subject: 99 of 102 matched sites kept. |
+| A-OPM-COVER | OPM coverage | scalp above the plane through LPA, RPA and nasion + 3 cm; for dense arrays, scalp points > 2 mm inside the smooth BEM head surface (ear canals, pinna folds; 7 % of candidates, upper scalp unaffected: dense and BEM surfaces agree to 0.8 mm median) are not sites | Excludes face and neck; sample subject: 99 of 102 matched sites kept; every sensing centre lies outside the BEM head surface (min 3.0 mm for opm99, 4.9 mm for the dense arrays). |
 | A-OPM-CLEAR | Physical clearance | sensing centre >= standoff - 1 mm from every scalp point, sites moved outward if needed (sample: 3 sites, +3 to +4 mm over the ear pinnae and brow) | Package collisions with the pinna/brow. |
 | A-OPM-NOISE | OPM intrinsic noise | sweep 7-30 fT/sqrt(Hz) (white) | No single verified device specification (GOAL.md). |
 | D-ANAT | Primary adult anatomy | MNE `sample` subject | Individual adult MRI with real helmet position; fsaverage secondary. |
@@ -128,4 +128,4 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | U-GO-pool | Whether Eq. 1 pooled all 306 MEG channels | Magnetometers (N=102), gradiometers (N=204) and pooled (N=306) reported separately. |
 | U-GO-grid | Noise-source count and decimation unstated | 7-mm Poisson-disk grid on 3-D distance: 1,838 sources, sparser than the ~4,000 of a 7-mm MNE surface grid (A3 of the extraction). The calibration rule makes absolute SNR nearly independent of the density; s_s is compared after scaling by sqrt(M / 4000). |
 | U-GO-patch | Centroid set, surface and element weighting for patches unstated | oct-6 vertices as centroids; white surface; moment = density x vertex area; signed sum. |
-| U-OPM-PACK | OPM package footprint (no verified device data) | Minimum sensing-centre spacing 17 mm (10-mm cell in a ~12-17 mm package); densest feasible single-axis array on the sample head: 221 sites; 306 single-axis channels infeasible. |
+| U-OPM-PACK | OPM package footprint (no verified device data) | Minimum sensing-centre spacing 17 mm (10-mm cell in a ~12-17 mm package); densest feasible single-axis array on the sample head: 216 sites (`opm_dense`); 306 single-axis channels infeasible. The channel-budget control `opm204` takes 204 of them by farthest-point sampling. |
