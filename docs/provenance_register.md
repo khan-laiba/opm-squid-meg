@@ -103,6 +103,15 @@ Status: `verified` (checked against the source or reproduced numerically), `tran
 | A-OPM-NOISE | OPM intrinsic noise | sweep 7-30 fT/sqrt(Hz) (white) | No single verified device specification (GOAL.md). |
 | D-ANAT | Primary adult anatomy | MNE `sample` subject | Individual adult MRI with real helmet position; fsaverage secondary. |
 | D-BADCH | Bad channels | channels marked bad in the sample recording (MEG 2443) are excluded wherever recorded or empty-room noise enters | Its pre-stimulus RMS is 23x the gradiometer median. |
+| A-G2-BAND | Common analysis band | 1-40 Hz, Butterworth order 4, zero phase, for the target, every noise term and the measured-noise calibration; ENBW of the composite response | Spontaneous-activity band where brain noise dominates; frequency-band sensitivity is a separate analysis. |
+| A-G2-BRAIN | Cortical background | independent, cortex-normal, area-scaled moment variance on a 7-mm Poisson-disk grid (1,838 sources); scale fitted once so the median good-gradiometer variance equals the measured (task baseline - empty room) level; correlated extension exp(-d/lambda), lambda 5 and 10 mm, re-fitted | Gradiometers are least affected by room and physiological artefacts; the magnetometer level is a validation, not a fit. |
+| A-G2-ENV | Room field | 8-term external expansion (homogeneous + linear gradient) about (0, 0, 40) mm head, coefficient covariance from the empty-room recording; same room field for every array; head-position variants keep it in head coordinates | Residual higher-order and movement-related fields not modelled. |
+| A-G2-OPMNOISE | Primary OPM noise | 15 fT/sqrt(Hz), the middle of the A-OPM-NOISE sweep, not a device value | The sweep is reported for every comparison. |
+| A-G2-TARGET | Focal targets | 10-nAm dipoles, cortical normal, at the 8,193 valid oct-6 vertices | Every SNR metric is linear in the moment. |
+| A-G2-PATCH | Extended targets | geodesic radius 5/10/20 mm around each target, signed sum; fixed total 10 nAm (scalar moment) or fixed density 0.25 nAm/mm^2 | OPM/SQUID ratios do not depend on the convention; absolute values do. |
+| A-G2-COVEST | Estimated covariance | Ledoit-Wolf estimate from 2 x 39 Hz x T independent samples, T = 10 and 60 s; plug-in matched filter evaluated under the true covariance | Practical counterpart of the oracle detectability. |
+| A-G2-HEADPOS | Head-position variants | measured; +/-5 mm along each device axis; +/-5 deg pitch about the head origin; well fitted (up 6 mm, 20 mm from the nearest magnetometer); all at least 18 mm (Dewar spacing) from the coils | Source-blind (geometry only); OPM arrays are head-mounted and unchanged. |
+| D-G2-COND | Noise conditions | intrinsic; intrinsic+brain; intrinsic+brain+env; projected (external 8-dim subspace removed by the same noise-weighted projection for every array; rank n - 8) | Headline conditions: intrinsic+brain and projected. |
 
 ## Unresolved ambiguities (U)
 
