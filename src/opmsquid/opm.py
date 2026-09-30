@@ -145,14 +145,15 @@ def make_info(array: OPMArray, sfreq: float = 1000.0) -> mne.Info:
     return info
 
 
-def deep_below_surface(points: np.ndarray, surf: dict, depth: float) -> np.ndarray:
-    """True for points inside the closed MNE surface ``surf`` (same frame) and farther than
-    ``depth`` from it (distance to the surface subdivided three times, ~1-mm vertex spacing)."""
+def signed_distance(points: np.ndarray, surf: dict) -> np.ndarray:
+    """Distance [m] from each point to the closed MNE surface ``surf`` (same frame), negative
+    inside (nearest vertex of the surface subdivided three times, ~1-mm vertex spacing)."""
     from mne.surface import _CheckInside
     from .anatomy import Surface
 
     fine = Surface(surf["rr"], surf["tris"], surf["nn"]).subdivided(3)
-    return _CheckInside(surf)(points) & (cKDTree(fine.rr).query(points)[0] > depth)
+    d = cKDTree(fine.rr).query(points)[0]
+    return np.where(_CheckInside(surf)(points), -d, d)
 
 
 def farthest_point_subset(pos: np.ndarray, n: int, start: int | None = None) -> np.ndarray:
@@ -199,17 +200,24 @@ def above_brow_plane(points_head: np.ndarray, fids: dict, brow_offset: float = 0
 
 
 def resolve_clearance(pos: np.ndarray, axis: np.ndarray, scalp, min_clearance: float, step: float = 0.0005,
-                      max_extra: float = 0.015) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+                      max_extra: float = 0.015, model_surface: dict | None = None,
+                      model_clearance: float = 0.0) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Move sensing centres outward along their axes until every point is at least
     ``min_clearance`` from the scalp (e.g. over the ear pinna or brow ridge, where the offset
-    along a smoothed normal comes close to other parts of the head). Returns (positions, extra
-    outward shift per site, feasible mask: False if more than ``max_extra`` would be needed)."""
+    along a smoothed normal comes close to other parts of the head) and, with ``model_surface``
+    (the BEM head surface, same frame), at least ``model_clearance`` from it. Returns (positions,
+    extra outward shift per site, feasible mask: False if more than ``max_extra`` would be needed)."""
+    from .anatomy import Surface
+
     tree = cKDTree(scalp.rr)
+    model = None
+    if model_surface is not None:
+        model = cKDTree(Surface(model_surface["rr"], model_surface["tris"], model_surface["nn"]).subdivided(3).rr)
     pos = pos.copy()
     extra = np.zeros(len(pos))
     ok = np.ones(len(pos), bool)
     for i in range(len(pos)):
-        while tree.query(pos[i])[0] < min_clearance:
+        while tree.query(pos[i])[0] < min_clearance or (model is not None and model.query(pos[i])[0] < model_clearance):
             if extra[i] >= max_extra:
                 ok[i] = False
                 break
@@ -219,6 +227,9 @@ def resolve_clearance(pos: np.ndarray, axis: np.ndarray, scalp, min_clearance: f
 
 
 MIN_CENTER_SPACING = 0.017  # m, packing assumption A-OPM-PACK (10-mm cell in a ~12-17 mm package)
+MODEL_CLEARANCE = 0.004  # m, A-OPM-CLEAR: sensing centre to the BEM head surface (the forward model's outer boundary)
+MAX_EXTRA_SHIFT = 0.005  # m, A-OPM-CLEAR: a package may sit up to 5 mm beyond its nominal standoff to clear the
+# scalp (pinna, brow, occipital curvature); a site needing more (e.g. in the occipito-cervical crease) is infeasible
 
 
 def prune_to_spacing(centres: np.ndarray, min_dist: float, candidates: np.ndarray | None = None) -> np.ndarray:
@@ -241,7 +252,9 @@ def dense_array(scalp, trans: mne.transforms.Transform, digitisation: mne.Info, 
                 max_sites: int | None = None, standoff: float = STANDOFF, scalp_gap: float = 0.0,
                 normal_radius: float = 0.010, brow_offset: float = 0.030, seed_point=None,
                 min_center_spacing: float = MIN_CENTER_SPACING, outer_skin: dict | None = None,
-                max_depth_below_skin: float = 0.002, axis_surface=None, ear_clearance: float = 0.0) -> tuple[OPMArray, dict]:
+                max_depth_below_skin: float = 0.002, max_height_above_skin: float = 0.004, axis_surface=None,
+                ear_clearance: float = 0.0, fov_margin: float = 0.020,
+                max_extra_shift: float = MAX_EXTRA_SHIFT) -> tuple[OPMArray, dict]:
     """Scalp-normal single-axis OPM array filling the coverage region (above the brow plane) by
     farthest-point sampling of the MRI scalp: sites are added in order of largest distance to the
     already placed ones until that distance falls below ``min_spacing_m`` (or ``max_sites`` is
@@ -251,18 +264,23 @@ def dense_array(scalp, trans: mne.transforms.Transform, digitisation: mne.Info, 
 
     With ``outer_skin`` (the MNE BEM head surface, MRI frame), scalp points lying more than
     ``max_depth_below_skin`` inside that smooth surface (ear canals, pinna folds: not reachable
-    by a sensor package) are not used as sites, nor points within ``ear_clearance`` of the
-    preauricular points (A-OPM-COVER). With ``axis_surface`` (a smooth closed surface, e.g. the
+    by a sensor package) or more than ``max_height_above_skin`` outside it (the ear pinna, and the
+    flat cap where the MRI head surface is cut at the edge of the field of view, which lies above
+    the brow plane at the back of a pitched head) are not used as sites, nor points within
+    ``ear_clearance`` of the preauricular points, nor points within ``fov_margin`` (MRI z) of the
+    lowest point of the MRI head surface: next to the field-of-view cut the smoothed normals and
+    the clearance check see the artificial cap instead of anatomy (A-OPM-COVER). With ``axis_surface`` (a smooth closed surface, e.g. the
     BEM head surface with outward normals) the sensitive axes are its normals averaged within
     ``normal_radius`` (A-OPM-AXIS), instead of the dense scalp's."""
     mri_head = np.linalg.inv(trans["trans"])
     rr_head = scalp.rr @ mri_head[:3, :3].T + mri_head[:3, 3]
     fids = fiducials_head(digitisation)
-    cover = above_brow_plane(rr_head, fids, brow_offset)
+    cover = above_brow_plane(rr_head, fids, brow_offset) & (scalp.rr[:, 2] >= scalp.rr[:, 2].min() + fov_margin)
     if ear_clearance > 0:
         cover &= np.minimum(np.linalg.norm(rr_head - fids["lpa"], axis=1), np.linalg.norm(rr_head - fids["rpa"], axis=1)) >= ear_clearance
     if outer_skin is not None:
-        cover &= ~deep_below_surface(scalp.rr, outer_skin, max_depth_below_skin)
+        h = signed_distance(scalp.rr, outer_skin)
+        cover &= (h >= -max_depth_below_skin) & (h <= max_height_above_skin)
     cand = np.flatnonzero(cover)
     pts = scalp.rr[cand]
     start = int(np.argmax(pts[:, 2])) if seed_point is None else int(cKDTree(pts).query(seed_point)[1])
@@ -278,26 +296,31 @@ def dense_array(scalp, trans: mne.transforms.Transform, digitisation: mne.Info, 
     ref = axis_surface if axis_surface is not None else scalp
     nrm = smoothed_normals(ref.rr, ref.nn, sp_mri, normal_radius)
     centres = sp_mri + (scalp_gap + standoff) * nrm
-    centres, extra, feasible = resolve_clearance(centres, nrm, scalp, standoff - 0.001)
+    centres, extra, feasible = resolve_clearance(centres, nrm, scalp, standoff - 0.001, max_extra=max_extra_shift,
+                                                 model_surface=outer_skin, model_clearance=MODEL_CLEARANCE)
     keep = feasible & prune_to_spacing(centres, min_center_spacing, feasible)
     arr = OPMArray(pos=centres[keep] @ mri_head[:3, :3].T + mri_head[:3, 3], axis=nrm[keep] @ mri_head[:3, :3].T,
                    scalp_point=sp_mri[keep] @ mri_head[:3, :3].T + mri_head[:3, 3], site_id=np.arange(int(keep.sum())),
                    standoff=standoff, scalp_gap=scalp_gap, label=f"dense OPM ({keep.sum()} sites, >= {min_spacing_m * 1e3:g} mm)")
     report = dict(n_sites=int(keep.sum()), min_spacing_mm=float(min_spacing(arr.pos).min() * 1e3),
-                  median_spacing_mm=float(np.median(min_spacing(arr.pos)) * 1e3), n_moved_out=int(np.sum(extra[keep] > 0)))
+                  median_spacing_mm=float(np.median(min_spacing(arr.pos)) * 1e3), n_moved_out=int(np.sum(extra[keep] > 0)),
+                  max_extra_shift_mm=round(float(extra[keep].max() * 1e3), 3) if keep.any() else 0.0)
     return arr, report
 
 
 def matched_to_neuromag(squid_info: mne.Info, trans: mne.transforms.Transform, scalp, digitisation: mne.Info,
                         standoff: float = STANDOFF, scalp_gap: float = 0.0, normal_radius: float = 0.010,
                         brow_offset: float = 0.030, min_clearance: float | None = None, axis_surface=None,
-                        ear_clearance: float = 0.0) -> tuple[OPMArray, dict]:
+                        ear_clearance: float = 0.0, max_extra_shift: float = MAX_EXTRA_SHIFT,
+                        outer_skin: dict | None = None) -> tuple[OPMArray, dict]:
     """Matched-site OPM array: every Neuromag sensor location (magnetometer coil centre and
     normal, MRI frame) is projected along its inward normal onto the scalp. A site is kept if
     that scalp point lies above the brow plane; its sensing centre is placed at
     scalp_gap + standoff along the smoothed scalp normal and, where needed, moved further out
-    until it is ``min_clearance`` (default standoff - 1 mm) from every scalp point. Returns the
-    array (head frame) and a report with the per-site extra shift."""
+    until it is ``min_clearance`` (default standoff - 1 mm) from every scalp point and, with
+    ``outer_skin`` (BEM head surface, MRI frame), ``MODEL_CLEARANCE`` from that surface; a site
+    needing more than ``max_extra_shift`` is dropped. Returns the array (head frame) and a report
+    with the per-site extra shift."""
     from . import neuromag  # local import to avoid a cycle at module import
 
     geo = neuromag.sensor_geometry(squid_info, frame="mri", trans=trans)
@@ -315,7 +338,8 @@ def matched_to_neuromag(squid_info: mne.Info, trans: mne.transforms.Transform, s
         keep &= np.minimum(np.linalg.norm(pts_head - fids["lpa"], axis=1), np.linalg.norm(pts_head - fids["rpa"], axis=1)) >= ear_clearance
     centres = scalp_pts + (scalp_gap + standoff) * nrm
     min_clearance = standoff - 0.001 if min_clearance is None else min_clearance
-    centres, extra, feasible = resolve_clearance(centres, nrm, scalp, min_clearance)
+    centres, extra, feasible = resolve_clearance(centres, nrm, scalp, min_clearance, max_extra=max_extra_shift,
+                                                 model_surface=outer_skin, model_clearance=MODEL_CLEARANCE)
     keep &= feasible
     arr = OPMArray(pos=centres[keep] @ mri_head[:3, :3].T + mri_head[:3, 3], axis=nrm[keep] @ mri_head[:3, :3].T,
                    scalp_point=pts_head[keep], site_id=geo.site[mags][keep], standoff=standoff, scalp_gap=scalp_gap,

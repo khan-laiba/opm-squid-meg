@@ -50,5 +50,62 @@ class TestHeadPositions(unittest.TestCase):
         self.assertEqual(len(v), 10)
 
 
+@unittest.skipUnless(HAVE_SAMPLE, "MNE sample data not available")
+class TestArrayComposition(unittest.TestCase):
+    """Pins the G2 arrays on the sample head: any change to the placement rules must show up here
+    (and invalidates the cached full-resolution lead fields)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.subject = anatomy.load_sample()
+        cls.dig = mne.io.read_info(paths.SAMPLE_MEG / neuromag.RAW_FILE, verbose=False)
+        cls.arrays = g2.build_arrays(cls.subject, cls.dig)
+
+    def _geometry(self, a):
+        pos = np.array([ch["loc"][:3] for ch in a.info["chs"]])
+        axis = np.array([ch["loc"][9:12] for ch in a.info["chs"]])
+        return pos, axis
+
+    def test_channel_counts_and_coil_types(self):
+        types = {name: sorted({ch["coil_type"] for ch in a.info["chs"]}) for name, a in self.arrays.items()}
+        self.assertEqual({name: a.n for name, a in self.arrays.items()},
+                         {"squid": 306, "opm_matched": 98, "opm204": 204, "opm_dense": 215})
+        self.assertEqual(types["squid"], [3014, 3024])
+        self.assertEqual(sum(ch["coil_type"] == 3014 for ch in self.arrays["squid"].info["chs"]), 204)
+        for name in ("opm_matched", "opm204", "opm_dense"):
+            self.assertEqual(types[name], [9901])
+
+    def test_opm_physical_placement(self):
+        from scipy.spatial import cKDTree
+
+        from opmsquid import opm
+
+        skin = g2.skin_surface(self.subject)
+        t = self.subject.trans["trans"]
+        fids = opm.fiducials_head(self.dig)
+        zmin = self.subject.scalp.rr[:, 2].min()
+        for name in ("opm_matched", "opm204", "opm_dense"):
+            pos, axis = self._geometry(self.arrays[name])
+            pos_mri = mne.transforms.apply_trans(t, pos)
+            d, i = cKDTree(skin.rr).query(pos_mri)
+            angle = np.degrees(np.arccos(np.clip(np.sum((axis @ t[:3, :3].T) * skin.nn[i], axis=1), -1, 1)))
+            ear = np.minimum(np.linalg.norm(pos - fids["lpa"], axis=1), np.linalg.norm(pos - fids["rpa"], axis=1))
+            with self.subTest(name=name):
+                self.assertGreaterEqual(opm.min_spacing(pos).min(), 0.017 - 1e-9 if name != "opm_matched" else 0.020)
+                self.assertTrue(np.all(opm.signed_distance(pos_mri, next(
+                    s for s in self.subject.bem_surfaces if s["id"] == mne.io.constants.FIFF.FIFFV_BEM_SURF_ID_HEAD)) > 0.004 - 1e-6))
+                self.assertLess(d.max(), 0.012)  # nominal 7 mm + at most 5 mm clearance shift
+                self.assertLess(angle.max(), 6.5)  # axis along the local head-surface normal
+                self.assertGreater(ear.min(), 0.019)  # no sensor on the ear
+                self.assertGreater(pos_mri[:, 2].min(), zmin)  # nothing at the MRI field-of-view cut
+        self.assertLessEqual(self.arrays["opm_dense"].meta["max_extra_shift_mm"], 5.0 + 1e-9)
+
+    def test_opm204_is_a_subset_of_the_dense_array(self):
+        dense, _ = self._geometry(self.arrays["opm_dense"])
+        sub, _ = self._geometry(self.arrays["opm204"])
+        self.assertEqual(self.arrays["opm204"].meta["subset_of"], 215)
+        self.assertTrue(all(np.any(np.all(np.isclose(dense, p, atol=1e-12), axis=1)) for p in sub))
+
+
 if __name__ == "__main__":
     unittest.main()

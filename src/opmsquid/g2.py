@@ -8,10 +8,11 @@ Arrays (sample subject, measured head position in the Neuromag helmet):
   opm204       204 sites spread evenly over the dense array (channel-budget control vs the 204
                gradiometers)
   opm_dense    a dense single-axis OPM array under the 17-mm packing rule, greedy farthest-point
-               construction ("full system"; 220 sites on the sample head). Not proven maximal;
+               construction ("full system"; 216 sites on the sample head). Not proven maximal;
                306 single-axis channels appear infeasible on this head (A-OPM-PACK).
-OPM sensitive axes follow the smooth BEM head-surface normal (A-OPM-AXIS); sites avoid the ears
-(A-OPM-COVER).
+OPM sensitive axes follow the smooth BEM head-surface normal (A-OPM-AXIS). Sites avoid the ears,
+the ear pinna and the edge of the MRI field of view (A-OPM-COVER); a package may sit at most 5 mm
+beyond its nominal standoff to clear the scalp (A-OPM-CLEAR).
 """
 from __future__ import annotations
 
@@ -72,9 +73,10 @@ def skin_surface(subject: anatomy.Subject) -> anatomy.Surface:
 
 
 def matched_opm(subject: anatomy.Subject, digitisation: mne.Info, scalp_gap: float = 0.0) -> Array:
+    skin = next(s for s in subject.bem_surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_HEAD)
     arr, rep = opm.matched_to_neuromag(neuromag.load_info("T3"), subject.trans, subject.scalp, digitisation,
                                        scalp_gap=scalp_gap, normal_radius=AXIS_RADIUS, axis_surface=skin_surface(subject),
-                                       ear_clearance=EAR_CLEARANCE)
+                                       ear_clearance=EAR_CLEARANCE, outer_skin=skin)
     return _opm_array("opm_matched", arr, dict(role="matched-site coverage control", **_rep(rep)))
 
 
