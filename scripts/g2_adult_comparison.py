@@ -430,7 +430,7 @@ def patch_analysis(st, arrays, noise_nom, headline, cfg):
     """Geodesic patches around every target: detectability under the fixed-total and fixed-density
     conventions (OPM/SQUID ratios do not depend on the convention; absolute values do)."""
     radii = cfg["sources"]["patch_radii_mm"]
-    members = {r: goldenholz.geodesic_patches(st.cortex.adjacency, st.src.target, r * 1e-3, st.cortex.valid) for r in radii}
+    members = {r: goldenholz.geodesic_patches(st.cortex.adjacency, st.src.target, r * 1e-3, st.cortex.usable) for r in radii}
     area = {r: np.array([st.cortex.area[m].sum() for m in members[r]]) for r in radii}
     dens = cfg["sources"]["patch_density_nAm_per_mm2"] * 1e-9 / 1e-6
     total = cfg["sources"]["patch_total_nAm"] * 1e-9
@@ -488,12 +488,12 @@ def convergence(st, arrays, G_t, G_g, noise_nom, res, brain_scale, target_var, g
     full_cov = {}
     for name, a in arrays.items():
         full, col = g2.fullres_matrix(a, st.subject, st.cortex, g2.FULLRES_JOBS[name])
-        valid_idx = np.flatnonzero(col >= 0)
-        areas = st.cortex.area[valid_idx]
+        use = np.flatnonzero((col >= 0) & st.cortex.usable)  # A-BEM-DIST
         c = np.zeros((full.shape[0], full.shape[0]))
-        for s in range(0, full.shape[1], 20000):
-            g = np.asarray(full[:, s:s + 20000], dtype=np.float64)
-            c += (g * areas[s:s + 20000][None, :]) @ g.T
+        for s in range(0, len(use), 20000):
+            idx = use[s:s + 20000]
+            g = np.asarray(full[:, col[idx]], dtype=np.float64)
+            c += (g * st.cortex.area[idx][None, :]) @ g.T
         full_cov[name] = c
         del full
     bs_full = background.calibrate(full_cov["squid"], grads, target_var)
@@ -565,7 +565,7 @@ def convergence(st, arrays, G_t, G_g, noise_nom, res, brain_scale, target_var, g
     log("convergence: coil checks done")
 
     # target sampling: oct-6 targets vs the same number of random full-resolution vertices
-    valid = np.flatnonzero(st.cortex.valid)
+    valid = np.flatnonzero(st.cortex.usable)
     rand = np.sort(rng.choice(valid, st.nt, replace=False))
     r3 = {}
     for name, a in arrays.items():
@@ -695,7 +695,7 @@ def figures(st, arrays, res, amp, depth, orient, lobe, patches, sens, primary, h
     hemis = plotting.inflated_views(st.subject.subjects_dir, "sample", st.subject.src)
     n_lh_full = int(np.sum(st.cortex.hemi == 0))
     oct_global = np.concatenate([st.subject.src[0]["vertno"], st.subject.src[1]["vertno"] + n_lh_full])
-    ok = st.cortex.valid[oct_global]
+    ok = st.cortex.usable[oct_global]
     n_lh = st.subject.src[0]["nuse"]
     for cond in headline:
         rows = []

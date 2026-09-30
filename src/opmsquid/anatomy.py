@@ -134,11 +134,18 @@ def orientation_angle(points: np.ndarray, normals: np.ndarray, inner_skull: Surf
     return out
 
 
+MIN_BEM_DISTANCE = 0.002  # [m] A-BEM-DIST: sources closer to the 5120-triangle inner skull are not used
+
+
 @dataclass
 class FullResCortex:
     """Full-resolution white surface of both hemispheres (sources at every vertex, as in Hunold
     et al. 2016 and Goldenholz et al. 2009). Vertices outside the inner-skull BEM surface are
-    marked invalid (MNE cannot place BEM sources there)."""
+    marked invalid (MNE cannot place BEM sources there). ``usable`` further drops vertices within
+    MIN_BEM_DISTANCE of the inner-skull mesh: there the linear-collocation BEM lead fields are
+    numerical artefacts (up to ~4000x the energy of neighbouring vertices within 0.5 mm; no
+    anomaly beyond 2 mm). Forward matrices keep a column for every valid vertex; sources are
+    chosen among usable vertices."""
 
     rr: np.ndarray  # (n, 3) MRI [m]
     nn: np.ndarray  # (n, 3) unit normals (outward from white matter)
@@ -148,10 +155,23 @@ class FullResCortex:
     tris: np.ndarray  # (m, 3) triangles in global indices
     valid: np.ndarray  # (n,) inside the inner skull
     adjacency: object  # scipy.sparse csr (n, n) edge lengths [m]
+    dist_inner_skull: np.ndarray | None = None  # (n,) distance to the inner-skull mesh [m]
 
     @property
     def n(self) -> int:
         return len(self.rr)
+
+    @property
+    def usable(self) -> np.ndarray:
+        return self.valid & (self.dist_inner_skull >= MIN_BEM_DISTANCE)
+
+
+def inner_skull_distance(subject: "Subject", points: np.ndarray) -> np.ndarray:
+    """Distance [m] from each point to the subject's 5120-triangle inner-skull BEM surface (to the
+    surface subdivided three times, ~1-mm vertex spacing, so the error is below ~0.1 mm)."""
+    inner = next(s for s in subject.bem_surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_BRAIN)
+    fine = Surface(inner["rr"], inner["tris"], inner["nn"]).subdivided(3)
+    return cKDTree(fine.rr).query(points)[0]
 
 
 def full_resolution(subject: Subject) -> FullResCortex:
@@ -163,7 +183,8 @@ def full_resolution(subject: Subject) -> FullResCortex:
     if cache.exists():
         z = np.load(cache)
         adj = sp.csr_matrix((z["adj_data"], z["adj_indices"], z["adj_indptr"]), shape=(len(z["rr"]),) * 2)
-        return FullResCortex(z["rr"], z["nn"], z["area"], z["hemi"], z["vertno"], z["tris"], z["valid"], adj)
+        return FullResCortex(z["rr"], z["nn"], z["area"], z["hemi"], z["vertno"], z["tris"], z["valid"], adj,
+                             inner_skull_distance(subject, z["rr"]))
 
     src = mne.read_source_spaces(subject.subjects_dir / subject.name / "bem" / f"{subject.name}-all-src.fif",
                                  verbose=False)
@@ -187,7 +208,7 @@ def full_resolution(subject: Subject) -> FullResCortex:
     w = np.linalg.norm(rr[e[:, 0]] - rr[e[:, 1]], axis=1)
     adj = sp.coo_matrix((np.r_[w, w], (np.r_[e[:, 0], e[:, 1]], np.r_[e[:, 1], e[:, 0]])), shape=(len(rr),) * 2)
     out = FullResCortex(rr, nn, np.concatenate(area), np.concatenate(hemi), np.concatenate(vertno), tris, valid,
-                        adj.tocsr())
+                        adj.tocsr(), inner_skull_distance(subject, rr))
     cache.parent.mkdir(parents=True, exist_ok=True)
     np.savez(cache, rr=out.rr, nn=out.nn, area=out.area, hemi=out.hemi, vertno=out.vertno, tris=out.tris,
              valid=out.valid, adj_data=out.adjacency.data, adj_indices=out.adjacency.indices,
