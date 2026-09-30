@@ -83,6 +83,46 @@ def simulate_background(gains, n_bg_sources, bg_cols, n_times, fs, rng, pad_s, c
     return traces
 
 
+def fig6_realizations(gains, names, usable_pos, n_bg, n_t, fs, pad_s, n_real, seed):
+    """Rendered baseline SD [px] at the Fig. 6 channels for independent background realizations
+    (a new node subset and new time courses each, from their own random streams, so the primary
+    realization and the sources are unchanged). Returns {kind: (n_real, n_channels)}."""
+    rows = {k: [names[k].index("MEG " + ch) for ch in hunold.FIG6_BASELINE_SD_PX[k]] for k in ("mag", "grad")}
+    sub = {k: np.asarray(gains[k][rows[k]]) for k in rows}
+    out = {k: np.empty((n_real, len(rows[k]))) for k in rows}
+    for r in range(n_real):
+        rng = np.random.default_rng([seed, 1, r])
+        cols = np.sort(rng.choice(usable_pos, n_bg, replace=False))
+        tr = simulate_background(sub, n_bg, cols, n_t, fs, rng, pad_s)
+        for k in rows:
+            ppu = hunold.FIG6_SCALE_BAR_PX[k] / hunold.FIG6_SCALE_BAR[k]
+            out[k][r] = [hunold.rendered_centroid_sd(tr[k][i, 300:-300], fs, ppu) for i in range(len(rows[k]))]
+    return out
+
+
+def fig6_expected(calib, real):
+    """Calibration scalar from our expected rendered SD over background realizations (the paper's
+    Fig. 6 baseline is a single draw; so is ours in one realization). The spread of the
+    single-realization estimator shows how uncertain one draw makes the scalar."""
+    for k in ("mag", "grad"):
+        paper = np.array(list(hunold.FIG6_BASELINE_SD_PX[k].values()))
+        per_draw = np.mean(paper[None, :] / real[k], axis=1)
+        calib[k]["realizations"] = dict(n=int(len(real[k])), ours_px_mean=real[k].mean(axis=0).tolist(),
+                                        ours_px_sd=real[k].std(axis=0, ddof=1).tolist(),
+                                        expected_ratio=float(np.mean(paper / real[k].mean(axis=0))),
+                                        single_draw_ratio_p5_p50_p95=np.percentile(per_draw, [5, 50, 95]).tolist())
+    calib["scale_single_draw"] = calib["scale"]
+    calib["scale"] = calib["mag"]["realizations"]["expected_ratio"]
+    calib["alternatives"] = {"mag_by_channel_name": calib["scale"],
+                             "grad_by_channel_name": calib["grad"]["realizations"]["expected_ratio"],
+                             "mag_all_channel_median": calib["mag"]["ratio_to_all_channel_median"],
+                             "grad_all_channel_median": calib["grad"]["ratio_to_all_channel_median"],
+                             "mag_single_draw_p5": calib["mag"]["realizations"]["single_draw_ratio_p5_p50_p95"][0],
+                             "mag_single_draw_p95": calib["mag"]["realizations"]["single_draw_ratio_p5_p50_p95"][2]}
+    calib["scale_range"] = [min(calib["alternatives"].values()), max(calib["alternatives"].values())]
+    return calib
+
+
 def fig6_calibration(bg, names, fs):
     """Rendered baseline SD of our background at the Fig. 6 channels vs the paper's digitised SD.
     Returns per-kind details; the calibration scalar is the magnetometer mean ratio paper/ours."""
@@ -251,7 +291,7 @@ def plot_vs_paper(all_maps, calib, fname):
             ax.legend(fontsize=6.5, loc="upper left")
     fig.colorbar(im, ax=fig.axes[:4], fraction=0.02, pad=0.01)
     fig.suptitle("G1B vs Hunold et al. (2016) Figs 4-5 (digitised classes): p2p numerator, background calibrated with one scalar "
-                 f"({calib['scale']:.2f}; {calib['scale_range'][0]:.2f}-{calib['scale_range'][1]:.2f} over channel choices) "
+                 f"({calib['scale']:.2f}; {calib['scale_range'][0]:.2f}-{calib['scale_range'][1]:.2f} over channel choices and single draws) "
                  "to the Fig. 6 baselines", fontsize=10)
     fig.savefig(fname, dpi=150)
     plt.close(fig)
@@ -282,8 +322,15 @@ def main():
     print(f"background: {n_bg} dipoles ({cortex.area[valid_idx][bg_cols].mean() * 1e6 * 10:.2f} mm2 per dipole incl. the "
           f"other 90 %) in {time.time() - t0:.0f} s")
     calib = fig6_calibration(bg_spec, names, fs)
-    print(f"Fig. 6 calibration: paper/ours baseline SD mag {calib['mag']['mean_ratio']:.3f}, grad {calib['grad']['mean_ratio']:.3f} "
-          f"(all-channel medians {calib['mag']['ratio_to_all_channel_median']:.3f}, {calib['grad']['ratio_to_all_channel_median']:.3f})")
+    t0 = time.time()
+    real = fig6_realizations(gains, names, usable_pos, n_bg, n_t, fs, cfg["background"]["pad_s"],
+                             cfg["background"]["calibration_realizations"], cfg["sources"]["seed"])
+    calib = fig6_expected(calib, real)
+    print(f"Fig. 6 calibration ({calib['mag']['realizations']['n']} realizations, {time.time() - t0:.0f} s): paper/ours baseline SD "
+          f"mag {calib['scale']:.3f} (single draws 5-95 %: {calib['alternatives']['mag_single_draw_p5']:.3f}-"
+          f"{calib['alternatives']['mag_single_draw_p95']:.3f}; primary realization {calib['scale_single_draw']:.3f}), "
+          f"grad {calib['alternatives']['grad_by_channel_name']:.3f} (all-channel medians "
+          f"{calib['mag']['ratio_to_all_channel_median']:.3f}, {calib['grad']['ratio_to_all_channel_median']:.3f})")
     bgs = {"as_specified": bg_spec, "fig6_calibrated": {k: v * calib["scale"] for k, v in bg_spec.items()}}
 
     # sources: stratified to the paper's per-bin counts
@@ -337,7 +384,7 @@ def main():
             print(var, key, {k: (round(v["pearson_r"], 3), round(v["mean_ratio_ours_to_paper"], 2)) for k, v in comp.items()},
                   "GM-MM sign agreement", gm_mm[key]["agree"])
     plot_vs_paper(all_maps, calib, OUT / "Figure_G1B_vs_paper.png")
-    # the calibration scalar is uncertain (channel choice): noise-free numerators scale as 1/k
+    # the calibration scalar is uncertain (channel choice, single-draw spread): noise-free numerators scale as 1/k
     calib_sens = {}
     for alt, k_alt in calib["alternatives"].items():
         f = calib["scale"] / k_alt
