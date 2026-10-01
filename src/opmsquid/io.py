@@ -24,7 +24,7 @@ def json_safe(value):
     return value
 
 
-CODE_PATHS = ("src", "scripts", "configs", "tests", "requirements.txt")
+CODE_PATHS = ("src", "scripts", "configs", "tests", "requirements.txt", "legacy/*.py")  # G1A imports legacy/replicate_figure3.py
 
 
 def git_commit() -> str:

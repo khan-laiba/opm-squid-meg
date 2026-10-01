@@ -697,7 +697,7 @@ def save_outputs(res: Results, fig, registration, outdir: Path, fonts: Fonts, et
                                     "SQUID": float(res.signal_squid_pT[surface])},
         snr_at_brain_surface={"OPM": float(res.snr_opm[surface]), "SQUID": float(res.snr_squid[surface])},
         font=fonts.note, artwork_fonts=fonts.artwork, mne_version=mne.__version__, matplotlib_version=matplotlib.__version__,
-        outputs=paths,
+        outputs={k: Path(v).name for k, v in paths.items()},  # relative to the summary (no local absolute paths)
     )
     if eta == ETA:
         summary["d_eq_paper_caption_mm"] = 28.0
@@ -772,7 +772,7 @@ def main(argv=None) -> Results:
     marker = "published grid rule" if args.deq_marker == "published" else "root of Eq. (3)"
     print(f"Equal-SNR depth: grid {res.d_eq_grid_mm:.2f} mm, exact {res.d_eq_exact_mm:.2f} mm "
           f"(dotted line: {marker})")
-    print("Wrote:", ", ".join(summary["outputs"].values()))
+    print("Wrote:", ", ".join(str(Path(args.outdir) / v) for v in summary["outputs"].values()))
     return res
 
 

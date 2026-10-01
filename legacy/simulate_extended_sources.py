@@ -530,7 +530,7 @@ def main(argv=None):
                       forward_rel_err=p.forward_rel_err, peak_rel_err=p.peak_rel_err,
                       d_eq_vs_eta_mm=dict(zip(ETA_GRID.tolist(), p.d_eq_vs_eta_mm.tolist())))
                  for p in results],
-        outputs=files)
+        outputs=[Path(f).name for f in files])  # relative to the summary (no local absolute paths)
     with open(outdir / "extended_sources_summary.json", "w") as fh:
         json.dump(_json_safe(summary), fh, indent=2, allow_nan=False)
 

@@ -601,6 +601,8 @@ def main(argv=None) -> bool:
     if summary_file.is_file():
         s = json.loads(summary_file.read_text())
         png = s.get("outputs", {}).get("png")
+        if png and not Path(png).is_absolute():  # recorded relative to the summary
+            png = summary_file.parent / png
         if png and Path(png).resolve() == replica.resolve():  # summary written with this PNG
             options = dict(eta=s.get("eta", 3.0), deq_marker=s.get("deq_marker", "published"),
                            dtheta_deg=s.get("dtheta_deg", 0.05),

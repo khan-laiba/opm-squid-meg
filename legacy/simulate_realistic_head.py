@@ -832,7 +832,7 @@ def write_tables(res: dict, outdir: Path, files) -> dict:
             vs_eta={"eta": ETA_GRID, "opm_better_cortex_percent": 100 * s["opm_area_fraction_vs_eta"],
                     "d50_mm": s["d50_vs_eta"], "sphere_d_eq_mm_equal_area": s["sphere_eq"]["d_eq_vs_eta"]})
     summary = dict(
-        subject=res["subject"], subjects_dir=raw["subjects_dir"], mne_version=mne.__version__,
+        subject=res["subject"], subjects_dir="SUBJECTS_DIR (local; not recorded)", mne_version=mne.__version__,
         head_model="single-compartment BEM (inner skull, 5120 triangles, 0.3 S/m)",
         source_space=f"ico-5 white-matter surface, {len(raw['depth_mm'])} sources, fixed cortical-normal orientation",
         cortex_area_cm2=float(raw["area_m2"].sum() * 1e4),
@@ -850,7 +850,7 @@ def write_tables(res: dict, outdir: Path, files) -> dict:
              "50 % (area-weighted, 2-mm bins with >= 30 sources); null if censored (see 'd50' per size)"),
         sphere_model="tangential dipole / spherical cap of the same area on the brain surface (h = 95 mm, b = 80 mm)",
         simulate_evoked_consistency_max_rel_err=raw["simulate_evoked_rel_err"], simulation_runtime_s=raw["runtime_s"],
-        sizes=sizes, outputs=files)
+        sizes=sizes, outputs=[Path(f).name for f in files])  # relative to the summary
     with open(outdir / "realistic_head_summary.json", "w") as fh:
         json.dump(_json_safe(summary), fh, indent=2, allow_nan=False)
     return summary
