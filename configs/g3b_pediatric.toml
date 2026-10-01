@@ -4,7 +4,7 @@
 # (configs/g2_adult.toml), read from there so that the conventions cannot drift apart.
 
 [anatomy]
-template = "ANTS2-0Years3T"              # D-G3-ANAT: 2-year infant template (O'Reilly et al. 2021), native dimensions
+templates = ["ANTS2-0Years3T", "ANTS18-0Months3T", "ANTS12-0Months3T"]  # D-G3-ANAT: infant templates (O'Reilly et al. 2021), native dimensions
 school_age_scale = 0.8947368421052632    # 85/95: Jas et al. 2026 Table 1 child (8 y) / adult head radius (size-only control)
 size_matched_rule = "ofc"                # second size-only control: adult scaled by the template/adult occipitofrontal circumference
 bem_conductivity = [0.3, 0.006, 0.3]     # as G2 (geometry-only comparison first; 1-layer BEM as the conductivity-free check)

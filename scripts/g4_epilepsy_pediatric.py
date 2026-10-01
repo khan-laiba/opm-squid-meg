@@ -12,7 +12,7 @@ morphologies, detectors, operating points, null durations, inverse settings and 
 error); thresholds are calibrated on this anatomy's own null data. Event locations are stratified
 by the same depth and orientation bands; strata the anatomy cannot fill are reported as such.
 
-Usage: g4_epilepsy_pediatric.py [infant2yr|school] [--detection] [--localization] [--compare]
+Usage: g4_epilepsy_pediatric.py [infant2yr|infant18mo|infant12mo|school|size2yr] [--detection] [--localization] [--compare]
 (default: infant2yr, all three). Outputs: results/g4/g4_<label>_*, g4_localization_<label>_*,
 g4_pediatric_comparison.json and G4_pediatric_report.md.
 """
@@ -130,6 +130,10 @@ def compare(labels) -> dict:
     return out
 
 
+def fmt(x) -> str:
+    return "-" if x is None else f"{x:.1f}"
+
+
 def report(cmp: dict, labels) -> str:
     L = ["# G4 pediatric: IED detection and bounded localization in the fixed adult helmet (NEW)", "",
          "Same framework, configuration and seeds as the adult (configs/g4_epilepsy.toml); the child anatomy, arrays and "
@@ -185,17 +189,16 @@ def report(cmp: dict, labels) -> str:
         for k, v in cmp.items():
             if k.startswith(f"{lab}/localization/"):
                 arr, fam, s = k.split("/")[2:5]
-                fmt = (lambda x: "-" if x is None else f"{x:.1f}")
                 L.append(f"| {lab} | {arr} | {fam} {s} | {fmt(v['dspm_error_mm_median_all'])} | {fmt(v['ecd_error_mm_median_detected'])} | "
                          f"{v['detected']:.2f} | {v['joint_detect_and_dspm_within_10mm']:.2f} | {v['joint_detect_and_ecd_within_10mm']:.2f} |")
-    L += ["", "Simulated IED-source recovery does not identify an epileptogenic zone or establish surgical benefit. One template "
-          "is not a population; the scaled adult is a size-only control."]
+    L += ["", "Simulated IED-source recovery does not identify an epileptogenic zone or establish surgical benefit. Average "
+          "templates of one database are not a population; the scaled adults are size-only controls."]
     return "\n".join(L) + "\n"
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("anatomy", nargs="?", default="infant2yr", choices=("infant2yr", "school", "size2yr"))
+    ap.add_argument("anatomy", nargs="?", default="infant2yr", choices=G3.CHILDREN)
     ap.add_argument("--detection", action="store_true")
     ap.add_argument("--localization", action="store_true")
     ap.add_argument("--compare", action="store_true")
@@ -217,7 +220,7 @@ def main():
             G4L.localize(ctx, cfg, np.random.default_rng(cfg["localization"]["seed"]))
             log(f"localization done ({time.time() - t0:.0f} s)")
     if run_all or args.compare:
-        labels = [lab for lab in ("school", "size2yr", "infant2yr") if (OUT / f"g4_{lab}_summary.json").exists()]
+        labels = [lab for lab in G3.CHILDREN if (OUT / f"g4_{lab}_summary.json").exists()]
         cmp = compare(labels)
         io.write_json(dict(status="NEW (G4 pediatric vs adult, same framework)", labels=["adult"] + labels, comparison=cmp),
                       OUT / "g4_pediatric_comparison.json")

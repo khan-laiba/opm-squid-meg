@@ -44,24 +44,41 @@ class TestScaledSubject(unittest.TestCase):
 
 @unittest.skipUnless((paths.EXTERNAL / anatomy.INFANT_SUBJECTS / "ANTS2-0Years3T").exists(), "infant template not downloaded")
 class TestTemplate(unittest.TestCase):
+    NAMES = ("ANTS2-0Years3T", "ANTS18-0Months3T", "ANTS12-0Months3T")  # configs/g3b_pediatric.toml
+
     @classmethod
     def setUpClass(cls):
         mne.set_log_level("WARNING")
-        cls.t = anatomy.load_template()
+        cls.t = {n: anatomy.load_template(n) for n in cls.NAMES}
 
     def test_head_frame_from_fiducials(self):
-        f = self.t.fiducials
-        self.assertGreater(f["nasion"][1], 0.05)
-        np.testing.assert_allclose(f["nasion"][[0, 2]], 0.0, atol=1e-9)
-        for k in ("lpa", "rpa"):
-            np.testing.assert_allclose(f[k][1:], 0.0, atol=1e-9)
-        self.assertLess(f["lpa"][0], 0.0)
-        self.assertGreater(f["rpa"][0], 0.0)
+        for n, t in self.t.items():
+            with self.subTest(template=n):
+                f = t.fiducials
+                self.assertGreater(f["nasion"][1], 0.05)
+                np.testing.assert_allclose(f["nasion"][[0, 2]], 0.0, atol=1e-9)
+                for k in ("lpa", "rpa"):
+                    np.testing.assert_allclose(f[k][1:], 0.0, atol=1e-9)
+                self.assertLess(f["lpa"][0], 0.0)
+                self.assertGreater(f["rpa"][0], 0.0)
 
     def test_native_dimensions(self):
-        size = P.head_size(self.t)
-        self.assertTrue(450 < size["ofc_mm"] < 520, size)  # 2-year head circumference, ~48-50 cm
-        self.assertTrue(110 < size["inter_auricular_mm"] < 130, size)
+        size = {n: P.head_size(t) for n, t in self.t.items()}
+        for n, s in size.items():
+            with self.subTest(template=n):
+                self.assertTrue(450 < s["ofc_mm"] < 520, s)  # 12-24-month head circumference, ~45-50 cm
+                self.assertTrue(110 < s["inter_auricular_mm"] < 130, s)
+        ofc = [size[n]["ofc_mm"] for n in self.NAMES]
+        self.assertEqual(ofc, sorted(ofc, reverse=True))  # the older template has the larger head
+
+    def test_bem_surfaces_nested(self):
+        from scipy.spatial import cKDTree
+        for n, t in self.t.items():
+            with self.subTest(template=n):
+                rr = {s["id"]: s["rr"] for s in t.bem_surfaces}
+                ids = sorted(rr)  # brain (inner skull), skull, head
+                for a, b in zip(ids, ids[1:]):
+                    self.assertGreater(cKDTree(rr[b]).query(rr[a])[0].min(), 1e-4)  # the 12-month skull is 0.25 mm at its thinnest
 
 
 class TestPlacements(unittest.TestCase):

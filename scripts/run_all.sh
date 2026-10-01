@@ -22,9 +22,13 @@ $PY scripts/study_bem_skin_refinement.py                 # G2   headline vs head
 $PY scripts/g4_epilepsy_adult.py                         # G4   IED detection, adult
 $PY scripts/g4_localization.py                           # G4   bounded localization, adult
 $PY scripts/study_g4_vs_g2.py                            # G4   detection vs the G2 detectability at the G4 locations
-# after the adult baseline (adult-baseline-v2); needs the 2-year infant template (README, Data setup):
+# after the adult baseline (adult-baseline-v2); needs the 12-, 18- and 24-month infant templates (README, Data setup):
 $PY scripts/g3a_jas_size_benchmark.py                    # G3A  Jas Table 1 / Fig. 5 (REPRO)
 $PY scripts/g3b_pediatric_helmet.py                      # G3B  fixed adult helmet vs head-adaptive OPM (NEW)
-$PY scripts/g4_epilepsy_pediatric.py infant2yr           # G4   IED detection and localization, 2-year template
-$PY scripts/g4_epilepsy_pediatric.py school              # G4   the same, school-age size control
+$PY scripts/g4_epilepsy_pediatric.py infant2yr --detection --localization   # G4  IED detection and localization, 2-year template
+$PY scripts/g4_epilepsy_pediatric.py infant18mo --detection --localization  # G4  the same, 18-month template
+$PY scripts/g4_epilepsy_pediatric.py infant12mo --detection --localization  # G4  the same, 12-month template
+$PY scripts/g4_epilepsy_pediatric.py school --detection --localization      # G4  the same, school-age size control
+$PY scripts/g4_epilepsy_pediatric.py size2yr --detection --localization     # G4  the same, 2-year size control
+$PY scripts/g4_epilepsy_pediatric.py --compare                              # G4  pediatric vs adult comparison and report
 $PY scripts/build_site.py                                # G5   local report in site/_build (not deployed)

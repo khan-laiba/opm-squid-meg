@@ -9,6 +9,8 @@ Anatomies (src/opmsquid/anatomy.py):
              circumference over the adult's
   infant2yr  the 2-year infant template (O'Reilly et al. 2021), native dimensions; an average
              template, not an individual child
+  infant18mo, infant12mo  the 18- and 12-month templates of the same series (variability across
+             templates; still averages from one database)
 Arrays: the same Neuromag helmet (coils 3014/3024, 'accurate' integration, intrinsic noise) at
 source-blind placements (src/opmsquid/pediatric.py: centred, top and back contact, bounded
 translations and rotations) and a counterfactual helmet scaled with the head (mechanistic
@@ -50,7 +52,8 @@ from opmsquid import (anatomy, background, forward, g2, goldenholz, io, neuromag
 
 OUT = ROOT / "results" / "g3b"
 STATE = ROOT / "cache" / "g3b" / "state.pkl"
-ANATOMIES = ("adult", "school", "size2yr", "infant2yr")
+TEMPLATES = {"infant2yr": "ANTS2-0Years3T", "infant18mo": "ANTS18-0Months3T", "infant12mo": "ANTS12-0Months3T"}
+ANATOMIES = ("adult", "school", "size2yr") + tuple(TEMPLATES)
 CHILDREN = ANATOMIES[1:]
 SCALED = ("school", "size2yr")
 REFS = ("combined", "grad", "mag")
@@ -59,9 +62,11 @@ PLACEMENT_ORDER = ("centred", "top", "back", "x+5mm", "x-5mm", "y+5mm", "y-5mm",
                    "roll-5deg", "x-centred", "top-18mm", "counterfactual", "counterfactual_x-centred")
 OPMS = ("opm_dense", "opm_matched")
 LABEL = {"adult": "adult", "school": "school-age size (scaled adult)", "size2yr": "2-year size (scaled adult)",
-         "infant2yr": "2-year template", "opm_dense": "OPM dense (refitted)", "opm_matched": "OPM matched",
+         "infant2yr": "2-year template", "infant18mo": "18-month template", "infant12mo": "12-month template",
+         "opm_dense": "OPM dense (refitted)", "opm_matched": "OPM matched",
          "combined": "Neuromag combined", "grad": "Neuromag grad", "mag": "Neuromag mag"}
-COLORS = {"adult": "k", "school": "tab:blue", "size2yr": "tab:green", "infant2yr": "tab:red"}
+COLORS = {"adult": "k", "school": "tab:blue", "size2yr": "tab:green", "infant2yr": "tab:red", "infant18mo": "tab:orange",
+          "infant12mo": "tab:purple"}
 METRICS = ("detect", "peak", "meanpow_db")
 
 
@@ -126,10 +131,15 @@ def load_anatomies(cfg, g2cfg) -> dict:
     a_cor = anatomy.full_resolution(a_sub)
     adult = Anatomy("adult", a_sub, a_cor, g2.make_sources(a_sub, a_cor, np.random.default_rng(seed)), P.head_size(a_sub),
                     "MNE sample subject (as G2)")
-    t_sub = anatomy.load_template(cfg["anatomy"]["template"])
-    t_cor = anatomy.full_resolution(t_sub)
-    infant = Anatomy("infant2yr", t_sub, t_cor, g2.make_sources(t_sub, t_cor, np.random.default_rng(seed)), P.head_size(t_sub),
-                     "2-year template, native dimensions")
+    if list(cfg["anatomy"]["templates"]) != list(TEMPLATES.values()):
+        raise ValueError("configs/g3b_pediatric.toml [anatomy] templates must match TEMPLATES")
+    templates = {}
+    for key, name in TEMPLATES.items():
+        t_sub = anatomy.load_template(name)
+        t_cor = anatomy.full_resolution(t_sub)
+        templates[key] = Anatomy(key, t_sub, t_cor, g2.make_sources(t_sub, t_cor, np.random.default_rng(seed)), P.head_size(t_sub),
+                                 f"{LABEL[key]} ({name}), native dimensions")
+    infant = templates["infant2yr"]
     out = {"adult": adult}
     ofc = infant.size["ofc_mm"] / adult.size["ofc_mm"]
     for key, f, note in (("school", cfg["anatomy"]["school_age_scale"], "adult x 85/95 (Jas Table 1 child/adult head radius)"),
@@ -137,7 +147,7 @@ def load_anatomies(cfg, g2cfg) -> dict:
         sub = anatomy.scaled(a_sub, f, f"sample_x{f:.4f}")
         cor = anatomy.full_resolution(sub)
         out[key] = Anatomy(key, sub, cor, scaled_sources(adult, sub, cor), P.head_size(sub), f"{note}: {f:.4f}")
-    out["infant2yr"] = infant
+    out.update(templates)
     for an in out.values():
         an.ofc_ratio = an.size["ofc_mm"] / adult.size["ofc_mm"]
     return out
@@ -483,7 +493,7 @@ def main():
         patches = {}
         for key in ANATOMIES:
             an = anats[key]
-            idx = (np.searchsorted(an.src.target, chosen) if key != "infant2yr"
+            idx = (np.searchsorted(an.src.target, chosen) if key not in TEMPLATES
                    else np.sort(rng.choice(an.nt, cfg["sources"]["n_patch_centres"], replace=False)))
             patches[key] = run_patches(an, runs[key], com, cfg, idx)
         counts = sorted({runs[c]["arrays"]["opm_dense"]["n"] for c in CHILDREN})
@@ -674,24 +684,27 @@ def summarise(anats, state, cfg) -> dict:
         "Scaled controls: the adult's vertices, so Delta is vertex-wise. The absolute 4-mm usable-source rule drops "
         f"{anats['adult'].nt - anats['school'].nt} and {anats['adult'].nt - anats['size2yr'].nt} superficial adult targets in the "
         "scaled copies, so D_child and D_adult are medians over slightly different target sets while Delta uses the common vertices. "
-        "The template: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per declared depth/orientation "
+        "The templates: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per declared depth/orientation "
         "stratum from area-weighted medians.",
         "Intervals: bootstrap over parcels of one anatomy (or of each anatomy, for between-anatomy strata); they do not include "
-        "between-subject variability. One template is not a population: template results are conditional simulations.",
+        f"between-subject variability. {len(TEMPLATES)} average templates of one database (" + ", ".join(LABEL[k] for k in TEMPLATES)
+        + ") are not a population: template results are conditional simulations.",
         "Every child array uses the adult's conventions: background moment variance per unit cortical area, room field, "
         "intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. Both systems' detectability "
         "rises in the smaller heads, the OPM's more (absolute detectability table), by different routes: the on-scalp OPM sees "
         "more signal from a cortex that is closer in absolute terms at about the same brain noise, while the SQUIDs' brain noise "
         "falls (the cortex is farther from the fixed helmet and, with the background fixed per unit area, smaller) more than "
-        "their signal. The template's averaged white surface is smoother than an individual cortex (usable area "
-        f"{out['anatomies']['infant2yr']['cortical_area_cm2']:,.0f} vs {out['anatomies']['adult']['cortical_area_cm2']:,.0f} cm^2 "
-        "for the adult), which lowers its background power and its patch cancellation further; scaling the background variance "
-        "x0.5 or x2 leaves D_child almost unchanged.",
+        "their signal. The templates' averaged white surfaces are smoother than an individual cortex (usable area "
+        + ", ".join(f"{out['anatomies'][k]['cortical_area_cm2']:,.0f}" for k in TEMPLATES) + " cm^2 for the "
+        + ", ".join(LABEL[k] for k in TEMPLATES) + f" vs {out['anatomies']['adult']['cortical_area_cm2']:,.0f} cm^2 for the adult), "
+        "which lowers their background power and their patch cancellation further; scaling the background variance x0.5 or x2 "
+        "leaves D_child almost unchanged.",
         "Placements are chosen from the scalp and helmet geometry only. Under the adult's measured pose a head with other "
-        "fiducials need not be centred laterally: the template sits right of the helmet's midline; 'x-centred' shifts each head "
-        "along device x to equal left/right median gaps before the top contact, and 'counterfactual_x-centred' scales the helmet "
-        "about that laterally centred head. The counterfactual helmet (scaled with the head) is a mechanistic control, not a "
-        "pediatric SQUID system.",
+        "fiducials need not be centred laterally; 'x-centred' shifts each head along device x to equal left/right median gaps "
+        "before the top contact (shift: " + ", ".join(f"{LABEL[k]} {out['placements'][k]['x-centred']['shift_x_mm']:+.1f} mm"
+                                                       for k in ANATOMIES)
+        + "; negative = to the left), and 'counterfactual_x-centred' scales the helmet about that laterally centred head. The "
+        "counterfactual helmet (scaled with the head) is a mechanistic control, not a pediatric SQUID system.",
         "Targets on the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum and midbrain, not cortex) are left "
         "out of every summary; they would otherwise dominate the deepest strata."]
     return out
@@ -920,7 +933,7 @@ def figures(anats, state, s, cfg):
             y = np.array([r.get("delta", np.nan) for r in rows])
             lo = np.array([r["ci95"][0] if "ci95" in r else np.nan for r in rows])
             hi = np.array([r["ci95"][1] if "ci95" in r else np.nan for r in rows])
-            off = {"school": -0.6, "size2yr": 0.0, "infant2yr": 0.6}[c]
+            off = (CHILDREN.index(c) - (len(CHILDREN) - 1) / 2) * 0.5
             ax.errorbar(x + off, y, yerr=[y - lo, hi - y], fmt="o-", color=COLORS[c], label=LABEL[c], ms=4, capsize=2)
         ax.axhline(0, color="0.5", lw=0.8)
         ax.set_xlabel("depth stratum [mm] (native)")
@@ -937,7 +950,7 @@ def figures(anats, state, s, cfg):
     fig, axs = plt.subplots(1, 2, figsize=(15, 4.8))
     for i, k in enumerate(ANATOMIES):
         y = [s["placement_D"][f"{k}/{n}/combined/intrinsic+brain"]["median"] for n in names]
-        axs[0].plot(np.arange(len(names)) + (i - 1.5) * 0.12, y, "o", color=COLORS[k], label=LABEL[k], ms=6)
+        axs[0].plot(np.arange(len(names)) + (i - (len(ANATOMIES) - 1) / 2) * 0.1, y, "o", color=COLORS[k], label=LABEL[k], ms=5)
     for xv in np.arange(len(names) - 1) + 0.5:
         axs[0].axvline(xv, color="0.9", lw=0.6, zorder=0)
     axs[0].set_xticks(range(len(names)))
@@ -951,7 +964,8 @@ def figures(anats, state, s, cfg):
     for i, k in enumerate(ANATOMIES):
         for jn, (n, mk) in enumerate((("squid:centred", "o"), ("squid:top", "s"))):
             v = [s["sensor_distances"][k][n]["regions"][r] for r in regions]
-            axs[1].plot(np.arange(len(regions)) + (i - 1.5) * w, v, mk, color=COLORS[k], mfc="none" if jn == 0 else COLORS[k],
+            axs[1].plot(np.arange(len(regions)) + (i - (len(ANATOMIES) - 1) / 2) * w, v, mk, color=COLORS[k],
+                        mfc="none" if jn == 0 else COLORS[k],
                         label=f"{LABEL[k]}, {n[6:]}")
     axs[1].set_xticks(range(len(regions)))
     axs[1].set_xticklabels(regions, rotation=30, ha="right", fontsize=8)
@@ -966,8 +980,8 @@ def figures(anats, state, s, cfg):
     norm = plt.Normalize(-6, 6)
     a = anats["adult"]
     hemis_a = plotting.inflated_views(a.subject.subjects_dir, "sample", a.subject.src)
-    t = anats["infant2yr"]
-    hemis_t = plotting.inflated_views(t.subject.subjects_dir, t.subject.name, t.subject.src)
+    hemis_t = {k: plotting.inflated_views(anats[k].subject.subjects_dir, anats[k].subject.name, anats[k].subject.src)
+               for k in TEMPLATES}
 
     def on_map(an, values, target=None):
         n_lh = int(np.sum(an.cortex.hemi == 0))
@@ -997,19 +1011,19 @@ def figures(anats, state, s, cfg):
     plotting.cortex_map_figure(hemis_a, rows, n_lh, plt.get_cmap("RdBu_r"), plt.Normalize(-2, 2),
                                "G3B: Delta = D_child - D_adult [dB] at every vertex (dense OPM vs Neuromag combined, top contact, "
                                "intrinsic + brain)", "Delta [dB]", OUT / "Figure_G3B_maps_delta.png")
-    v, n_lh_t = on_map(t, d_db(runs["infant2yr"]["res"], "opm_dense", primary, "combined", "intrinsic+brain"))
-    rows = [("2-year template\nD", v)]
-    vm, _ = on_map(t, d_db(runs["infant2yr"]["res"], "opm_matched", primary, "combined", "intrinsic+brain"))
-    rows.append(("2-year template\nD, matched OPM", vm))
-    plotting.cortex_map_figure(hemis_t, rows, n_lh_t, plt.get_cmap("RdBu_r"), norm,
-                               "G3B: 2-year template, OPM vs Neuromag combined (top contact, intrinsic + brain), D [dB]", "dB",
-                               OUT / "Figure_G3B_maps_template.png")
+    for k in TEMPLATES:
+        v, n_lh_t = on_map(anats[k], d_db(runs[k]["res"], "opm_dense", primary, "combined", "intrinsic+brain"))
+        vm, _ = on_map(anats[k], d_db(runs[k]["res"], "opm_matched", primary, "combined", "intrinsic+brain"))
+        plotting.cortex_map_figure(hemis_t[k], [(f"{LABEL[k]}\nD", v), (f"{LABEL[k]}\nD, matched OPM", vm)], n_lh_t,
+                                   plt.get_cmap("RdBu_r"), norm,
+                                   f"G3B: {LABEL[k]}, OPM vs Neuromag combined (top contact, intrinsic + brain), D [dB]", "dB",
+                                   OUT / f"Figure_G3B_maps_{k}.png")
 
     # 5. usefulness maps at the primary reference moment
     qr = cfg["usefulness"]["primary_reference_nAm"]
     thr = cfg["usefulness"]["detectability_threshold"]
     cmap = matplotlib.colors.ListedColormap(["#efe3c8", "tab:orange", "tab:blue", "tab:purple"])  # neither, SQUID only, OPM only, both
-    for k, hem in (("adult", hemis_a), ("infant2yr", hemis_t)):
+    for k, hem in [("adult", hemis_a)] + [(k, hemis_t[k]) for k in TEMPLATES]:
         an = anats[k]
         rows = []
         for cond in ("intrinsic+brain",):
@@ -1026,7 +1040,7 @@ def figures(anats, state, s, cfg):
     # 6. geometry: sagittal and coronal sections with both helmets and the dense OPM sites
     info = neuromag.load_info("T3")
     mags = P.magnetometer_positions(info)
-    fig, axs = plt.subplots(2, 4, figsize=(16, 8))
+    fig, axs = plt.subplots(2, len(ANATOMIES), figsize=(4 * len(ANATOMIES), 8))
     for j, k in enumerate(ANATOMIES):
         an = anats[k]
         rr = P.scalp_head_frame(an.subject)

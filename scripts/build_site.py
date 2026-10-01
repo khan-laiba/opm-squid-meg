@@ -39,8 +39,9 @@ DETECTORS = {"squid/combined": "Neuromag combined", "squid/grad": "Neuromag grad
              "opm_matched/opm": "OPM matched", "opm_dense/opm": "OPM dense"}
 DEPTH_BANDS = ("10-20 mm", "20-30 mm", "30-45 mm", "45-70 mm")
 ANAT = {"adult": "adult (sample subject)", "school": "school-age size (scaled adult)", "size2yr": "2-year size (scaled adult)",
-        "infant2yr": "2-year template"}
-CHILDREN = ("school", "size2yr", "infant2yr")
+        "infant2yr": "2-year template", "infant18mo": "18-month template", "infant12mo": "12-month template"}
+CHILDREN = ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo")
+TEMPLATES = ("infant2yr", "infant18mo", "infant12mo")
 
 
 def load(rel):
@@ -177,23 +178,23 @@ def pediatric_findings(d):
         c = s.get("ci95")
         return f"{s['median']:+.2f} dB" + (f" [{c[0]:+.2f}, {c[1]:+.2f}]" if c else "")
 
-    r = {c: C[f"{c}/opm_dense/combined/intrinsic+brain/detect"] for c in CHILDREN}
+    kids = [c for c in CHILDREN if f"{c}/opm_dense/combined/intrinsic+brain/detect" in C]
+    r = {c: C[f"{c}/opm_dense/combined/intrinsic+brain/detect"] for c in kids}
     items = [
         f"In the fixed Neuromag helmet, raised to 20-mm contact with its top, the dense OPM array's known-topography "
-        f"detectability relative to Neuromag combined (D, in dB) grows from <strong>{r['school']['d_adult']['median']:+.2f} dB</strong> "
-        f"in the adult to {r['school']['d_child']['median']:+.2f}, {r['size2yr']['d_child']['median']:+.2f} and "
-        f"<strong>{r['infant2yr']['d_child']['median']:+.2f} dB</strong> in the school-age-size control, the 2-year-size control "
-        f"and the 2-year template: Delta = {ci(r['school']['delta'])}, {ci(r['size2yr']['delta'])} and "
-        f"{ci(r['infant2yr']['delta'])} (vertex-wise for the scaled adults; by parcel for the template). OPM arrays refitted "
-        "with the adult rules (nothing shrunk); background, room field and sensor noise unchanged.",
+        f"detectability relative to Neuromag combined (D, in dB) grows from <strong>{r[kids[0]]['d_adult']['median']:+.2f} dB</strong> "
+        "in the adult to " + "; ".join(f"{r[c]['d_child']['median']:+.2f} dB ({ANAT[c]})" for c in kids) + ". Delta = "
+        + "; ".join(f"{ci(r[c]['delta'])} ({ANAT[c]})" for c in kids)
+        + " (vertex-wise for the scaled adults; by parcel for the templates). OPM arrays refitted with the adult rules "
+        "(nothing shrunk); background, room field and sensor noise unchanged.",
         "The gain comes mainly from the fixed helmet's fit: left at the adult's ear-line position, Delta is "
-        + ", ".join(f"{dec[f'{c}/centred_vs_adult_centred/combined']['delta']['median']:+.2f}" for c in CHILDREN)
+        + ", ".join(f"{dec[f'{c}/centred_vs_adult_centred/combined']['delta']['median']:+.2f}" for c in kids)
         + " dB; in a counterfactual helmet scaled with the head it is "
-        + ", ".join(f"{dec[f'{c}/counterfactual_vs_adult_counterfactual/combined']['delta']['median']:+.2f}" for c in CHILDREN)
+        + ", ".join(f"{dec[f'{c}/counterfactual_vs_adult_counterfactual/combined']['delta']['median']:+.2f}" for c in kids)
         + " dB, and "
         + ", ".join(f"{dec[f'{c}/counterfactual_x-centred_vs_adult_counterfactual_x-centred/combined']['delta']['median']:+.2f}"
-                    for c in CHILDREN)
-        + " dB about the laterally centred head. With the background fixed per unit cortical area, both systems' detectability "
+                    for c in kids)
+        + " dB about the laterally centred head (same order). With the background fixed per unit cortical area, both systems' detectability "
         "rises in the smaller heads and the on-scalp OPM's rises more; in a helmet scaled with the head the SQUID, its "
         "gradiometers most, gains as much or slightly more.",
         f"Delta stays positive for OPM noise 7-30 fT/&radic;Hz, background variance x0.5 or x2, a 1-layer head model and the "
@@ -413,11 +414,12 @@ def page_pediatric(d, out):
               "the regional magnetometer-to-scalp gaps (right).", "Placements"),
           fig(out, "g3b/Figure_G3B_maps_scaled.png", "D on the adult's inflated cortex (adult and scaled controls).", "Maps, scaled"),
           fig(out, "g3b/Figure_G3B_maps_delta.png", "Delta at every vertex (scaled controls).", "Maps, Delta"),
-          fig(out, "g3b/Figure_G3B_maps_template.png", "D on the 2-year template's inflated cortex (derived from O'Reilly et al. "
-              "2021 / Richards et al. 2016).", "Maps, template"),
+          *[fig(out, f"g3b/Figure_G3B_maps_{k}.png", f"D on the {ANAT[k]}'s inflated cortex (derived from O'Reilly et al. "
+                "2021 / Richards et al. 2016).", f"Maps, {ANAT[k]}") for k in TEMPLATES if (RES / "g3b" / f"Figure_G3B_maps_{k}.png").exists()],
           fig(out, "g3b/Figure_G3B_usefulness_adult.png", "Where the dense OPM array, Neuromag, both or neither reach "
               "detectability 5 for a 100-nAm source (operational threshold), adult.", "Usefulness, adult"),
-          fig(out, "g3b/Figure_G3B_usefulness_infant2yr.png", "The same for the 2-year template.", "Usefulness, template")]
+          *[fig(out, f"g3b/Figure_G3B_usefulness_{k}.png", f"The same for the {ANAT[k]}.", f"Usefulness, {ANAT[k]}")
+            for k in TEMPLATES if (RES / "g3b" / f"Figure_G3B_usefulness_{k}.png").exists()]]
     return "\n".join(h)
 
 
