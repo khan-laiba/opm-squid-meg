@@ -567,14 +567,17 @@ dB of detectability; area-weighted medians without the medial wall, parcel-boots
   +2.23 at 60-90 mm (83 template vs 26 adult targets, 79 of them isthmus cingulate). Within strata the
   template's Delta is largest deep and for radial sources, but those strata hold little of its area
   (2.9 % of it is deeper than 50 mm); most of its pooled gain reflects its shallower cortex (42 % of its area at
-  10-20 mm vs 22 % in the adult, area-weighted median depth 21.8 vs 26.2 mm): reweighted to the
+  10-20 mm vs 21 % in the adult, area-weighted median depth 21.8 vs 26.2 mm): reweighted to the
   adult's depth mix, the target-level difference of the medians falls from +0.85 to +0.33 dB. For the
   scaled controls the homologous (vertex-wise) Delta is largest near the surface and falls with
   depth: 2-year size +2.25 [+1.67, +2.53] dB at an adult depth of 10-15 mm, +1.56 at 20-25 mm,
   +0.68 at 30-40 mm, +0.45 at 40-50 mm; school-age size +0.73, +0.70, +0.31 and +0.22 dB. By
   orientation: the scaled controls gain about equally for radial and tangential sources (+0.70 /
   +0.47 dB; +1.23 / +1.24 dB), the template far more for radial sources (0-30 deg +2.22 [+1.58,
-  +2.82], 30-60 deg +1.00, 60-90 deg +0.53 dB; radial sources are 16 % of its targets).
+  +2.82], 30-60 deg +1.00, 60-90 deg +0.53 dB; radial sources are 16 % of its targets). These are
+  pooled over depth; at matched depth radial sources still gain more down to 40 mm (+0.64, +0.72,
+  +0.81 vs tangential +0.21, +0.19, +0.09 dB at 0-15, 15-25, 25-40 mm) but not deeper (+0.48 vs
+  +0.70 dB at 40-90 mm).
   Regionally the template's Delta is asymmetric (left inferior temporal, entorhinal, fusiform and
   pars orbitalis +2.3 to +3.0 dB; right orbitofrontal -0.8 to -0.9 dB): at top contact under the
   adult's measured pose its left frontal, temporal and parietal gaps are about 8 mm wider than the
@@ -614,8 +617,8 @@ dB of detectability; area-weighted medians without the medial wall, parcel-boots
   head-adaptive array works against it, and the headline Delta includes that loss.
 * Placements: the source-blind variants (+-5 mm, pitch +-10 deg, roll +-5 deg, back contact) give
   D_child 1.45-2.52 (school-age size), 1.70-3.06 (2-year size) and 1.75-2.51 dB (template), adult
-  0.96-1.41 dB; top contact (the primary) ranks in the middle of the family. True 18-mm contact
-  gives the lowest D for the adult, the school-age size control and the template (0.86, 1.35,
+  0.96-1.41 dB; top contact (the primary) ranks in the middle of the family. Among the placements,
+  true 18-mm contact gives the lowest D for the adult, the school-age size control and the template (0.86, 1.35,
   1.70 dB), but not for the 2-year size control (2.05 dB; pitch +10 deg gives 1.70). Regions:
   raising the head (centred -> top) lowers D in every lobe, most in the parietal and frontal
   lobes (template frontal +3.71 -> +2.02, parietal +3.02 -> +1.39 dB); back contact favours the

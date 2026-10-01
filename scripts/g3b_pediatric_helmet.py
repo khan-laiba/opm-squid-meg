@@ -679,10 +679,11 @@ def summarise(anats, state, cfg) -> dict:
         "Intervals: bootstrap over parcels of one anatomy (or of each anatomy, for between-anatomy strata); they do not include "
         "between-subject variability. One template is not a population: template results are conditional simulations.",
         "Every child array uses the adult's conventions: background moment variance per unit cortical area, room field, "
-        "intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. With the background fixed per "
-        "unit area, a smaller cortex lowers the total background power: both systems' detectability rises in the smaller heads "
-        "and the OPM's rises more (absolute detectability table). The template's averaged white surface is smoother than an "
-        "individual cortex (usable area "
+        "intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. Both systems' detectability "
+        "rises in the smaller heads, the OPM's more (absolute detectability table), by different routes: the on-scalp OPM sees "
+        "more signal from a cortex that is closer in absolute terms at about the same brain noise, while the SQUIDs' brain noise "
+        "falls (the cortex is farther from the fixed helmet and, with the background fixed per unit area, smaller) more than "
+        "their signal. The template's averaged white surface is smoother than an individual cortex (usable area "
         f"{out['anatomies']['infant2yr']['cortical_area_cm2']:,.0f} vs {out['anatomies']['adult']['cortical_area_cm2']:,.0f} cm^2 "
         "for the adult), which lowers its background power and its patch cancellation further; scaling the background variance "
         "x0.5 or x2 leaves D_child almost unchanged.",
