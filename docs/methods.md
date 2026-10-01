@@ -433,9 +433,86 @@ OPM, dense OPM)
   head normalized d_eq is 49.4 % (87 % of the volume). This concentric sphere is not a helmet
   fit: real heads sit off-centre in a fixed helmet, which G3B models with pediatric anatomy.
 
-### G3B: fixed adult helmet vs head-adaptive OPM (NEW)
-Blocked on pediatric anatomy (GOAL: school-aged first; a scaled adult is a size-only control).
+### G3B: fixed adult helmet vs head-adaptive OPM (NEW) — `opmsquid.pediatric`, `scripts/g3b_pediatric_helmet.py`
+* Anatomies (D-G3-ANAT, A-G3-SCALE). The adult is the G2 subject with the G2 targets and background
+  grid. Two size-only controls scale every MRI-frame coordinate of the adult about its MRI origin:
+  "school-age size" by 85/95 (Jas et al. Table 1, 8-year vs adult head radius) and "2-year size" by
+  the 2-year template's occipitofrontal circumference over the adult's. Their vertices are the
+  adult's, so every comparison with the adult is vertex-wise; areas scale with the square of the
+  factor and the 4-mm usable-source rule (A-BEM-DIST) is applied on the scaled meshes. The 2-year
+  infant template of O'Reilly et al. (2021; `mne.datasets.fetch_infant_template('2yr')`, an average
+  of many 2-year-old MRIs, LGPL-2.1, cite O'Reilly et al. 2021 and Richards et al. 2016) is used in
+  its native dimensions with its own 3-layer BEM, dense head surface, oct-6 source space (whose
+  full white surface is the full-resolution cortex), aparc labels and fiducials (head frame from
+  them). It is a template, not an individual child, and it is the only pediatric anatomy: results
+  on it are conditional simulations, not population estimates, and anatomical variability is not
+  assessed. No school-aged native anatomy was available (PLAN, inputs).
+* Head size from the dense scalp (head frame): occipitofrontal circumference (largest convex-hull
+  perimeter of scalp sections parallel to the fiducial plane), breadth, length, vertex height,
+  cap volume above the fiducial plane and inter-auricular distance.
+* Fixed helmet (A-G3-PLACE). The same Neuromag sensors (coils 3014/3024, 'accurate' integration,
+  typical intrinsic noise) for every anatomy. Placements are chosen from the scalp and helmet
+  geometry only: "centred" keeps the head frame where the adult's is in the sample recording (the
+  ear line in the same place; a smaller head leaves a wide gap at the vertex); "top" raises the
+  head (device +z) until the nearest magnetometer coil centre is 20 mm from the scalp (the 18-mm
+  Dewar spacing plus 2 mm, G2's 'well fitted' rule; the usual pediatric positioning and the
+  primary placement); "back" moves it posterior (device -y, the occiput against the helmet, as for
+  a supine child) to the same contact; bounded variants translate the centred head by +-5 mm along
+  device x and y, pitch it by +-10 deg or roll it by +-5 deg about the head origin, then raise it
+  to the same top contact where there is room (an adult head shifted towards the helmet wall
+  stays where it is). A placement is feasible if no magnetometer coil centre is within 18 mm of the
+  scalp. Regional gaps use MNE's Vectorview selections (left/right frontal, temporal, parietal,
+  occipital).
+* Counterfactual helmet (A-G3-COUNTERFACTUAL; a mechanistic control, not a pediatric SQUID
+  system): every coil centre scaled by the child/adult head-circumference ratio about the head
+  origin of the centred placement (coil sizes, orientations, integration and noise unchanged).
+  Around a scaled adult this reproduces the adult's measured fit with every gap scaled by the same
+  factor; where a coil would come within 18 mm of the scalp the factor is raised in steps of 0.005.
+* Head-adaptive OPM arrays: refitted to each head with the G2 rules unchanged (10-mm cell, 7-mm
+  standoff, 17-mm packing, clearance and coverage rules; nothing shrunk): the dense array and the
+  matched-site array (the Neuromag sites at the primary placement projected onto the scalp; the
+  17-mm packing rule now also applies to it, which removes no site on the adult head, where the
+  projected sites are at least 22.9 mm apart). The 204-site channel-budget control has no
+  pediatric counterpart: fewer than 204 sites fit on the smaller heads.
+* Conventions held fixed (geometry-only comparison first): the G2 analysis band, intrinsic noise
+  (OPM 15 fT/sqrt(Hz)), room field, 3-layer BEM conductivities (0.3/0.006/0.3 S/m; the 1-layer BEM
+  is the conductivity-free check) and the background moment variance per unit cortical area,
+  calibrated once on the adult's Neuromag gradiometers (G2's rule). Background sensitivity: the
+  variance x0.5 and x2 (a bounded sensitivity, not an age-specific estimate). The template's
+  averaged white surface is smoother than an individual cortex (1,070 vs 2,024 cm^2 for the adult),
+  which lowers its total background power and its patch cancellation.
+* Metric (A-G3-METRIC): known-topography detectability d of a 10-nAm cortical-normal dipole with
+  the oracle covariance, in dB (20 log10 d); D = dB_OPM - dB_SQUID for each SQUID comparator (102
+  magnetometers, 204 gradiometers, combined 306); D_child, D_adult and Delta = D_child - D_adult
+  reported together. D does not depend on the moment. Peak-channel and mean-power SNR (dB) are
+  secondary metrics. Homologous comparison: vertex-wise for the scaled controls; for the template
+  (no vertex correspondence) per Desikan-Killiany parcel and per declared depth (native mm below
+  the scalp) and orientation stratum, from area-weighted medians (target weights = usable cortical
+  area of each target's nearest-target cell). Strata or parcels with fewer than 10 targets in
+  either anatomy are reported as sparse. Intervals: bootstrap over parcels (one anatomy, or each
+  anatomy independently for between-anatomy strata); they contain no between-subject variability.
+* Extended sources: fixed-total 10-nAm geodesic patches of 5 and 10 mm (native) around 300 targets
+  (the same vertices in the adult and the scaled controls; random targets on the template), for
+  the primary placement and the dense OPM array.
+* Usefulness (A-G3-USEFUL; operational, not a clinical standard): a source is usable by a system
+  when d reaches 5 for a reference moment (20, 50, 100, 200 nAm; maps at 100 nAm); shares of the
+  usable cortical area where OPM, SQUID, both or neither are usable, and the moment needed for
+  d = 5 by depth.
+
+## 11. Epilepsy relevance, pediatric (G4, NEW) — `scripts/g4_epilepsy_pediatric.py`
+* The adult detection and localization studies (section 9) run unchanged — configuration
+  (`configs/g4_epilepsy.toml`), seeds, strengths, morphologies, detectors, operating points, null
+  durations, inverse settings, coregistration error — on a G3B anatomy: Neuromag at the primary
+  placement (top contact), the refitted dense and matched OPM arrays, the adult's background
+  variance per unit area, room field and intrinsic noise. `g4_epilepsy_adult.Context` holds what
+  the studies need (anatomy, arrays, lead fields, background scale); on the adult it reproduces the
+  adult results exactly (checked by rerunning the adult through it). Thresholds are calibrated on
+  each anatomy's own null data. Locations are stratified by the adult depth and orientation bands;
+  a band the anatomy cannot fill gets fewer locations, reported as such.
+* Anatomies: the 2-year template (primary) and the school-age size control (a scaled adult). One
+  template is not a population; the comparison with the adult mixes head size, anatomy and the
+  fixed-helmet fit, which G3B separates for detectability.
 
 ## To be written
 
-G3B; G4 pediatric.
+G3B and pediatric G4 results.

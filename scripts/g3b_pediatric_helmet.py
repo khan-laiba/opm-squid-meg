@@ -96,6 +96,9 @@ class Anatomy:
         self.key, self.subject, self.cortex, self.src, self.size, self.scale_note = key, subject, cortex, src, size, scale_note
         self.weights = P.target_areas(cortex, src.target)
         self.nt = len(src.target)
+        # the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum and midbrain) is not cortex:
+        # its targets are computed but left out of every G3B summary (they dominate the deepest strata)
+        self.cortical = ~np.char.endswith(src.region.astype(str), "unknown")
         self.points = np.concatenate([src.target, src.grid])
 
 
@@ -208,10 +211,20 @@ def run_anatomy(an: Anatomy, com: Common, cfg) -> dict:
         res_bem1[name] = evaluate(an, arrays[name], g[:, :an.nt], g[:, an.nt:], com, headline)
     log(f"{an.key}: 1-layer BEM done ({time.time() - t0:.0f} s)")
     amp = {n: np.abs(G_t[n][arrays[n].kinds == "mag"] * com.q).max(axis=0) for n in (primary, "opm_dense", "opm_matched")}
+    noise_rms = {}  # median per-channel RMS of the brain background and of the intrinsic noise (fT; gradiometers fT/cm)
+    for n in (primary, "squid:centred", "opm_dense", "opm_matched"):
+        nz = g2.array_noise(arrays[n], G_g[n], an.src.grid_area, com.brain_scale, com.env, com.enbw, com.opm_asd)
+        for kind in np.unique(arrays[n].kinds):
+            m = arrays[n].kinds == kind
+            unit = 1e13 if kind == "grad" else 1e15
+            noise_rms[f"{n}/{kind}"] = dict(brain=float(np.median(np.sqrt(np.diag(nz.brain_cov)[m])) * unit),
+                                           intrinsic=float(np.median(np.sqrt(nz.intrinsic_var[m])) * unit))
     geometry = sensor_geometry(an, arrays, pl)
     opm_pos = {n: np.array([c["loc"][:3] for c in arrays[n].info["chs"]]) for n in OPMS}  # head frame
+    geometry["source_to_sensor_mm"] = source_sensor_distances(an, arrays, (primary, "squid:centred") + OPMS)
+    geometry["opm_coverage"] = opm_coverage(an, arrays)
     return dict(arrays={n: dict(n=a.n, meta=a.meta) for n, a in arrays.items()}, placements=pl, res=res, sens=sens, res_bem1=res_bem1,
-                opm_pos=opm_pos,
+                opm_pos=opm_pos, noise_rms=noise_rms,
                 amp=amp, geometry=geometry, runtime_s=time.time() - t0, _arrays=arrays, _G=(G_t, G_g))
 
 
@@ -260,6 +273,34 @@ def sensor_geometry(an: Anatomy, arrays: dict, pl: dict) -> dict:
             d = tree.query(np.array([c["loc"][:3] for c in a.info["chs"]]))[0]
             out[name] = dict(median_mm=float(np.median(d) * 1e3), min_mm=float(d.min() * 1e3))
     return out
+
+
+def source_sensor_distances(an: Anatomy, arrays: dict, names) -> dict:
+    """Distance [mm] from every target to the nearest magnetometer coil centre (SQUID) or sensing
+    centre (OPM): a geometric quantity kept separate from depth below the scalp and orientation."""
+    from scipy.spatial import cKDTree
+
+    hm = an.subject.trans["trans"]  # head -> MRI
+    out = {}
+    for n in names:
+        a = arrays[n]
+        pos = np.array([c["loc"][:3] for c, k in zip(a.info["chs"], a.kinds) if k == "mag"])
+        if n.startswith("squid:"):
+            t = a.info["dev_head_t"]["trans"]
+            pos = pos @ t[:3, :3].T + t[:3, 3]
+        pos = pos @ hm[:3, :3].T + hm[:3, 3]
+        out[n] = cKDTree(pos).query(an.cortex.rr[an.src.target])[0] * 1e3
+    return out
+
+
+def opm_coverage(an: Anatomy, arrays: dict) -> dict:
+    """Sites per 100 cm^2 of the scalp above the brow plane (the coverage region of A-OPM-COVER)."""
+    rr = P.scalp_head_frame(an.subject)
+    tris = an.subject.scalp.tris
+    above = opm.above_brow_plane(rr, opm.fiducials_head(an.subject.digitisation()))
+    area = 0.5 * np.linalg.norm(np.cross(rr[tris[:, 1]] - rr[tris[:, 0]], rr[tris[:, 2]] - rr[tris[:, 0]]), axis=1)
+    cover_cm2 = float(area[above[tris].all(axis=1)].sum() * 1e4)
+    return dict(scalp_above_brow_plane_cm2=cover_cm2, **{f"{n}_sites_per_100cm2": 100.0 * arrays[n].n / cover_cm2 for n in OPMS})
 
 
 # ----------------------------------------------------------------------------------------------
@@ -380,11 +421,11 @@ def usefulness(an: Anatomy, run: dict, cfg, primary: str) -> dict:
             d_s = run["res"][primary][(ref, cond)]["detect"]
             for qr in u["reference_moments_nAm"]:
                 o, s = d_o * qr / q0 >= thr, d_s * qr / q0 >= thr
-                w = an.weights / an.weights.sum()
+                w = an.weights * an.cortical / np.sum(an.weights * an.cortical)
                 out[f"{ref}/{cond}/{qr:g}nAm"] = dict(both=float(w[o & s].sum()), opm_only=float(w[o & ~s].sum()),
                                                      squid_only=float(w[~o & s].sum()), neither=float(w[~o & ~s].sum()))
             for name, d in (("opm_dense", d_o), (ref, d_s)):
-                q5 = q0 * thr / d  # moment [nAm] at which d reaches the threshold
+                q5 = np.where(an.cortical, q0 * thr / d, np.nan)  # moment [nAm] at which d reaches the threshold
                 out[f"q_threshold_vs_depth/{name}/{cond}"] = strata_rows(q5, an.weights, an.src.region.astype(str), an.src.depth_mm,
                                                                          np.array(cfg["strata"]["depth_edges_mm"]), np.random.default_rng(0),
                                                                          200, cfg["strata"]["min_n"])
@@ -456,7 +497,15 @@ def summarise(anats, state, cfg) -> dict:
                          for n, v in r["arrays"].items()} for k, r in runs.items()}
     out["placements"] = {k: {n: {kk: vv for kk, vv in v.items() if kk not in ("trans", "info", "motion")} for n, v in r["placements"].items()}
                          for k, r in runs.items()}
-    out["sensor_distances"] = {k: r["geometry"] for k, r in runs.items()}
+    out["sensor_distances"] = {k: {n: v for n, v in r["geometry"].items() if n != "source_to_sensor_mm"} for k, r in runs.items()}
+    edges = np.array(cfg["strata"]["depth_edges_mm"])
+    out["source_to_sensor_mm_by_depth"] = {}
+    for k, r in runs.items():
+        an = anats[k]
+        for n, dist in r["geometry"].get("source_to_sensor_mm", {}).items():
+            out["source_to_sensor_mm_by_depth"][f"{k}/{n}"] = [
+                dict(lo=float(lo), hi=float(hi), n=int(m.sum()), median=float(np.median(dist[m])) if m.sum() else None)
+                for lo, hi in zip(edges[:-1], edges[1:]) for m in [(an.src.depth_mm >= lo) & (an.src.depth_mm < hi)]]
     # D per anatomy (primary placement), all comparators/conditions/metrics
     D = {}
     for k, r in runs.items():
@@ -464,7 +513,8 @@ def summarise(anats, state, cfg) -> dict:
             for ref in REFS:
                 for cond in conds:
                     for metric in METRICS:
-                        D[(k, o, primary, ref, cond, metric)] = d_db(r["res"], o, primary, ref, cond, metric)
+                        D[(k, o, primary, ref, cond, metric)] = np.where(anats[k].cortical, d_db(r["res"], o, primary, ref, cond, metric),
+                                                                         np.nan)
     out["D_median_dB"] = {f"{k}/{o}/{ref}/{cond}/{metric}": P.weighted_median(v, anats[k].weights)
                           for (k, o, s, ref, cond, metric), v in D.items()}
     # primary comparisons: D_child, D_adult, Delta (dense and matched OPM; every comparator; headline conditions)
@@ -488,7 +538,7 @@ def summarise(anats, state, cfg) -> dict:
             sq = f"squid:{name}"
             for ref in REFS:
                 for cond in headline:
-                    x = d_db(r["res"], "opm_dense", sq, ref, cond)
+                    x = np.where(an.cortical, d_db(r["res"], "opm_dense", sq, ref, cond), np.nan)
                     plc[f"{k}/{name}/{ref}/{cond}"] = dict(
                         median=P.weighted_median(x, an.weights),
                         by_lobe={lb: P.weighted_median(x[an.src.lobe == lb], an.weights[an.src.lobe == lb]) for lb in plotting.DK_LOBES})
@@ -496,8 +546,9 @@ def summarise(anats, state, cfg) -> dict:
     for c in CHILDREN:
         for name in ("centred", "counterfactual"):
             for ref in REFS:
-                xc = d_db(runs[c]["res"], "opm_dense", f"squid:{name}", ref, "intrinsic+brain")
-                xa = d_db(runs["adult"]["res"], "opm_dense", "squid:centred", ref, "intrinsic+brain")
+                xc = np.where(anats[c].cortical, d_db(runs[c]["res"], "opm_dense", f"squid:{name}", ref, "intrinsic+brain"), np.nan)
+                xa = np.where(anats["adult"].cortical, d_db(runs["adult"]["res"], "opm_dense", "squid:centred", ref, "intrinsic+brain"),
+                              np.nan)
                 res = compare(anats[c], anats["adult"], xc, xa, cfg, rng, 200)
                 out.setdefault("delta_other_placements", {})[f"{c}/{name}_vs_adult_centred/{ref}"] = dict(
                     d_child=res["d_child"], d_adult=res["d_adult"], delta=res["delta"])
@@ -509,12 +560,14 @@ def summarise(anats, state, cfg) -> dict:
                 for cond in headline:
                     for ref in REFS:
                         sq = s.get(primary, r["res"][primary])
-                        x = 20 * np.log10(s[o][("opm", cond)]["detect"] / sq[(ref, cond)]["detect"])
+                        x = np.where(anats[k].cortical, 20 * np.log10(s[o][("opm", cond)]["detect"] / sq[(ref, cond)]["detect"]), np.nan)
                         sens[f"{k}/{key}/{o}/{ref}/{cond}"] = P.weighted_median(x, anats[k].weights)
         for o in OPMS:
             for cond in headline:
                 for ref in REFS:
-                    x = 20 * np.log10(r["res_bem1"][o][("opm", cond)]["detect"] / r["res_bem1"][primary][(ref, cond)]["detect"])
+                    x = np.where(anats[k].cortical,
+                                 20 * np.log10(r["res_bem1"][o][("opm", cond)]["detect"] / r["res_bem1"][primary][(ref, cond)]["detect"]),
+                                 np.nan)
                     sens[f"{k}/bem1/{o}/{ref}/{cond}"] = P.weighted_median(x, anats[k].weights)
     for c in CHILDREN:
         for key in [kk for kk in runs[c]["sens"]] + ["bem1"]:
@@ -530,7 +583,8 @@ def summarise(anats, state, cfg) -> dict:
             pt[f"{k}/area_cm2/{r_:g}mm"] = float(np.median(p["area_cm2"][f"{r_:g}"]))
             for ref in REFS:
                 for cond in headline:
-                    x = 20 * np.log10(p["det"][("opm_dense", "opm", cond, r_)] / p["det"][(primary, ref, cond, r_)])
+                    x = np.where(anats[k].cortical[p["centres"]],
+                                 20 * np.log10(p["det"][("opm_dense", "opm", cond, r_)] / p["det"][(primary, ref, cond, r_)]), np.nan)
                     w = anats[k].weights[p["centres"]]
                     pt[f"{k}/{r_:g}mm/{ref}/{cond}"] = P.weighted_median(x, w)
                     focal = D[(k, "opm_dense", primary, ref, cond, "detect")][p["centres"]]
@@ -543,6 +597,17 @@ def summarise(anats, state, cfg) -> dict:
     out["patches_median_D_dB"] = pt
     out["usefulness"] = {k: usefulness(anats[k], runs[k], cfg, primary) for k in ANATOMIES}
     out["amplitude_median_fT"] = {k: {n: float(np.median(v) * 1e15) for n, v in r["amp"].items()} for k, r in runs.items()}
+    out["noise_rms_median"] = {k: r.get("noise_rms") for k, r in runs.items()}
+    a = anats["adult"]
+    ratio_g2 = runs["adult"]["res"]["opm_dense"][("opm", "intrinsic+brain")]["detect"] / \
+        runs["adult"]["res"]["squid:centred"][("combined", "intrinsic+brain")]["detect"]
+    out["link_to_g2"] = dict(
+        adult_centred_unweighted_all_targets=float(np.median(ratio_g2)),
+        adult_centred_unweighted_cortical=float(np.median(ratio_g2[a.cortical])),
+        adult_centred_area_weighted_cortical_dB=P.weighted_median(20 * np.log10(ratio_g2[a.cortical]), a.weights[a.cortical]),
+        note="G2's headline (1.13x) is the unweighted median over all targets at the measured (= centred) position; G3B "
+             "summaries are area-weighted and leave out the medial wall, and its primary placement is top contact")
+    out["medial_wall_targets"] = {k: int(np.sum(~an.cortical)) for k, an in anats.items()}
     out["notes"] = [
         "D = 20 log10(d_OPM / d_SQUID) of a 10-nAm cortical-normal dipole (known-topography detectability with the oracle noise "
         "covariance; independent of the moment). Delta = D_child - D_adult. A positive Delta is an increase in relative OPM "
@@ -556,7 +621,9 @@ def summarise(anats, state, cfg) -> dict:
         "white surface is smoother than an individual cortex (about half the adult's area), which lowers its total background "
         "power and its patch cancellation; the background sensitivity (x0.5, x2) bounds the first effect.",
         "Placements are chosen from the scalp and helmet geometry only. The counterfactual helmet (scaled with the head) is a "
-        "mechanistic control, not a pediatric SQUID system."]
+        "mechanistic control, not a pediatric SQUID system.",
+        "Targets on the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum and midbrain, not cortex) are left "
+        "out of every summary; they would otherwise dominate the deepest strata."]
     return out
 
 
@@ -602,7 +669,12 @@ def write_report(anats, s, cfg):
             if n in ("centred", "top", "back", "counterfactual"):
                 L.append(f"| {LABEL[k]} | {n} | {v.get('moved_mm', 0.0):.1f} | {v['min_dist_mm']:.1f} | {v['median_dist_mm']:.1f} | "
                          f"{v['feasible']} |")
-    L += ["", "## D_child, D_adult and Delta (dense OPM; intrinsic + brain noise; detectability dB)", "",
+    g = s["link_to_g2"]
+    L += ["", f"Link to G2: at the adult's measured (= centred) position the dense/combined detectability ratio is "
+          f"{g['adult_centred_unweighted_all_targets']:.3f}x as an unweighted median over all targets (G2's headline), "
+          f"{g['adult_centred_unweighted_cortical']:.3f}x without the medial wall and {g['adult_centred_area_weighted_cortical_dB']:+.2f} dB "
+          "area-weighted without it (the G3B convention).", "",
+          "## D_child, D_adult and Delta (dense OPM; intrinsic + brain noise; detectability dB)", "",
           "| child anatomy | comparator | D_child | D_adult | Delta | homology |", "|---|---|---|---|---|---|"]
     for c in CHILDREN:
         for ref in REFS:
@@ -621,7 +693,17 @@ def write_report(anats, s, cfg):
         for ref in REFS:
             r = s["comparisons"][f"{c}/opm_matched/{ref}/intrinsic+brain/detect"]
             L.append(f"| {LABEL[c]} | {LABEL[ref]} | {fmt_ci(r['d_child'])} | {fmt_ci(r['d_adult'])} | {fmt_ci(r['delta'])} |")
-    L += ["", "## Delta by depth stratum (dense OPM vs Neuromag combined, intrinsic + brain)", "",
+    L += ["", "## What drives Delta: placement and helmet fit (dense OPM vs Neuromag combined, intrinsic + brain)", "",
+          "| child anatomy | Delta at top contact (child and adult) | Delta, centred (child) vs adult measured | "
+          "Delta, counterfactual helmet (child) vs adult measured |", "|---|---|---|---|"]
+    for c in CHILDREN:
+        top = s["comparisons"][f"{c}/opm_dense/combined/intrinsic+brain/detect"]["delta"]
+        cen = s["delta_other_placements"][f"{c}/centred_vs_adult_centred/combined"]["delta"]
+        cf = s["delta_other_placements"][f"{c}/counterfactual_vs_adult_centred/combined"]["delta"]
+        L.append(f"| {LABEL[c]} | {fmt_ci(top)} | {fmt_ci(cen)} | {fmt_ci(cf)} |")
+    L += ["", "With the helmet scaled with the head (the counterfactual), Delta shows what remains without the head-helmet "
+          "mismatch: the OPM's fixed 7-mm standoff and 10-mm cell do not shrink with the head.", ""]
+    L += ["## Delta by depth stratum (dense OPM vs Neuromag combined, intrinsic + brain)", "",
           "| child anatomy | depth [mm] | n child / adult | D_child | D_adult | Delta [95 % CI] |", "|---|---|---|---|---|---|"]
     for c in CHILDREN:
         for row in s["comparisons"][f"{c}/opm_dense/combined/intrinsic+brain/detect"]["delta_by_depth"]:
@@ -642,6 +724,29 @@ def write_report(anats, s, cfg):
     L += ["", "| anatomy | " + " | ".join(keys) + " |", "|---" * (len(keys) + 1) + "|"]
     for k in ANATOMIES:
         L.append(f"| {LABEL[k]} | " + " | ".join(f"{sens[f'{k}/{kk}/opm_dense/combined/intrinsic+brain']:+.2f}" for kk in keys) + " |")
+    L += ["", "Delta (child minus adult, same variant):", "", "| child anatomy | " + " | ".join(keys) + " |", "|---" * (len(keys) + 1) + "|"]
+    for c in CHILDREN:
+        L.append(f"| {LABEL[c]} | " + " | ".join(f"{sens[f'delta/{c}/{kk}/opm_dense/combined/intrinsic+brain']:+.2f}" for kk in keys) + " |")
+    L += ["", "## Regions that gain or lose with the placement (median D by lobe, dense OPM vs Neuromag combined, intrinsic + brain)", "",
+          "| anatomy | placement | " + " | ".join(plotting.DK_LOBES) + " |", "|---|---|" + "---|" * len(plotting.DK_LOBES)]
+    for k in ANATOMIES:
+        for n in ("centred", "top", "back", "counterfactual"):
+            by = s["placement_D"][f"{k}/{n}/combined/intrinsic+brain"]["by_lobe"]
+            L.append(f"| {LABEL[k]} | {n} | " + " | ".join(f"{by[lb]:+.2f}" for lb in plotting.DK_LOBES) + " |")
+    L += ["", "## Source-to-sensor distance (median, mm) by depth below the scalp", "",
+          "| anatomy | sensors | " + " | ".join(f"{a:g}-{b:g}" for a, b in zip(cfg["strata"]["depth_edges_mm"][:-1],
+                                                                              cfg["strata"]["depth_edges_mm"][1:])) + " |",
+          "|---|---|" + "---|" * (len(cfg["strata"]["depth_edges_mm"]) - 1)]
+    for key, rows in s.get("source_to_sensor_mm_by_depth", {}).items():
+        k, n = key.split("/", 1)
+        if n in (f"squid:{primary}", "opm_dense"):
+            L.append(f"| {LABEL[k]} | {n} | " + " | ".join("-" if r["median"] is None else f"{r['median']:.0f}" for r in rows) + " |")
+    if any(s.get("noise_rms_median", {}).values()):
+        L += ["", "## Noise composition (median per-channel RMS in the band; magnetometers and OPM in fT, gradiometers in fT/cm)", "",
+              "| anatomy | channels | brain background | intrinsic |", "|---|---|---|---|"]
+        for k, nr in s["noise_rms_median"].items():
+            for key, v in (nr or {}).items():
+                L.append(f"| {LABEL[k]} | {key} | {v['brain']:.1f} | {v['intrinsic']:.1f} |")
     L += ["", "## Usefulness (dense OPM vs Neuromag combined, intrinsic + brain): share of usable cortical area", "",
           f"A source counts as usable when its detectability reaches {cfg['usefulness']['detectability_threshold']:g} at the reference "
           "moment (an operational choice, not a clinical standard).", "",
@@ -668,7 +773,7 @@ def figures(anats, state, s, cfg):
             ax = axs[i, j]
             for k in ANATOMIES:
                 an = anats[k]
-                x = d_db(runs[k]["res"], "opm_dense", primary, ref, cond)
+                x = np.where(an.cortical, d_db(runs[k]["res"], "opm_dense", primary, ref, cond), np.nan)
                 rows = strata_rows(x, an.weights, an.src.region.astype(str), an.src.depth_mm, edges, np.random.default_rng(0), 200,
                                    cfg["strata"]["min_n"])
                 med = np.array([r.get("median", np.nan) for r in rows])
@@ -676,7 +781,7 @@ def figures(anats, state, s, cfg):
                 hi = np.array([r["ci95"][1] if "ci95" in r else np.nan for r in rows])
                 ax.plot(centers, med, "o-", color=COLORS[k], label=LABEL[k], ms=4)
                 ax.fill_between(centers, lo, hi, color=COLORS[k], alpha=0.12)
-                xm = d_db(runs[k]["res"], "opm_matched", primary, ref, cond)
+                xm = np.where(an.cortical, d_db(runs[k]["res"], "opm_matched", primary, ref, cond), np.nan)
                 rows_m = strata_rows(xm, an.weights, an.src.region.astype(str), an.src.depth_mm, edges, np.random.default_rng(0), 50,
                                      cfg["strata"]["min_n"])
                 ax.plot(centers, [r.get("median", np.nan) for r in rows_m], "--", color=COLORS[k], lw=1, alpha=0.7)
@@ -687,8 +792,8 @@ def figures(anats, state, s, cfg):
             if j == 0:
                 ax.set_ylabel("D = OPM - SQUID [dB]")
     axs[0, 0].legend(fontsize=7, title="solid: dense OPM; dashed: matched", title_fontsize=7)
-    fig.suptitle("G3B: relative OPM performance vs depth in each anatomy (fixed helmet, top contact; area-weighted medians, "
-                 "parcel-bootstrap 95 % bands)", fontsize=10)
+    fig.suptitle("G3B: relative OPM performance vs depth in each anatomy (fixed helmet, top contact; area-weighted medians "
+                 "without the medial wall, parcel-bootstrap 95 % bands)", fontsize=10)
     fig.tight_layout()
     fig.savefig(OUT / "Figure_G3B_depth.png", dpi=150)
     plt.close(fig)

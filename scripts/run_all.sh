@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Reproduce every milestone in order (see README.md). Requires the MNE sample data in
 # data/external/MNE-sample-data. Full-resolution lead fields take ~6 min each; the whole run
-# takes roughly 2 h on a laptop (about 40 min of it for the lead fields). Each driver writes its
+# takes roughly 2 h on a laptop for the adult part (about 40 min of it for the lead fields) and
+# about 3 h for the pediatric part. Each driver writes its
 # outputs to results/<milestone>/ with the code commit and package versions in its JSON.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -17,6 +18,9 @@ $PY scripts/g2_band_sensitivity.py                       # G2   frequency band a
 $PY scripts/g2_report.py                                 # G2   per-configuration report
 $PY scripts/g4_epilepsy_adult.py                         # G4   IED detection, adult
 $PY scripts/g4_localization.py                           # G4   bounded localization, adult
-# after the adult baseline (adult-baseline-v1):
+# after the adult baseline (adult-baseline-v2); needs the 2-year infant template (README, Data setup):
 $PY scripts/g3a_jas_size_benchmark.py                    # G3A  Jas Table 1 / Fig. 5 (REPRO)
+$PY scripts/g3b_pediatric_helmet.py                      # G3B  fixed adult helmet vs head-adaptive OPM (NEW)
+$PY scripts/g4_epilepsy_pediatric.py infant2yr           # G4   IED detection and localization, 2-year template
+$PY scripts/g4_epilepsy_pediatric.py school              # G4   the same, school-age size control
 $PY scripts/build_site.py                                # G5   local report in site/_build (not deployed)
