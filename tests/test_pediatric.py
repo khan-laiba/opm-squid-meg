@@ -108,6 +108,18 @@ class TestPlacements(unittest.TestCase):
         same = P.scaled_helmet(self.info, 1.0, [0.01, 0.02, 0.03])
         np.testing.assert_allclose([c["loc"] for c in same["chs"]], [c["loc"] for c in self.info["chs"]])
 
+    def test_lateral_centring_balances_the_helmet_halves(self):
+        pose, dx = P.lateral_centring(self.info, self.child, self.base)
+        fit = P.HelmetFit(self.info, self.child)
+        regions = P.helmet_regions(self.info)
+        left = np.concatenate([v for k, v in regions.items() if k.startswith("left")])
+        right = np.concatenate([v for k, v in regions.items() if k.startswith("right")])
+        d = fit.distances(pose)
+        self.assertLess(abs(np.median(d[left]) - np.median(d[right])), 0.001)
+        self.assertLessEqual(abs(dx), 0.020)
+        self.assertIn("x-centred", self.pl)
+        self.assertTrue(18.0 < self.pl["top-18mm"]["min_dist_mm"] <= 18.6)
+
     def test_helmet_regions_partition_magnetometers(self):
         regions = P.helmet_regions(self.info)
         self.assertEqual(len(regions), 8)
@@ -138,6 +150,46 @@ class TestSummaries(unittest.TestCase):
         targets = np.flatnonzero(cortex.usable)[::50]
         a = P.target_areas(cortex, targets)
         self.assertAlmostEqual(a.sum(), cortex.area[cortex.usable].sum(), places=12)
+
+
+class TestG3BSummaries(unittest.TestCase):
+    """The summary helpers of scripts/g3b_pediatric_helmet.py on synthetic values."""
+
+    @classmethod
+    def setUpClass(cls):
+        import sys
+
+        sys.path.insert(0, str(paths.ROOT / "scripts"))
+        import g3b_pediatric_helmet as G3
+
+        cls.G3 = G3
+        cls.rng = np.random.default_rng(0)
+
+    def test_delta_strata_of_shifted_values(self):
+        n = 60
+        vc, va = np.linspace(10, 40, n), np.linspace(10, 40, n)
+        groups = np.repeat(np.array(["a", "b", "c", "d"]), n // 4)
+        rows = self.G3.delta_strata(np.full(n, 2.0), np.ones(n), groups, vc, np.full(n, 0.5), np.ones(n), groups, va,
+                                    np.array([10.0, 25.0, 40.1]), self.rng, 50, 10)
+        for row in rows:
+            self.assertAlmostEqual(row["delta"], 1.5)
+            self.assertEqual(row["ci95"], [1.5, 1.5])
+
+    def test_sparse_strata_are_reported_not_summarised(self):
+        x = np.ones(12)
+        rows = self.G3.strata_rows(x, np.ones(12), np.repeat(["a", "b"], 6), np.r_[np.full(11, 5.0), 50.0],
+                                   np.array([0.0, 10.0, 90.0]), self.rng, 10, 10)
+        self.assertIn("median", rows[0])
+        self.assertNotIn("median", rows[1])  # one target: sparse
+        self.assertEqual(rows[1]["n"], 1)
+
+    def test_parcel_table_skips_the_medial_wall_and_sparse_parcels(self):
+        gc = np.array(["lh.a"] * 12 + ["lh.unknown"] * 12 + ["lh.b"] * 3)
+        xc = np.r_[np.full(12, 3.0), np.full(12, 9.0), np.full(3, 1.0)]
+        rows = {r["parcel"]: r for r in self.G3.parcel_table(xc, np.ones(27), gc, xc - 1.0, np.ones(27), gc, 10)}
+        self.assertNotIn("lh.unknown", rows)
+        self.assertAlmostEqual(rows["lh.a"]["delta"], 1.0)
+        self.assertNotIn("delta", rows["lh.b"])
 
 
 if __name__ == "__main__":

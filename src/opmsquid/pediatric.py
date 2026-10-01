@@ -18,6 +18,11 @@ Placement rules (A-G3-PLACE; chosen without reference to any test source):
   x and y, pitched by +-10 deg or rolled by +-5 deg about the head origin, then raised to the same
   top contact where there is room (a pose already within the clearance, e.g. an adult head shifted
   towards the helmet wall, stays as it is). For a child these are variants of ``top``.
+* ``x-centred``: the centred head shifted along device x until the median magnetometer-to-scalp
+  distances of the left and right helmet halves are equal (a lateral centring that uses geometry
+  only; the adult's measured pose leaves a head with other fiducials off-centre), then top contact.
+* ``top-18mm``: the centred head raised until the nearest coil is at the 18-mm Dewar spacing itself
+  (true contact; the most SQUID-favourable placement of this family).
 Feasibility: every magnetometer coil centre at least ``dewar`` (18 mm) from the scalp.
 """
 from __future__ import annotations
@@ -140,6 +145,25 @@ class HelmetFit:
                     feasible=bool(d.min() >= DEWAR and not self.any_inside(dev_head)))
 
 
+def lateral_centring(info: mne.Info, subject, dev_head: np.ndarray, max_shift: float = 0.020,
+                     step: float = 0.0005) -> tuple[np.ndarray, float]:
+    """``dev_head`` with the head shifted along device x (within +-``max_shift``) so that the median
+    magnetometer-to-scalp distance of the left helmet half (MNE's left selections) equals that of the
+    right half. Returns the transform and the shift [m] (positive: towards device +x, the right)."""
+    fit = HelmetFit(info, subject)
+    regions = helmet_regions(info)
+    left = np.concatenate([v for k, v in regions.items() if k.startswith("left")])
+    right = np.concatenate([v for k, v in regions.items() if k.startswith("right")])
+    best = None
+    for dx in np.arange(-max_shift, max_shift + step / 2, step):
+        t = moved(dev_head, translate([dx, 0.0, 0.0]))
+        d = fit.distances(t)
+        imbalance = abs(float(np.median(d[left]) - np.median(d[right])))
+        if best is None or imbalance < best[0] - 1e-12:
+            best = (imbalance, float(dx), t)
+    return best[2], best[1]
+
+
 def placements(info: mne.Info, subject, base_dev_head: np.ndarray, translation: float = 0.005, pitch_deg: float = 10.0,
                roll_deg: float = 5.0, clearance: float = CLEARANCE) -> dict:
     """Source-blind head placements in the helmet of ``info`` (see the module docstring): name ->
@@ -158,6 +182,13 @@ def placements(info: mne.Info, subject, base_dev_head: np.ndarray, translation: 
     for name, m in variants.items():
         t, d = fit.contact(moved(base_dev_head, m), (0, 0, 1), clearance)
         out[name] = dict(trans=t, rule=f"centred, {name}, then up to contact where there is room", moved_mm=d * 1e3)
+    pose, dx = lateral_centring(info, subject, base_dev_head)
+    t, d = fit.contact(pose, (0, 0, 1), clearance)
+    out["x-centred"] = dict(trans=t, pose=pose, shift_x_mm=dx * 1e3, moved_mm=d * 1e3,
+                            rule=f"centred, shifted {dx * 1e3:+.1f} mm along device x to equal left/right median gaps, then up to "
+                                 f"{clearance * 1e3:g}-mm contact")
+    t, d = fit.contact(base_dev_head, (0, 0, 1), DEWAR)
+    out["top-18mm"] = dict(trans=t, moved_mm=d * 1e3, rule=f"centred, then up to {DEWAR * 1e3:g}-mm contact (true contact)")
     for v in out.values():
         v.update(fit.describe(v["trans"]))
     return out
