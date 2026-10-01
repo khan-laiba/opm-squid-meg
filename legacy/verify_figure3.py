@@ -585,6 +585,8 @@ def main(argv=None) -> bool:
     ap.add_argument("--skip-unregistered", action="store_true",
                     help="skip the comparison with a replica rendered without raster registration")
     ap.add_argument("--self-test", action="store_true", help="run the negative controls as well")
+    ap.add_argument("--artwork-fonts", action="store_true",
+                    help="render replicas with the artwork fonts when the replica's summary does not say (see replicate_figure3.py)")
     args = ap.parse_args(argv)
     outdir = Path(args.outdir)
     outdir.mkdir(parents=True, exist_ok=True)
@@ -595,13 +597,14 @@ def main(argv=None) -> bool:
 
     # options of the replica under test (written by replicate_figure3.py next to the PNG)
     summary_file = replica.parent / "figure3_summary.json"
-    options = dict(eta=3.0, deq_marker="published", dtheta_deg=0.05)
+    options = dict(eta=3.0, deq_marker="published", dtheta_deg=0.05, artwork_fonts=args.artwork_fonts)
     if summary_file.is_file():
         s = json.loads(summary_file.read_text())
         png = s.get("outputs", {}).get("png")
         if png and Path(png).resolve() == replica.resolve():  # summary written with this PNG
             options = dict(eta=s.get("eta", 3.0), deq_marker=s.get("deq_marker", "published"),
-                           dtheta_deg=s.get("dtheta_deg", 0.05))
+                           dtheta_deg=s.get("dtheta_deg", 0.05),
+                           artwork_fonts=s.get("artwork_fonts", "Myriad" in s.get("font", "")))
     if not replica.is_file():  # end-to-end: render the replica first
         replica.parent.mkdir(parents=True, exist_ok=True)
         _render(replica, **options)

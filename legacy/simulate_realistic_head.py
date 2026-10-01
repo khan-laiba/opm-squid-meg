@@ -870,7 +870,9 @@ def main(argv=None):
     ap.add_argument("--replot", action="store_true",
                     help=f"re-analyse {RESULTS_FILE} in --outdir (e.g. another --eta) instead of simulating")
     ap.add_argument("--outdir", default=str(Path(__file__).resolve().parent / "realistic_head_output"))
-    ap.add_argument("--font-dir", default=None, help="folder containing MyriadPro-Regular.otf / -Bold.otf")
+    ap.add_argument("--artwork-fonts", action="store_true",
+                    help="licensed artwork fonts (Myriad Pro; see replicate_figure3.py); default: open fonts")
+    ap.add_argument("--font-dir", default=None, help="folder containing MyriadPro-Regular.otf / -Bold.otf (implies --artwork-fonts)")
     args = ap.parse_args(argv)
     if any(not 0 <= r <= 40 for r in args.radii):
         ap.error("patch radii must be between 0 and 40 mm")
@@ -894,7 +896,7 @@ def main(argv=None):
         save_raw(raw, outdir / RESULTS_FILE)
         src = anat.src
     res = analyse(raw, args.eta)
-    fonts = R.setup_fonts(args.font_dir)
+    fonts = R.setup_fonts(args.font_dir, args.artwork_fonts)
     radii = sorted(res["sizes"])
     files = [str(outdir / RESULTS_FILE)]
     for r in radii:

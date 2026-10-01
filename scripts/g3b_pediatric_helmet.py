@@ -522,8 +522,8 @@ def summarise(anats, state, cfg) -> dict:
     headline = cfg["conditions"]["headline"]
     conds = cfg["conditions"]["all"]
     rng = np.random.default_rng(7)
-    out = dict(status="NEW (G3B: fixed adult Neuromag helmet vs head-adaptive OPM on smaller heads; size-only controls and one "
-                      "2-year template)", config=cfg, brain_scale=state["brain_scale"], enbw_hz=state["enbw"])
+    out = dict(status="NEW (G3B: fixed adult Neuromag helmet vs head-adaptive OPM on smaller heads; size-only controls and "
+                      "the 12-, 18- and 24-month templates)", config=cfg, brain_scale=state["brain_scale"], enbw_hz=state["enbw"])
     out["anatomies"] = {k: dict(description=an.subject.description, scale_note=an.scale_note, head_size=an.size,
                                 ofc_ratio_to_adult=an.ofc_ratio, n_targets=an.nt, n_background_grid=int(len(an.src.grid)),
                                 cortical_area_cm2=float(an.cortex.area[an.cortex.usable].sum() * 1e4),
@@ -606,6 +606,7 @@ def summarise(anats, state, cfg) -> dict:
                 vw[f"{c}/{name}/{cs}/{cond}"] = P.weighted_median(np.where(an.cortical, x, np.nan), an.weights)
     out["absolute_detectability_dB"] = absd
     out["vertexwise_change_dB"] = vw
+    out["template_depth_checks"] = template_depth_checks(anats, D, primary, cfg)
     # channel count: the adult's dense array subsampled to each child's site count
     cc = {}
     ra = runs["adult"]
@@ -687,7 +688,8 @@ def summarise(anats, state, cfg) -> dict:
         "The templates: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per declared depth/orientation "
         "stratum from area-weighted medians.",
         "Intervals: bootstrap over parcels of one anatomy (or of each anatomy, for between-anatomy strata); they do not include "
-        f"between-subject variability. {len(TEMPLATES)} average templates of one database (" + ", ".join(LABEL[k] for k in TEMPLATES)
+        f"between-subject variability. {('One', 'Two', 'Three', 'Four')[len(TEMPLATES) - 1]} average templates of one database ("
+        + ", ".join(LABEL[k] for k in TEMPLATES)
         + ") are not a population: template results are conditional simulations.",
         "Every child array uses the adult's conventions: background moment variance per unit cortical area, room field, "
         "intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. Both systems' detectability "
@@ -711,6 +713,49 @@ def summarise(anats, state, cfg) -> dict:
 
 
 # ----------------------------------------------------------------------------------------------
+def template_depth_checks(anats, D, primary, cfg) -> dict:
+    """Templates (no vertex correspondence): how much of the pooled difference of the medians
+    (dense OPM vs Neuromag combined, intrinsic + brain) reflects the template's shallower cortex
+    (its targets reweighted to the adult's area share per depth stratum), and radial (0-30 deg)
+    vs tangential (60-90 deg) sources at matched depth. Deterministic, no intervals."""
+    edges = np.array(cfg["strata"]["depth_edges_mm"])
+    min_n = cfg["strata"]["min_n"]
+    a = anats["adult"]
+    key = ("opm_dense", primary, "combined", "intrinsic+brain", "detect")
+    xa = D[("adult",) + key]
+    da, oa, wa, oka = a.src.depth_mm, a.src.orientation_deg, a.weights, np.isfinite(xa)
+
+    def share(d, w, ok, lo, hi):
+        return float(w[ok & (d >= lo) & (d < hi)].sum() / w[ok].sum())
+
+    out = {}
+    for k in TEMPLATES:
+        an = anats[k]
+        xc = D[(k,) + key]
+        dc, oc, wc, okc = an.src.depth_mm, an.src.orientation_deg, an.weights, np.isfinite(xc)
+        wr = np.zeros_like(wc)
+        for lo, hi in zip(edges[:-1], edges[1:]):
+            mc, ma = okc & (dc >= lo) & (dc < hi), oka & (da >= lo) & (da < hi)
+            if mc.any() and ma.any():
+                wr[mc] = wc[mc] * (wa[ma].sum() / wa[oka].sum()) / (wc[mc].sum() / wc[okc].sum())
+        rows = []
+        for lo, hi in ((0, 15), (15, 25), (25, 40), (40, 90)):
+            row = dict(lo=lo, hi=hi)
+            for lab, (olo, ohi) in (("radial", (0, 30)), ("tangential", (60, 90.1))):
+                mc = okc & (dc >= lo) & (dc < hi) & (oc >= olo) & (oc < ohi)
+                ma = oka & (da >= lo) & (da < hi) & (oa >= olo) & (oa < ohi)
+                row[lab] = (P.weighted_median(xc[mc], wc[mc]) - P.weighted_median(xa[ma], wa[ma])
+                            if mc.sum() >= min_n and ma.sum() >= min_n else None)
+            rows.append(row)
+        out[k] = dict(pooled_difference_db=P.weighted_median(xc, wc) - P.weighted_median(xa, wa),
+                      depth_reweighted_difference_db=P.weighted_median(np.where(wr > 0, xc, np.nan), wr) - P.weighted_median(xa, wa),
+                      area_share_10_20mm=share(dc, wc, okc, 10, 20), adult_area_share_10_20mm=share(da, wa, oka, 10, 20),
+                      area_share_deeper_50mm=share(dc, wc, okc, 50, np.inf),
+                      median_depth_mm=P.weighted_median(dc[okc], wc[okc]), adult_median_depth_mm=P.weighted_median(da[oka], wa[oka]),
+                      radial_share=share(oc, wc, okc, 0, 30), orientation_at_matched_depth=rows)
+    return out
+
+
 def write_targets_csv(anats, state, cfg):
     primary = f"squid:{cfg['placement']['primary']}"
     for k, an in anats.items():
@@ -730,6 +775,10 @@ def fmt_ci(s):
     if not s.get("ci95"):
         return f"{s['median']:+.2f} dB"
     return f"{s['median']:+.2f} dB [{s['ci95'][0]:+.2f}, {s['ci95'][1]:+.2f}]"
+
+
+def fmt_opt(v):
+    return "-" if v is None else f"{v:+.2f}"
 
 
 def write_report(anats, s, cfg):
@@ -828,6 +877,20 @@ def write_report(anats, s, cfg):
         for row in s["comparisons"][f"{c}/opm_dense/combined/intrinsic+brain/detect"].get("delta_by_adult_depth", []):
             cell = f"{row['median']:+.2f} [{row['ci95'][0]:+.2f}, {row['ci95'][1]:+.2f}]" if row.get("ci95") else "sparse"
             L.append(f"| {LABEL[c]} | {row['lo']:g}-{row['hi']:g} | {row['n']} | {cell} |")
+    tdc = s.get("template_depth_checks", {})
+    if tdc:
+        L += ["", "Templates: the pooled difference of the medians (D_child - D_adult over all targets) and the same with the "
+              "template's targets reweighted to the adult's area share per depth stratum; then radial (0-30 deg) and tangential "
+              "(60-90 deg) sources at matched depth (difference of the medians; '-': fewer than "
+              f"{cfg['strata']['min_n']} targets):", "",
+              "| template | pooled | depth-reweighted | area at 10-20 mm (adult) | median depth [mm] (adult) | radial 0-15 / 15-25 / "
+              "25-40 / 40-90 mm | tangential 0-15 / 15-25 / 25-40 / 40-90 mm |", "|---|---|---|---|---|---|---|"]
+        for k, r in tdc.items():
+            rad = " / ".join(fmt_opt(row["radial"]) for row in r["orientation_at_matched_depth"])
+            tan = " / ".join(fmt_opt(row["tangential"]) for row in r["orientation_at_matched_depth"])
+            L.append(f"| {LABEL[k]} | {r['pooled_difference_db']:+.2f} | {r['depth_reweighted_difference_db']:+.2f} | "
+                     f"{r['area_share_10_20mm']:.0%} ({r['adult_area_share_10_20mm']:.0%}) | {r['median_depth_mm']:.1f} "
+                     f"({r['adult_median_depth_mm']:.1f}) | {rad} | {tan} |")
     L += ["", "## Delta by orientation stratum (0 deg = radial to the inner skull; dense OPM vs Neuromag combined)", "",
           "| child anatomy | orientation [deg] | n child / adult | D_child | D_adult | Delta [95 % CI] |", "|---|---|---|---|---|---|"]
     for c in CHILDREN:

@@ -482,7 +482,9 @@ def main(argv=None):
     ap.add_argument("--moment-density", type=R._positive_float, default=None,
                     help="current density [nAm/mm^2]; default: every patch has Q = 30 nAm")
     ap.add_argument("--outdir", default=str(Path(__file__).resolve().parent / "extended_sources_output"))
-    ap.add_argument("--font-dir", default=None)
+    ap.add_argument("--artwork-fonts", action="store_true",
+                    help="licensed artwork fonts (Myriad Pro; see replicate_figure3.py); default: open fonts")
+    ap.add_argument("--font-dir", default=None, help="folder containing MyriadPro-*.otf (implies --artwork-fonts)")
     args = ap.parse_args(argv)
     max_radius_mm = 0.5 * np.pi * B * 1e3  # a hemispherical cap on the brain surface
     if any(not 0 <= r < max_radius_mm for r in args.radii):
@@ -495,7 +497,7 @@ def main(argv=None):
     outdir = Path(args.outdir)
     outdir.mkdir(parents=True, exist_ok=True)
     results, info = run_study(sorted(set(args.radii)), args.eta, args.moment_density)
-    fonts = R.setup_fonts(args.font_dir)
+    fonts = R.setup_fonts(args.font_dir, args.artwork_fonts)
     files = []
     for p in results:
         files += figure3_per_patch(p, info, fonts, outdir)

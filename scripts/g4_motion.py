@@ -1,0 +1,527 @@
+#!/usr/bin/env python3
+"""G4 bounded secondary extension: head motion and OPM slippage (NEW; docs/methods.md section 12).
+
+Static fit is studied first (G2, G3B, G4). This script adds two motion mechanisms that the static
+maps cannot show (src/opmsquid/motion.py), on the G3B arrays and noise conventions:
+
+A. Sustained displacements (geometry). Neuromag at the primary G3B placement (top contact): the
+   head displaced in the fixed helmet. Dense OPM array: the head moves with the array (no change)
+   unless the cap slips (rigid rotation about the head origin). Detectability with the displaced
+   geometry known (ideal movement compensation, or a known slip) and with the template of the
+   reference geometry (mismatched; noise covariance from the displaced data).
+B. In-band motion (room-field coupling). The dense OPM array moving rigidly with the head in a static
+   residual field: in-band artefact covariance J Sigma J^T per unit field (1 nT uniform, 1 nT/m
+   gradient), after no correction, the homogeneous-field projection (3 terms) or the 8-term
+   projection, with sensor calibration errors. Its effect on detectability, and the in-band motion
+   x field at which the OPM loses 1 or 3 dB or falls to the Neuromag's static detectability. The
+   SQUIDs are fixed in the room and have no such term. A time-domain simulation with exact rigid
+   motion (slow drift plus in-band jitter) checks the linear model and gives the peak field change.
+
+Not modelled: sensor dynamic range, gain changes with the operating field and cross-axis
+projection beyond the declared calibration errors; head-motion statistics of real children;
+movement-compensation algorithms (the 'known geometry' rows are their ideal limit).
+Configuration: configs/g4_motion.toml. Outputs: results/g4/g4_motion_summary.json,
+G4_motion_report.md, Figure_G4_motion.png. Usage: g4_motion.py [--quick]
+"""
+from __future__ import annotations
+
+import argparse
+import sys
+import time
+import tomllib
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT / "scripts"))
+
+import numpy as np  # noqa: E402
+import mne  # noqa: E402
+
+import g3b_pediatric_helmet as G3  # noqa: E402
+from opmsquid import background, g2, io, metrics, motion, noise, opm  # noqa: E402
+from opmsquid import pediatric as P  # noqa: E402
+
+OUT = ROOT / "results" / "g4"
+CORRECTIONS = ("none", "homogeneous", "homogeneous+gradient")
+log = G3.log
+
+
+# ----------------------------------------------------------------------------------------------
+def setup(keys):
+    cfg3 = tomllib.loads((ROOT / "configs" / "g3b_pediatric.toml").read_text())
+    cfg2 = tomllib.loads((ROOT / "configs" / "g2_adult.toml").read_text())
+    anats = G3.load_anatomies(cfg3, cfg2)
+    com = G3.Common(cfg3, cfg2)
+    adult = anats["adult"]
+    g = G3.gains(adult, G3.g2.Array("squid", com.squid_info, com.kinds, None, {}), adult.subject.bem_model(com.bem))
+    unit = background.sensor_covariance(g[:, adult.nt:], background.moment_covariance(adult.src.grid_area))
+    com.brain_scale = background.calibrate(unit, com.grads, com.target_var)  # G2's rule, as G3B and pediatric G4
+    return {k: anats[k] for k in keys}, com, cfg3
+
+
+def reference(an, com, cfg3) -> dict:
+    """Primary G3B Neuromag placement and the refitted dense OPM array, with their gains."""
+    arrays, pl = G3.build_arrays(an, com, cfg3)
+    primary = cfg3["placement"]["primary"]
+    bem3 = an.subject.bem_model(com.bem)
+    out = dict(squid=arrays[f"squid:{primary}"], opm=arrays["opm_dense"], dev_head=np.array(pl[primary]["trans"]), bem3=bem3, G={})
+    for name in ("squid", "opm"):
+        g = G3.gains(an, out[name], bem3)
+        out["G"][name] = (g[:, :an.nt], g[:, an.nt:])
+    return out
+
+
+def noise_cov(an, array, g_grid, com, cond) -> tuple:
+    nz = g2.array_noise(array, g_grid, an.src.grid_area, com.brain_scale, com.env, com.enbw, com.opm_asd)
+    return nz, nz.covariance(cond)
+
+
+def change_db(d, d0, floor):
+    r = np.divide(d, d0, out=np.zeros_like(d), where=d0 > 0)
+    return np.where(r > 0, 20.0 * np.log10(np.maximum(r, 1e-30)), floor).clip(min=floor)
+
+
+def summarise_change(an, x, cfg3) -> dict:
+    """Area-weighted median over cortical targets, share losing > 3 dB, and medians by depth."""
+    m, w = an.cortical, an.weights
+    edges = cfg3["strata"]["depth_edges_mm"]
+    by_depth = []
+    for lo, hi in zip(edges[:-1], edges[1:]):
+        k = m & (an.src.depth_mm >= lo) & (an.src.depth_mm < hi)
+        by_depth.append(dict(lo=lo, hi=hi, n=int(k.sum()), median=P.weighted_median(x[k], w[k]) if k.sum() >= cfg3["strata"]["min_n"] else None))
+    return dict(median_db=P.weighted_median(x[m], w[m]), share_loss_gt_3db=float(np.sum(w[m] * (x[m] < -3.0)) / np.sum(w[m])),
+                by_depth=by_depth)
+
+
+# ----------------------------------------------------------------------------------------------
+# A. sustained displacements
+def squid_displacements(cfg, origin) -> list:
+    g = cfg["geometry"]
+    out = []
+    for d in g["translations_mm"]:
+        out.append((f"down {d:g} mm", P.translate([0.0, 0.0, -d * 1e-3])))
+        for ax, lab in ((0, "x"), (1, "y")):
+            for sgn in (1, -1):
+                out.append((f"{lab}{'+' if sgn > 0 else '-'}{d:g} mm", P.translate(sgn * d * 1e-3 * np.eye(3)[ax])))
+    for deg in g["rotations_deg"]:
+        for ax, lab in ((0, "pitch"), (1, "roll"), (2, "yaw")):
+            for sgn in (1, -1):
+                out.append((f"{lab} {sgn * deg:+g} deg", P.rotate_about(ax, sgn * deg, origin)))
+    return out
+
+
+def slipped_opm(an, array, rot: np.ndarray) -> tuple:
+    """The dense array rotated rigidly about the head origin (head frame); sensors that would enter
+    the scalp moved outward along their axes to the A-OPM-CLEAR clearances."""
+    pos = np.array([c["loc"][:3] for c in array.info["chs"]]) @ rot.T
+    ax = np.array([c["loc"][9:12] for c in array.info["chs"]]) @ rot.T
+    hm = an.subject.trans["trans"]  # head -> MRI
+    skin = next(s for s in an.subject.bem_surfaces if s["id"] == mne.io.constants.FIFF.FIFFV_BEM_SURF_ID_HEAD)
+    pos_mri, ax_mri = pos @ hm[:3, :3].T + hm[:3, 3], ax @ hm[:3, :3].T
+    pos_mri, extra, _ = opm.resolve_clearance(pos_mri, ax_mri, an.subject.scalp, opm.STANDOFF - 0.001, max_extra=0.03,
+                                              model_surface=skin, model_clearance=opm.MODEL_CLEARANCE,
+                                              cell_clearance=opm.CELL_CLEARANCE, to_head=np.linalg.inv(hm)[:3, :3])
+    mh = np.linalg.inv(hm)
+    arr = opm.OPMArray(pos_mri @ mh[:3, :3].T + mh[:3, 3], ax, pos, np.arange(len(pos)), opm.STANDOFF, 0.0, "slipped dense OPM")
+    info = opm.make_info(arr)
+    return g2.Array("opm_dense", info, array.kinds.copy(), array.coil_def, dict(array.meta, slipped=True)), extra
+
+
+def part_a(an, ref, com, cfg, cfg3) -> dict:
+    cond, floor = cfg["condition"], cfg["geometry"]["floor_db"]
+    out = {"squid": {}, "opm": {}}
+    fit = P.HelmetFit(com.squid_info, an.subject)
+    base = ref["dev_head"]
+    origin = np.linalg.inv(base)[:3, 3]
+    for sysname in ("squid", "opm"):
+        arr0 = ref[sysname]
+        gt0, gg0 = ref["G"][sysname]
+        _, c0 = noise_cov(an, arr0, gg0, com, cond)
+        s0 = gt0 * com.q
+        d0 = np.linalg.norm(metrics.whitener(c0).apply(s0), axis=0)
+        if sysname == "squid":
+            cases = [(name, m, None) for name, m in squid_displacements(cfg, origin)]
+        else:
+            cases = [(f"slip {lab} {sgn * deg:+g} deg", None, motion.rotation(np.radians(sgn * deg) * np.eye(3)[ax]))
+                     for deg in cfg["geometry"]["slip_deg"] for ax, lab in ((0, "x"), (1, "y"), (2, "z")) for sgn in (1, -1)]
+        for name, m, rot in cases:
+            row = {}
+            if sysname == "squid":
+                t = P.moved(base, m)
+                dist = fit.distances(t)
+                row.update(min_dist_mm=float(dist.min() * 1e3), median_dist_mm=float(np.median(dist) * 1e3))
+                if dist.min() < P.DEWAR:
+                    out[sysname][name] = dict(row, feasible=False)
+                    continue
+                arr = g2.Array("squid", P.with_dev_head(com.squid_info, t), com.kinds, None, {})
+            else:
+                arr, extra = slipped_opm(an, arr0, rot)
+                p0 = np.array([c["loc"][:3] for c in arr0.info["chs"]])
+                p1 = np.array([c["loc"][:3] for c in arr.info["chs"]])
+                row.update(median_sensor_shift_mm=float(np.median(np.linalg.norm(p1 - p0, axis=1)) * 1e3),
+                           n_lifted=int(np.sum(extra > 0)), max_lift_mm=float(extra.max() * 1e3))
+            g = G3.gains(an, arr, ref["bem3"])
+            gt, gg = g[:, :an.nt], g[:, an.nt:]
+            _, ck = noise_cov(an, arr, gg, com, cond)
+            wk = metrics.whitener(ck)
+            sk = wk.apply(gt * com.q)
+            d_known = np.linalg.norm(sk, axis=0)
+            d_mis = motion.mismatched_detectability(wk.apply(s0), sk)
+            row.update(feasible=True, known=summarise_change(an, change_db(d_known, d0, floor), cfg3),
+                       mismatched=summarise_change(an, change_db(d_mis, d0, floor), cfg3),
+                       share_wrong_polarity=float(np.sum(an.weights[an.cortical] * (d_mis[an.cortical] <= 0)) / an.weights[an.cortical].sum()))
+            out[sysname][name] = row
+        log(f"{an.key}: part A {sysname} done ({len(cases)} cases)")
+    return out
+
+
+# ----------------------------------------------------------------------------------------------
+# B. in-band motion in a static residual field
+def part_b(an, ref, com, cfg, rng) -> dict:
+    cb = cfg["coupling"]
+    cond = cfg["condition"]
+    op = ref["opm"]
+    gt, gg = ref["G"]["opm"]
+    nz, c_ib = noise_cov(an, op, gg, com, cond)
+    s_nom = motion.sensors(op.info, op.coil_def)
+    basis = motion.external_basis(s_nom, com.env.r0)
+    proj = {"none": np.eye(op.n), "homogeneous": motion.projector(basis[:, :3]), "homogeneous+gradient": motion.projector(basis)}
+    s = gt * com.q
+    m, w = an.cortical, an.weights
+    # Neuromag's static detectability at the same condition (no motion term: fixed sensors)
+    gq, gqg = ref["G"]["squid"]
+    _, cq = noise_cov(an, ref["squid"], gqg, com, cond)
+    d_sq = np.linalg.norm(metrics.whitener(cq).apply(gq * com.q), axis=0)
+    thetas = np.radians(cb["rotation_rms_deg"])
+    out = dict(rotation_rms_deg=cb["rotation_rms_deg"], cases={}, coupling_fT={})
+    d_ib = np.linalg.norm(metrics.whitener(c_ib).apply(s), axis=0)
+
+    def med_db(num, den):
+        return P.weighted_median(20 * np.log10(num[m] / den[m]), w[m])
+
+    for corr, pm in proj.items():
+        cs, ss = pm @ c_ib @ pm.T, pm @ s
+        ws = metrics.whitener(cs)
+        d_static = np.linalg.norm(ws.apply(ss), axis=0)
+        h = ws.matrix.T @ ws.apply(ss)  # matched filter of the static noise model (the analyst's, without the motion term)
+        num, a = np.sum(h * ss, axis=0), np.sum(h * (cs @ h), axis=0)
+        out[f"static/{corr}"] = dict(opm_change_db=med_db(d_static, d_ib), D_db=med_db(d_static, d_sq))
+        for pivot_name, pivot in (("neck", cb["pivot_head_m"]), ("origin", cb["pivot_sensitivity_m"])):
+            for ax_err, gain_err in cb["calibration"]:
+                cal = f"tilt{ax_err:g}deg_gain{gain_err * 100:g}pct"
+                for field in ("uniform", "gradient"):
+                    if pivot_name == "origin" and (field == "uniform" or corr == "none"):
+                        continue  # the pivot does not matter for a uniform field; one sensitivity row per correction
+                    curves = {"unmodelled": ([], []), "oracle": ([], [])}
+                    rms = []
+                    for _ in range(cb["n_draws"]):
+                        b0, grad = motion.random_field(rng, 1e-9 if field == "uniform" else 0.0, 1e-9 if field == "gradient" else 0.0)
+                        act, gains = motion.with_calibration_errors(s_nom, rng, ax_err, gain_err)
+                        jac = motion.jacobian(act, b0, grad, com.env.r0, np.asarray(pivot, float), gains)[:, :3]
+                        cu = pm @ jac @ jac.T @ pm.T  # per rad^2 of per-axis in-band rotation
+                        rms.append(np.median(np.sqrt(np.maximum(np.diag(cu), 0))) * np.radians(1.0) * 1e15)  # fT per deg per unit field
+                        b = np.sum(h * (cu @ h), axis=0)
+                        for metric in curves:
+                            lrow, drow = [], []
+                            for th in thetas:
+                                if metric == "unmodelled":  # the static filter applied to data that contain the artefact
+                                    d = num / np.sqrt(a + th**2 * b)
+                                else:  # the artefact is part of the (known) noise covariance: the optimal filter nulls it
+                                    d = np.linalg.norm(metrics.whitener(cs + th**2 * cu).apply(ss), axis=0)
+                                lrow.append(med_db(d, d_static))
+                                drow.append(med_db(d, d_sq))
+                            curves[metric][0].append(lrow)
+                            curves[metric][1].append(drow)
+                    key = f"{corr}/{cal}/{field}/{pivot_name}"
+                    out["cases"][key] = {}
+                    for metric, (loss, dd) in curves.items():
+                        loss, dd = np.array(loss), np.array(dd)
+                        med_l, med_d = np.median(loss, axis=0), np.median(dd, axis=0)
+                        out["cases"][key][metric] = dict(
+                            opm_change_db_median=med_l, opm_change_db_range=[loss.min(axis=0), loss.max(axis=0)],
+                            D_db_median=med_d, D_db_range=[dd.min(axis=0), dd.max(axis=0)],
+                            breakeven_deg_x_unit={f"loss_{x:g}dB": crossing(cb["rotation_rms_deg"], med_l, -x) for x in cb["loss_db"]}
+                            | {"D_0dB": crossing(cb["rotation_rms_deg"], med_d, 0.0)})
+                    out["coupling_fT"][key] = dict(median=float(np.median(rms)), range=[float(np.min(rms)), float(np.max(rms))])
+        log(f"{an.key}: part B {corr} done")
+    return out
+
+
+def crossing(x, y, level) -> float | None:
+    """First x (log-interpolated) where the decreasing curve y falls to ``level``; None if it never does."""
+    x, y = np.asarray(x, float), np.asarray(y, float)
+    below = np.flatnonzero(y <= level)
+    if not len(below):
+        return None
+    i = below[0]
+    if i == 0:
+        return float(x[0])
+    f = (y[i - 1] - level) / (y[i - 1] - y[i])
+    return float(np.exp(np.log(x[i - 1]) + f * (np.log(x[i]) - np.log(x[i - 1]))))
+
+
+# ----------------------------------------------------------------------------------------------
+# B'. exact rigid motion over a recording
+def trajectory(rng, n, fs, filt, drift_deg, inband_deg) -> np.ndarray:
+    """(3, n) rotation vector [rad]: a slow drift (below 0.1 Hz, peak ``drift_deg`` per axis) plus
+    jitter whose in-band (``filt``) RMS is ``inband_deg`` per axis."""
+    from scipy import signal
+
+    lp = signal.butter(2, 0.1, btype="lowpass", fs=fs, output="sos")
+    out = np.empty((3, n))
+    for k in range(3):
+        d = signal.sosfiltfilt(lp, rng.standard_normal(n))
+        d *= drift_deg / np.abs(d).max()
+        j = rng.standard_normal(n)
+        jb = filt.apply(j)
+        j *= inband_deg / np.sqrt(np.mean(jb[n // 10:-n // 10] ** 2))
+        out[k] = np.radians(d + j)
+    return out
+
+
+def timecourse(an, ref, com, cfg, rng) -> dict:
+    tc, cb = cfg["timecourse"], cfg["coupling"]
+    g2cfg = com.g2cfg["band"]
+    fs = tc["fs_hz"]
+    n = int(tc["duration_s"] * fs)
+    filt = noise.AnalysisFilter(fs=fs, l_freq=g2cfg["l_freq_hz"], h_freq=g2cfg["h_freq_hz"], order=g2cfg["order"])
+    rot = trajectory(rng, n, fs, filt, tc["drift_deg"], tc["inband_rotation_rms_deg"])
+    op = ref["opm"]
+    s_nom = motion.sensors(op.info, op.coil_def)
+    basis = motion.external_basis(s_nom, com.env.r0)
+    proj = {"none": np.eye(op.n), "homogeneous": motion.projector(basis[:, :3]), "homogeneous+gradient": motion.projector(basis)}
+    b0, grad = motion.random_field(rng, tc["b0_nT"] * 1e-9, tc["gradient_nT_per_m"] * 1e-9)
+    act, gains = motion.with_calibration_errors(s_nom, rng, *tc["calibration"])
+    pivot = np.asarray(cb["pivot_head_m"], float)
+    y = np.empty((op.n, n))
+    for i in range(n):
+        y[:, i] = motion.readings(act, b0, grad, com.env.r0, motion.rotation(rot[:, i]), np.zeros(3), pivot, gains)
+    raw = y - y[:, :1]
+    yf = filt.apply(y - y.mean(axis=1, keepdims=True))
+    trim = slice(int(2 * fs), n - int(2 * fs))
+    rf = filt.apply(rot)[:, trim]
+    sigma = np.cov(rf)  # in-band motion covariance actually present
+    jac = motion.jacobian(act, b0, grad, com.env.r0, pivot, gains)[:, :3]
+    out = dict(peak_field_change_pT=dict(median=float(np.median(np.abs(raw).max(axis=1)) * 1e12),
+                                         max=float(np.abs(raw).max() * 1e12)),
+               inband_rotation_rms_deg=np.degrees(np.sqrt(np.diag(sigma))).tolist(), corrections={})
+    example = int(np.argmax(np.abs(raw).max(axis=1)))
+    t_show = slice(int(10 * fs), int(20 * fs))
+    out["_example"] = dict(t=np.arange(n)[t_show] / fs, raw=raw[example, t_show], filtered={})
+    for corr, pm in proj.items():
+        exact = np.sqrt(np.mean((pm @ yf)[:, trim] ** 2, axis=1))
+        lin = np.sqrt(np.maximum(np.diag(pm @ jac @ sigma @ jac.T @ pm.T), 0))
+        out["corrections"][corr] = dict(inband_rms_fT_median=float(np.median(exact) * 1e15),
+                                        linear_prediction_fT_median=float(np.median(lin) * 1e15),
+                                        exact_over_linear_median=float(np.median(exact / np.maximum(lin, 1e-30))))
+        out["_example"]["filtered"][corr] = (pm @ yf)[example, t_show]
+    return out
+
+
+# ----------------------------------------------------------------------------------------------
+def figure(summary, examples, path):
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    keys = summary["anatomies"]
+    fig = plt.figure(figsize=(16, 10))
+    # A: sustained displacements
+    ax = fig.add_subplot(2, 2, 1)
+    labels = []
+    for i, k in enumerate(keys):
+        a = summary["geometry"][k]
+        sq = [(n, r) for n, r in a["squid"].items() if r["feasible"]]
+        op = list(a["opm"].items())
+        rows = sq + op
+        y = np.arange(len(rows)) + i * (len(rows) + 1)
+        ax.scatter([r["mismatched"]["median_db"] for _, r in rows], y, marker="o", color=G3.COLORS[k], s=14,
+                   label=f"{G3.LABEL[k]}: template from the reference geometry")
+        ax.scatter([r["known"]["median_db"] for _, r in rows], y, marker="|", color=G3.COLORS[k], s=40,
+                   label=f"{G3.LABEL[k]}: geometry known")
+        labels += [(yy, ("SQUID " if n in a["squid"] else "OPM ") + n) for yy, (n, _) in zip(y, rows)]
+    ax.set_yticks([yy for yy, _ in labels])
+    ax.set_yticklabels([lab for _, lab in labels], fontsize=4.5)
+    ax.axvline(0, color="0.5", lw=0.8)
+    ax.set_xlim(-25, 3)
+    ax.set_xlabel("median change in detectability [dB] (cortical targets, area-weighted)")
+    ax.set_title("A. Sustained displacement: head in the fixed helmet (SQUID) vs cap slip (OPM)", fontsize=9)
+    ax.legend(fontsize=6, loc="lower left")
+    # B: in-band motion, adult and the youngest template, neck pivot
+    th = np.array(summary["coupling"][keys[0]]["rotation_rms_deg"])
+    for j, field in enumerate(("uniform", "gradient")):
+        ax = fig.add_subplot(2, 2, 2 + j)
+        for k, ls in zip(keys, ("-", "--", ":")):
+            for corr, col in zip(CORRECTIONS, ("tab:red", "tab:blue", "tab:green")):
+                for cal, alpha in zip(summary["calibration_labels"], (1.0, 0.65, 0.35)):
+                    c = summary["coupling"][k]["cases"].get(f"{corr}/{cal}/{field}/neck")
+                    if c is None:
+                        continue
+                    ax.plot(th, c["unmodelled"]["opm_change_db_median"], ls, color=col, alpha=alpha, lw=1.2,
+                            label=f"{G3.LABEL[k]}, {corr}, {cal}" if k in (keys[0], keys[-1]) else None)
+        ax.set_xscale("log")
+        ax.set_ylim(-20, 1)
+        ax.axhline(-1, color="0.6", lw=0.7)
+        ax.axhline(-3, color="0.6", lw=0.7, ls="--")
+        unit = "1 nT uniform field" if field == "uniform" else "1 nT/m gradient (rotation about the neck pivot)"
+        ax.set_xlabel(f"in-band head rotation, RMS per axis [deg], in a {unit}")
+        ax.set_ylabel("median OPM detectability change [dB]\n(artefact not in the noise model)")
+        ax.set_title(f"B. Room-field coupling of the head-mounted OPM array ({field}); scales as rotation x field", fontsize=9)
+        if j == 0:
+            ax.legend(fontsize=5, ncol=2, loc="lower left")
+    # B': time course
+    ax = fig.add_subplot(2, 2, 4)
+    ex = examples
+    ax.plot(ex["t"], (ex["raw"] - ex["raw"].mean()) * 1e12, color="0.6", lw=0.8, label="raw field change (pT, DC removed)")
+    for corr, col in zip(CORRECTIONS, ("tab:red", "tab:blue", "tab:green")):
+        ax.plot(ex["t"], ex["filtered"][corr] * 1e12, color=col, lw=0.8, label=f"in band, {corr} (pT)")
+    tc = summary["timecourse"]
+    ax.set_xlabel("time [s]")
+    ax.set_ylabel("pT")
+    ax.set_title(f"B'. Exact rigid motion, {tc['config']['anatomy']}: drift {tc['config']['drift_deg']:g} deg, in-band "
+                 f"{tc['config']['inband_rotation_rms_deg']:g} deg RMS, B0 {tc['config']['b0_nT']:g} nT, "
+                 f"G {tc['config']['gradient_nT_per_m']:g} nT/m, calibration {tc['config']['calibration']}", fontsize=8)
+    ax.legend(fontsize=6)
+    fig.tight_layout()
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+
+
+def fmt(v, spec="+.1f"):
+    return "-" if v is None else format(v, spec)
+
+
+def report(s) -> str:
+    L = ["# G4 extension: head motion and OPM slippage (NEW, bounded secondary analysis)", "",
+         "Static fit was studied first (G2, G3B, G4). This analysis adds what the static maps cannot show, on the G3B arrays "
+         "and noise conventions (Neuromag at top contact; the refitted dense OPM array; intrinsic + brain noise, the G3B "
+         "primary condition; 10-nAm cortical-normal dipoles; area-weighted medians over cortical targets). It bounds two "
+         "mechanisms; it does not establish motion robustness. Configuration: `configs/g4_motion.toml`; code: "
+         "`scripts/g4_motion.py`, `src/opmsquid/motion.py`.", "",
+         "## A. Sustained displacement: the head in the fixed helmet (Neuromag) vs a slipped cap (dense OPM)", "",
+         "'known': the displaced geometry is known (template and noise of the displaced geometry: ideal movement "
+         "compensation or a known slip). 'mismatched': the template of the reference geometry applied to the displaced data "
+         "(noise covariance from those data). A head-mounted array moving with the head has no geometry change; only slips "
+         f"appear for it. A wrong-polarity template counts as {s['config']['geometry']['floor_db']:g} dB.", "",
+         "| anatomy | system | displacement | known [dB] | mismatched [dB] | share > 3 dB loss (mismatched) | note |",
+         "|---|---|---|---|---|---|---|"]
+    for k in s["anatomies"]:
+        for sysname in ("squid", "opm"):
+            for n, r in s["geometry"][k][sysname].items():
+                if not r["feasible"]:
+                    L.append(f"| {G3.LABEL[k]} | Neuromag | {n} | infeasible | | | nearest magnetometer {r['min_dist_mm']:.1f} mm |")
+                    continue
+                note = (f"nearest magnetometer {r['min_dist_mm']:.1f} mm" if sysname == "squid"
+                        else f"sensors moved {r['median_sensor_shift_mm']:.1f} mm (median); {r['n_lifted']} lifted (max {r['max_lift_mm']:.1f} mm)")
+                L.append(f"| {G3.LABEL[k]} | {'Neuromag combined' if sysname == 'squid' else 'OPM dense'} | {n} | "
+                         f"{r['known']['median_db']:+.2f} | {r['mismatched']['median_db']:+.2f} | {r['mismatched']['share_loss_gt_3db']:.2f} | {note} |")
+    cb = s["config"]["coupling"]
+    L += ["", "## B. In-band motion of the head-mounted array in a static residual field", "",
+          "The dense OPM array moves rigidly with the head (rotation about a pivot "
+          f"{-cb['pivot_head_m'][2] * 1e3:g} mm below the head origin) in a static field: 1 nT uniform, or a 1 nT/m "
+          "symmetric traceless gradient (Frobenius norm), random isotropic draws. The artefact covariance is J Sigma J^T for "
+          "in-band rotation with the given RMS per axis; it is added to the noise after the correction ('none'; "
+          "'homogeneous': 3-term homogeneous-field projection; 'homogeneous+gradient': the 8-term projection of G2), applied "
+          "to signal and noise alike. Calibration errors: RMS tilt of each sensitive axis and RMS gain error, unknown to the "
+          "analyst. Everything is linear in rotation x field: for a field of B nT the rotation thresholds below divide by B. "
+          "Neuromag is fixed in the room and has no such term; its static detectability is the comparator for D.", "",
+          "Static reference (no motion): OPM detectability change from the correction alone and D (dense OPM vs Neuromag "
+          "combined, both intrinsic + brain):", "", "| anatomy | correction | OPM change [dB] | D [dB] |", "|---|---|---|---|"]
+    for k in s["anatomies"]:
+        for corr in CORRECTIONS:
+            st = s["coupling"][k][f"static/{corr}"]
+            L.append(f"| {G3.LABEL[k]} | {corr} | {st['opm_change_db']:+.2f} | {st['D_db']:+.2f} |")
+    L += ["", "In-band artefact per channel (median over channels, then over draws) for 1 deg RMS rotation per axis in the unit "
+          "field, after each correction [fT]. Then the in-band rotation (deg RMS per axis, in the unit field) at which the median "
+          "OPM detectability falls by 1 or 3 dB, or D falls to 0 dB, when the artefact is not part of the analyst's noise model "
+          "(matched filter of the static covariance applied to data that contain it; '-': not reached up to "
+          f"{max(cb['rotation_rms_deg']):g} deg). Last column: the loss at {max(cb['rotation_rms_deg']):g} deg when the artefact is "
+          "part of the known noise covariance (the optimal filter nulls its at most 3 spatial patterns: the bound for data-driven "
+          "nulling or regression on measured head motion).", "",
+          "| anatomy | field | pivot | correction | calibration (tilt, gain) | artefact [fT per deg] | 1 dB | 3 dB | D = 0 | "
+          f"oracle loss at {max(cb['rotation_rms_deg']):g} deg [dB] |", "|---|---|---|---|---|---|---|---|---|---|"]
+    for k in s["anatomies"]:
+        for key, c in s["coupling"][k]["cases"].items():
+            corr, cal, field, pivot = key.split("/")
+            be = c["unmodelled"]["breakeven_deg_x_unit"]
+            cf = s["coupling"][k]["coupling_fT"][key]
+            L.append(f"| {G3.LABEL[k]} | {field} | {pivot} | {corr} | {cal} | {cf['median']:.3g} | {fmt(be['loss_1dB'], '.3g')} | "
+                     f"{fmt(be['loss_3dB'], '.3g')} | {fmt(be['D_0dB'], '.3g')} | {c['oracle']['opm_change_db_median'][-1]:+.2f} |")
+    tc = s["timecourse"]
+    L += ["", f"## B'. Exact rigid motion over {tc['config']['duration_s']:g} s ({G3.LABEL[tc['config']['anatomy']]})", "",
+          f"Slow drift up to {tc['config']['drift_deg']:g} deg per axis plus in-band jitter of "
+          f"{tc['config']['inband_rotation_rms_deg']:g} deg RMS per axis (measured: "
+          + ", ".join(f"{v:.3f}" for v in tc["inband_rotation_rms_deg"]) + f" deg), in B0 = {tc['config']['b0_nT']:g} nT and "
+          f"G = {tc['config']['gradient_nT_per_m']:g} nT/m, calibration errors {tc['config']['calibration']} (tilt deg, gain). "
+          f"Peak field change at a sensor (drift included): median {tc['peak_field_change_pT']['median']:.0f} pT, maximum "
+          f"{tc['peak_field_change_pT']['max']:.0f} pT; this offset moves the sensors' operating point (dynamic range, gain), "
+          "which is not modelled beyond the calibration errors.", "",
+          "| correction | in-band RMS, exact [fT] | linear prediction [fT] | exact / linear |", "|---|---|---|---|"]
+    for corr, r in tc["corrections"].items():
+        L.append(f"| {corr} | {r['inband_rms_fT_median']:.1f} | {r['linear_prediction_fT_median']:.1f} | {r['exact_over_linear_median']:.2f} |")
+    L += ["", "## Notes", ""] + [f"- {n}" for n in s["notes"]]
+    return "\n".join(L) + "\n"
+
+
+# ----------------------------------------------------------------------------------------------
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--quick", action="store_true", help="adult only, two field draws (smoke test; writes to cache/)")
+    args = ap.parse_args()
+    t0 = time.time()
+    mne.set_log_level("WARNING")
+    cfg = tomllib.loads((ROOT / "configs" / "g4_motion.toml").read_text())
+    if args.quick:
+        cfg["anatomies"] = ["adult"]
+        cfg["coupling"]["n_draws"] = 2
+        cfg["geometry"]["translations_mm"] = [5.0]
+        cfg["geometry"]["rotations_deg"] = [5.0]
+        cfg["geometry"]["slip_deg"] = [3.0]
+        cfg["timecourse"]["duration_s"] = 20.0
+    keys = cfg["anatomies"]
+    anats, com, cfg3 = setup(keys)
+    rng = np.random.default_rng(cfg["coupling"]["seed"])
+    refs, geometry, coupling = {}, {}, {}
+    for k in keys:
+        refs[k] = reference(anats[k], com, cfg3)
+        log(f"{k}: reference arrays ready (Neuromag at {cfg3['placement']['primary']}, OPM dense {refs[k]['opm'].n} sites)")
+        geometry[k] = part_a(anats[k], refs[k], com, cfg, cfg3)
+        coupling[k] = part_b(anats[k], refs[k], com, cfg, rng)
+    tk = cfg["timecourse"]["anatomy"] if cfg["timecourse"]["anatomy"] in keys else keys[0]
+    tc = timecourse(anats[tk], refs[tk], com, cfg, rng)
+    examples = tc.pop("_example")
+    tc["config"] = dict(cfg["timecourse"], anatomy=tk)
+    summary = dict(
+        status="NEW (G4 bounded secondary extension: head motion and OPM slippage; not a motion-robustness result)",
+        config=cfg, anatomies=keys, calibration_labels=[f"tilt{a:g}deg_gain{g * 100:g}pct" for a, g in cfg["coupling"]["calibration"]],
+        geometry=geometry, coupling=coupling, timecourse=tc,
+        notes=[
+            "A head-mounted array moving rigidly with the head keeps its sensor-to-head geometry, so sustained head displacement "
+            "changes only the SQUID geometry; the OPM's geometry changes only if the cap slips. The 'known' rows are the ideal "
+            "limit of movement compensation (continuous head-position tracking for the SQUID, a measured slip for the OPM).",
+            "In a perfectly calibrated array, rotation in a uniform field changes every reading by a uniform field in the head "
+            "frame and is removed exactly by the homogeneous-field projection; translation in a gradient is uniform too; rotation "
+            "in a gradient adds a symmetric traceless gradient, removed to first order by the 8-term projection "
+            "(tests/test_motion.py). Calibration errors leave residuals proportional to the field change.",
+            "The static room field is treated as in G2 for both systems (removed exactly by the projection in the projected "
+            "condition); the same calibration errors would also leave part of it, for both systems, which is not modelled here.",
+            "Not modelled: sensor dynamic range, gain change with the operating field and cross-axis projection beyond the "
+            "declared calibration errors; head-motion statistics of real children; specific movement-compensation algorithms; "
+            "field changes from moving magnetic material.",
+            "Field strengths, motion amplitudes, pivot and calibration errors are declared sweeps (A-MOT-*), not measurements of "
+            "a particular room or device; results scale linearly with rotation x field."])
+    if args.quick:
+        out_dir = ROOT / "cache" / "g4_motion_quick"
+        out_dir.mkdir(parents=True, exist_ok=True)
+    else:
+        out_dir = OUT
+    io.write_json(summary, out_dir / "g4_motion_summary.json")
+    (out_dir / "G4_motion_report.md").write_text(report(summary))
+    figure(summary, examples, out_dir / "Figure_G4_motion.png")
+    log(f"done in {time.time() - t0:.0f} s -> {out_dir}")
+
+
+if __name__ == "__main__":
+    main()

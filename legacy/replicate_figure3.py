@@ -75,8 +75,11 @@ Usage
     python verify_figure3.py                    # quantitative comparison with the preprint
 
 Outputs: Figure3_replicated.{png,pdf,svg}, figure3_data.csv, figure3_summary.json
-Requires: mne, numpy, scipy, matplotlib >= 3.10, Pillow.  Myriad Pro is used when found
-(e.g. inside Adobe Acrobat); check its licence before distributing PDFs that embed it.
+Requires: mne, numpy, scipy, matplotlib >= 3.10, Pillow.  Text is set in open fonts shipped
+with matplotlib (DejaVu Sans; STIX italic for d) unless ``--artwork-fonts`` asks for the published
+artwork's Myriad Pro / Times New Roman (found e.g. inside Adobe Acrobat): that rendering is the
+one checked pixel by pixel (verify_figure3.py), but its outputs embed licensed fonts and are not
+for redistribution.
 """
 from __future__ import annotations
 
@@ -419,11 +422,22 @@ class Fonts:
     italic_serif: FontProperties
     tick: FontProperties
     note: str
+    artwork: bool = False
 
 
-def setup_fonts(font_dir: str | None = None) -> Fonts:
-    """Myriad Pro (the published figure font) from an installed family, a font folder or
-    Adobe Acrobat; otherwise a similar sans-serif with a warning."""
+OPEN_SANS, OPEN_SERIF = "DejaVu Sans", "STIXGeneral"  # Bitstream Vera licence / SIL OFL, shipped with matplotlib
+
+
+def setup_fonts(font_dir: str | None = None, artwork: bool = False) -> Fonts:
+    """Open fonts by default (DejaVu Sans; STIX italic serif). With ``artwork`` (or a font folder,
+    or FIG3_FONT_DIR): Myriad Pro, the published figure font, from an installed family, a font
+    folder or Adobe Acrobat (otherwise a similar sans-serif with a warning), and Times New Roman
+    italic. Those fonts are licensed: outputs that embed them are not for redistribution."""
+    tick = FontProperties(family="DejaVu Sans", size=TICK_LABEL_SIZE)
+    if not (artwork or font_dir or os.environ.get("FIG3_FONT_DIR")):
+        return Fonts(FontProperties(family=OPEN_SANS, size=FONT_SIZE), FontProperties(family=OPEN_SANS, weight="bold", size=FONT_SIZE),
+                     FontProperties(family=OPEN_SERIF, style="italic", size=FONT_SIZE), tick,
+                     f"open fonts ({OPEN_SANS}; {OPEN_SERIF} italic)", False)
     installed = {f.name for f in font_manager.fontManager.ttflist}
 
     def search(dirs):
@@ -457,8 +471,7 @@ def setup_fonts(font_dir: str | None = None) -> Fonts:
             warnings.warn(note + " (pass --font-dir to use Myriad Pro)", stacklevel=2)
     serif = "Times New Roman" if "Times New Roman" in installed else "STIXGeneral"
     italic = FontProperties(family=serif, style="italic", size=FONT_SIZE)
-    tick = FontProperties(family="DejaVu Sans", size=TICK_LABEL_SIZE)
-    return Fonts(regular, bold, italic, tick, note)
+    return Fonts(regular, bold, italic, tick, note, True)
 
 
 def _advance_px(text: str, prop: FontProperties) -> float:
@@ -683,7 +696,7 @@ def save_outputs(res: Results, fig, registration, outdir: Path, fonts: Fonts, et
         signal_at_brain_surface_pT={"OPM": float(res.signal_opm_pT[surface]),
                                     "SQUID": float(res.signal_squid_pT[surface])},
         snr_at_brain_surface={"OPM": float(res.snr_opm[surface]), "SQUID": float(res.snr_squid[surface])},
-        font=fonts.note, mne_version=mne.__version__, matplotlib_version=matplotlib.__version__,
+        font=fonts.note, artwork_fonts=fonts.artwork, mne_version=mne.__version__, matplotlib_version=matplotlib.__version__,
         outputs=paths,
     )
     if eta == ETA:
@@ -694,10 +707,10 @@ def save_outputs(res: Results, fig, registration, outdir: Path, fonts: Fonts, et
 
 
 def render_png(path, eta: float = ETA, deq_marker: str = "published", raster_registration: bool = True,
-               dtheta_deg: float = DTHETA_DEG, font_dir: str | None = None) -> Results:
+               dtheta_deg: float = DTHETA_DEG, font_dir: str | None = None, artwork_fonts: bool = False) -> Results:
     """Simulate and write only the 1200-dpi PNG (used by verify_figure3.py)."""
     res = run_simulation(dtheta_deg=dtheta_deg, eta=eta)
-    fonts = setup_fonts(font_dir)
+    fonts = setup_fonts(font_dir, artwork_fonts)
     with plt.rc_context(FIGURE_RC):
         fig, _, registration = make_figure(res, fonts, deq_marker)
         registration(raster_registration)
@@ -734,12 +747,15 @@ def main(argv=None) -> Results:
                     help="dotted line at the published position (250-point grid) or at the root of Eq. (3)")
     ap.add_argument("--no-raster-registration", action="store_true",
                     help="do not apply the sub-pixel raster registration to the PNG")
-    ap.add_argument("--font-dir", default=None, help="folder containing MyriadPro-*.otf")
+    ap.add_argument("--artwork-fonts", action="store_true",
+                    help="set text in the published artwork's licensed fonts (Myriad Pro, Times New Roman), as checked by "
+                         "verify_figure3.py; not for redistribution (default: open fonts)")
+    ap.add_argument("--font-dir", default=None, help="folder containing MyriadPro-*.otf (implies --artwork-fonts)")
     args = ap.parse_args(argv)
 
     mne.set_log_level("WARNING")
     res = run_simulation(dtheta_deg=args.dtheta, eta=args.eta)
-    fonts = setup_fonts(args.font_dir)
+    fonts = setup_fonts(args.font_dir, args.artwork_fonts)
     with plt.rc_context(FIGURE_RC):
         fig, _, registration = make_figure(res, fonts, args.deq_marker)
         summary = save_outputs(res, fig, registration, Path(args.outdir), fonts, args.eta,
