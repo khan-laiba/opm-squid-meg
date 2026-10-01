@@ -18,9 +18,9 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G1B Hunold et al. 2016 depth-orientation spike SNR (MEG part) | ADAPT (+ NEW OPM column) | done, independently reviewed |
 | G1C Goldenholz et al. 2009 cortical SNR maps (MEG part) | ADAPT (+ NEW OPM extension) | done, independently reviewed |
 | G2 realistic adult OPM vs Neuromag | NEW | done, independently reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2` |
-| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (2-year infant template and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`; independently reviewed (approve with notes; fixes re-verified) |
-| G4 epilepsy detection and localization | NEW | adult done; pediatric done (2-year template, school-age size control); independently reviewed |
-| G5 software, reproduction, report | - | 109 unit tests pass; `scripts/run_all.sh`; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then) |
+| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`; the 2-year-template pass independently reviewed (approve with notes; fixes re-verified); the 18- and 12-month templates added on 2026-10-01 |
+| G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates and both size controls); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts independently reviewed |
+| G5 software, reproduction, report | - | 120 unit tests pass (also in a clean clone of 5bfe1c0: 119 pass, the full-resolution lead-field check skips without the local cache); `scripts/run_all.sh`; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
 
 Adult findings so far (`adult-baseline-v2`), conditional on one adult head (MNE sample subject),
 an assumed OPM noise of 15 fT/sqrt(Hz), OPM sensors with no helmet-to-scalp gap beyond the 7-mm
@@ -52,42 +52,64 @@ measured (not best) head position; details and caveats in `docs/methods.md` and
 - `adult-baseline-v1` reported 1.21x; that value was inflated by OPM cells reaching into the
   coarse BEM head surface, a numerical error corrected in v2 (see PLAN.md).
 
-Pediatric findings (G3B, NEW), conditional on one adult head, one 2-year average template
-(O'Reilly et al. 2021) and two scaled copies of the adult; the same Neuromag helmet, sensors and
-noise for every head; OPM arrays refitted to each head with the adult rules; details in
-`docs/methods.md` section 10 and `results/g3b/G3B_report.md`:
+Pediatric findings (G3B, NEW), conditional on one adult head, three average infant templates of
+one database (24, 18 and 12 months; O'Reilly et al. 2021) and two scaled copies of the adult; the
+same Neuromag helmet, sensors and noise for every head; OPM arrays refitted to each head with the
+adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report.md`:
 - With the child raised to 20-mm contact with the top of the fixed helmet, the dense OPM array's
   known-topography detectability relative to Neuromag combined (D) rises from +0.99 dB in the adult
-  to +1.49 dB (school-age-size control), +2.15 dB (2-year-size control) and +1.85 dB (2-year
-  template): Delta = D_child - D_adult = +0.47 [+0.38, +0.58], +1.13 [+0.99, +1.25] and +0.73
-  [+0.44, +1.16] dB. Against the gradiometers or magnetometers alone, after external-field
+  to +1.49 dB (school-age-size control), +2.15 dB (2-year-size control), +1.85 dB (2-year
+  template), +1.90 dB (18-month template) and +2.06 dB (12-month template): Delta = D_child -
+  D_adult = +0.47 [+0.38, +0.58], +1.13 [+0.99, +1.25], +0.73 [+0.44, +1.16], +0.85 [+0.49, +1.27]
+  and +1.03 [+0.66, +1.44] dB. Against the gradiometers or magnetometers alone, after external-field
   projection, for the matched-site OPM array and for extended sources the sign is the same.
 - The gain comes from the fixed helmet's fit: left at the adult's ear-line position Delta is
-  +1.15 to +1.79 dB; laterally centred or at true 18-mm contact it stays +0.46 to +1.16 dB; in a
-  counterfactual helmet scaled with the head, centred laterally, it is -0.17, -0.30 and -0.37 dB
-  (without the lateral centring the off-centre template kept +0.28 dB). With the background fixed
-  per unit cortical area, both systems' detectability rises in the smaller heads and the on-scalp
-  OPM's rises more (vertex-wise +1.15 and +1.74 dB vs Neuromag +0.65 and +0.54 dB in the scaled
-  controls); with a helmet that fits, the SQUID gains about as much. The children's arrays also
-  have fewer OPM sites (171, 155, 151 vs 212); at an equal site count Delta would be larger.
+  +1.15 to +2.49 dB; laterally centred or at true 18-mm contact it stays +0.46 to +1.16 dB; in a
+  counterfactual helmet scaled with the head, centred laterally, it is -0.17, -0.30, -0.37, -0.29
+  and -0.12 dB (without the lateral centring the off-centre templates kept +0.28, +0.20 and +0.08
+  dB). With the background fixed per unit cortical area, both systems' detectability rises in the
+  smaller heads and the on-scalp OPM's rises more (vertex-wise +1.15 and +1.74 dB vs Neuromag +0.65
+  and +0.54 dB in the scaled controls); with a helmet that fits, the SQUID gains about as much. The
+  children's arrays also have fewer OPM sites (171, 155, 151, 157, 145 vs 212); at an equal site
+  count Delta would be larger.
 - Delta stays positive for OPM noise 7-30 fT/sqrt(Hz), background variance x0.5 or x2 and a
-  1-layer head model; at 30 fT/sqrt(Hz) the adult's D is -0.04 dB (a tie) and the template's
-  +0.61 dB. In the scaled controls the gain is largest near the surface (vertex-wise +2.25 dB at
-  10-15 mm for the 2-year size). In the template the within-stratum gain is largest for deep and
-  radial sources, but most of its pooled gain reflects its shallower cortex (reweighted to the
-  adult's depth mix, +0.33 instead of +0.85 dB at target level); it is also regionally
-  asymmetric, with the template off-centre in the helmet.
+  1-layer head model; at 30 fT/sqrt(Hz) the adult's D is -0.04 dB (a tie) and the templates' +0.61,
+  +0.61 and +0.77 dB. In the scaled controls the gain is largest near the surface (vertex-wise
+  +2.25 dB at 10-15 mm for the 2-year size). In the templates the within-stratum gain is largest for
+  deep and radial sources, but much of their pooled gain reflects their shallower cortex
+  (reweighted to the adult's depth mix, +0.33, +0.54 and +0.32 instead of +0.85, +0.91 and +1.07 dB
+  at target level); it is also regionally asymmetric, with the templates off-centre in the helmet.
 - At 100 nAm (detectability >= 5, an operational threshold) both systems reach 66 % of the
-  adult's and 75 % of the template's usable cortex, the OPM alone a further 2 % and 5 %, and the
+  adult's and 75-79 % of the templates' usable cortex, the OPM alone a further 2 % and 5 %, and the
   SQUID alone at most 0.15 %.
 - Simulated spikes (same detectors and seeds as the adult): the full OPM array's superficial
-  detection advantage is about the same in the adult and both smaller heads (strength for 50 %
-  detection at 10-20 mm, Neuromag combined / dense OPM: 53/35, 52/37 and 45/30 nAm; 16 of 18
-  locations favour the OPM in each, and 0, 0 and 2 favour Neuromag); deeper, no location-level
-  difference is established for the
-  practical detector, so G3B's deeper gain is not resolved at this sample size. Localization: dipole
-  errors similar; dSPM of strong focal spikes in the template 7.5 vs 14.8 mm (p = 0.035,
-  uncorrected; it does not survive a correction over the 16 comparisons).
+  detection advantage is about the same in the adult and every smaller head (strength for 50 %
+  detection at 10-20 mm, Neuromag combined / dense OPM: adult 53/35; children 52/37, 59/36, 45/30,
+  36/27 and 40/29 nAm; paired strength ratio 1.33-1.64 against the adult's 1.51; 14-16 of 18
+  locations favour the OPM in each); deeper, a location-level difference appears only for the
+  2-year size control (30-70 mm) and the 18-month template (45-70 mm), uncorrected and not
+  surviving a correction, so G3B's deeper gain is mostly not resolved at this sample size.
+  Localization: dipole errors similar; dSPM of strong focal spikes about 5 mm better with the
+  dense OPM in all three templates (p = 0.035, 0.002 and 0.005, uncorrected; 16 comparisons per
+  anatomy).
+
+Head motion and OPM slippage (G4, NEW, a bounded secondary extension; `docs/methods.md` section 12,
+`results/g4/G4_motion_report.md`), adult and the 24- and 12-month templates, declared conditions:
+- A sustained head displacement in the fixed helmet costs Neuromag, analysed with the template of
+  the reference position, 0.3-0.6 dB at 5 mm and 1.4-1.7 dB at 10 mm (median detectability), and up
+  to 2.3 dB for a 10-deg pitch or roll of a template; with the displaced geometry known (ideal
+  movement compensation) at most 0.4 dB. The head-mounted array is unaffected by head displacement;
+  if its cap slips by 3 deg (about 4-6 mm at the sensors) it loses 0.1-0.5 dB uncompensated and at
+  most 0.1 dB with the slip known.
+- In-band head rotation moves the OPM array through the room's residual static field (the SQUIDs
+  are fixed and have no such term). If the artefact is not modelled, the dense array loses 1 dB at
+  about 0.02 deg RMS of in-band rotation in a 1-nT residual field without correction, and at 0.4 deg
+  after a homogeneous or 8-term field projection with 1-deg/1-% sensor calibration errors (0.13-0.15
+  deg with 3 deg/3 %); the thresholds scale inversely with the field (0.04 deg in 10 nT), and a
+  homogeneous projection alone leaves the gradient term (1 dB at about 0.2 deg in a 1-nT/m
+  gradient). If the artefact is modelled (oracle covariance), the loss stays below 0.15 dB.
+  These are bounds on two mechanisms, not a motion-robustness result; real head-motion statistics,
+  sensor dynamic range and gain changes are not modelled.
 
 Labels: REPRO = reproduction with the paper's definitions; ADAPT = adaptation where original
 data or details are unavailable; NEW = new experiment or study choice.
@@ -103,7 +125,7 @@ data or details are unavailable; NEW = new experiment or study choice.
 | `site/` | templates and style of the local report (`scripts/build_site.py`; output in `site/_build/`, not committed) |
 | `results/` | figures, CSV and JSON per milestone (JSON records the code commit and versions) |
 | `docs/` | methods, provenance register, audit, structured literature extractions |
-| `legacy/` | earlier Fig. 3 replication work, kept unchanged |
+| `legacy/` | earlier Fig. 3 replication work (science unchanged; open fonts and relative paths since 2026-10-01) |
 
 ## Reproduce
 
@@ -111,8 +133,8 @@ data or details are unavailable; NEW = new experiment or study choice.
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -c "import mne; mne.datasets.sample.data_path(path='data/external')"  # ~1.6 GB download
-.venv/bin/python -c "import mne; mne.datasets.fetch_infant_template('2yr', subjects_dir='data/external/infant_subjects')"  # ~392 MB (G3B, pediatric G4)
-bash scripts/run_all.sh     # tests, then every milestone in order (~2 h, of which ~40 min for lead fields)
+.venv/bin/python -c "import mne; [mne.datasets.fetch_infant_template(a, subjects_dir='data/external/infant_subjects') for a in ('2yr', '18mo', '12mo')]"  # ~1.15 GB (G3B, pediatric G4)
+bash scripts/run_all.sh     # tests, then every milestone in order (~8 h on a 10-core laptop: adult ~2 h, five pediatric G4 runs ~1 h each)
 ```
 
 Each driver writes `results/<milestone>/` and records the code commit it ran in its JSON.
@@ -132,16 +154,17 @@ release (release-ready and publicly deployed are separate statuses).
 
 ## Data and privacy
 
-- The 2-year infant template (O'Reilly et al. 2021, from the Neurodevelopmental MRI Database of
-  Richards et al. 2016; LGPL-2.1 repository) is not committed. Figures derived from it (every
-  `results/g3b` figure that shows the template, e.g. the geometry, depth, Delta, placement, map and
-  usefulness figures, and `results/g4/*infant2yr*`) cite both papers; confirm their redistribution
-  with the owner before any public release (the source database has its own terms).
+- The infant templates (24, 18 and 12 months; O'Reilly et al. 2021, from the Neurodevelopmental
+  MRI Database of Richards et al. 2016; LGPL-2.1 repository) are not committed. Figures and tables
+  derived from them (every `results/g3b` figure that shows a template, `results/g3b/g3b_targets_infant*`,
+  `results/g4/*infant*` and the motion results) cite both papers; confirm their redistribution with
+  the owner before any public release (the source database has its own terms).
 - Not committed: the reference PDFs, the MNE sample data and anatomy (`data/`), computed caches
   (`cache/`). Results contain only derived quantities of the public MNE sample dataset.
-- Before any public release: PDFs in `results/g1a/` and `legacy/` embed licensed font subsets
-  (Myriad Pro, Times New Roman) to match the original artwork (`results/g1a/fig3/README.md`), so
-  regenerate them with open fonts; the published Jas et al. Fig. 3 raster used by the legacy
-  replica is CC-BY 4.0 and needs attribution; commit metadata carries the author's name and
-  institutional e-mail, and a few tracked files contain local absolute paths.
+- Release preparation (`docs/release_checklist.md`): every figure is set in open fonts (DejaVu
+  Sans, STIX); the published Jas et al. Fig. 3 raster used by the legacy verification is CC-BY 4.0
+  and carries its attribution; output summaries no longer record local absolute paths. Still the
+  owner's decisions: a licence (none yet), the author name and institutional e-mail in the commit
+  metadata, the redistribution of template- and fsaverage-derived figures, and two documents that
+  name local folders.
 - The repository is private. No website is deployed; publication needs explicit owner approval.

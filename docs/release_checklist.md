@@ -74,7 +74,7 @@ separately after any change.
 ## 4. Re-run before release
 
 ```bash
-.venv/bin/python -m unittest discover -s tests
+.venv/bin/python -m unittest discover -s tests -t .
 ```
 
 ```bash

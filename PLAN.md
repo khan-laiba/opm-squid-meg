@@ -18,9 +18,9 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | G1B Hunold depth-orientation spikes | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule and a realization-averaged Fig. 6 calibration | `scripts/g1b_hunold.py` -> `results/g1b/`; calibrated background (scalar 0.47; one realization alone 0.44-0.52), p2p: bin means 0.78-0.91x the paper (0.68-1.01x over the calibration range), noisy p2p 0.97-1.04x, r 0.91-0.97, 2.5-classification agreement 80-93 %, GM-MM sign agreement 100 % |
 | G1C Goldenholz cortical SNR maps | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.76 nAm at 4,000 sources (paper 1.6-1.9); focal median -22.1 dB, 56 % inside the paper's -29/-19 dB range; deep medial cortex darkest |
 | G2 realistic adult OPM-Neuromag comparison | done; independently reviewed; `adult-baseline-v1` (1.21x) corrected in `adult-baseline-v2` (near-surface BEM error, see below) | `scripts/g2_adult_comparison.py` -> `results/g2/` (`G2_report.md`); with modelled brain noise the dense 212-site OPM array is 1.13x [1.10-1.16] Neuromag combined (1.01-1.28x for OPM noise 30-7 fT/sqrt(Hz), 0.93-1.13x jointly with a 0-6 mm scalp gap; 3- and 1-layer BEM agree), the matched 97-site array 1.00x (a tie); 1.4-1.7x for sources within 20 mm of the scalp, 1.02-1.05x below 35 mm; without brain noise Neuromag wins (dense 0.76x); all adult results rerun at 81168f3 |
-| G3 pediatric extension | G3A done (REPRO size benchmark); G3B done after the adult freeze (2-year infant template, adult scaled to school-age and 2-year head size; fixed Neuromag helmet at source-blind placements vs refitted OPM; counterfactual helmet) | `scripts/g3a_jas_size_benchmark.py` -> `results/g3a/`; `scripts/g3b_pediatric_helmet.py` -> `results/g3b/` (`G3B_report.md`): dense OPM vs Neuromag combined at top contact, D_adult +0.99 dB, Delta +0.47 (school-age size), +1.13 (2-year size), +0.73 dB (template); with a helmet scaled with the head -0.17, -0.30, +0.28 dB (the gain is mainly the fixed helmet's fit); robust to OPM noise 7-30 fT/sqrt(Hz), background x0.5/x2, 1-layer BEM |
-| G4 epilepsy detection and localization | adult (rerun at 81168f3) and pediatric (2-year template, school-age size control) done | `scripts/g4_epilepsy_adult.py`, `scripts/g4_localization.py` -> `results/g4/`; 50 % detection at 1 false event/min: dense OPM 35 vs Neuromag combined 53 nAm at 10-20 mm (paired ratio 1.51 [1.25-1.66]; 16/0 locations, p < 0.001), 271 vs 290 nAm at 45-70 mm; no location-level advantage established deeper than 20 mm (the 20-30 mm result varied between runs); matched: 9/3 locations at 10-20 mm (p = 0.04 uncorrected; 0.14 in an earlier run) and 0/7 at 45-70 mm (p = 0.016 uncorrected; same direction earlier); localization: ECD similar (~4-5 mm), dSPM of 320-nAm patches ~5 mm better with OPM (not established: p = 0.14 / 0.046 uncorrected); pediatric (`scripts/g4_epilepsy_pediatric.py`, `G4_pediatric_report.md`): 10-20 mm strength ratio Neuromag/OPM 1.42-1.50 as in the adult, no practical-detector difference established deeper |
-| G5 repository, tests, report | private repository `khan-laiba/opm-squid-meg` (no Pages, verified 2026-10-01); 109 unittest tests pass; `scripts/run_all.sh`; local report (`scripts/build_site.py` -> `site/_build/`, link-checked, not deployed); clean-environment smoke test passed (2026-09-30, at a commit before 81168f3, 87 tests then) | release-ready is not claimed: public release needs the owner's approval, a check of the template-derived figures' redistribution, the git author metadata and the licensed font subsets (README, Data and privacy) |
+| G3 pediatric extension | G3A done (REPRO size benchmark); G3B done after the adult freeze (24-, 18- and 12-month infant templates, adult scaled to school-age and 2-year head size; fixed Neuromag helmet at source-blind placements vs refitted OPM; counterfactual helmet) | `scripts/g3a_jas_size_benchmark.py` -> `results/g3a/`; `scripts/g3b_pediatric_helmet.py` -> `results/g3b/` (`G3B_report.md`; computed at cb1b8a9, redrawn at fd40dfe): dense OPM vs Neuromag combined at top contact, D_adult +0.99 dB, Delta +0.47 (school-age size), +1.13 (2-year size), +0.73 (2-year template), +0.85 (18 months), +1.03 dB (12 months); with a helmet scaled with the head about the laterally centred head -0.17, -0.30, -0.37, -0.29, -0.12 dB (the gain is mainly the fixed helmet's fit); robust to OPM noise 7-30 fT/sqrt(Hz), background x0.5/x2, 1-layer BEM |
+| G4 epilepsy detection and localization | adult (rerun at 81168f3) and pediatric (three templates, both size controls) done; motion and slippage bounded extension done (5bfe1c0) | `scripts/g4_epilepsy_adult.py`, `scripts/g4_localization.py` -> `results/g4/`; 50 % detection at 1 false event/min: dense OPM 35 vs Neuromag combined 53 nAm at 10-20 mm (paired ratio 1.51 [1.25-1.66]; 16/0 locations, p < 0.001), 271 vs 290 nAm at 45-70 mm; no location-level advantage established deeper than 20 mm (the 20-30 mm result varied between runs); matched: 9/3 locations at 10-20 mm (p = 0.04 uncorrected; 0.14 in an earlier run) and 0/7 at 45-70 mm (p = 0.016 uncorrected; same direction earlier); localization: ECD similar (~4-5 mm), dSPM of 320-nAm patches ~5 mm better with OPM (not established: p = 0.14 / 0.046 uncorrected); pediatric (`scripts/g4_epilepsy_pediatric.py`, `G4_pediatric_report.md`): 10-20 mm strength ratio Neuromag/OPM 1.33-1.64 as in the adult (1.51), deeper differences only for the 2-year size control and the 18-month template (uncorrected); motion (`scripts/g4_motion.py`, `G4_motion_report.md`): uncompensated head displacement costs Neuromag 1.4-1.7 dB at 10 mm, a 3-deg OPM cap slip 0.1-0.5 dB; un-modelled in-band rotation costs the OPM 1 dB at ~0.02 deg RMS in a 1-nT field (no correction) or ~0.4 deg (field projection, 1 deg/1 % calibration), thresholds inversely proportional to the field |
+| G5 repository, tests, report | private repository `khan-laiba/opm-squid-meg` (no Pages, verified 2026-10-01); 120 unittest tests pass (also in a clean clone of 5bfe1c0); `scripts/run_all.sh`; local report (`scripts/build_site.py` -> `site/_build/`, link-checked, not deployed); clean-environment smoke test passed (2026-09-30, at a commit before 81168f3, 87 tests then); release prepared, not executed | `docs/release_checklist.md`: figures in open fonts, no local paths in output summaries; owner decisions left: licence, git author metadata, template/fsaverage-derived figures, the CC-BY raster, two documents naming local folders, visibility and Pages |
 
 ## Decisions log
 
@@ -38,6 +38,9 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | 2026-09-30 | `adult-baseline-v2` results recomputed at one clean commit (81168f3) after the second independent review (cell clearance checked in the forward model's frame). | NEW (review v2) |
 | 2026-09-30 | `adult-baseline-v2` tagged at c472694 after a light independent re-review (approve with notes, fixed) and pushed; repository private, no Pages (verified). | owner rules |
 | 2026-09-30 | G3B design: primary placement = top contact (20 mm), centred/back/bounded variants as sensitivity; counterfactual helmet scaled with the head-circumference ratio about the head origin; D/Delta in dB of known-topography detectability; vertex-wise homology for scaled controls, parcels and strata for the template; medial wall excluded from G3B summaries. Developed on branch `g3b` (worktree) while the adult reruns ran; merged with --no-ff. | NEW (A-G3-*) |
+| 2026-10-01 | More pediatric anatomies: the 18- and 12-month templates of the same series (`fetch_infant_template('18mo' / '12mo')`, `ANTS18-0Months3T.zip` 385,415,605 bytes and `ANTS12-0Months3T.zip` 377,092,022 bytes, same repository and licence) in G3B and pediatric G4; pediatric G4 also for the 2-year size control. | owner (downloads approved) |
+| 2026-10-01 | G4 motion extension (bounded, secondary): sustained displacement in the fixed helmet vs OPM cap slip (geometry known vs mismatched template), in-band room-field coupling of the head-mounted array (no correction, homogeneous or 8-term projection; calibration errors; artefact outside and inside the noise model), exact rigid motion over a recording; per unit field. | NEW (A-MOT-*) |
+| 2026-10-01 | Release preparation, staying private: figures in open fonts by default (licensed artwork fonts only on request, for the pixel verification), output summaries without local absolute paths, `docs/release_checklist.md`; no visibility or Pages change. Provenance now also watches `legacy/*.py` (G1A imports the Fig. 3 replica). | owner ("prepare, stay private") |
 
 ## Inputs and availability
 
@@ -46,13 +49,13 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | Jas et al. 2026 preprint (PDF) | G1A, G3 size benchmark | available locally (not committed) |
 | Hunold et al. 2016 (PDF) | G1B | available locally (not committed) |
 | Goldenholz et al. 2009 (PDF) | G1C | available locally (not committed) |
-| TRIUX specification image | G2 noise and geometry references | **not found on disk**; values transcribed in GOAL.md are used and flagged |
+| TRIUX specification image | G2 noise and geometry references | **not found on disk** (project folders searched again 2026-10-01; personal folders not searched); values transcribed in GOAL.md are used and flagged |
 | MRN Neuromag page (T3 coils 3014/3024, shielded-room floor 5-7 fT) | G2 | read 2026-09-30 |
 | MNE implementation docs (coil definitions, frames), MNE 1.13.2 | all | read 2026-09-30 |
 | Neuromag 3-D geometry, `dev_head_t`, head-MRI trans | G2 | MNE sample data (MGH Vectorview: 204 grads coil 3012 T1, 102 mags coil 3024 T3) |
 | Measured SQUID noise | G2 measured-noise scenario | MNE sample `ernoise_raw.fif` (empty room) and baseline covariance |
 | Adult anatomy | G1B, G1C, G2 | MNE `sample` subject (3-layer BEM surfaces, oct-6 source space); fsaverage (sibling folder, read-only) |
-| School-aged anatomy (FreeSurfer surfaces, BEM surfaces, scalp) | G3 | **missing** (owner decision 2026-09-30: route (c) + (d)). FreeSurfer is not installed; MNE only packages infant templates (up to 2 years, Neurodevelopmental MRI Database via `mne.datasets.fetch_infant_template`). Routes: (a) age-specific average templates of the Neurodevelopmental MRI Database (registration required); (b) an OpenNeuro school-aged dataset that ships FreeSurfer outputs (e.g. fMRIPrep `sourcedata/freesurfer`); (c) the 2-year infant template as a young-child anatomy (**downloaded**, `data/external/infant_subjects/ANTS2-0Years3T`); (d) scaled adult surfaces as a labelled size-only control (**used**: school-age and 2-year size). A school-aged native anatomy and more than one pediatric anatomy remain open. |
+| School-aged anatomy (FreeSurfer surfaces, BEM surfaces, scalp) | G3 | **missing** (owner decision 2026-09-30: route (c) + (d)). FreeSurfer is not installed; MNE only packages infant templates (up to 2 years, Neurodevelopmental MRI Database via `mne.datasets.fetch_infant_template`). Routes: (a) age-specific average templates of the Neurodevelopmental MRI Database (registration required); (b) an OpenNeuro school-aged dataset that ships FreeSurfer outputs (e.g. fMRIPrep `sourcedata/freesurfer`); (c) the 2-year infant template as a young-child anatomy (**downloaded**, `data/external/infant_subjects/ANTS2-0Years3T`), and since 2026-10-01 the 18- and 12-month templates of the same series (**downloaded**); (d) scaled adult surfaces as a labelled size-only control (**used**: school-age and 2-year size). A school-aged native anatomy and individual children (between-child variability) remain open. |
 | Original Hunold/Goldenholz participant data and recordings | exact reproduction | unavailable; G1B and G1C are adaptations |
 | Jas SEF recordings | experimental validation | unavailable; used as context only |
 
@@ -146,8 +149,8 @@ GATE G1: all three run reproducibly; each output states REPRO/ADAPT status and a
 2. [x] Fixed adult Neuromag helmet vs OPM refit per head (`opmsquid.pediatric`,
    `scripts/g3b_pediatric_helmet.py`): the 2-year infant template in native dimensions, and the
    adult scaled to school-age (85/95) and 2-year head circumference as labelled size-only
-   controls. A school-aged native anatomy is still missing, and with one template no claim about
-   anatomical variability is made.
+   controls. A school-aged native anatomy is still missing, and with average templates of one
+   database no claim about anatomical variability is made.
 3. [x] Centred, top- and back-contact and bounded translated/rotated placements chosen
    source-blind; regional gaps (helmet selections), source-to-sensor distances, OPM coverage and
    packing, noise composition; counterfactual helmet scaled with the head (labelled mechanistic
@@ -167,6 +170,11 @@ GATE G1: all three run reproducibly; each output states REPRO/ADAPT status and a
    exactly: the detection and localization summaries are identical apart from provenance and the
    event tables byte-identical (checked 2026-09-30, 21:04 and 21:38; G4-relevant code changed later
    only in `plotting.py`).
+7. [x] 18- and 12-month templates added (2026-10-01; G3B computed at cb1b8a9, summaries redrawn at
+   fd40dfe): the four anatomies of the reviewed pass reproduce to 1e-9 (188 secondary bootstrap
+   bounds moved with the shared random stream); Delta +0.85 [+0.49, +1.27] and +1.03 [+0.66, +1.44]
+   dB; the depth checks of the earlier hand computation are now computed for every template
+   (`template_depth_checks`).
 
 ## G4 — epilepsy (NEW)
 
@@ -177,8 +185,10 @@ GATE G1: all three run reproducibly; each output states REPRO/ADAPT status and a
    mismatch (coregistration draws shared by all arrays); nondetections and errors reported
    separately; GOF descriptive only (whitened GOF depends on the channel count).
 4. [x] Pediatric runs (`scripts/g4_epilepsy_pediatric.py`): the adult detection and localization studies
-   unchanged on the 2-year template and the school-age size control (Neuromag at top contact,
-   refitted OPM arrays); comparison in `results/g4/G4_pediatric_report.md`.
+   unchanged on the three templates and both size controls (Neuromag at top contact, refitted OPM
+   arrays); comparison in `results/g4/G4_pediatric_report.md` (regenerated at fd40dfe).
+5. [x] Motion and slippage, a bounded secondary extension (`scripts/g4_motion.py`,
+   `src/opmsquid/motion.py`, `results/g4/G4_motion_report.md`; methods section 12).
 
 ## G5 — software, reproduction, report
 
@@ -219,7 +229,8 @@ clean-environment smoke test (needs a package download; ask first), local static
 ## Open questions and risks
 
 1. School-aged native anatomy: not available (owner decision 2026-09-30: the 2-year infant template and
-   scaled-adult size controls); a claim about anatomical variability needs more than one pediatric anatomy.
+   scaled-adult size controls; 2026-10-01: the 18- and 12-month templates added); a claim about anatomical
+   variability needs individual children, not averages of one database.
 2. The TRIUX specification image was not found; values from GOAL.md are used and flagged.
 3. OPM device noise: no single verified device specification; a declared 7-30 fT/sqrt(Hz)
    sweep is used instead.
