@@ -20,7 +20,7 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G2 realistic adult OPM vs Neuromag | NEW | done, independently reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2` |
 | G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`; the 2-year-template pass independently reviewed (approve with notes; fixes re-verified); the 18- and 12-month templates added on 2026-10-01 |
 | G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates and both size controls); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts independently reviewed |
-| G5 software, reproduction, report | - | 120 unit tests pass (also in a clean clone of 5bfe1c0: 119 pass, the full-resolution lead-field check skips without the local cache); `scripts/run_all.sh`; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
+| G5 software, reproduction, report | - | 124 unit tests pass (also in a clean clone of 57a025e: 123 pass, the full-resolution lead-field check skips without the local cache); `scripts/run_all.sh`; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
 
 Adult findings so far (`adult-baseline-v2`), conditional on one adult head (MNE sample subject),
 an assumed OPM noise of 15 fT/sqrt(Hz), OPM sensors with no helmet-to-scalp gap beyond the 7-mm
@@ -91,8 +91,9 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   surviving a correction, so G3B's deeper gain is mostly not resolved at this sample size.
   Localization: dipole errors similar; dSPM of strong focal spikes about 5 mm better with the
   dense OPM in all three templates (p = 0.035, 0.002 and 0.005, uncorrected; 16 comparisons per OPM
-  array and anatomy, so the 18- and 12-month values survive a Bonferroni correction within their
-  anatomy, and only the 12-month dense dSPM of strong patches, p = 0.00025, one across all children).
+  array and anatomy: of these three only the 18-month value survives a Bonferroni correction within
+  its anatomy; seven pediatric localization comparisons do in all, and only one, the 12-month dense
+  dSPM of strong patches, p = 0.00025, across all children).
 
 Head motion and OPM slippage (G4, NEW, a bounded secondary extension; `docs/methods.md` section 12,
 `results/g4/G4_motion_report.md`), adult and the 24- and 12-month templates, declared conditions:

@@ -752,12 +752,14 @@ mm. Order below: school-age size, 2-year size, 2-year template, 18 months, 12 mo
   320-nAm focal spikes, Neuromag vs dense: adult 0.21 vs 0.33; children 0.25 vs 0.29, 0.12 vs 0.17,
   0.29 vs 0.54, 0.29 vs 0.58, 0.17 vs 0.62. Within an anatomy and OPM array (16 localization
   comparisons: dSPM and ECD errors and joint detection-and-localization success, for focal and patch
-  sources at 80 and 320 nAm; the comparison file holds the 8 error comparisons) five survive a
-  Bonferroni correction (p < 0.0031): dense dSPM of 320-nAm patches at 12 months (-6.1 mm, p =
-  0.00025), matched dSPM of 320-nAm focal events at 18 months (p = 0.00034), dense dSPM of 320-nAm
-  focal events at 18 months (-5.9 mm, p = 0.0019), matched dSPM of 320-nAm patches at 12 months (p =
-  0.0022) and dense ECD of 80-nAm focal events at 18 months (-3.5 mm, p = 0.0028); across the five
-  children and both arrays (160 comparisons, p < 0.00031) only the first. None survives in the
+  sources at 80 and 320 nAm; the comparison file holds the 8 error comparisons, the localization
+  summaries all 16) seven survive a Bonferroni correction (p < 0.0031): dense dSPM of 320-nAm patches
+  at 12 months (-6.1 mm, p = 0.00025), matched dSPM of 320-nAm focal events at 18 months (p =
+  0.00034), dense joint detection-and-dSPM success for 320-nAm focal events and patches at 12 months
+  (11/0 locations each, exact McNemar p = 0.00098), dense dSPM of 320-nAm focal events at 18 months
+  (-5.9 mm, p = 0.0019), matched dSPM of 320-nAm patches at 12 months (p = 0.0022) and dense ECD of
+  80-nAm focal events at 18 months (-3.5 mm, p = 0.0028); across the five children and both arrays
+  (160 comparisons, p < 0.00031) only the first. None survives in the
   2-year template, the size controls or the adult, and in the adult the significance of such
   differences varied between runs (section 9). The consistent direction across the three templates
   (dSPM of strong focal events about 5 mm better with the dense OPM) is the more robust observation.
@@ -844,16 +846,17 @@ dB of detectability, dense OPM or Neuromag combined, intrinsic + brain noise)
   1.7 dB at 10 mm and 2.3 dB at 10 deg without compensation.
 * B. In-band rotation, artefact outside the noise model; thresholds in deg RMS per axis for a unit
   field (divide by the residual field in nT or nT/m), 1-dB loss on the median curve over 32 draws,
-  ranges over the three anatomies (10th-90th percentiles of the per-draw thresholds about +-10-20 %
-  around them): no correction 0.021-0.023 deg (uniform) and 0.16-0.21 deg (gradient); homogeneous
+  ranges over the three anatomies (the 10th-90th percentiles of the per-draw thresholds, over the
+  draws that reach the level, lie 2-17 % below and 4-20 % above them): no correction 0.021-0.023 deg (uniform) and 0.16-0.21 deg (gradient); homogeneous
   projection: the uniform term is removed exactly with perfect calibration, 0.43-0.45 deg with 1-deg/
   1-% calibration errors and 0.14-0.15 deg with 3 deg/3 %, while the gradient term is not removed
   (0.14-0.21 deg, as without correction); 8-term projection: uniform 0.38-0.40 and 0.13 deg,
   gradient 3.0-3.9 and 1.1-1.3 deg (1 deg/1 % and 3 deg/3 %). The OPM falls to Neuromag's static
-  detectability (D = 0) at 0.6-1.4 times these rotations, earliest for the adult, whose static D
+  detectability (D = 0) at 0.55-1.5 times these rotations, earliest for the adult, whose static D
   after the projections is smallest (+0.51 to +0.80 dB, against +1.25 to +1.86 dB for the
   templates). With the head origin instead of the neck as pivot the thresholds after the homogeneous
-  projection change by less than 1 % (the translation the neck pivot adds is uniform and removed),
+  projection change by less than 2 % (not at all with perfect calibration: the translation the neck
+  pivot adds is uniform and removed),
   and after the 8-term projection they rise by 11-24 % (or beyond 5 deg): with calibration errors the
   projection leaks part of the translation term. With the artefact part of the noise
   model (oracle), the loss stays below 0.15 dB up to 5 deg in every case. Artefact per channel for 1
