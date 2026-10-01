@@ -189,10 +189,13 @@ def pediatric_findings(d):
         "The gain comes mainly from the fixed helmet's fit: left at the adult's ear-line position, Delta is "
         + ", ".join(f"{dec[f'{c}/centred_vs_adult_centred/combined']['delta']['median']:+.2f}" for c in CHILDREN)
         + " dB; in a counterfactual helmet scaled with the head it is "
-        + ", ".join(f"{dec[f'{c}/counterfactual_vs_adult_centred/combined']['delta']['median']:+.2f}" for c in CHILDREN)
-        + " dB (it reverses for the scaled adults, because the OPM's 7-mm standoff and 10-mm cell do not shrink; the "
-        "template, whose shape fits the scaled helmet less closely, keeps a small gain). In the fixed helmet the child's cortex is "
-        "farther from the SQUIDs, whose brain noise falls towards their intrinsic floor while the OPM's does not.",
+        + ", ".join(f"{dec[f'{c}/counterfactual_vs_adult_counterfactual/combined']['delta']['median']:+.2f}" for c in CHILDREN)
+        + " dB, and "
+        + ", ".join(f"{dec[f'{c}/counterfactual_x-centred_vs_adult_counterfactual_x-centred/combined']['delta']['median']:+.2f}"
+                    for c in CHILDREN)
+        + " dB about the laterally centred head. With the background fixed per unit cortical area, both systems' detectability "
+        "rises in the smaller heads and the on-scalp OPM's rises more; in a helmet scaled with the head the SQUID, its "
+        "gradiometers most, gains as much or slightly more.",
         f"Delta stays positive for OPM noise 7-30 fT/&radic;Hz, background variance x0.5 or x2, a 1-layer head model and the "
         f"matched-site OPM array; at 30 fT/&radic;Hz the adult's D is {sens['adult/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f} dB "
         f"and the template's {sens['infant2yr/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f} dB. A positive Delta is a "
