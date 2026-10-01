@@ -28,7 +28,7 @@
     }
   },
   "provenance": {
-    "commit": "40e8c0e+dirty",
+    "commit": "471ff16",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }
