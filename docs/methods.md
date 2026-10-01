@@ -340,7 +340,7 @@ clearance; medians over the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 15
 ## 9. Epilepsy relevance, adult (G4, NEW) — `opmsquid.ied`, `opmsquid.detection`, `opmsquid.localization`, `scripts/g4_*.py`
 
 Configuration: `configs/g4_epilepsy.toml`; assumptions A-G4-* in the register. The pediatric part
-follows G3B.
+is section 11.
 
 Detection design (`scripts/g4_epilepsy_adult.py`)
 * Recordings: the G2 noise model in the time domain (A-G4-TS), one realization per 30-s segment
@@ -448,7 +448,7 @@ Neuromag combined, matched OPM, dense OPM)
   distributed estimate of extended sources tends to benefit from on-scalp sensors, matched or
   dense (about 5 mm; not established at this sample size).
 
-## 10. Pediatric extension (G3) — `scripts/g3a_jas_size_benchmark.py`; G3B follows this baseline
+## 10. Pediatric extension (G3) — `scripts/g3a_jas_size_benchmark.py`, `scripts/g3b_pediatric_helmet.py`
 
 ### G3A: head-size benchmark (REPRO; NEW fixed-shell contrast)
 * Jas et al. Table 1 heads (h, b): newborn (55, 48), 1 year (70, 62), 8 years (85, 73) and adult
@@ -464,10 +464,154 @@ Neuromag combined, matched OPM, dense OPM)
   head normalized d_eq is 49.4 % (87 % of the volume). This concentric sphere is not a helmet
   fit: real heads sit off-centre in a fixed helmet, which G3B models with pediatric anatomy.
 
-### G3B: fixed adult helmet vs head-adaptive OPM (NEW)
-Follows the adult baseline (owner decision 2026-09-30: the 2-year infant template and the adult
-scaled to school-age and 2-year head size as size-only controls; no school-aged native anatomy).
+### G3B: fixed adult helmet vs head-adaptive OPM (NEW) — `opmsquid.pediatric`, `scripts/g3b_pediatric_helmet.py`
+* Anatomies (D-G3-ANAT, A-G3-SCALE). The adult is the G2 subject with the G2 targets and background
+  grid. Two size-only controls scale every MRI-frame coordinate of the adult about its MRI origin:
+  "school-age size" by 85/95 (Jas et al. Table 1, 8-year vs adult head radius) and "2-year size" by
+  the 2-year template's occipitofrontal circumference over the adult's. Their vertices are the
+  adult's, so every comparison with the adult is vertex-wise; areas scale with the square of the
+  factor and the 4-mm usable-source rule (A-BEM-DIST) is applied on the scaled meshes. The 2-year
+  infant template of O'Reilly et al. (2021; `mne.datasets.fetch_infant_template('2yr')`, an average
+  of many 2-year-old MRIs, LGPL-2.1, cite O'Reilly et al. 2021 and Richards et al. 2016) is used in
+  its native dimensions with its own 3-layer BEM, dense head surface, oct-6 source space (whose
+  full white surface is the full-resolution cortex), aparc labels and fiducials (head frame from
+  them). It is a template, not an individual child, and it is the only pediatric anatomy: results
+  on it are conditional simulations, not population estimates, and anatomical variability is not
+  assessed. No school-aged native anatomy was available (PLAN, inputs).
+* Head size from the dense scalp (head frame): occipitofrontal circumference (largest convex-hull
+  perimeter of scalp sections parallel to the fiducial plane), breadth, length, vertex height,
+  cap volume above the fiducial plane and inter-auricular distance.
+* Fixed helmet (A-G3-PLACE). The same Neuromag sensors (coils 3014/3024, 'accurate' integration,
+  typical intrinsic noise) for every anatomy. Placements are chosen from the scalp and helmet
+  geometry only: "centred" keeps the head frame where the adult's is in the sample recording (the
+  ear line in the same place; a smaller head leaves a wide gap at the vertex); "top" raises the
+  head (device +z) until the nearest magnetometer coil centre is 20 mm from the scalp (the 18-mm
+  Dewar spacing plus 2 mm, G2's 'well fitted' rule; the usual pediatric positioning and the
+  primary placement); "back" moves it posterior (device -y, the occiput against the helmet, as for
+  a supine child) to the same contact; bounded variants translate the centred head by +-5 mm along
+  device x and y, pitch it by +-10 deg or roll it by +-5 deg about the head origin, then raise it
+  to the same top contact where there is room (an adult head shifted towards the helmet wall
+  stays where it is). A placement is feasible if no magnetometer coil centre is within 18 mm of the
+  scalp. Regional gaps use MNE's Vectorview selections (left/right frontal, temporal, parietal,
+  occipital).
+* Counterfactual helmet (A-G3-COUNTERFACTUAL; a mechanistic control, not a pediatric SQUID
+  system): every coil centre scaled by the child/adult head-circumference ratio about the head
+  origin of the centred placement (coil sizes, orientations, integration and noise unchanged).
+  Around a scaled adult this reproduces the adult's measured fit with every gap scaled by the same
+  factor; where a coil would come within 18 mm of the scalp the factor is raised in steps of 0.005.
+* Head-adaptive OPM arrays: refitted to each head with the G2 rules unchanged (10-mm cell, 7-mm
+  standoff, 17-mm packing, clearance and coverage rules; nothing shrunk): the dense array and the
+  matched-site array (the Neuromag sites at the primary placement projected onto the scalp; the
+  17-mm packing rule now also applies to it, which removes no site on the adult head, where the
+  projected sites are at least 22.9 mm apart). The 204-site channel-budget control has no
+  pediatric counterpart: fewer than 204 sites fit on the smaller heads.
+* Conventions held fixed (geometry-only comparison first): the G2 analysis band, intrinsic noise
+  (OPM 15 fT/sqrt(Hz)), room field, 3-layer BEM conductivities (0.3/0.006/0.3 S/m; the 1-layer BEM
+  is the conductivity-free check) and the background moment variance per unit cortical area,
+  calibrated once on the adult's Neuromag gradiometers (G2's rule). Background sensitivity: the
+  variance x0.5 and x2 (a bounded sensitivity, not an age-specific estimate). The template's
+  averaged white surface is smoother than an individual cortex (1,070 vs 2,024 cm^2 for the adult),
+  which lowers its total background power and its patch cancellation.
+* Metric (A-G3-METRIC): known-topography detectability d of a 10-nAm cortical-normal dipole with
+  the oracle covariance, in dB (20 log10 d); D = dB_OPM - dB_SQUID for each SQUID comparator (102
+  magnetometers, 204 gradiometers, combined 306); D_child, D_adult and Delta = D_child - D_adult
+  reported together. D does not depend on the moment. Peak-channel and mean-power SNR (dB) are
+  secondary metrics. Homologous comparison: vertex-wise for the scaled controls; for the template
+  (no vertex correspondence) per Desikan-Killiany parcel and per declared depth (native mm below
+  the scalp) and orientation stratum, from area-weighted medians (target weights = usable cortical
+  area of each target's nearest-target cell). Strata or parcels with fewer than 10 targets in
+  either anatomy are reported as sparse. Intervals: bootstrap over parcels (one anatomy, or each
+  anatomy independently for between-anatomy strata); they contain no between-subject variability.
+* Extended sources: fixed-total 10-nAm geodesic patches of 5 and 10 mm (native) around 300 targets
+  (the same vertices in the adult and the scaled controls; random targets on the template), for
+  the primary placement and the dense OPM array.
+* Usefulness (A-G3-USEFUL; operational, not a clinical standard): a source is usable by a system
+  when d reaches 5 for a reference moment (20, 50, 100, 200 nAm; maps at 100 nAm); shares of the
+  usable cortical area where OPM, SQUID, both or neither are usable, and the moment needed for
+  d = 5 by depth.
+* The medial wall (FreeSurfer 'unknown', 558 adult and 575 template targets) is not cortex and is
+  left out of every G3B summary (it made up most of the 60-90 mm strata).
+
+G3B results (`results/g3b/g3b_summary.json`, `G3B_report.md`; computed at 0cea778, redrawn at
+1b2cb02; dense OPM vs Neuromag, intrinsic + brain noise, primary placement unless stated; dB of
+detectability; area-weighted medians without the medial wall, parcel-bootstrap 95 % intervals)
+* Heads: occipitofrontal circumference 586 mm (adult), 525 (school-age size, x0.895), 495 (2-year
+  size, x0.844) and 495 mm (template); usable cortex 1,878, 1,470, 1,290 and 1,062 cm^2. Refitted
+  OPM arrays: dense 212, 171, 155 and 151 sites (23.5-25.9 per 100 cm^2 of covered scalp, which
+  shrinks from 901 to 584 cm^2), matched 96, 89, 90 and 83. Top contact raises the heads by 5.5,
+  22, 22 and 28 mm; the median magnetometer-to-scalp gap is then 28.4, 34.1, 39.1 and 38.5 mm
+  (centred 29.8, 41.3, 46.9, 47.3 mm). Every placement and the counterfactual helmets are feasible;
+  the counterfactual factors are 0.895, 0.844 and 0.904 (template: the circumference ratio 0.844
+  would bring a coil within 18 mm of its scalp).
+* Link to G2: at the adult's measured position the dense/combined ratio is 1.130x as G2 reports it
+  (unweighted, all targets), 1.143x without the medial wall and +1.25 dB area-weighted; at top
+  contact the adult's D is +0.99 dB [+0.75, +1.20] (1.12x).
+* D_child, D_adult, Delta (vs Neuromag combined): school-age size +1.49 vs +0.99 dB, Delta +0.47
+  [+0.38, +0.58] dB; 2-year size +2.15 vs +0.99, Delta +1.13 [+0.99, +1.25]; 2-year template +1.85
+  vs +0.99, Delta +0.73 [+0.44, +1.16] (66 parcels, Delta > 0 in 96 % of their area; the frontal
+  poles are sparse). Against the gradiometers alone Delta is +0.69, +1.53 and +1.05 dB, against the
+  magnetometers alone +0.44, +1.03 and +0.82 dB. With the external projection +0.90, +1.58 and
+  +0.74 dB; for the matched-site OPM array +0.46, +1.22 and +0.90 dB (the gain is not a coverage
+  effect of the dense array); for 5- and 10-mm patches +0.61/+0.42, +1.34/+1.14 and +0.58/+0.50 dB.
+  Secondary metrics: peak-channel SNR (D_adult -1.19 dB, Neuromag's best channel ahead) Delta
+  +0.77, +1.76, +1.65 dB; mean-power SNR (D_adult +0.55 dB) Delta +0.18, +0.58, +0.57 dB.
+* By depth (template vs adult, combined): Delta +0.12 to +0.35 dB down to 30 mm (intervals include
+  0), +0.33 [+0.17, +0.60] at 30-40 mm, +0.37 at 40-50 mm, +1.12 at 50-60 mm and +2.23 at 60-90 mm
+  (83 template vs 26 adult targets, mostly isthmus cingulate). The 2-year size control gains most
+  near the surface (+1.21 and +1.06 dB above 20 mm, +0.4-0.7 dB at 20-50 mm); the school-age control
+  +0.1-0.4 dB.
+  Regionally the template's Delta is asymmetric (left inferior temporal, entorhinal, fusiform and
+  pars orbitalis +2.3 to +3.0 dB; right orbitofrontal -0.8 to -0.9 dB): at top contact under the
+  adult's measured pose its left gaps are 4-8 mm wider than its right; the x-5mm variant, which
+  re-centres it, changes the median D by -0.1 dB.
+* What drives Delta: with the child left centred (ear line where the adult's was) Delta is
+  +1.15, +1.73 and +1.79 dB; at top contact +0.47, +1.13, +0.73 dB; in the counterfactual helmet
+  scaled with the head -0.17 [-0.22, -0.12], -0.30 [-0.36, -0.25] and +0.28 [+0.06, +0.53] dB. The
+  relative gain of the head-adaptive array comes mainly from the fixed helmet's fit: without the
+  mismatch, a smaller head of adult proportions slightly favours the SQUID helmet relative to the
+  adult case, because the OPM's 7-mm standoff and 10-mm cell do not shrink; the template, whose
+  rounder shape fits the uniformly scaled helmet less closely (factor raised to 0.904, median gap
+  34 mm), keeps a small gain. Mechanism in the fixed
+  helmet: the cortex is farther from the SQUIDs (median target-to-magnetometer distance at 15-20 mm
+  depth 48 mm adult, 50-57 mm children; OPM 26 mm in every head), and the SQUID brain noise falls
+  (magnetometers 203 -> 150, 125 and 120 fT; gradiometers 41 -> 30, 23 and 23 fT/cm against 21 fT/cm
+  intrinsic) while the OPM's stays near 490-540 fT, so the SQUID signal falls faster than its noise.
+* Placements: the source-blind variants (+-5 mm, pitch +-10 deg, roll +-5 deg, back contact) give
+  D_child 1.45-2.52 (school-age size), 1.70-3.06 (2-year size) and 1.75-2.51 dB (template), adult
+  0.96-1.41 dB; top contact is among the most favourable placements for the SQUID. Regions:
+  raising the head (centred -> top) lowers D in every lobe, most in the parietal and frontal
+  lobes (template frontal +3.71 -> +2.02, parietal +3.02 -> +1.39 dB); back contact favours the
+  SQUID at the occiput (template occipital +1.25 dB vs +2.08 at top) and disfavours it frontally
+  (+3.89 vs +2.02 dB).
+* Sensitivity (Delta vs combined): OPM noise 7-30 fT/sqrt(Hz) +0.38 to +0.55 (school-age size),
+  +1.03 to +1.20 (2-year size), +0.64 to +0.87 dB (template); background variance x0.5 / x2 +0.51 /
+  +0.48, +1.20 / +1.10, +0.89 / +0.80 dB; 1-layer BEM +0.43, +1.10, +0.78 dB. At 30 fT/sqrt(Hz) the
+  adult's D is -0.04 dB (a tie) and the children's +0.34, +0.99 and +0.61 dB.
+* Usefulness (d >= 5) at 100 nAm, share of usable cortical area, both / OPM only / SQUID only /
+  neither: adult 0.66 / 0.02 / 0.00 / 0.32, school-age size 0.69 / 0.04 / 0.00 / 0.28, 2-year size
+  0.69 / 0.05 / 0.00 / 0.26, template 0.75 / 0.05 / 0.00 / 0.20; at 50 nAm OPM only 0.07, 0.10, 0.14
+  and 0.12. Nowhere is the SQUID alone usable; the cortex neither reaches is mostly deep and
+  medial.
+* Limits: one adult, one template and two scaled copies; no anatomical variability; the template
+  is an average with a smooth cortex; no age-specific background physiology (only the bounded x0.5/
+  x2 sensitivity); conductivities held at adult values (the 1-layer BEM bounds this for MEG); the
+  intervals contain no between-subject variability. Delta measures a change in relative
+  performance under these matching assumptions, not a clinical benefit.
+
+## 11. Epilepsy relevance, pediatric (G4, NEW) — `scripts/g4_epilepsy_pediatric.py`
+* The adult detection and localization studies (section 9) run unchanged — configuration
+  (`configs/g4_epilepsy.toml`), seeds, strengths, morphologies, detectors, operating points, null
+  durations, inverse settings, coregistration error — on a G3B anatomy: Neuromag at the primary
+  placement (top contact), the refitted dense and matched OPM arrays, the adult's background
+  variance per unit area, room field and intrinsic noise. `g4_epilepsy_adult.Context` holds what
+  the studies need (anatomy, arrays, lead fields, background scale); on the adult it reproduces the
+  adult results exactly (checked by rerunning the adult through it). Thresholds are calibrated on
+  each anatomy's own null data. Locations are stratified by the adult depth and orientation bands;
+  a band the anatomy cannot fill gets fewer locations, reported as such.
+* Anatomies: the 2-year template (primary) and the school-age size control (a scaled adult). One
+  template is not a population; the comparison with the adult mixes head size, anatomy and the
+  fixed-helmet fit, which G3B separates for detectability.
 
 ## To be written
 
-G3B; G4 pediatric.
+G3B and pediatric G4 results.

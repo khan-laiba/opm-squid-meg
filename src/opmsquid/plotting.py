@@ -106,14 +106,22 @@ def inflated_views(subjects_dir, subject, src):
     return hemis
 
 
-def render_view(ax, verts, tris, values, gyral, camera_x: float, cmap, norm, contour_level=None, shade=0.2):
+def triangle_mode(v: np.ndarray) -> np.ndarray:
+    """Per-triangle value of categorical vertex values (n_tri, 3): the value at least two vertices
+    share, else the first vertex's (no averaging of category codes)."""
+    a, b, c = v[:, 0], v[:, 1], v[:, 2]
+    return np.where(a == b, a, np.where(b == c, b, a))
+
+
+def render_view(ax, verts, tris, values, gyral, camera_x: float, cmap, norm, contour_level=None, shade=0.2,
+                categorical: bool = False):
     d = np.array([camera_x, 0.0, 0.0])
     screen = np.column_stack([verts[:, 1] * camera_x, verts[:, 2]])
     tri_n = np.cross(verts[tris[:, 1]] - verts[tris[:, 0]], verts[tris[:, 2]] - verts[tris[:, 0]])
     cos_view = tri_n @ d / np.linalg.norm(tri_n, axis=1)
     t = tris[cos_view > 0]
     t = t[np.argsort(verts[t].mean(axis=1) @ d)]
-    vals = np.nanmean(values[t], axis=1)
+    vals = triangle_mode(values[t]) if categorical else np.nanmean(values[t], axis=1)
     rgba = cmap(norm(vals))
     rgba[np.isnan(vals)] = (0.8, 0.8, 0.8, 1.0)
     rgba[:, :3] *= (1.0 - shade + shade * gyral[t].mean(axis=1))[:, None]
@@ -128,7 +136,7 @@ def render_view(ax, verts, tris, values, gyral, camera_x: float, cmap, norm, con
 
 
 def cortex_map_figure(hemis, rows: list[tuple[str, np.ndarray]], n_lh: int, cmap, norm, title: str, cbar_label: str,
-                      fname, contour_level=None):
+                      fname, contour_level=None, categorical: bool = False):
     """One row per (label, values over the source space), four views per row."""
     fig, axs = plt.subplots(len(rows), 4, figsize=(11, 1.9 * len(rows) + 0.8), squeeze=False)
     fig.subplots_adjust(left=0.16, right=0.9, top=1 - 0.6 / (1.9 * len(rows) + 0.8), bottom=0.03, wspace=0.02, hspace=0.05)
@@ -136,7 +144,7 @@ def cortex_map_figure(hemis, rows: list[tuple[str, np.ndarray]], n_lh: int, cmap
         for j, (h, cam) in enumerate(((0, -1.0), (0, 1.0), (1, -1.0), (1, 1.0))):
             verts, tris, gyral = hemis[h]
             v = vals[:n_lh] if h == 0 else vals[n_lh:]
-            render_view(axs[i, j], verts, tris, v, gyral, cam, cmap, norm, contour_level)
+            render_view(axs[i, j], verts, tris, v, gyral, cam, cmap, norm, contour_level, categorical=categorical)
         axs[i, 0].text(-0.05, 0.5, label, transform=axs[i, 0].transAxes, ha="right", va="center", fontsize=8)
     for j, t in enumerate(("left, lateral", "left, medial", "right, medial", "right, lateral")):
         axs[0, j].set_title(t, fontsize=8)

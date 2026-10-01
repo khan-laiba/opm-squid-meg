@@ -350,15 +350,18 @@ def matched_to_neuromag(squid_info: mne.Info, trans: mne.transforms.Transform, s
                         standoff: float = STANDOFF, scalp_gap: float = 0.0, normal_radius: float = 0.010,
                         brow_offset: float = 0.030, min_clearance: float | None = None, axis_surface=None,
                         ear_clearance: float = 0.0, max_extra_shift: float = MAX_EXTRA_SHIFT,
-                        outer_skin: dict | None = None) -> tuple[OPMArray, dict]:
+                        outer_skin: dict | None = None,
+                        min_center_spacing: float | None = MIN_CENTER_SPACING) -> tuple[OPMArray, dict]:
     """Matched-site OPM array: every Neuromag sensor location (magnetometer coil centre and
     normal, MRI frame) is projected along its inward normal onto the scalp. A site is kept if
     that scalp point lies above the brow plane; its sensing centre is placed at
     scalp_gap + standoff along the smoothed scalp normal and, where needed, moved further out
     until it is ``min_clearance`` (default standoff - 1 mm) from every scalp point and, with
     ``outer_skin`` (BEM head surface, MRI frame), ``MODEL_CLEARANCE`` from that surface; a site
-    needing more than ``max_extra_shift`` is dropped. Returns the array (head frame) and a report
-    with the per-site extra shift."""
+    needing more than ``max_extra_shift`` is dropped. Sites whose sensing centres are closer than
+    ``min_center_spacing`` are then pruned (A-OPM-PACK; none on the adult head, where the projected
+    Neuromag sites are >= 22.9 mm apart, but a smaller head in the same helmet brings them closer).
+    Returns the array (head frame) and a report with the per-site extra shift."""
     from . import neuromag  # local import to avoid a cycle at module import
 
     geo = neuromag.sensor_geometry(squid_info, frame="mri", trans=trans)
@@ -380,10 +383,14 @@ def matched_to_neuromag(squid_info: mne.Info, trans: mne.transforms.Transform, s
                                                  model_surface=outer_skin, model_clearance=MODEL_CLEARANCE,
                                                  cell_clearance=CELL_CLEARANCE, to_head=mri_head[:3, :3])
     keep &= feasible
+    n_feasible = int(keep.sum())
+    if min_center_spacing:
+        keep &= prune_to_spacing(centres, min_center_spacing, keep)
     arr = OPMArray(pos=centres[keep] @ mri_head[:3, :3].T + mri_head[:3, 3], axis=nrm[keep] @ mri_head[:3, :3].T,
                    scalp_point=pts_head[keep], site_id=geo.site[mags][keep], standoff=standoff, scalp_gap=scalp_gap,
                    label=f"OPM matched to Neuromag ({keep.sum()} sites)")
     report = dict(n_neuromag_sites=len(mags), n_ray_hits=int(hit.sum()), n_kept=int(keep.sum()),
+                  n_pruned_for_packing=n_feasible - int(keep.sum()),
                   squid_coil_to_scalp_mm=dist * 1e3, excluded_sites=geo.site[mags][~keep].tolist(),
                   extra_shift_mm={int(s): round(float(e) * 1e3, 1) for s, e, k in zip(geo.site[mags], extra, keep)
                                   if k and e > 0},
