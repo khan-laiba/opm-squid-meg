@@ -3,7 +3,10 @@
   "labels": [
     "adult",
     "school",
-    "infant2yr"
+    "size2yr",
+    "infant2yr",
+    "infant18mo",
+    "infant12mo"
   ],
   "comparison": {
     "adult/n_locations_per_depth_band": {
@@ -2150,6 +2153,1078 @@
       "n_locations": 18,
       "p_values": "uncorrected"
     },
+    "size2yr/n_locations_per_depth_band": {
+      "depth0": 18,
+      "depth1": 18,
+      "depth2": 18,
+      "depth3": 18
+    },
+    "size2yr/simulated_at_commit": "c950959",
+    "size2yr/squid/combined/oracle/depth0/s50": {
+      "value": 29.189602113628922,
+      "ci95": [
+        23.202587723203255,
+        40.0
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/combined/oracle/depth1/s50": {
+      "value": 51.46659592037726,
+      "ci95": [
+        38.86127764614423,
+        67.8324149548831
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/combined/oracle/depth2/s50": {
+      "value": 105.56063286183151,
+      "ci95": [
+        87.93049780473474,
+        124.35250254167353
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/combined/oracle/depth3/s50": {
+      "value": 144.385288928114,
+      "ci95": [
+        124.75037617357641,
+        185.14971456074485
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/combined/practical@1/depth0/s50": {
+      "value": 58.78937969102393,
+      "ci95": [
+        49.24577653379665,
+        76.61314926819828
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/combined/practical@1/depth1/s50": {
+      "value": 105.56063286183151,
+      "ci95": [
+        78.0438913642058,
+        134.54342644059423
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/combined/practical@1/depth2/s50": {
+      "value": 201.58736798317958,
+      "ci95": [
+        152.53141295146142,
+        263.9785316716926
+      ],
+      "share_resamples_not_reached": 0.001
+    },
+    "size2yr/squid/combined/practical@1/depth3/s50": {
+      "value": 272.6977268571439,
+      "ci95": [
+        223.75855974772026,
+        null
+      ],
+      "share_resamples_not_reached": 0.105
+    },
+    "size2yr/squid/combined/heldout_false_per_min": {
+      "1": 0.4,
+      "0.2": 0.05
+    },
+    "size2yr/squid/combined/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.12962962962962962,
+    "size2yr/squid/grad/oracle/depth0/s50": {
+      "value": 37.034988491491625,
+      "ci95": [
+        27.773022852293117,
+        50.84668947381563
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/grad/oracle/depth1/s50": {
+      "value": 59.66657961965606,
+      "ci95": [
+        47.86690413470022,
+        77.52141446979802
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/grad/oracle/depth2/s50": {
+      "value": 111.95511084693189,
+      "ci95": [
+        98.69864667476531,
+        130.83507191740614
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/grad/oracle/depth3/s50": {
+      "value": 204.94187036228348,
+      "ci95": [
+        165.1156738175447,
+        240.2071011754135
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/grad/practical@1/depth0/s50": {
+      "value": 64.7846567720125,
+      "ci95": [
+        53.05094622614889,
+        88.7655577654276
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/grad/practical@1/depth1/s50": {
+      "value": 110.37072962763231,
+      "ci95": [
+        87.2406186132206,
+        134.54342644059423
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/grad/practical@1/depth2/s50": {
+      "value": 217.05669239162748,
+      "ci95": [
+        172.09482530049348,
+        286.8464217805753
+      ],
+      "share_resamples_not_reached": 0.005
+    },
+    "size2yr/squid/grad/practical@1/depth3/s50": {
+      "value": null,
+      "ci95": [
+        271.8437741496644,
+        null
+      ],
+      "share_resamples_not_reached": 0.663
+    },
+    "size2yr/squid/grad/heldout_false_per_min": {
+      "1": 1.1,
+      "0.2": 0.1
+    },
+    "size2yr/squid/grad/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.10185185185185185,
+    "size2yr/squid/mag/oracle/depth0/s50": {
+      "value": 30.4975986789893,
+      "ci95": [
+        25.198420997897465,
+        40.0
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/mag/oracle/depth1/s50": {
+      "value": 53.63136315837714,
+      "ci95": [
+        43.620309306610295,
+        66.22026239078485
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/mag/oracle/depth2/s50": {
+      "value": 103.4147718055152,
+      "ci95": [
+        84.2148162111164,
+        124.66633274567995
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/mag/oracle/depth3/s50": {
+      "value": 141.37239851960555,
+      "ci95": [
+        123.6826669813584,
+        182.8143852692427
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/mag/practical@1/depth0/s50": {
+      "value": 58.97076869164406,
+      "ci95": [
+        47.87456104584359,
+        77.94803221439982
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/mag/practical@1/depth1/s50": {
+      "value": 107.26272631675424,
+      "ci95": [
+        79.99999999999997,
+        133.55880400418687
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/squid/mag/practical@1/depth2/s50": {
+      "value": 207.49432874416144,
+      "ci95": [
+        156.0877827284116,
+        272.6977268571439
+      ],
+      "share_resamples_not_reached": 0.003
+    },
+    "size2yr/squid/mag/practical@1/depth3/s50": {
+      "value": 272.6977268571439,
+      "ci95": [
+        223.75855974772026,
+        null
+      ],
+      "share_resamples_not_reached": 0.103
+    },
+    "size2yr/squid/mag/heldout_false_per_min": {
+      "1": 0.55,
+      "0.2": 0.25
+    },
+    "size2yr/squid/mag/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.12962962962962962,
+    "size2yr/opm_matched/opm/oracle/depth0/s50": {
+      "value": 20.885475648548276,
+      "ci95": [
+        15.73357102062611,
+        29.189602113628922
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_matched/opm/oracle/depth1/s50": {
+      "value": 50.39684199579491,
+      "ci95": [
+        37.75260503273493,
+        63.49604207872797
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_matched/opm/oracle/depth2/s50": {
+      "value": 97.92428346437235,
+      "ci95": [
+        73.34976034708075,
+        121.99039471595711
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_matched/opm/oracle/depth3/s50": {
+      "value": 145.41144960605774,
+      "ci95": [
+        126.99208415745595,
+        185.15971464202764
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_matched/opm/practical@1/depth0/s50": {
+      "value": 37.92310057356686,
+      "ci95": [
+        31.142589061457866,
+        62.4567345724568
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_matched/opm/practical@1/depth1/s50": {
+      "value": 96.41320593742165,
+      "ci95": [
+        71.26481359397745,
+        115.98476381318781
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_matched/opm/practical@1/depth2/s50": {
+      "value": 187.29918635390592,
+      "ci95": [
+        143.5767260002485,
+        238.6928888241654
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_matched/opm/practical@1/depth3/s50": {
+      "value": 277.2476733466528,
+      "ci95": [
+        235.6774662604365,
+        null
+      ],
+      "share_resamples_not_reached": 0.104
+    },
+    "size2yr/opm_matched/opm/heldout_false_per_min": {
+      "1": 0.6,
+      "0.2": 0.15
+    },
+    "size2yr/opm_matched/opm/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.28703703703703703,
+    "size2yr/opm_dense/opm/oracle/depth0/s50": {
+      "value": 16.918723112109333,
+      "ci95": [
+        14.451808069770465,
+        22.83079116352461
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_dense/opm/oracle/depth1/s50": {
+      "value": 43.965248902367364,
+      "ci95": [
+        32.011081703238624,
+        56.568542494923776
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_dense/opm/oracle/depth2/s50": {
+      "value": 93.87683680037004,
+      "ci95": [
+        70.1030906626264,
+        114.40903100584426
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_dense/opm/oracle/depth3/s50": {
+      "value": 140.03274393476852,
+      "ci95": [
+        118.14609167515991,
+        175.17762973851137
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_dense/opm/practical@1/depth0/s50": {
+      "value": 35.8010028371189,
+      "ci95": [
+        29.0484571222865,
+        49.680785219767465
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_dense/opm/practical@1/depth1/s50": {
+      "value": 94.35475591178911,
+      "ci95": [
+        68.17443171428596,
+        125.73165005460014
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_dense/opm/practical@1/depth2/s50": {
+      "value": 171.48375400580684,
+      "ci95": [
+        134.52467679759073,
+        229.43975823114673
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "size2yr/opm_dense/opm/practical@1/depth3/s50": {
+      "value": 242.51465064166362,
+      "ci95": [
+        198.4006473060138,
+        null
+      ],
+      "share_resamples_not_reached": 0.027
+    },
+    "size2yr/opm_dense/opm/heldout_false_per_min": {
+      "1": 0.9,
+      "0.2": 0.05
+    },
+    "size2yr/opm_dense/opm/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.3148148148148148,
+    "size2yr/paired/opm_dense/opm_vs_squid/combined/oracle/depth0": {
+      "locations_favouring_opm": 15,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 6.103515625e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.7252839898264476,
+        "ci95": [
+          1.4580964437558694,
+          2.000199577479244
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/combined/oracle/depth1": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.037109375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1706199147119118,
+        "ci95": [
+          0.979777169787296,
+          1.4626905935092873
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/combined/oracle/depth2": {
+      "locations_favouring_opm": 10,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0068359375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1244587744930856,
+        "ci95": [
+          1.0233040229943586,
+          1.3269826733112433
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/combined/oracle/depth3": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.09375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.031082337395124,
+        "ci95": [
+          0.9258376027467039,
+          1.1642403241911254
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/combined/practical@1/depth0": {
+      "locations_favouring_opm": 16,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 3.0517578125e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.6421154446006303,
+        "ci95": [
+          1.3967906538009354,
+          1.849022276291893
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/combined/practical@1/depth1": {
+      "locations_favouring_opm": 7,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.189453125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1187632445418927,
+        "ci95": [
+          0.9466622550796114,
+          1.3661192535593145
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/combined/practical@1/depth2": {
+      "locations_favouring_opm": 10,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0087890625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1755479062836083,
+        "ci95": [
+          1.0565384295026456,
+          1.3115902324229507
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/combined/practical@1/depth3": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.03125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1244587744930856,
+        "ci95": [
+          1.0333782478092137,
+          1.2444223321044998
+        ],
+        "share_resamples_undefined": 0.119
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/grad/oracle/depth0": {
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 1.52587890625e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 2.1889943021163556,
+        "ci95": [
+          1.7752185410063317,
+          2.6516524351423287
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/grad/oracle/depth1": {
+      "locations_favouring_opm": 14,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.0001220703125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3571304862200664,
+        "ci95": [
+          1.1829760003812841,
+          1.6726305406063775
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/grad/oracle/depth2": {
+      "locations_favouring_opm": 12,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.00048828125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1925743842967937,
+        "ci95": [
+          1.072998315174296,
+          1.45688668329558
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/grad/oracle/depth3": {
+      "locations_favouring_opm": 16,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 3.0517578125e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.4635282049300669,
+        "ci95": [
+          1.2767478429883194,
+          1.6105108575256075
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/grad/practical@1/depth0": {
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 1.52587890625e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.8095765938948225,
+        "ci95": [
+          1.6324656938415814,
+          2.025034675248301
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/grad/practical@1/depth1": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.08984375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1697420926065063,
+        "ci95": [
+          0.9819186700353079,
+          1.4868224891474244
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/grad/practical@1/depth2": {
+      "locations_favouring_opm": 12,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.002197265625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2657565939702802,
+        "ci95": [
+          1.104517411293386,
+          1.4559118347674571
+        ],
+        "share_resamples_undefined": 0.003
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/grad/practical@1/depth3": {
+      "locations_favouring_opm": 13,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.000244140625,
+      "s50_ratio_squid_over_opm": {
+        "value": null,
+        "ci95": [
+          1.186087345636455,
+          1.5519609990488128
+        ],
+        "share_resamples_undefined": 0.644
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/mag/oracle/depth0": {
+      "locations_favouring_opm": 15,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 6.103515625e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.8025945857084853,
+        "ci95": [
+          1.5394019949722106,
+          2.0582047306305076
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/mag/oracle/depth1": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.01171875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2198580582922458,
+        "ci95": [
+          1.042457160091541,
+          1.4820950542922149
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/mag/oracle/depth2": {
+      "locations_favouring_opm": 11,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.011962890625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1016005154224324,
+        "ci95": [
+          0.9881146117916239,
+          1.2792724555752495
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/mag/oracle/depth3": {
+      "locations_favouring_opm": 5,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.1875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0095667238046917,
+        "ci95": [
+          0.9215434506505437,
+          1.1179358614282382
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/mag/practical@1/depth0": {
+      "locations_favouring_opm": 16,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 3.0517578125e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.6471820345351464,
+        "ci95": [
+          1.4254064481111137,
+          1.828910012940905
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/mag/practical@1/depth1": {
+      "locations_favouring_opm": 7,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.109375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1368025414323852,
+        "ci95": [
+          0.9934179637039555,
+          1.3757898021107358
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/mag/practical@1/depth2": {
+      "locations_favouring_opm": 11,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.00439453125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2099940892192924,
+        "ci95": [
+          1.0800597388923066,
+          1.3481590000853552
+        ],
+        "share_resamples_undefined": 0.004
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_dense/opm_vs_squid/mag/practical@1/depth3": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.03125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1244587744930856,
+        "ci95": [
+          1.0320082797342096,
+          1.2367164195515152
+        ],
+        "share_resamples_undefined": 0.115
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/combined/oracle/depth0": {
+      "locations_favouring_opm": 12,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.001220703125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3976029373148537,
+        "ci95": [
+          1.1601293861601631,
+          1.6818142019554652
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/combined/oracle/depth1": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 5,
+      "location_sign_flip_p": 0.359375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.021226606315364,
+        "ci95": [
+          0.8967952424469341,
+          1.2155672362349697
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/combined/oracle/depth2": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.076171875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0779821830428555,
+        "ci95": [
+          0.9834723789397555,
+          1.223347340905835
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/combined/oracle/depth3": {
+      "locations_favouring_opm": 3,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 1.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 0.992943054479384,
+        "ci95": [
+          0.8778510114334688,
+          1.1277176762560885
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/combined/practical@1/depth0": {
+      "locations_favouring_opm": 12,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.001708984375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.5502260838872777,
+        "ci95": [
+          1.1149823543001836,
+          1.7751036022389897
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/combined/practical@1/depth1": {
+      "locations_favouring_opm": 7,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0546875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0948773234482745,
+        "ci95": [
+          0.9999999999999991,
+          1.2585414426137558
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/combined/practical@1/depth2": {
+      "locations_favouring_opm": 4,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.3125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.076285337418796,
+        "ci95": [
+          0.9942154607051937,
+          1.2080894444044468
+        ],
+        "share_resamples_undefined": 0.001
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/combined/practical@1/depth3": {
+      "locations_favouring_opm": 4,
+      "locations_favouring_squid": 4,
+      "location_sign_flip_p": 0.640625,
+      "s50_ratio_squid_over_opm": {
+        "value": 0.9835888740396391,
+        "ci95": [
+          0.8711402186578083,
+          1.0816357415511861
+        ],
+        "share_resamples_undefined": 0.156
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/grad/oracle/depth0": {
+      "locations_favouring_opm": 15,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 6.103515625e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.773241324004315,
+        "ci95": [
+          1.453729456089302,
+          2.1018293236971544
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/grad/oracle/depth1": {
+      "locations_favouring_opm": 13,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.001220703125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.18393489069483,
+        "ci95": [
+          1.0832637998219206,
+          1.3920155045987526
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/grad/oracle/depth2": {
+      "locations_favouring_opm": 11,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.00390625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.143282410513265,
+        "ci95": [
+          1.035967705730764,
+          1.3676686297476397
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/grad/oracle/depth3": {
+      "locations_favouring_opm": 12,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.00244140625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.4093929392596176,
+        "ci95": [
+          1.230972898601573,
+          1.5518381055278867
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/grad/practical@1/depth0": {
+      "locations_favouring_opm": 14,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.0001220703125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.7083164559906439,
+        "ci95": [
+          1.3698488049888393,
+          1.897667036100802
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/grad/practical@1/depth1": {
+      "locations_favouring_opm": 10,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.0234375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1447677582599005,
+        "ci95": [
+          1.028807646469244,
+          1.3417692727600772
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/grad/practical@1/depth2": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.0390625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1588768569527799,
+        "ci95": [
+          1.0269966245333841,
+          1.3395457849612897
+        ],
+        "share_resamples_undefined": 0.005
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/grad/practical@1/depth3": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.0458984375,
+      "s50_ratio_squid_over_opm": {
+        "value": null,
+        "ci95": [
+          1.0291117970060093,
+          1.2645907904289233
+        ],
+        "share_resamples_undefined": 0.623
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/mag/oracle/depth0": {
+      "locations_favouring_opm": 14,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.0001220703125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.460230027421432,
+        "ci95": [
+          1.2560853266952565,
+          1.6934790848128494
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/mag/oracle/depth1": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 5,
+      "location_sign_flip_p": 0.207763671875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0641810287012055,
+        "ci95": [
+          0.9361177424536052,
+          1.2501182048244621
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/mag/oracle/depth2": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.03125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0560687109152087,
+        "ci95": [
+          0.9911032141366487,
+          1.1712894159095253
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/mag/oracle/depth3": {
+      "locations_favouring_opm": 3,
+      "locations_favouring_squid": 5,
+      "location_sign_flip_p": 0.5625,
+      "s50_ratio_squid_over_opm": {
+        "value": 0.972223293988234,
+        "ci95": [
+          0.8503094129989411,
+          1.1053678877415536
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/mag/practical@1/depth0": {
+      "locations_favouring_opm": 13,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0010986328125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.555009157999803,
+        "ci95": [
+          1.1388421150263932,
+          1.7727720407438428
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/mag/practical@1/depth1": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.03125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1125314760964864,
+        "ci95": [
+          1.0104792810292096,
+          1.2710003719455616
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/mag/practical@1/depth2": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.109375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1078229050717623,
+        "ci95": [
+          1.0135748253103625,
+          1.250291913510671
+        ],
+        "share_resamples_undefined": 0.001
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "size2yr/paired/opm_matched/opm_vs_squid/mag/practical@1/depth3": {
+      "locations_favouring_opm": 3,
+      "locations_favouring_squid": 4,
+      "location_sign_flip_p": 0.65625,
+      "s50_ratio_squid_over_opm": {
+        "value": 0.9835888740396391,
+        "ci95": [
+          0.8747474936871393,
+          1.080276612957474
+        ],
+        "share_resamples_undefined": 0.131
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
     "infant2yr/n_locations_per_depth_band": {
       "depth0": 18,
       "depth1": 18,
@@ -3222,6 +4297,2150 @@
       "n_locations": 18,
       "p_values": "uncorrected"
     },
+    "infant18mo/n_locations_per_depth_band": {
+      "depth0": 18,
+      "depth1": 18,
+      "depth2": 18,
+      "depth3": 18
+    },
+    "infant18mo/simulated_at_commit": "cb1b8a9",
+    "infant18mo/squid/combined/oracle/depth0/s50": {
+      "value": 19.430638823072112,
+      "ci95": [
+        15.471677518266018,
+        28.866811540599127
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/combined/oracle/depth1/s50": {
+      "value": 31.748021039363984,
+      "ci95": [
+        25.010192906935252,
+        45.3725008878185
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/combined/oracle/depth2/s50": {
+      "value": 67.27171322029716,
+      "ci95": [
+        58.274193899759716,
+        86.05524689761452
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/combined/oracle/depth3/s50": {
+      "value": 192.82641187484333,
+      "ci95": [
+        131.22132512261643,
+        231.95660631946419
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/combined/practical@1/depth0/s50": {
+      "value": 36.352862401514464,
+      "ci95": [
+        30.686211465192336,
+        55.644622503597375
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/combined/practical@1/depth1/s50": {
+      "value": 62.04579047334934,
+      "ci95": [
+        53.55616404897887,
+        75.88191877630499
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/combined/practical@1/depth2/s50": {
+      "value": 124.09158094669868,
+      "ci95": [
+        107.1123280979577,
+        155.4496026096116
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/combined/practical@1/depth3/s50": {
+      "value": null,
+      "ci95": [
+        249.79888995966527,
+        null
+      ],
+      "share_resamples_not_reached": 0.605
+    },
+    "infant18mo/squid/combined/heldout_false_per_min": {
+      "1": 0.95,
+      "0.2": 0.15
+    },
+    "infant18mo/squid/combined/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.37962962962962965,
+    "infant18mo/squid/grad/oracle/depth0/s50": {
+      "value": 26.606241163962437,
+      "ci95": [
+        18.83013676297782,
+        41.12574147623009
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/grad/oracle/depth1/s50": {
+      "value": 40.0,
+      "ci95": [
+        29.043915982744316,
+        65.62682848061101
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/grad/oracle/depth2/s50": {
+      "value": 82.82119390731013,
+      "ci95": [
+        67.67366748299273,
+        109.28322054035165
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/grad/oracle/depth3/s50": {
+      "value": 212.45581247825686,
+      "ci95": [
+        153.60746989676687,
+        271.3296598195325
+      ],
+      "share_resamples_not_reached": 0.005
+    },
+    "infant18mo/squid/grad/practical@1/depth0/s50": {
+      "value": 47.085867756356706,
+      "ci95": [
+        34.02553107130107,
+        66.67622932959385
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/grad/practical@1/depth1/s50": {
+      "value": 83.32928085204667,
+      "ci95": [
+        61.27412306701759,
+        118.40622896698132
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/grad/practical@1/depth2/s50": {
+      "value": 144.385288928114,
+      "ci95": [
+        122.18413485366408,
+        189.3015241833957
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/grad/practical@1/depth3/s50": {
+      "value": null,
+      "ci95": [
+        288.40014803546575,
+        null
+      ],
+      "share_resamples_not_reached": 0.885
+    },
+    "infant18mo/squid/grad/heldout_false_per_min": {
+      "1": 0.75,
+      "0.2": 0.1
+    },
+    "infant18mo/squid/grad/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.3055555555555556,
+    "infant18mo/squid/mag/oracle/depth0/s50": {
+      "value": 21.601194777846114,
+      "ci95": [
+        16.647368194286422,
+        29.396957208019725
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/mag/oracle/depth1/s50": {
+      "value": 31.748021039363984,
+      "ci95": [
+        26.110233954196193,
+        42.19534007714352
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/mag/oracle/depth2/s50": {
+      "value": 69.3119183366632,
+      "ci95": [
+        60.05090034456449,
+        89.25263342092343
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/mag/oracle/depth3/s50": {
+      "value": 191.71210984269595,
+      "ci95": [
+        131.22132512261643,
+        242.51465064166362
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/mag/practical@1/depth0/s50": {
+      "value": 37.2322221567994,
+      "ci95": [
+        30.84421650815882,
+        55.08037804777077
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/mag/practical@1/depth1/s50": {
+      "value": 64.02216340647719,
+      "ci95": [
+        54.170221877475704,
+        95.13656920021761
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/mag/practical@1/depth2/s50": {
+      "value": 125.11312950791205,
+      "ci95": [
+        110.15679026258037,
+        159.99999999999994
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/squid/mag/practical@1/depth3/s50": {
+      "value": null,
+      "ci95": [
+        253.98416831491193,
+        null
+      ],
+      "share_resamples_not_reached": 0.696
+    },
+    "infant18mo/squid/mag/heldout_false_per_min": {
+      "1": 1.1,
+      "0.2": 0.35
+    },
+    "infant18mo/squid/mag/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.35185185185185186,
+    "infant18mo/opm_matched/opm/oracle/depth0/s50": {
+      "value": 17.817974362806787,
+      "ci95": [
+        14.301128875730535,
+        25.198420997897465
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_matched/opm/oracle/depth1/s50": {
+      "value": 30.31433133020796,
+      "ci95": [
+        23.577526872139963,
+        40.0
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_matched/opm/oracle/depth2/s50": {
+      "value": 69.6440450636899,
+      "ci95": [
+        59.24390209146256,
+        93.33618600694633
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_matched/opm/oracle/depth3/s50": {
+      "value": 181.49000355127401,
+      "ci95": [
+        126.99208415745595,
+        230.03947159120276
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_matched/opm/practical@1/depth0/s50": {
+      "value": 33.11013119539243,
+      "ci95": [
+        25.786053463576515,
+        47.928027460674
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_matched/opm/practical@1/depth1/s50": {
+      "value": 59.75035846617942,
+      "ci95": [
+        41.570369041273736,
+        95.13656920021769
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_matched/opm/practical@1/depth2/s50": {
+      "value": 120.7331542074738,
+      "ci95": [
+        106.01893145277924,
+        147.70178789903494
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_matched/opm/practical@1/depth3/s50": {
+      "value": null,
+      "ci95": [
+        251.44551459360898,
+        null
+      ],
+      "share_resamples_not_reached": 0.672
+    },
+    "infant18mo/opm_matched/opm/heldout_false_per_min": {
+      "1": 1.45,
+      "0.2": 0.15
+    },
+    "infant18mo/opm_matched/opm/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.4351851851851852,
+    "infant18mo/opm_dense/opm/oracle/depth0/s50": {
+      "value": 14.594801056814461,
+      "ci95": [
+        12.051650742177708,
+        21.43546925072586
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_dense/opm/oracle/depth1/s50": {
+      "value": 29.0484571222865,
+      "ci95": [
+        22.684152074526178,
+        37.844325736637416
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_dense/opm/oracle/depth2/s50": {
+      "value": 59.66657961965606,
+      "ci95": [
+        48.608841923633335,
+        77.62502021998381
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_dense/opm/oracle/depth3/s50": {
+      "value": 135.65823870040558,
+      "ci95": [
+        102.46348516952536,
+        184.69613134805454
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_dense/opm/practical@1/depth0/s50": {
+      "value": 27.407019694402468,
+      "ci95": [
+        20.885475648548276,
+        40.0
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_dense/opm/practical@1/depth1/s50": {
+      "value": 58.37920422725782,
+      "ci95": [
+        42.60164357759851,
+        88.32716109390499
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_dense/opm/practical@1/depth2/s50": {
+      "value": 118.48780418292513,
+      "ci95": [
+        98.78882313944516,
+        151.76383755261
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant18mo/opm_dense/opm/practical@1/depth3/s50": {
+      "value": 282.1092015987266,
+      "ci95": [
+        213.5743766672054,
+        null
+      ],
+      "share_resamples_not_reached": 0.213
+    },
+    "infant18mo/opm_dense/opm/heldout_false_per_min": {
+      "1": 1.05,
+      "0.2": 0.3
+    },
+    "infant18mo/opm_dense/opm/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.5,
+    "infant18mo/paired/opm_dense/opm_vs_squid/combined/oracle/depth0": {
+      "locations_favouring_opm": 14,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.0001220703125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3313397522468968,
+        "ci95": [
+          1.1459640425288993,
+          1.6227630996038498
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/combined/oracle/depth1": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.037109375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.092933125697968,
+        "ci95": [
+          0.998249243684749,
+          1.2600002535415735
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/combined/oracle/depth2": {
+      "locations_favouring_opm": 10,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.08740234375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1274605256262373,
+        "ci95": [
+          1.0250366444917465,
+          1.2786442133256
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/combined/oracle/depth3": {
+      "locations_favouring_opm": 12,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.001708984375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.421413205140388,
+        "ci95": [
+          1.1779236545624516,
+          1.597920226801581
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/combined/practical@1/depth0": {
+      "locations_favouring_opm": 16,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 3.0517578125e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3264069864896353,
+        "ci95": [
+          1.155352696872273,
+          1.616082110246228
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/combined/practical@1/depth1": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.09375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0628063759111597,
+        "ci95": [
+          0.8988509731955423,
+          1.256171277893513
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/combined/practical@1/depth2": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.1826171875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.047294122820626,
+        "ci95": [
+          0.9812649597661534,
+          1.1289718646282072
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/combined/practical@1/depth3": {
+      "locations_favouring_opm": 7,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.046875,
+      "s50_ratio_squid_over_opm": {
+        "value": null,
+        "ci95": [
+          1.0343469255039468,
+          1.2889656527102977
+        ],
+        "share_resamples_undefined": 0.622
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/grad/oracle/depth0": {
+      "locations_favouring_opm": 16,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 3.0517578125e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.8229944389368509,
+        "ci95": [
+          1.3773503766939055,
+          2.3214127760683474
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/grad/oracle/depth1": {
+      "locations_favouring_opm": 15,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 6.103515625e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3770094511942694,
+        "ci95": [
+          1.1741786674948498,
+          1.7912389743692185
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/grad/oracle/depth2": {
+      "locations_favouring_opm": 14,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.00048828125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3880667273916638,
+        "ci95": [
+          1.181623415675432,
+          1.7090498439624788
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/grad/oracle/depth3": {
+      "locations_favouring_opm": 15,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.00018310546875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.566110650658342,
+        "ci95": [
+          1.2599210498948727,
+          1.8660659830736153
+        ],
+        "share_resamples_undefined": 0.004
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/grad/practical@1/depth0": {
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 1.52587890625e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.7180221812287524,
+        "ci95": [
+          1.3273277360715086,
+          2.0950148514599634
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/grad/practical@1/depth1": {
+      "locations_favouring_opm": 12,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.00048828125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.4273795258952744,
+        "ci95": [
+          1.194191942947101,
+          1.678925172514194
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/grad/practical@1/depth2": {
+      "locations_favouring_opm": 11,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.00341796875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2185666695722333,
+        "ci95": [
+          1.1130138495935338,
+          1.3755192366696167
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/grad/practical@1/depth3": {
+      "locations_favouring_opm": 10,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0068359375,
+      "s50_ratio_squid_over_opm": {
+        "value": null,
+        "ci95": [
+          1.1510091478063518,
+          1.476443212740947
+        ],
+        "share_resamples_undefined": 0.89
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/mag/oracle/depth0": {
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 1.52587890625e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.480060926747631,
+        "ci95": [
+          1.2429571508214439,
+          1.7205941870247556
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/mag/oracle/depth1": {
+      "locations_favouring_opm": 10,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0087890625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.092933125697968,
+        "ci95": [
+          1.0053377670327088,
+          1.2745606273192622
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/mag/oracle/depth2": {
+      "locations_favouring_opm": 13,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.0284423828125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1616539573491766,
+        "ci95": [
+          1.0340306045857368,
+          1.3275472794645344
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/mag/oracle/depth3": {
+      "locations_favouring_opm": 12,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.00146484375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.4131991663704446,
+        "ci95": [
+          1.1729317499565197,
+          1.6006497790987477
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/mag/practical@1/depth0": {
+      "locations_favouring_opm": 16,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 3.0517578125e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.358492188204017,
+        "ci95": [
+          1.1621057076910746,
+          1.6848174676814622
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/mag/practical@1/depth1": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.015625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.096660433349734,
+        "ci95": [
+          1.0129117294687375,
+          1.3316526349573952
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/mag/practical@1/depth2": {
+      "locations_favouring_opm": 7,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.14453125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0559156730996426,
+        "ci95": [
+          0.9916363556585536,
+          1.151651095478865
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_dense/opm_vs_squid/mag/practical@1/depth3": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.0078125,
+      "s50_ratio_squid_over_opm": {
+        "value": null,
+        "ci95": [
+          1.065356213176066,
+          1.3111440397159848
+        ],
+        "share_resamples_undefined": 0.692
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/combined/oracle/depth0": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.03125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0905077326652572,
+        "ci95": [
+          1.0108316519735376,
+          1.2311444133449163
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/combined/oracle/depth1": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.27734375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0472941228206265,
+        "ci95": [
+          0.918394168963765,
+          1.2702353950857592
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/combined/oracle/depth2": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 7,
+      "location_sign_flip_p": 0.49853515625,
+      "s50_ratio_squid_over_opm": {
+        "value": 0.9659363289248459,
+        "ci95": [
+          0.8332457278032883,
+          1.1007375978529106
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/combined/oracle/depth3": {
+      "locations_favouring_opm": 5,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 1.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0624629902570175,
+        "ci95": [
+          0.9543393749188087,
+          1.2171092660182603
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/combined/practical@1/depth0": {
+      "locations_favouring_opm": 12,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.00048828125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0979377335289233,
+        "ci95": [
+          1.0224743687653821,
+          1.2697175728776264
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/combined/practical@1/depth1": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 5,
+      "location_sign_flip_p": 0.33349609375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0384170416060217,
+        "ci95": [
+          0.7789104127526328,
+          1.3382328326948048
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/combined/practical@1/depth2": {
+      "locations_favouring_opm": 4,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.53125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0278169386136768,
+        "ci95": [
+          0.9812053259242047,
+          1.118566484761777
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/combined/practical@1/depth3": {
+      "locations_favouring_opm": 2,
+      "locations_favouring_squid": 4,
+      "location_sign_flip_p": 0.6875,
+      "s50_ratio_squid_over_opm": {
+        "value": null,
+        "ci95": [
+          0.9023761025618645,
+          1.0682720926696434
+        ],
+        "share_resamples_undefined": 0.682
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/grad/oracle/depth0": {
+      "locations_favouring_opm": 14,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.0001220703125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.4932247977357216,
+        "ci95": [
+          1.209850382101342,
+          1.82323273345958
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/grad/oracle/depth1": {
+      "locations_favouring_opm": 13,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0008544921875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3195079107728944,
+        "ci95": [
+          1.1248288243534104,
+          1.7643867830652853
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/grad/oracle/depth2": {
+      "locations_favouring_opm": 10,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0087890625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1892071150027206,
+        "ci95": [
+          1.0594388209695884,
+          1.3185116082818362
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/grad/oracle/depth3": {
+      "locations_favouring_opm": 10,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0068359375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1706199147119112,
+        "ci95": [
+          1.017477600751927,
+          1.412422815307139
+        ],
+        "share_resamples_undefined": 0.002
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/grad/practical@1/depth0": {
+      "locations_favouring_opm": 14,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.0001220703125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.4220984954269564,
+        "ci95": [
+          1.1410268897632225,
+          1.7633061320072654
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/grad/practical@1/depth1": {
+      "locations_favouring_opm": 13,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0050048828125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3946239485611396,
+        "ci95": [
+          1.1805513545678306,
+          1.6679721935606893
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/grad/practical@1/depth2": {
+      "locations_favouring_opm": 11,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0048828125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1959042226296448,
+        "ci95": [
+          1.1035131329549286,
+          1.3761583509257436
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/grad/practical@1/depth3": {
+      "locations_favouring_opm": 5,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.390625,
+      "s50_ratio_squid_over_opm": {
+        "value": null,
+        "ci95": [
+          0.9353049784804874,
+          1.2509000395615844
+        ],
+        "share_resamples_undefined": 0.879
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/mag/oracle/depth0": {
+      "locations_favouring_opm": 11,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.0009765625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.212326066813544,
+        "ci95": [
+          1.061203295265288,
+          1.3738242580418605
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/mag/oracle/depth1": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.171875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0472941228206265,
+        "ci95": [
+          0.9201791099052039,
+          1.2812787128702345
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/mag/oracle/depth2": {
+      "locations_favouring_opm": 7,
+      "locations_favouring_squid": 4,
+      "location_sign_flip_p": 1.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 0.9952310821876734,
+        "ci95": [
+          0.8617891773544671,
+          1.1224151872589785
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/mag/oracle/depth3": {
+      "locations_favouring_opm": 5,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.765625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0563232469634838,
+        "ci95": [
+          0.943017960204738,
+          1.184652797872993
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/mag/practical@1/depth0": {
+      "locations_favouring_opm": 13,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.000244140625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1244963644837687,
+        "ci95": [
+          1.0411340645480283,
+          1.2819223081146325
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/mag/practical@1/depth1": {
+      "locations_favouring_opm": 11,
+      "locations_favouring_squid": 4,
+      "location_sign_flip_p": 0.0631103515625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0714942144274455,
+        "ci95": [
+          0.9056719815943373,
+          1.3343354444808253
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/mag/practical@1/depth2": {
+      "locations_favouring_opm": 4,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.46875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.036278148526721,
+        "ci95": [
+          0.9757660164990594,
+          1.1370655604060467
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant18mo/paired/opm_matched/opm_vs_squid/mag/practical@1/depth3": {
+      "locations_favouring_opm": 2,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 1.0,
+      "s50_ratio_squid_over_opm": {
+        "value": null,
+        "ci95": [
+          0.9421768888116514,
+          1.1026845697973386
+        ],
+        "share_resamples_undefined": 0.711
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/n_locations_per_depth_band": {
+      "depth0": 18,
+      "depth1": 18,
+      "depth2": 18,
+      "depth3": 18
+    },
+    "infant12mo/simulated_at_commit": "cb1b8a9",
+    "infant12mo/squid/combined/oracle/depth0/s50": {
+      "value": 21.98262445118369,
+      "ci95": [
+        17.327979584165803,
+        27.408821025771463
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/combined/oracle/depth1/s50": {
+      "value": 40.0,
+      "ci95": [
+        31.086494875449787,
+        54.96120170205972
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/combined/oracle/depth2/s50": {
+      "value": 64.51591854061458,
+      "ci95": [
+        55.59546171646581,
+        79.99999999999997
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/combined/oracle/depth3/s50": {
+      "value": 154.5498126279753,
+      "ci95": [
+        120.09757597676743,
+        193.29431110471143
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/combined/practical@1/depth0/s50": {
+      "value": 40.0,
+      "ci95": [
+        32.81127937966087,
+        55.792416136822645
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/combined/practical@1/depth1/s50": {
+      "value": 64.08559020716976,
+      "ci95": [
+        52.138639620694406,
+        90.74500177563701
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/combined/practical@1/depth2/s50": {
+      "value": 122.55730858687785,
+      "ci95": [
+        99.57540715712186,
+        164.90093810025024
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/combined/practical@1/depth3/s50": {
+      "value": 278.57618025475966,
+      "ci95": [
+        226.27416997969516,
+        null
+      ],
+      "share_resamples_not_reached": 0.149
+    },
+    "infant12mo/squid/combined/heldout_false_per_min": {
+      "1": 1.25,
+      "0.2": 0.6
+    },
+    "infant12mo/squid/combined/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.32407407407407407,
+    "infant12mo/squid/grad/oracle/depth0/s50": {
+      "value": 26.918003852647114,
+      "ci95": [
+        22.851798158655345,
+        32.68621193253674
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/grad/oracle/depth1/s50": {
+      "value": 47.17737795589458,
+      "ci95": [
+        34.28975931412291,
+        60.93122296816773
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/grad/oracle/depth2/s50": {
+      "value": 71.60200567423777,
+      "ci95": [
+        60.366577103736894,
+        90.75395400075946
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/grad/oracle/depth3/s50": {
+      "value": 173.32220797150725,
+      "ci95": [
+        136.34886342857192,
+        204.63314939718856
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/grad/practical@1/depth0/s50": {
+      "value": 49.119514336416415,
+      "ci95": [
+        39.02194568210293,
+        58.79647134468782
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/grad/practical@1/depth1/s50": {
+      "value": 70.01637196738426,
+      "ci95": [
+        57.95145892808463,
+        100.82296314643854
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/grad/practical@1/depth2/s50": {
+      "value": 142.5437949024542,
+      "ci95": [
+        115.61446455816369,
+        196.20161320192878
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/grad/practical@1/depth3/s50": {
+      "value": 319.99999999999994,
+      "ci95": [
+        248.1831618933974,
+        null
+      ],
+      "share_resamples_not_reached": 0.497
+    },
+    "infant12mo/squid/grad/heldout_false_per_min": {
+      "1": 1.15,
+      "0.2": 0.25
+    },
+    "infant12mo/squid/grad/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.23148148148148148,
+    "infant12mo/squid/mag/oracle/depth0/s50": {
+      "value": 21.43546925072586,
+      "ci95": [
+        17.102337811147077,
+        28.2842712474619
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/mag/oracle/depth1/s50": {
+      "value": 41.48620177784768,
+      "ci95": [
+        32.622839339311,
+        56.568542494923776
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/mag/oracle/depth2/s50": {
+      "value": 66.89672036022698,
+      "ci95": [
+        58.18069541229469,
+        84.38579004669118
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/mag/oracle/depth3/s50": {
+      "value": 159.99999999999994,
+      "ci95": [
+        114.85133153924878,
+        203.05194611484683
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/mag/practical@1/depth0/s50": {
+      "value": 39.02194568210293,
+      "ci95": [
+        32.31732288058291,
+        53.63136315837714
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/mag/practical@1/depth1/s50": {
+      "value": 64.6346457611658,
+      "ci95": [
+        53.49068561211387,
+        92.58765658720432
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/mag/practical@1/depth2/s50": {
+      "value": 118.8795431309558,
+      "ci95": [
+        98.78139138764885,
+        148.75524734745863
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/squid/mag/practical@1/depth3/s50": {
+      "value": 264.30612095668874,
+      "ci95": [
+        226.27416997969516,
+        null
+      ],
+      "share_resamples_not_reached": 0.048
+    },
+    "infant12mo/squid/mag/heldout_false_per_min": {
+      "1": 1.35,
+      "0.2": 0.55
+    },
+    "infant12mo/squid/mag/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.3425925925925926,
+    "infant12mo/opm_matched/opm/oracle/depth0/s50": {
+      "value": 17.411011265922486,
+      "ci95": [
+        13.263002457176707,
+        24.837156241469682
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_matched/opm/oracle/depth1/s50": {
+      "value": 38.4889534757658,
+      "ci95": [
+        28.2842712474619,
+        53.29000662039463
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_matched/opm/oracle/depth2/s50": {
+      "value": 62.99216575194313,
+      "ci95": [
+        54.57549017576777,
+        77.72687685137609
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_matched/opm/oracle/depth3/s50": {
+      "value": 150.22894570587295,
+      "ci95": [
+        123.37686603263525,
+        184.85643149956368
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_matched/opm/practical@1/depth0/s50": {
+      "value": 32.49009585424942,
+      "ci95": [
+        28.04588768228695,
+        46.28742864018623
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_matched/opm/practical@1/depth1/s50": {
+      "value": 62.4567345724568,
+      "ci95": [
+        51.23342350213315,
+        83.79045485731531
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_matched/opm/practical@1/depth2/s50": {
+      "value": 119.33315923931214,
+      "ci95": [
+        95.12014029307123,
+        159.99999999999994
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_matched/opm/practical@1/depth3/s50": {
+      "value": 265.99612676569194,
+      "ci95": [
+        229.83038591709968,
+        null
+      ],
+      "share_resamples_not_reached": 0.061
+    },
+    "infant12mo/opm_matched/opm/heldout_false_per_min": {
+      "1": 1.05,
+      "0.2": 0.4
+    },
+    "infant12mo/opm_matched/opm/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.4166666666666667,
+    "infant12mo/opm_dense/opm/oracle/depth0/s50": {
+      "value": 13.517071368140432,
+      "ci95": [
+        10.755926581280853,
+        17.697301721873234
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_dense/opm/oracle/depth1/s50": {
+      "value": 35.394603443746455,
+      "ci95": [
+        25.54097359338625,
+        52.095231651811005
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_dense/opm/oracle/depth2/s50": {
+      "value": 59.66657961965606,
+      "ci95": [
+        49.39441156972257,
+        77.13407983539956
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_dense/opm/oracle/depth3/s50": {
+      "value": 136.67971814692362,
+      "ci95": [
+        110.70423903386965,
+        179.59392772949968
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_dense/opm/practical@1/depth0/s50": {
+      "value": 28.713697703389013,
+      "ci95": [
+        21.242543537253813,
+        40.03715504444616
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_dense/opm/practical@1/depth1/s50": {
+      "value": 61.88671007306402,
+      "ci95": [
+        50.39684199579491,
+        87.25325310727933
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_dense/opm/practical@1/depth2/s50": {
+      "value": 114.85479081355602,
+      "ci95": [
+        88.31724451167574,
+        159.99999999999994
+      ],
+      "share_resamples_not_reached": 0.0
+    },
+    "infant12mo/opm_dense/opm/practical@1/depth3/s50": {
+      "value": 258.5385830446632,
+      "ci95": [
+        214.6944955796245,
+        null
+      ],
+      "share_resamples_not_reached": 0.064
+    },
+    "infant12mo/opm_dense/opm/heldout_false_per_min": {
+      "1": 0.7,
+      "0.2": 0.4
+    },
+    "infant12mo/opm_dense/opm/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.46296296296296297,
+    "infant12mo/paired/opm_dense/opm_vs_squid/combined/oracle/depth0": {
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 6.103515625e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.6262860387788187,
+        "ci95": [
+          1.336836262483246,
+          1.9749276247356626
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/combined/oracle/depth1": {
+      "locations_favouring_opm": 10,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.001953125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1301157834293303,
+        "ci95": [
+          1.033880794342273,
+          1.2685582906489419
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/combined/oracle/depth2": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0390625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0812739552337434,
+        "ci95": [
+          1.0126824243937018,
+          1.1744519765457744
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/combined/oracle/depth3": {
+      "locations_favouring_opm": 7,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.1796875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.130744302983141,
+        "ci95": [
+          0.92326918481859,
+          1.3041569240576236
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/combined/practical@1/depth0": {
+      "locations_favouring_opm": 14,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.00042724609375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3930633530100476,
+        "ci95": [
+          1.1949914330536218,
+          1.6811818762300013
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/combined/practical@1/depth1": {
+      "locations_favouring_opm": 5,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.5625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0355307323900351,
+        "ci95": [
+          0.9591073325047481,
+          1.166529039576116
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/combined/practical@1/depth2": {
+      "locations_favouring_opm": 7,
+      "locations_favouring_squid": 4,
+      "location_sign_flip_p": 0.431640625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.06706309522452,
+        "ci95": [
+          0.9621577608711783,
+          1.1957604422607766
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/combined/practical@1/depth3": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.3125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0775033148790598,
+        "ci95": [
+          0.9636895166847873,
+          1.1957957715357177
+        ],
+        "share_resamples_undefined": 0.159
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/grad/oracle/depth0": {
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 2.288818359375e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.991407984727558,
+        "ci95": [
+          1.6145800466062863,
+          2.416178888808894
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/grad/oracle/depth1": {
+      "locations_favouring_opm": 13,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.000244140625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3328974862191856,
+        "ci95": [
+          1.1300657423393543,
+          1.485624793909112
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/grad/oracle/depth2": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.0078125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2000353653697589,
+        "ci95": [
+          1.0856598148204324,
+          1.3743665728593033
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/grad/oracle/depth3": {
+      "locations_favouring_opm": 11,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.0009765625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2680901769580388,
+        "ci95": [
+          1.1176128736369468,
+          1.3755418181397434
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/grad/practical@1/depth0": {
+      "locations_favouring_opm": 15,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 6.103515625e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.7106648834928337,
+        "ci95": [
+          1.3724392294410788,
+          1.9715598373865197
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/grad/practical@1/depth1": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.015625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1313636140089252,
+        "ci95": [
+          1.0432881878537033,
+          1.322470062669147
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/grad/practical@1/depth2": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.01953125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.241078355484934,
+        "ci95": [
+          1.068984608308796,
+          1.5016427907093512
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/grad/practical@1/depth3": {
+      "locations_favouring_opm": 10,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.048583984375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2377262853054283,
+        "ci95": [
+          1.042546787457766,
+          1.3440848032251043
+        ],
+        "share_resamples_undefined": 0.494
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/mag/oracle/depth0": {
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 1.52587890625e-05,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.5858072112609387,
+        "ci95": [
+          1.3433515400555303,
+          1.9270508959095207
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/mag/oracle/depth1": {
+      "locations_favouring_opm": 12,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.00048828125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1721052855919902,
+        "ci95": [
+          1.0442737824274135,
+          1.3350090563469246
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/mag/oracle/depth2": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.00390625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1211757199199177,
+        "ci95": [
+          1.0411476024993163,
+          1.2438569869457383
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/mag/oracle/depth3": {
+      "locations_favouring_opm": 8,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.3046875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1706199147119123,
+        "ci95": [
+          0.946003063374498,
+          1.3394861393579125
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/mag/practical@1/depth0": {
+      "locations_favouring_opm": 14,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.0001220703125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3590010623221565,
+        "ci95": [
+          1.1892071150027212,
+          1.6158906276926785
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/mag/practical@1/depth1": {
+      "locations_favouring_opm": 7,
+      "locations_favouring_squid": 4,
+      "location_sign_flip_p": 0.431640625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0444026784564495,
+        "ci95": [
+          0.9675088966442488,
+          1.1665290395761159
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/mag/practical@1/depth2": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.6171875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0350420934894493,
+        "ci95": [
+          0.9218087412948484,
+          1.1672544361985315
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_dense/opm_vs_squid/mag/practical@1/depth3": {
+      "locations_favouring_opm": 5,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.5625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.02230822898503,
+        "ci95": [
+          0.934631531208692,
+          1.1143553982212069
+        ],
+        "share_resamples_undefined": 0.075
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/combined/oracle/depth0": {
+      "locations_favouring_opm": 13,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.0399169921875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2625702272796149,
+        "ci95": [
+          1.019593231746625,
+          1.4800868423861044
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/combined/oracle/depth1": {
+      "locations_favouring_opm": 7,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0392592260318436,
+        "ci95": [
+          0.9460444028150152,
+          1.1593208441640168
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/combined/oracle/depth2": {
+      "locations_favouring_opm": 3,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0241895602489972,
+        "ci95": [
+          0.9888763947082514,
+          1.0717734625362931
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/combined/oracle/depth3": {
+      "locations_favouring_opm": 4,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 1.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0287618800877563,
+        "ci95": [
+          0.8777501661547406,
+          1.2142888165243995
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/combined/practical@1/depth0": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.013671875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2311444133449163,
+        "ci95": [
+          1.0703152486395515,
+          1.476868937173506
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/combined/practical@1/depth1": {
+      "locations_favouring_opm": 4,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 0.59375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.026079743775642,
+        "ci95": [
+          0.9488386886541853,
+          1.1555200191244115
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/combined/practical@1/depth2": {
+      "locations_favouring_opm": 4,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.6875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.027018050708772,
+        "ci95": [
+          0.9482741017636177,
+          1.0977134957444363
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/combined/practical@1/depth3": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 4,
+      "location_sign_flip_p": 0.65625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0472941228206272,
+        "ci95": [
+          0.9334521072599797,
+          1.1641802384108708
+        ],
+        "share_resamples_undefined": 0.163
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/grad/oracle/depth0": {
+      "locations_favouring_opm": 14,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.0029296875,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.5460333372669792,
+        "ci95": [
+          1.177763741435325,
+          1.874065317375929
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/grad/oracle/depth1": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.00390625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.225738132516369,
+        "ci95": [
+          1.0756905862201824,
+          1.3853380785753904
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/grad/oracle/depth2": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.0556640625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1366811224779814,
+        "ci95": [
+          1.0448536319884771,
+          1.2779878302000156
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/grad/oracle/depth3": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.0556640625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1537204575132123,
+        "ci95": [
+          1.0440654273483356,
+          1.2572662915704504
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/grad/practical@1/depth0": {
+      "locations_favouring_opm": 13,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.0006103515625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.511830391537365,
+        "ci95": [
+          1.2406190448738506,
+          1.6886678614218333
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/grad/practical@1/depth1": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.00390625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1210379864825855,
+        "ci95": [
+          1.0373278303981872,
+          1.310880124619676
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/grad/practical@1/depth2": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.03125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1945028172479302,
+        "ci95": [
+          1.049161228578803,
+          1.4280189883515746
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/grad/practical@1/depth3": {
+      "locations_favouring_opm": 7,
+      "locations_favouring_squid": 4,
+      "location_sign_flip_p": 0.220703125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.203025036082117,
+        "ci95": [
+          0.9866350331418879,
+          1.2865397865952504
+        ],
+        "share_resamples_undefined": 0.476
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/mag/oracle/depth0": {
+      "locations_favouring_opm": 10,
+      "locations_favouring_squid": 2,
+      "location_sign_flip_p": 0.04931640625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2311444133449159,
+        "ci95": [
+          0.9918249183865933,
+          1.5148843006496342
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/mag/oracle/depth1": {
+      "locations_favouring_opm": 9,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.017578125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.077872948766172,
+        "ci95": [
+          0.9563093497510512,
+          1.2404255526499344
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/mag/oracle/depth2": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 0,
+      "location_sign_flip_p": 0.03125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0619847652747738,
+        "ci95": [
+          1.0152266397652399,
+          1.1256499077548487
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/mag/oracle/depth3": {
+      "locations_favouring_opm": 5,
+      "locations_favouring_squid": 4,
+      "location_sign_flip_p": 1.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.065041089439963,
+        "ci95": [
+          0.8900655230015496,
+          1.2221338683645129
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/mag/practical@1/depth0": {
+      "locations_favouring_opm": 11,
+      "locations_favouring_squid": 1,
+      "location_sign_flip_p": 0.00390625,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.201041260609245,
+        "ci95": [
+          1.0631407575627807,
+          1.4383177280235833
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/mag/practical@1/depth1": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 4,
+      "location_sign_flip_p": 0.46484375,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0348707181638255,
+        "ci95": [
+          0.9563071169075581,
+          1.1498509032308506
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/mag/practical@1/depth2": {
+      "locations_favouring_opm": 6,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 1.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 0.9961987421497267,
+        "ci95": [
+          0.8799741522878415,
+          1.0859134350530955
+        ],
+        "share_resamples_undefined": 0.0
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
+    "infant12mo/paired/opm_matched/opm_vs_squid/mag/practical@1/depth3": {
+      "locations_favouring_opm": 4,
+      "locations_favouring_squid": 3,
+      "location_sign_flip_p": 1.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 0.9936465021895154,
+        "ci95": [
+          0.9201876506248746,
+          1.0640414496752397
+        ],
+        "share_resamples_undefined": 0.077
+      },
+      "n_locations": 18,
+      "p_values": "uncorrected"
+    },
     "adult/localization/squid/focal/80nAm": {
       "n": 24,
       "detected": 0.2916666666666667,
@@ -3734,6 +6953,262 @@
         "share_opm_smaller": 0.5
       }
     },
+    "size2yr/localization/squid/focal/80nAm": {
+      "n": 24,
+      "detected": 0.3333333333333333,
+      "dspm_error_mm_median_all": 45.83155752544191,
+      "ecd_error_mm_median_detected": 4.230905692046994,
+      "joint_detect_and_dspm_within_10mm": 0.08333333333333333,
+      "joint_detect_and_ecd_within_10mm": 0.2916666666666667
+    },
+    "size2yr/localization/squid/focal/320nAm": {
+      "n": 24,
+      "detected": 0.875,
+      "dspm_error_mm_median_all": 16.583350120674105,
+      "ecd_error_mm_median_detected": 6.345519540861482,
+      "joint_detect_and_dspm_within_10mm": 0.125,
+      "joint_detect_and_ecd_within_10mm": 0.625
+    },
+    "size2yr/localization/squid/patch/80nAm": {
+      "n": 24,
+      "detected": 0.041666666666666664,
+      "dspm_error_mm_median_all": 49.60628490841441,
+      "ecd_error_mm_median_detected": 6.9243791853521985,
+      "joint_detect_and_dspm_within_10mm": 0.041666666666666664,
+      "joint_detect_and_ecd_within_10mm": 0.041666666666666664
+    },
+    "size2yr/localization/squid/patch/320nAm": {
+      "n": 24,
+      "detected": 0.5416666666666666,
+      "dspm_error_mm_median_all": 28.842747219352738,
+      "ecd_error_mm_median_detected": 8.455712613740868,
+      "joint_detect_and_dspm_within_10mm": 0.08333333333333333,
+      "joint_detect_and_ecd_within_10mm": 0.2916666666666667
+    },
+    "size2yr/localization/opm_matched/focal/80nAm": {
+      "n": 24,
+      "detected": 0.375,
+      "dspm_error_mm_median_all": 36.42416827743739,
+      "ecd_error_mm_median_detected": 3.9189341665632775,
+      "joint_detect_and_dspm_within_10mm": 0.20833333333333334,
+      "joint_detect_and_ecd_within_10mm": 0.375
+    },
+    "size2yr/localization/opm_matched/focal/320nAm": {
+      "n": 24,
+      "detected": 0.875,
+      "dspm_error_mm_median_all": 16.1143552938073,
+      "ecd_error_mm_median_detected": 5.604978404834902,
+      "joint_detect_and_dspm_within_10mm": 0.16666666666666666,
+      "joint_detect_and_ecd_within_10mm": 0.6666666666666666
+    },
+    "size2yr/localization/opm_matched/patch/80nAm": {
+      "n": 24,
+      "detected": 0.125,
+      "dspm_error_mm_median_all": 57.5419954279955,
+      "ecd_error_mm_median_detected": 7.7775721159997735,
+      "joint_detect_and_dspm_within_10mm": 0.041666666666666664,
+      "joint_detect_and_ecd_within_10mm": 0.08333333333333333
+    },
+    "size2yr/localization/opm_matched/patch/320nAm": {
+      "n": 24,
+      "detected": 0.5416666666666666,
+      "dspm_error_mm_median_all": 22.03707965189981,
+      "ecd_error_mm_median_detected": 7.939583371655007,
+      "joint_detect_and_dspm_within_10mm": 0.16666666666666666,
+      "joint_detect_and_ecd_within_10mm": 0.3333333333333333
+    },
+    "size2yr/localization/opm_dense/focal/80nAm": {
+      "n": 24,
+      "detected": 0.4583333333333333,
+      "dspm_error_mm_median_all": 41.5490755044971,
+      "ecd_error_mm_median_detected": 4.967605462671034,
+      "joint_detect_and_dspm_within_10mm": 0.16666666666666666,
+      "joint_detect_and_ecd_within_10mm": 0.3333333333333333
+    },
+    "size2yr/localization/opm_dense/focal/320nAm": {
+      "n": 24,
+      "detected": 0.9166666666666666,
+      "dspm_error_mm_median_all": 16.78151460984317,
+      "ecd_error_mm_median_detected": 6.141138764358902,
+      "joint_detect_and_dspm_within_10mm": 0.16666666666666666,
+      "joint_detect_and_ecd_within_10mm": 0.625
+    },
+    "size2yr/localization/opm_dense/patch/80nAm": {
+      "n": 24,
+      "detected": 0.08333333333333333,
+      "dspm_error_mm_median_all": 52.404332323104796,
+      "ecd_error_mm_median_detected": 3.918326362655483,
+      "joint_detect_and_dspm_within_10mm": 0.041666666666666664,
+      "joint_detect_and_ecd_within_10mm": 0.08333333333333333
+    },
+    "size2yr/localization/opm_dense/patch/320nAm": {
+      "n": 24,
+      "detected": 0.5833333333333334,
+      "dspm_error_mm_median_all": 18.32797815562752,
+      "ecd_error_mm_median_detected": 7.937407451287565,
+      "joint_detect_and_dspm_within_10mm": 0.125,
+      "joint_detect_and_ecd_within_10mm": 0.375
+    },
+    "size2yr/localization_paired/opm_matched_vs_squid/focal/80nAm": {
+      "dspm_error_mm": {
+        "median_difference": -0.7849560768645132,
+        "ci95": [
+          -13.180920231884976,
+          4.317911414098571
+        ],
+        "wilcoxon_p": 0.44549752117368835,
+        "share_opm_smaller": 0.5416666666666666
+      },
+      "ecd_error_mm": {
+        "median_difference": -2.1994987062569074,
+        "ci95": [
+          -8.084191829052376,
+          -0.08913816574144318
+        ],
+        "wilcoxon_p": 0.045679688453674316,
+        "share_opm_smaller": 0.7083333333333334
+      }
+    },
+    "size2yr/localization_paired/opm_matched_vs_squid/focal/320nAm": {
+      "dspm_error_mm": {
+        "median_difference": 0.0,
+        "ci95": [
+          -3.6284937185497688,
+          2.877796715292474
+        ],
+        "wilcoxon_p": 0.5900638024577389,
+        "share_opm_smaller": 0.4583333333333333
+      },
+      "ecd_error_mm": {
+        "median_difference": -0.49241883519057517,
+        "ci95": [
+          -1.4545392831974522,
+          0.3183310626640692
+        ],
+        "wilcoxon_p": 0.128027081489563,
+        "share_opm_smaller": 0.5833333333333334
+      }
+    },
+    "size2yr/localization_paired/opm_matched_vs_squid/patch/80nAm": {
+      "dspm_error_mm": {
+        "median_difference": 0.3552359669566414,
+        "ci95": [
+          -16.122368013625014,
+          21.01162265085031
+        ],
+        "wilcoxon_p": 0.7898378372192383,
+        "share_opm_smaller": 0.4583333333333333
+      },
+      "ecd_error_mm": {
+        "median_difference": -1.774386622967313,
+        "ci95": [
+          -8.121969134934645,
+          3.9381702227763853
+        ],
+        "wilcoxon_p": 0.40611207485198975,
+        "share_opm_smaller": 0.6666666666666666
+      }
+    },
+    "size2yr/localization_paired/opm_matched_vs_squid/patch/320nAm": {
+      "dspm_error_mm": {
+        "median_difference": -1.438898357646237,
+        "ci95": [
+          -7.939372934822572,
+          0.0
+        ],
+        "wilcoxon_p": 0.06837655952437323,
+        "share_opm_smaller": 0.5
+      },
+      "ecd_error_mm": {
+        "median_difference": 1.699305185239806,
+        "ci95": [
+          -0.03558840613589531,
+          2.538531349206906
+        ],
+        "wilcoxon_p": 0.40611207485198975,
+        "share_opm_smaller": 0.3333333333333333
+      }
+    },
+    "size2yr/localization_paired/opm_dense_vs_squid/focal/80nAm": {
+      "dspm_error_mm": {
+        "median_difference": -2.460895194650891,
+        "ci95": [
+          -6.513515920965654,
+          0.0
+        ],
+        "wilcoxon_p": 0.44549752117368835,
+        "share_opm_smaller": 0.625
+      },
+      "ecd_error_mm": {
+        "median_difference": -3.0301343059359804,
+        "ci95": [
+          -10.356555522597013,
+          1.0006290928381762
+        ],
+        "wilcoxon_p": 0.07872927188873291,
+        "share_opm_smaller": 0.6666666666666666
+      }
+    },
+    "size2yr/localization_paired/opm_dense_vs_squid/focal/320nAm": {
+      "dspm_error_mm": {
+        "median_difference": -3.6107997441779496,
+        "ci95": [
+          -8.012737973737657,
+          0.0
+        ],
+        "wilcoxon_p": 0.05816656898450354,
+        "share_opm_smaller": 0.5416666666666666
+      },
+      "ecd_error_mm": {
+        "median_difference": -0.8982171750482353,
+        "ci95": [
+          -1.9792373100504221,
+          0.5183105231638735
+        ],
+        "wilcoxon_p": 0.3165123462677002,
+        "share_opm_smaller": 0.5416666666666666
+      }
+    },
+    "size2yr/localization_paired/opm_dense_vs_squid/patch/80nAm": {
+      "dspm_error_mm": {
+        "median_difference": 0.0799996917043515,
+        "ci95": [
+          -13.144726141175948,
+          23.84577410635834
+        ],
+        "wilcoxon_p": 0.746925950050354,
+        "share_opm_smaller": 0.4583333333333333
+      },
+      "ecd_error_mm": {
+        "median_difference": -2.359131676039064,
+        "ci95": [
+          -8.533884369639047,
+          8.124813325706917
+        ],
+        "wilcoxon_p": 0.8115357160568237,
+        "share_opm_smaller": 0.5833333333333334
+      }
+    },
+    "size2yr/localization_paired/opm_dense_vs_squid/patch/320nAm": {
+      "dspm_error_mm": {
+        "median_difference": 0.0,
+        "ci95": [
+          -4.127902756737454,
+          0.0
+        ],
+        "wilcoxon_p": 0.30105418162259867,
+        "share_opm_smaller": 0.4166666666666667
+      },
+      "ecd_error_mm": {
+        "median_difference": -1.6217705286032509,
+        "ci95": [
+          -6.686747215620967,
+          1.419221710223721
+        ],
+        "wilcoxon_p": 0.28966712951660156,
+        "share_opm_smaller": 0.5833333333333334
+      }
+    },
     "infant2yr/localization/squid/focal/80nAm": {
       "n": 24,
       "detected": 0.4166666666666667,
@@ -3989,10 +7464,522 @@
         "wilcoxon_p": 0.47316575050354004,
         "share_opm_smaller": 0.375
       }
+    },
+    "infant18mo/localization/squid/focal/80nAm": {
+      "n": 24,
+      "detected": 0.375,
+      "dspm_error_mm_median_all": 41.88439053607253,
+      "ecd_error_mm_median_detected": 3.9785752603424824,
+      "joint_detect_and_dspm_within_10mm": 0.20833333333333334,
+      "joint_detect_and_ecd_within_10mm": 0.2916666666666667
+    },
+    "infant18mo/localization/squid/focal/320nAm": {
+      "n": 24,
+      "detected": 0.9583333333333334,
+      "dspm_error_mm_median_all": 14.803815246034265,
+      "ecd_error_mm_median_detected": 5.9513064165925424,
+      "joint_detect_and_dspm_within_10mm": 0.2916666666666667,
+      "joint_detect_and_ecd_within_10mm": 0.6666666666666666
+    },
+    "infant18mo/localization/squid/patch/80nAm": {
+      "n": 24,
+      "detected": 0.3333333333333333,
+      "dspm_error_mm_median_all": 52.879232200445074,
+      "ecd_error_mm_median_detected": 11.695707220235311,
+      "joint_detect_and_dspm_within_10mm": 0.125,
+      "joint_detect_and_ecd_within_10mm": 0.125
+    },
+    "infant18mo/localization/squid/patch/320nAm": {
+      "n": 24,
+      "detected": 0.875,
+      "dspm_error_mm_median_all": 12.6783094724231,
+      "ecd_error_mm_median_detected": 8.1757304291417,
+      "joint_detect_and_dspm_within_10mm": 0.4166666666666667,
+      "joint_detect_and_ecd_within_10mm": 0.5833333333333334
+    },
+    "infant18mo/localization/opm_matched/focal/80nAm": {
+      "n": 24,
+      "detected": 0.4583333333333333,
+      "dspm_error_mm_median_all": 32.7509861140393,
+      "ecd_error_mm_median_detected": 4.751465445539297,
+      "joint_detect_and_dspm_within_10mm": 0.3333333333333333,
+      "joint_detect_and_ecd_within_10mm": 0.2916666666666667
+    },
+    "infant18mo/localization/opm_matched/focal/320nAm": {
+      "n": 24,
+      "detected": 0.9583333333333334,
+      "dspm_error_mm_median_all": 9.471559622977667,
+      "ecd_error_mm_median_detected": 4.0805619354059735,
+      "joint_detect_and_dspm_within_10mm": 0.5416666666666666,
+      "joint_detect_and_ecd_within_10mm": 0.7083333333333334
+    },
+    "infant18mo/localization/opm_matched/patch/80nAm": {
+      "n": 24,
+      "detected": 0.2916666666666667,
+      "dspm_error_mm_median_all": 41.0596455818793,
+      "ecd_error_mm_median_detected": 9.889725062391753,
+      "joint_detect_and_dspm_within_10mm": 0.20833333333333334,
+      "joint_detect_and_ecd_within_10mm": 0.16666666666666666
+    },
+    "infant18mo/localization/opm_matched/patch/320nAm": {
+      "n": 24,
+      "detected": 0.9166666666666666,
+      "dspm_error_mm_median_all": 8.38446926752691,
+      "ecd_error_mm_median_detected": 8.637207583033186,
+      "joint_detect_and_dspm_within_10mm": 0.5833333333333334,
+      "joint_detect_and_ecd_within_10mm": 0.5416666666666666
+    },
+    "infant18mo/localization/opm_dense/focal/80nAm": {
+      "n": 24,
+      "detected": 0.4583333333333333,
+      "dspm_error_mm_median_all": 26.353436441616125,
+      "ecd_error_mm_median_detected": 3.54184788431089,
+      "joint_detect_and_dspm_within_10mm": 0.4166666666666667,
+      "joint_detect_and_ecd_within_10mm": 0.4166666666666667
+    },
+    "infant18mo/localization/opm_dense/focal/320nAm": {
+      "n": 24,
+      "detected": 0.9583333333333334,
+      "dspm_error_mm_median_all": 8.026732398243288,
+      "ecd_error_mm_median_detected": 4.655054790034138,
+      "joint_detect_and_dspm_within_10mm": 0.5833333333333334,
+      "joint_detect_and_ecd_within_10mm": 0.625
+    },
+    "infant18mo/localization/opm_dense/patch/80nAm": {
+      "n": 24,
+      "detected": 0.3333333333333333,
+      "dspm_error_mm_median_all": 39.98927632535244,
+      "ecd_error_mm_median_detected": 6.3875202415271986,
+      "joint_detect_and_dspm_within_10mm": 0.20833333333333334,
+      "joint_detect_and_ecd_within_10mm": 0.20833333333333334
+    },
+    "infant18mo/localization/opm_dense/patch/320nAm": {
+      "n": 24,
+      "detected": 0.9583333333333334,
+      "dspm_error_mm_median_all": 9.757001243300579,
+      "ecd_error_mm_median_detected": 7.987957623216654,
+      "joint_detect_and_dspm_within_10mm": 0.5416666666666666,
+      "joint_detect_and_ecd_within_10mm": 0.7083333333333334
+    },
+    "infant18mo/localization_paired/opm_matched_vs_squid/focal/80nAm": {
+      "dspm_error_mm": {
+        "median_difference": -1.0381488976888633,
+        "ci95": [
+          -5.004482306020898,
+          10.169436455112649
+        ],
+        "wilcoxon_p": 0.7825803044501396,
+        "share_opm_smaller": 0.5
+      },
+      "ecd_error_mm": {
+        "median_difference": 1.0583468097283766,
+        "ci95": [
+          -1.5999898209044119,
+          4.539270151864853
+        ],
+        "wilcoxon_p": 0.4389305114746094,
+        "share_opm_smaller": 0.375
+      }
+    },
+    "infant18mo/localization_paired/opm_matched_vs_squid/focal/320nAm": {
+      "dspm_error_mm": {
+        "median_difference": -7.127179450768445,
+        "ci95": [
+          -14.54666072604116,
+          -1.6321993788171412
+        ],
+        "wilcoxon_p": 0.0003384546789562384,
+        "share_opm_smaller": 0.75
+      },
+      "ecd_error_mm": {
+        "median_difference": -0.14130640406944317,
+        "ci95": [
+          -0.9685321741218548,
+          0.636418904668846
+        ],
+        "wilcoxon_p": 0.746925950050354,
+        "share_opm_smaller": 0.5
+      }
+    },
+    "infant18mo/localization_paired/opm_matched_vs_squid/patch/80nAm": {
+      "dspm_error_mm": {
+        "median_difference": -7.201865708990305,
+        "ci95": [
+          -18.385214881948272,
+          -0.3594291987946434
+        ],
+        "wilcoxon_p": 0.04470848116563669,
+        "share_opm_smaller": 0.7083333333333334
+      },
+      "ecd_error_mm": {
+        "median_difference": -0.12710079062518997,
+        "ci95": [
+          -7.684175426571487,
+          2.624592284838915
+        ],
+        "wilcoxon_p": 0.6839864253997803,
+        "share_opm_smaller": 0.5
+      }
+    },
+    "infant18mo/localization_paired/opm_matched_vs_squid/patch/320nAm": {
+      "dspm_error_mm": {
+        "median_difference": -0.08902624488346333,
+        "ci95": [
+          -3.204999775445023,
+          1.8700494607115576
+        ],
+        "wilcoxon_p": 0.7412506037181041,
+        "share_opm_smaller": 0.5
+      },
+      "ecd_error_mm": {
+        "median_difference": -1.0662611126241655,
+        "ci95": [
+          -2.31113044215336,
+          0.30954384286858505
+        ],
+        "wilcoxon_p": 0.20761656761169434,
+        "share_opm_smaller": 0.7083333333333334
+      }
+    },
+    "infant18mo/localization_paired/opm_dense_vs_squid/focal/80nAm": {
+      "dspm_error_mm": {
+        "median_difference": -2.5661646604444956,
+        "ci95": [
+          -7.14811829186642,
+          5.380189901074473
+        ],
+        "wilcoxon_p": 0.4650985871802594,
+        "share_opm_smaller": 0.5416666666666666
+      },
+      "ecd_error_mm": {
+        "median_difference": -3.485079601748218,
+        "ci95": [
+          -9.094351832439166,
+          -0.4956505990603133
+        ],
+        "wilcoxon_p": 0.002814650535583496,
+        "share_opm_smaller": 0.75
+      }
+    },
+    "infant18mo/localization_paired/opm_dense_vs_squid/focal/320nAm": {
+      "dspm_error_mm": {
+        "median_difference": -5.855449520433224,
+        "ci95": [
+          -11.06747066508664,
+          -3.0579587469454523
+        ],
+        "wilcoxon_p": 0.0019440584341867799,
+        "share_opm_smaller": 0.7083333333333334
+      },
+      "ecd_error_mm": {
+        "median_difference": -0.10105956644858294,
+        "ci95": [
+          -0.5321752312060601,
+          1.3174498932531247
+        ],
+        "wilcoxon_p": 0.7898378372192383,
+        "share_opm_smaller": 0.5416666666666666
+      }
+    },
+    "infant18mo/localization_paired/opm_dense_vs_squid/patch/80nAm": {
+      "dspm_error_mm": {
+        "median_difference": -6.312579474024673,
+        "ci95": [
+          -20.376887361958644,
+          6.859920440870397
+        ],
+        "wilcoxon_p": 0.16178664110148655,
+        "share_opm_smaller": 0.5833333333333334
+      },
+      "ecd_error_mm": {
+        "median_difference": -3.963490603806481,
+        "ci95": [
+          -7.566024258336825,
+          -0.45472813742493656
+        ],
+        "wilcoxon_p": 0.009575724601745605,
+        "share_opm_smaller": 0.75
+      }
+    },
+    "infant18mo/localization_paired/opm_dense_vs_squid/patch/320nAm": {
+      "dspm_error_mm": {
+        "median_difference": -0.3150785326134429,
+        "ci95": [
+          -4.4447035754950415,
+          0.0
+        ],
+        "wilcoxon_p": 0.3061029943646809,
+        "share_opm_smaller": 0.5
+      },
+      "ecd_error_mm": {
+        "median_difference": -0.9122420159722768,
+        "ci95": [
+          -2.62118181608477,
+          -0.29225719924706306
+        ],
+        "wilcoxon_p": 0.015044927597045898,
+        "share_opm_smaller": 0.7916666666666666
+      }
+    },
+    "infant12mo/localization/squid/focal/80nAm": {
+      "n": 24,
+      "detected": 0.4166666666666667,
+      "dspm_error_mm_median_all": 24.96128097329023,
+      "ecd_error_mm_median_detected": 5.043728226729308,
+      "joint_detect_and_dspm_within_10mm": 0.08333333333333333,
+      "joint_detect_and_ecd_within_10mm": 0.375
+    },
+    "infant12mo/localization/squid/focal/320nAm": {
+      "n": 24,
+      "detected": 0.9583333333333334,
+      "dspm_error_mm_median_all": 13.176266996903259,
+      "ecd_error_mm_median_detected": 5.5020004370234235,
+      "joint_detect_and_dspm_within_10mm": 0.16666666666666666,
+      "joint_detect_and_ecd_within_10mm": 0.7083333333333334
+    },
+    "infant12mo/localization/squid/patch/80nAm": {
+      "n": 24,
+      "detected": 0.375,
+      "dspm_error_mm_median_all": 44.368786928428406,
+      "ecd_error_mm_median_detected": 9.805018458114336,
+      "joint_detect_and_dspm_within_10mm": 0.041666666666666664,
+      "joint_detect_and_ecd_within_10mm": 0.20833333333333334
+    },
+    "infant12mo/localization/squid/patch/320nAm": {
+      "n": 24,
+      "detected": 0.9583333333333334,
+      "dspm_error_mm_median_all": 16.682203573069174,
+      "ecd_error_mm_median_detected": 6.0786080911252505,
+      "joint_detect_and_dspm_within_10mm": 0.2916666666666667,
+      "joint_detect_and_ecd_within_10mm": 0.6666666666666666
+    },
+    "infant12mo/localization/opm_matched/focal/80nAm": {
+      "n": 24,
+      "detected": 0.4583333333333333,
+      "dspm_error_mm_median_all": 22.330562792290923,
+      "ecd_error_mm_median_detected": 6.135359741005396,
+      "joint_detect_and_dspm_within_10mm": 0.3333333333333333,
+      "joint_detect_and_ecd_within_10mm": 0.4166666666666667
+    },
+    "infant12mo/localization/opm_matched/focal/320nAm": {
+      "n": 24,
+      "detected": 0.9583333333333334,
+      "dspm_error_mm_median_all": 9.462034944837324,
+      "ecd_error_mm_median_detected": 5.866744982783604,
+      "joint_detect_and_dspm_within_10mm": 0.5416666666666666,
+      "joint_detect_and_ecd_within_10mm": 0.6666666666666666
+    },
+    "infant12mo/localization/opm_matched/patch/80nAm": {
+      "n": 24,
+      "detected": 0.375,
+      "dspm_error_mm_median_all": 22.721495017550854,
+      "ecd_error_mm_median_detected": 6.331490051797795,
+      "joint_detect_and_dspm_within_10mm": 0.20833333333333334,
+      "joint_detect_and_ecd_within_10mm": 0.2916666666666667
+    },
+    "infant12mo/localization/opm_matched/patch/320nAm": {
+      "n": 24,
+      "detected": 0.9583333333333334,
+      "dspm_error_mm_median_all": 6.529448223987706,
+      "ecd_error_mm_median_detected": 6.955661890854556,
+      "joint_detect_and_dspm_within_10mm": 0.6666666666666666,
+      "joint_detect_and_ecd_within_10mm": 0.6666666666666666
+    },
+    "infant12mo/localization/opm_dense/focal/80nAm": {
+      "n": 24,
+      "detected": 0.5,
+      "dspm_error_mm_median_all": 20.340231734738154,
+      "ecd_error_mm_median_detected": 5.009465451867952,
+      "joint_detect_and_dspm_within_10mm": 0.2916666666666667,
+      "joint_detect_and_ecd_within_10mm": 0.4166666666666667
+    },
+    "infant12mo/localization/opm_dense/focal/320nAm": {
+      "n": 24,
+      "detected": 1.0,
+      "dspm_error_mm_median_all": 7.400434792348456,
+      "ecd_error_mm_median_detected": 5.437627769327836,
+      "joint_detect_and_dspm_within_10mm": 0.625,
+      "joint_detect_and_ecd_within_10mm": 0.625
+    },
+    "infant12mo/localization/opm_dense/patch/80nAm": {
+      "n": 24,
+      "detected": 0.375,
+      "dspm_error_mm_median_all": 50.22307277109587,
+      "ecd_error_mm_median_detected": 7.760998215029537,
+      "joint_detect_and_dspm_within_10mm": 0.125,
+      "joint_detect_and_ecd_within_10mm": 0.25
+    },
+    "infant12mo/localization/opm_dense/patch/320nAm": {
+      "n": 24,
+      "detected": 1.0,
+      "dspm_error_mm_median_all": 7.00129055787274,
+      "ecd_error_mm_median_detected": 6.757380565215561,
+      "joint_detect_and_dspm_within_10mm": 0.75,
+      "joint_detect_and_ecd_within_10mm": 0.6666666666666666
+    },
+    "infant12mo/localization_paired/opm_matched_vs_squid/focal/80nAm": {
+      "dspm_error_mm": {
+        "median_difference": 0.0,
+        "ci95": [
+          -10.084258282423681,
+          5.356789154580511
+        ],
+        "wilcoxon_p": 0.7151447551766743,
+        "share_opm_smaller": 0.4583333333333333
+      },
+      "ecd_error_mm": {
+        "median_difference": 0.08657057587479566,
+        "ci95": [
+          -3.1385697935096317,
+          2.436598591325975
+        ],
+        "wilcoxon_p": 0.8553357124328613,
+        "share_opm_smaller": 0.5
+      }
+    },
+    "infant12mo/localization_paired/opm_matched_vs_squid/focal/320nAm": {
+      "dspm_error_mm": {
+        "median_difference": -4.24434181566787,
+        "ci95": [
+          -7.505936391173121,
+          0.0
+        ],
+        "wilcoxon_p": 0.0041838683298923394,
+        "share_opm_smaller": 0.5833333333333334
+      },
+      "ecd_error_mm": {
+        "median_difference": -0.18827666816606814,
+        "ci95": [
+          -0.8563377054490161,
+          1.6972418712423432
+        ],
+        "wilcoxon_p": 0.4389305114746094,
+        "share_opm_smaller": 0.5416666666666666
+      }
+    },
+    "infant12mo/localization_paired/opm_matched_vs_squid/patch/80nAm": {
+      "dspm_error_mm": {
+        "median_difference": -11.176244125797131,
+        "ci95": [
+          -31.720424960499717,
+          0.0
+        ],
+        "wilcoxon_p": 0.01627091479437473,
+        "share_opm_smaller": 0.6666666666666666
+      },
+      "ecd_error_mm": {
+        "median_difference": -2.790806185992146,
+        "ci95": [
+          -7.670774069250392,
+          -0.3148702433753172
+        ],
+        "wilcoxon_p": 0.2522493600845337,
+        "share_opm_smaller": 0.7083333333333334
+      }
+    },
+    "infant12mo/localization_paired/opm_matched_vs_squid/patch/320nAm": {
+      "dspm_error_mm": {
+        "median_difference": -6.757467139331169,
+        "ci95": [
+          -11.638222059093582,
+          -1.8096180616631017
+        ],
+        "wilcoxon_p": 0.0022039368924026206,
+        "share_opm_smaller": 0.75
+      },
+      "ecd_error_mm": {
+        "median_difference": -0.3788094528919377,
+        "ci95": [
+          -2.1946126680691833,
+          0.8749285127937967
+        ],
+        "wilcoxon_p": 0.40611207485198975,
+        "share_opm_smaller": 0.5833333333333334
+      }
+    },
+    "infant12mo/localization_paired/opm_dense_vs_squid/focal/80nAm": {
+      "dspm_error_mm": {
+        "median_difference": -0.20806825997802747,
+        "ci95": [
+          -11.570985860726186,
+          2.285023694673111
+        ],
+        "wilcoxon_p": 0.6148113070366257,
+        "share_opm_smaller": 0.5
+      },
+      "ecd_error_mm": {
+        "median_difference": -1.253783936503289,
+        "ci95": [
+          -2.8485821670658167,
+          -0.23517781069106714
+        ],
+        "wilcoxon_p": 0.08392000198364258,
+        "share_opm_smaller": 0.7083333333333334
+      }
+    },
+    "infant12mo/localization_paired/opm_dense_vs_squid/focal/320nAm": {
+      "dspm_error_mm": {
+        "median_difference": -4.71408408378248,
+        "ci95": [
+          -10.084258282423681,
+          0.0
+        ],
+        "wilcoxon_p": 0.00496959648564301,
+        "share_opm_smaller": 0.625
+      },
+      "ecd_error_mm": {
+        "median_difference": -0.040267255690723536,
+        "ci95": [
+          -1.0634608692747887,
+          0.8481725655967036
+        ],
+        "wilcoxon_p": 0.9888126850128174,
+        "share_opm_smaller": 0.5
+      }
+    },
+    "infant12mo/localization_paired/opm_dense_vs_squid/patch/80nAm": {
+      "dspm_error_mm": {
+        "median_difference": -2.063277480792168,
+        "ci95": [
+          -18.9388195643211,
+          10.446852551988343
+        ],
+        "wilcoxon_p": 0.4223414659500122,
+        "share_opm_smaller": 0.5
+      },
+      "ecd_error_mm": {
+        "median_difference": -2.4584586497834886,
+        "ci95": [
+          -4.638247594215414,
+          4.198069422810782
+        ],
+        "wilcoxon_p": 0.8553357124328613,
+        "share_opm_smaller": 0.5833333333333334
+      }
+    },
+    "infant12mo/localization_paired/opm_dense_vs_squid/patch/320nAm": {
+      "dspm_error_mm": {
+        "median_difference": -6.0717042612153245,
+        "ci95": [
+          -11.977613009516883,
+          -3.178796987058285
+        ],
+        "wilcoxon_p": 0.00025359518031722975,
+        "share_opm_smaller": 0.75
+      },
+      "ecd_error_mm": {
+        "median_difference": -1.2841261280980067,
+        "ci95": [
+          -2.7391191043677434,
+          0.8693171824909622
+        ],
+        "wilcoxon_p": 0.27681541442871094,
+        "share_opm_smaller": 0.5833333333333334
+      }
     }
   },
   "provenance": {
-    "commit": "beeb3c4",
+    "commit": "fd40dfe",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }
