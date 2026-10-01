@@ -18,9 +18,9 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G1B Hunold et al. 2016 depth-orientation spike SNR (MEG part) | ADAPT (+ NEW OPM column) | done, independently reviewed |
 | G1C Goldenholz et al. 2009 cortical SNR maps (MEG part) | ADAPT (+ NEW OPM extension) | done, independently reviewed |
 | G2 realistic adult OPM vs Neuromag | NEW | done, independently reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2` |
-| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (2-year infant template and two scaled-adult size controls), after the adult freeze `adult-baseline-v2` |
-| G4 epilepsy detection and localization | NEW | adult done; pediatric done (2-year template, school-age size control) |
-| G5 software, reproduction, report | - | in progress (tests, `scripts/run_all.sh`, local report; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3, with the 87 tests of the time) |
+| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (2-year infant template and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`; independently reviewed (approve with notes; fixes re-verified) |
+| G4 epilepsy detection and localization | NEW | adult done; pediatric done (2-year template, school-age size control); independently reviewed |
+| G5 software, reproduction, report | - | 109 unit tests pass; `scripts/run_all.sh`; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then) |
 
 Adult findings so far (`adult-baseline-v2`), conditional on one adult head (MNE sample subject),
 an assumed OPM noise of 15 fT/sqrt(Hz), OPM sensors with no helmet-to-scalp gap beyond the 7-mm
