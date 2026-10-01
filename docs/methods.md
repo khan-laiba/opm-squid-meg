@@ -778,7 +778,9 @@ noise conventions (Neuromag at top contact; the refitted dense OPM array; intrin
   infeasible (the head cannot move up from top contact). A head-mounted array moving with the head
   has no geometry change; its cap can slip, modelled as a rigid rotation of the array about the
   head origin by +-1 and +-3 deg about x, y and z, sensors that would enter the scalp being moved
-  out along their axes to the A-OPM-CLEAR clearances (a cap can lift, not sink). For each case,
+  out along their axes to the A-OPM-CLEAR clearances without its 5-mm limit on the extra shift (a
+  flexible cap or sliding holders can lift, not sink; the number of lifted sensors and the largest
+  lift are reported per case). For each case,
   'known': the detectability with the displaced geometry (template and noise of the displaced
   geometry; the ideal limit of movement compensation or of a measured slip); 'mismatched': the
   output SNR (h^T s_k) / sqrt(h^T C_k h) of the matched filter h = C_k^+ s_0 built with the
@@ -787,17 +789,21 @@ noise conventions (Neuromag at top contact; the refitted dense OPM array; intrin
 * B. In-band motion in a static residual field. A rigid array moving with the head reads
   n_i(t) . B(p_i(t)) at every integration point, with B(x) = B0 + G (x - x_ref) static in the room
   (`motion.readings`, exact for any rotation; `motion.jacobian`, its linearisation in the rotation
-  vector about a pivot and the translation). With perfect calibration, rotation in B0 and
-  translation in G change the readings by a uniform field in the head frame (removed exactly by a
-  homogeneous-field projection, for any rotation), and rotation in G adds a symmetric traceless
-  gradient (removed to first order by the 8-term projection of G2); `tests/test_motion.py` checks
-  these identities, the Jacobian against finite differences and the basis against
-  `environment.external_basis`. Calibration errors (A-MOT-CAL: sensitive-axis tilt 0, 1, 3 deg RMS
+  vector about a pivot and the translation). With perfect calibration any rigid motion changes the
+  readings by those of a uniform field plus the symmetric traceless gradient R^T G R about x_ref in
+  the head frame, so the 8-term projection of G2 removes the change exactly, for any rotation; in a
+  uniform field the change is uniform and the homogeneous-field projection removes it exactly;
+  translation in G is uniform, rotation in G is not. `tests/test_motion.py` checks these identities
+  (finite rotations up to 1 rad included), the Jacobian against finite differences (with a pivot and
+  calibration errors), the basis against `environment.external_basis`, the two metrics' bounds and
+  the threshold interpolation. Calibration errors (A-MOT-CAL: sensitive-axis tilt 0, 1, 3 deg RMS
   with gain errors 0, 1, 3 % RMS, unknown to the analyst) leave residuals proportional to the field
   change. Head rotation about a pivot 60 mm below the head origin (A-MOT-PIVOT; the head origin as a
   sensitivity), independent per axis with in-band RMS theta; fields of unit strength (A-MOT-FIELD:
-  1 nT uniform, or a 1 nT/m symmetric traceless gradient with unit Frobenius norm; 8 isotropic
-  draws with their own calibration draws per case). The artefact covariance theta^2 P J J^T P^T
+  1 nT uniform, or a 1 nT/m symmetric traceless gradient with unit Frobenius norm, about x_ref = r0
+  of G2, 0/0/40 mm in the head frame; 32 isotropic draws used as common random numbers: the same
+  fields and calibration errors in every correction, pivot and anatomy). The artefact covariance
+  theta^2 P J J^T P^T
   after the correction P (none, the 3-term homogeneous or the 8-term projection, applied to signal
   and noise alike) is evaluated two ways (A-MOT-METRIC): outside the analyst's noise model (the
   matched filter of the static covariance applied to data that contain the artefact), and inside
@@ -805,8 +811,10 @@ noise conventions (Neuromag at top contact; the refitted dense OPM array; intrin
   patterns per field, which the optimal filter nulls; the bound for data-driven nulling or for
   regression on measured head motion). The rotation at which the median OPM detectability falls by
   1 or 3 dB, or to Neuromag's static detectability (D = 0), is interpolated on a logarithmic grid
-  (0.0001-5 deg RMS); everything is linear in rotation x field, so for a field of B nT the
-  thresholds divide by B. The SQUIDs are fixed in the room and have no such term.
+  (0.0001-5 deg RMS) on the median curve over draws, with the 10th-90th percentiles of the per-draw
+  thresholds; everything is linear in rotation x field, so for a field of B nT the thresholds divide
+  by B. The SQUIDs are fixed in the room and have no such term; D charges no projection or SSS to
+  Neuromag, which is conservative for the OPM.
 * B'. A time-domain check with exact rigid motion over 60 s at 300 Hz (adult): slow rotation drift
   (below 0.1 Hz, up to 5 deg per axis) plus in-band jitter (0.05 deg RMS per axis after the G2
   analysis filter), B0 = 2 nT and G = 5 nT/m, calibration errors 1 deg and 1 %; the in-band
@@ -818,7 +826,7 @@ noise conventions (Neuromag at top contact; the refitted dense OPM array; intrin
   treated as in G2 for both systems; the same calibration errors would leave part of it too.
 
 Motion results (`results/g4/g4_motion_summary.json`, `G4_motion_report.md`, `Figure_G4_motion.png`;
-computed at 5bfe1c0; medians over cortical targets of the adult and the 24- and 12-month templates;
+computed at 3ddd032; medians over cortical targets of the adult and the 24- and 12-month templates;
 dB of detectability, dense OPM or Neuromag combined, intrinsic + brain noise)
 * A. Neuromag, head displaced in the fixed helmet, template of the reference position: 2 mm costs
   0.04-0.14 dB, 5 mm 0.28-0.56 dB, 10 mm down 1.65-1.72 dB (5-8 % of the cortex losing more than 3
@@ -826,32 +834,39 @@ dB of detectability, dense OPM or Neuromag combined, intrinsic + brain noise)
   head has no room); 5-deg rotations 0.22-0.84 dB, 10-deg rotations 0.91-2.31 dB (pitch and roll of
   the templates 1.90-2.31 dB, with 34-41 % of their cortex losing more than 3 dB). With the displaced
   geometry known (ideal movement compensation) the loss is at most 0.39 dB (10 mm away from the
-  helmet top). 18 of the 81 displacements are infeasible at top contact (up or towards the wall).
-  Dense OPM cap slipped, template of the reference geometry: 1 deg (median sensor shift 1.3-1.9 mm)
-  costs 0.01-0.09 dB, 3 deg (3.8-5.7 mm) 0.11-0.53 dB; with the slip known at most 0.08 dB. Per mm of
-  sensor-to-head displacement the uncompensated losses of the two systems are similar; the
+  helmet top). 18 of the 81 displacements are infeasible at top contact (translations towards the
+  helmet wall and some pitch and roll rotations; no upward displacement was tested). Dense OPM cap
+  slipped, template of the reference geometry: 1 deg (median sensor shift 1.3-1.9 mm) costs
+  0.01-0.09 dB, 3 deg (3.8-5.7 mm) 0.11-0.53 dB; with the slip known at most 0.08 dB. A 3-deg slip
+  lifts 6-87 sensors (largest lift 24 mm, adult, about x), most on the adult's less spherical head.
+  Per mm of sensor-to-head displacement the uncompensated losses of the two systems are similar; the
   head-mounted array is unaffected by head displacement itself, which costs the fixed helmet up to
   1.7 dB at 10 mm and 2.3 dB at 10 deg without compensation.
 * B. In-band rotation, artefact outside the noise model; thresholds in deg RMS per axis for a unit
-  field (divide by the residual field in nT or nT/m), 1-dB loss, ranges over the three anatomies:
-  no correction 0.021-0.023 deg (uniform) and 0.17-0.21 deg (gradient); homogeneous projection:
-  the uniform term is removed exactly with perfect calibration, 0.43-0.45 deg with 1-deg/1-%
-  calibration errors and 0.14-0.15 deg with 3 deg/3 %, while the gradient term is not removed
-  (0.14-0.21 deg, as without correction); 8-term projection: uniform 0.38-0.41 and 0.13 deg,
-  gradient 2.9-4.1 and 1.1-1.3 deg (1 deg/1 % and 3 deg/3 %). The OPM falls to Neuromag's static
-  detectability (D = 0) at similar rotations (static D +0.51 to +1.86 dB after the projections). With
-  the head origin as pivot the gradient thresholds change by less than 7 % after the homogeneous
-  projection and rise by 10-33 % (or beyond 5 deg) after the 8-term projection. With the
-  artefact part of the noise model (oracle), the loss stays below 0.15 dB up to 5 deg in every case.
-  Artefact per channel for 1 deg RMS in the unit field: 14-16 pT without correction (uniform), 0.23-
-  0.24 pT after the homogeneous projection with 1 deg/1 % errors, 22-29 fT for the gradient term
-  after the 8-term projection. For example, with 1-deg/1-% calibration and the 8-term projection the
-  dense array loses 1 dB at about 0.4 deg RMS of in-band head rotation in a 1-nT residual field, 0.04
-  deg in 10 nT; without any correction at 0.02 deg in 1 nT.
+  field (divide by the residual field in nT or nT/m), 1-dB loss on the median curve over 32 draws,
+  ranges over the three anatomies (10th-90th percentiles of the per-draw thresholds about +-10-20 %
+  around them): no correction 0.021-0.023 deg (uniform) and 0.16-0.21 deg (gradient); homogeneous
+  projection: the uniform term is removed exactly with perfect calibration, 0.43-0.45 deg with 1-deg/
+  1-% calibration errors and 0.14-0.15 deg with 3 deg/3 %, while the gradient term is not removed
+  (0.14-0.21 deg, as without correction); 8-term projection: uniform 0.38-0.40 and 0.13 deg,
+  gradient 3.0-3.9 and 1.1-1.3 deg (1 deg/1 % and 3 deg/3 %). The OPM falls to Neuromag's static
+  detectability (D = 0) at 0.6-1.4 times these rotations, earliest for the adult, whose static D
+  after the projections is smallest (+0.51 to +0.80 dB, against +1.25 to +1.86 dB for the
+  templates). With the head origin instead of the neck as pivot the thresholds after the homogeneous
+  projection change by less than 1 % (the translation the neck pivot adds is uniform and removed),
+  and after the 8-term projection they rise by 11-24 % (or beyond 5 deg): with calibration errors the
+  projection leaks part of the translation term. With the artefact part of the noise
+  model (oracle), the loss stays below 0.15 dB up to 5 deg in every case. Artefact per channel for 1
+  deg RMS in the unit field: 15 pT without correction (uniform), 0.23-0.24 pT after the homogeneous
+  projection with 1 deg/1 % errors, 23-28 fT for the gradient term after the 8-term projection. For
+  example, with 1-deg/1-% calibration and the 8-term projection the dense array loses 1 dB at about
+  0.4 deg RMS of in-band head rotation in a 1-nT residual field and 0.04 deg in 10 nT; without any
+  correction at 0.02 deg in 1 nT.
 * B'. Exact rigid motion (adult; 5-deg drift, 0.05-deg in-band jitter, 2 nT and 5 nT/m, 1 deg/1 %):
-  the linear model predicts the exact in-band artefact to within 0.04 % (1,387, 365 and 21 fT RMS
-  per channel after no, the homogeneous and the 8-term correction, against 89 fT of intrinsic OPM
-  noise in the band); the drift moves each sensor's operating point by up to 274 pT (median 127 pT).
+  per channel the exact in-band artefact is within 0.25 % of the linear prediction for 90 % of the
+  channels (largest deviation 0.9 %; medians 1,387, 365 and 21 fT RMS after no, the homogeneous and
+  the 8-term correction, against 89 fT of intrinsic OPM noise in the band); the drift moves each
+  sensor's operating point by up to 274 pT (median 127 pT).
 * Reading. A head-mounted array removes the geometry error that head motion causes in a fixed
   helmet, and converts motion into a field artefact whose size scales with the residual field and
   whose removal depends on calibration (or on modelling it from the data or from measured motion).

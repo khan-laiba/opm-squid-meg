@@ -144,97 +144,99 @@ Static reference (no motion): OPM detectability change from the correction alone
 | 12-month template | homogeneous | -0.06 | +1.86 |
 | 12-month template | homogeneous+gradient | -0.35 | +1.54 |
 
-In-band artefact per channel (median over channels, then over draws) for 1 deg RMS rotation per axis in the unit field, after each correction [fT]. Then the in-band rotation (deg RMS per axis, in the unit field) at which the median OPM detectability falls by 1 or 3 dB, or D falls to 0 dB, when the artefact is not part of the analyst's noise model (matched filter of the static covariance applied to data that contain it; '-': not reached up to 5 deg). Last column: the loss at 5 deg when the artefact is part of the known noise covariance (the optimal filter nulls its at most 3 spatial patterns: the bound for data-driven nulling or regression on measured head motion).
+In-band artefact per channel (median over channels, then over 32 draws) for 1 deg RMS rotation per axis in the unit field, after each correction [fT]. Then the in-band rotation (deg RMS per axis, in the unit field) at which the median OPM detectability falls by 1 or 3 dB, or D falls to 0 dB, when the artefact is not part of the analyst's noise model (matched filter of the static covariance applied to data that contain it), from the median curve over draws, with the 10th-90th percentiles of the per-draw thresholds ('-': not reached up to 5 deg). The draws are common random numbers: the same fields and calibration errors in every correction, pivot and anatomy. Last column: the loss at 5 deg when the artefact is part of the known noise covariance (the optimal filter nulls its at most 3 spatial patterns: the bound for data-driven nulling or regression on measured head motion).
 
 | anatomy | field | pivot | correction | calibration (tilt, gain) | artefact [fT per deg] | 1 dB | 3 dB | D = 0 | oracle loss at 5 deg [dB] |
 |---|---|---|---|---|---|---|---|---|---|
-| adult | uniform | neck | none | tilt0deg_gain0pct | 1.55e+04 | 0.0211 | 0.0402 | 0.0208 | -0.07 |
-| adult | gradient | neck | none | tilt0deg_gain0pct | 1.84e+03 | 0.165 | 0.311 | 0.152 | -0.09 |
-| adult | uniform | neck | none | tilt1deg_gain1pct | 1.51e+04 | 0.0222 | 0.0459 | 0.0217 | -0.06 |
-| adult | gradient | neck | none | tilt1deg_gain1pct | 1.79e+03 | 0.165 | 0.311 | 0.153 | -0.08 |
-| adult | uniform | neck | none | tilt3deg_gain3pct | 1.51e+04 | 0.022 | 0.0447 | 0.0216 | -0.06 |
-| adult | gradient | neck | none | tilt3deg_gain3pct | 1.9e+03 | 0.154 | 0.295 | 0.146 | -0.08 |
-| adult | uniform | neck | homogeneous | tilt0deg_gain0pct | 6.26e-12 | - | - | - | +0.00 |
-| adult | gradient | neck | homogeneous | tilt0deg_gain0pct | 1.35e+03 | 0.149 | 0.288 | 0.127 | -0.15 |
-| adult | uniform | neck | homogeneous | tilt1deg_gain1pct | 242 | 0.447 | 0.895 | 0.324 | -0.01 |
-| adult | gradient | neck | homogeneous | tilt1deg_gain1pct | 1.42e+03 | 0.144 | 0.279 | 0.12 | -0.14 |
-| adult | uniform | neck | homogeneous | tilt3deg_gain3pct | 706 | 0.148 | 0.286 | 0.119 | -0.01 |
-| adult | gradient | neck | homogeneous | tilt3deg_gain3pct | 1.42e+03 | 0.141 | 0.275 | 0.12 | -0.12 |
-| adult | gradient | origin | homogeneous | tilt0deg_gain0pct | 1.35e+03 | 0.152 | 0.292 | 0.128 | -0.14 |
-| adult | gradient | origin | homogeneous | tilt1deg_gain1pct | 1.39e+03 | 0.143 | 0.278 | 0.121 | -0.14 |
-| adult | gradient | origin | homogeneous | tilt3deg_gain3pct | 1.42e+03 | 0.149 | 0.287 | 0.125 | -0.13 |
-| adult | uniform | neck | homogeneous+gradient | tilt0deg_gain0pct | 6.07e-12 | - | - | - | +0.00 |
-| adult | gradient | neck | homogeneous+gradient | tilt0deg_gain0pct | 1.43e-12 | - | - | - | +0.00 |
-| adult | uniform | neck | homogeneous+gradient | tilt1deg_gain1pct | 229 | 0.379 | 0.791 | 0.23 | -0.01 |
-| adult | gradient | neck | homogeneous+gradient | tilt1deg_gain1pct | 28.7 | 2.9 | - | 2.01 | -0.02 |
-| adult | uniform | neck | homogeneous+gradient | tilt3deg_gain3pct | 711 | 0.129 | 0.255 | 0.0819 | -0.01 |
-| adult | gradient | neck | homogeneous+gradient | tilt3deg_gain3pct | 86.6 | 1.09 | 2.18 | 0.607 | -0.02 |
-| adult | gradient | origin | homogeneous+gradient | tilt0deg_gain0pct | 1.23e-12 | - | - | - | +0.00 |
-| adult | gradient | origin | homogeneous+gradient | tilt1deg_gain1pct | 23.5 | 3.53 | - | 2.18 | -0.02 |
-| adult | gradient | origin | homogeneous+gradient | tilt3deg_gain3pct | 68.6 | 1.23 | 2.45 | 0.74 | -0.02 |
-| 2-year template | uniform | neck | none | tilt0deg_gain0pct | 1.53e+04 | 0.0206 | 0.0381 | 0.0249 | -0.05 |
-| 2-year template | gradient | neck | none | tilt0deg_gain0pct | 1.5e+03 | 0.205 | 0.378 | 0.247 | -0.09 |
-| 2-year template | uniform | neck | none | tilt1deg_gain1pct | 1.51e+04 | 0.0191 | 0.0345 | 0.0235 | -0.05 |
-| 2-year template | gradient | neck | none | tilt1deg_gain1pct | 1.53e+03 | 0.204 | 0.37 | 0.247 | -0.09 |
-| 2-year template | uniform | neck | none | tilt3deg_gain3pct | 1.45e+04 | 0.0208 | 0.0391 | 0.0255 | -0.05 |
-| 2-year template | gradient | neck | none | tilt3deg_gain3pct | 1.75e+03 | 0.172 | 0.32 | 0.228 | -0.09 |
-| 2-year template | uniform | neck | homogeneous | tilt0deg_gain0pct | 6.27e-12 | - | - | - | +0.00 |
-| 2-year template | gradient | neck | homogeneous | tilt0deg_gain0pct | 1.19e+03 | 0.201 | 0.359 | 0.232 | -0.14 |
-| 2-year template | uniform | neck | homogeneous | tilt1deg_gain1pct | 229 | 0.442 | 0.888 | 0.55 | -0.02 |
-| 2-year template | gradient | neck | homogeneous | tilt1deg_gain1pct | 1.17e+03 | 0.203 | 0.367 | 0.236 | -0.14 |
-| 2-year template | uniform | neck | homogeneous | tilt3deg_gain3pct | 709 | 0.147 | 0.284 | 0.188 | -0.02 |
-| 2-year template | gradient | neck | homogeneous | tilt3deg_gain3pct | 1.18e+03 | 0.196 | 0.352 | 0.231 | -0.12 |
-| 2-year template | gradient | origin | homogeneous | tilt0deg_gain0pct | 1.21e+03 | 0.188 | 0.341 | 0.224 | -0.14 |
-| 2-year template | gradient | origin | homogeneous | tilt1deg_gain1pct | 1.23e+03 | 0.199 | 0.354 | 0.23 | -0.14 |
-| 2-year template | gradient | origin | homogeneous | tilt3deg_gain3pct | 1.19e+03 | 0.188 | 0.34 | 0.226 | -0.13 |
-| 2-year template | uniform | neck | homogeneous+gradient | tilt0deg_gain0pct | 6.95e-12 | - | - | - | +0.00 |
-| 2-year template | gradient | neck | homogeneous+gradient | tilt0deg_gain0pct | 9.17e-13 | - | - | - | +0.00 |
-| 2-year template | uniform | neck | homogeneous+gradient | tilt1deg_gain1pct | 234 | 0.412 | 0.842 | 0.403 | -0.02 |
-| 2-year template | gradient | neck | homogeneous+gradient | tilt1deg_gain1pct | 22.6 | 4.14 | - | 3.96 | -0.03 |
-| 2-year template | uniform | neck | homogeneous+gradient | tilt3deg_gain3pct | 708 | 0.13 | 0.257 | 0.138 | -0.02 |
-| 2-year template | gradient | neck | homogeneous+gradient | tilt3deg_gain3pct | 74.1 | 1.27 | 2.51 | 1.28 | -0.03 |
-| 2-year template | gradient | origin | homogeneous+gradient | tilt0deg_gain0pct | 7.56e-13 | - | - | - | +0.00 |
-| 2-year template | gradient | origin | homogeneous+gradient | tilt1deg_gain1pct | 19.4 | - | - | 4.97 | -0.03 |
-| 2-year template | gradient | origin | homogeneous+gradient | tilt3deg_gain3pct | 58.5 | 1.68 | 3.15 | 1.58 | -0.03 |
-| 12-month template | uniform | neck | none | tilt0deg_gain0pct | 1.44e+04 | 0.0226 | 0.0477 | 0.0326 | -0.03 |
-| 12-month template | gradient | neck | none | tilt0deg_gain0pct | 1.63e+03 | 0.2 | 0.357 | 0.266 | -0.06 |
-| 12-month template | uniform | neck | none | tilt1deg_gain1pct | 1.5e+04 | 0.0227 | 0.0482 | 0.0332 | -0.03 |
-| 12-month template | gradient | neck | none | tilt1deg_gain1pct | 1.47e+03 | 0.214 | 0.417 | 0.289 | -0.08 |
-| 12-month template | uniform | neck | none | tilt3deg_gain3pct | 1.44e+04 | 0.0215 | 0.0421 | 0.0298 | -0.03 |
-| 12-month template | gradient | neck | none | tilt3deg_gain3pct | 1.58e+03 | 0.203 | 0.368 | 0.269 | -0.08 |
-| 12-month template | uniform | neck | homogeneous | tilt0deg_gain0pct | 5.83e-12 | - | - | - | +0.00 |
-| 12-month template | gradient | neck | homogeneous | tilt0deg_gain0pct | 1.09e+03 | 0.211 | 0.403 | 0.277 | -0.13 |
-| 12-month template | uniform | neck | homogeneous | tilt1deg_gain1pct | 241 | 0.427 | 0.866 | 0.592 | -0.02 |
-| 12-month template | gradient | neck | homogeneous | tilt1deg_gain1pct | 1.12e+03 | 0.21 | 0.4 | 0.276 | -0.13 |
-| 12-month template | uniform | neck | homogeneous | tilt3deg_gain3pct | 700 | 0.135 | 0.266 | 0.205 | -0.02 |
-| 12-month template | gradient | neck | homogeneous | tilt3deg_gain3pct | 1.14e+03 | 0.206 | 0.38 | 0.267 | -0.12 |
-| 12-month template | gradient | origin | homogeneous | tilt0deg_gain0pct | 1.17e+03 | 0.205 | 0.377 | 0.267 | -0.13 |
-| 12-month template | gradient | origin | homogeneous | tilt1deg_gain1pct | 1.1e+03 | 0.207 | 0.386 | 0.274 | -0.13 |
-| 12-month template | gradient | origin | homogeneous | tilt3deg_gain3pct | 1.11e+03 | 0.208 | 0.39 | 0.275 | -0.13 |
-| 12-month template | uniform | neck | homogeneous+gradient | tilt0deg_gain0pct | 6.44e-12 | - | - | - | +0.00 |
-| 12-month template | gradient | neck | homogeneous+gradient | tilt0deg_gain0pct | 7.35e-13 | - | - | - | +0.00 |
-| 12-month template | uniform | neck | homogeneous+gradient | tilt1deg_gain1pct | 241 | 0.383 | 0.797 | 0.507 | -0.02 |
-| 12-month template | gradient | neck | homogeneous+gradient | tilt1deg_gain1pct | 22.4 | 3.66 | - | 4.43 | -0.03 |
-| 12-month template | uniform | neck | homogeneous+gradient | tilt3deg_gain3pct | 689 | 0.131 | 0.258 | 0.159 | -0.02 |
-| 12-month template | gradient | neck | homogeneous+gradient | tilt3deg_gain3pct | 66.3 | 1.34 | 2.63 | 1.47 | -0.03 |
-| 12-month template | gradient | origin | homogeneous+gradient | tilt0deg_gain0pct | 5.66e-13 | - | - | - | +0.00 |
-| 12-month template | gradient | origin | homogeneous+gradient | tilt1deg_gain1pct | 17.9 | - | - | - | -0.03 |
-| 12-month template | gradient | origin | homogeneous+gradient | tilt3deg_gain3pct | 57.2 | 1.48 | 2.86 | 1.84 | -0.03 |
+| adult | uniform | neck | none | tilt0deg_gain0pct | 1.5e+04 | 0.0219 [0.0207-0.0243] | 0.0444 [0.0385-0.0532] | 0.0216 [0.0205-0.0236] | -0.06 |
+| adult | gradient | neck | none | tilt0deg_gain0pct | 1.83e+03 | 0.169 [0.154-0.193] | 0.316 [0.295-0.347] | 0.155 [0.145-0.172] | -0.09 |
+| adult | uniform | neck | none | tilt1deg_gain1pct | 1.5e+04 | 0.0219 [0.0208-0.0242] | 0.0442 [0.0388-0.053] | 0.0215 [0.0206-0.0236] | -0.06 |
+| adult | gradient | neck | none | tilt1deg_gain1pct | 1.82e+03 | 0.168 [0.153-0.192] | 0.315 [0.293-0.346] | 0.154 [0.145-0.172] | -0.09 |
+| adult | uniform | neck | none | tilt3deg_gain3pct | 1.5e+04 | 0.0217 [0.0206-0.0237] | 0.0433 [0.0381-0.0517] | 0.0214 [0.0205-0.0231] | -0.05 |
+| adult | gradient | neck | none | tilt3deg_gain3pct | 1.81e+03 | 0.165 [0.15-0.184] | 0.31 [0.289-0.336] | 0.153 [0.143-0.17] | -0.08 |
+| adult | uniform | neck | homogeneous | tilt0deg_gain0pct | 6.07e-12 | - | - | - | +0.00 |
+| adult | gradient | neck | homogeneous | tilt0deg_gain0pct | 1.39e+03 | 0.146 [0.133-0.161] | 0.283 [0.262-0.305] | 0.122 [0.115-0.134] | -0.15 |
+| adult | uniform | neck | homogeneous | tilt1deg_gain1pct | 236 | 0.449 [0.403-0.507] | 0.898 [0.829-1] | 0.329 [0.303-0.347] | -0.01 |
+| adult | gradient | neck | homogeneous | tilt1deg_gain1pct | 1.39e+03 | 0.146 [0.132-0.162] | 0.283 [0.261-0.306] | 0.122 [0.115-0.133] | -0.14 |
+| adult | uniform | neck | homogeneous | tilt3deg_gain3pct | 704 | 0.142 [0.129-0.154] | 0.277 [0.255-0.295] | 0.116 [0.11-0.125] | -0.01 |
+| adult | gradient | neck | homogeneous | tilt3deg_gain3pct | 1.39e+03 | 0.143 [0.132-0.155] | 0.279 [0.26-0.297] | 0.121 [0.115-0.132] | -0.12 |
+| adult | gradient | origin | homogeneous | tilt0deg_gain0pct | 1.39e+03 | 0.146 [0.133-0.161] | 0.283 [0.262-0.305] | 0.122 [0.115-0.134] | -0.15 |
+| adult | gradient | origin | homogeneous | tilt1deg_gain1pct | 1.39e+03 | 0.146 [0.132-0.162] | 0.283 [0.261-0.306] | 0.122 [0.115-0.133] | -0.14 |
+| adult | gradient | origin | homogeneous | tilt3deg_gain3pct | 1.39e+03 | 0.144 [0.132-0.157] | 0.28 [0.261-0.299] | 0.122 [0.115-0.132] | -0.13 |
+| adult | uniform | neck | homogeneous+gradient | tilt0deg_gain0pct | 6.29e-12 | - | - | - | +0.00 |
+| adult | gradient | neck | homogeneous+gradient | tilt0deg_gain0pct | 1.27e-12 | - | - | - | +0.00 |
+| adult | uniform | neck | homogeneous+gradient | tilt1deg_gain1pct | 234 | 0.382 [0.347-0.453] | 0.795 [0.736-0.905] | 0.232 [0.222-0.248] | -0.01 |
+| adult | gradient | neck | homogeneous+gradient | tilt1deg_gain1pct | 27.5 | 2.99 [2.71-3.37] | - | 1.99 [1.73-2.05] | -0.02 |
+| adult | uniform | neck | homogeneous+gradient | tilt3deg_gain3pct | 693 | 0.13 [0.118-0.137] | 0.256 [0.235-0.269] | 0.0809 [0.0753-0.0885] | -0.01 |
+| adult | gradient | neck | homogeneous+gradient | tilt3deg_gain3pct | 82.9 | 1.11 [1.02-1.19] | 2.21 [2.01-2.38] | 0.613 [0.582-0.658] | -0.02 |
+| adult | gradient | origin | homogeneous+gradient | tilt0deg_gain0pct | 1.22e-12 | - | - | - | +0.00 |
+| adult | gradient | origin | homogeneous+gradient | tilt1deg_gain1pct | 23.3 | 3.53 [3.05-3.92] | - | 2.18 [2.07-2.27] | -0.02 |
+| adult | gradient | origin | homogeneous+gradient | tilt3deg_gain3pct | 71.6 | 1.23 [1.14-1.34] | 2.45 [2.28-2.64] | 0.712 [0.677-0.787] | -0.02 |
+| 2-year template | uniform | neck | none | tilt0deg_gain0pct | 1.49e+04 | 0.0213 [0.0178-0.0227] | 0.0411 [0.0328-0.0487] | 0.0264 [0.0229-0.0296] | -0.05 |
+| 2-year template | gradient | neck | none | tilt0deg_gain0pct | 1.56e+03 | 0.202 [0.174-0.211] | 0.364 [0.323-0.403] | 0.243 [0.227-0.257] | -0.09 |
+| 2-year template | uniform | neck | none | tilt1deg_gain1pct | 1.5e+04 | 0.0213 [0.0178-0.0228] | 0.0412 [0.0328-0.0491] | 0.0264 [0.023-0.0297] | -0.05 |
+| 2-year template | gradient | neck | none | tilt1deg_gain1pct | 1.55e+03 | 0.202 [0.173-0.211] | 0.362 [0.322-0.401] | 0.243 [0.227-0.256] | -0.09 |
+| 2-year template | uniform | neck | none | tilt3deg_gain3pct | 1.49e+04 | 0.0211 [0.0178-0.0225] | 0.0405 [0.0329-0.0473] | 0.0262 [0.0231-0.0292] | -0.05 |
+| 2-year template | gradient | neck | none | tilt3deg_gain3pct | 1.56e+03 | 0.194 [0.173-0.209] | 0.349 [0.322-0.392] | 0.241 [0.225-0.254] | -0.09 |
+| 2-year template | uniform | neck | homogeneous | tilt0deg_gain0pct | 6.19e-12 | - | - | - | +0.00 |
+| 2-year template | gradient | neck | homogeneous | tilt0deg_gain0pct | 1.2e+03 | 0.199 [0.183-0.208] | 0.354 [0.334-0.392] | 0.231 [0.223-0.244] | -0.14 |
+| 2-year template | uniform | neck | homogeneous | tilt1deg_gain1pct | 236 | 0.442 [0.394-0.505] | 0.887 [0.814-0.995] | 0.545 [0.522-0.571] | -0.02 |
+| 2-year template | gradient | neck | homogeneous | tilt1deg_gain1pct | 1.2e+03 | 0.199 [0.182-0.209] | 0.354 [0.333-0.393] | 0.232 [0.222-0.245] | -0.14 |
+| 2-year template | uniform | neck | homogeneous | tilt3deg_gain3pct | 711 | 0.146 [0.133-0.16] | 0.283 [0.261-0.304] | 0.192 [0.166-0.203] | -0.02 |
+| 2-year template | gradient | neck | homogeneous | tilt3deg_gain3pct | 1.19e+03 | 0.194 [0.177-0.206] | 0.349 [0.327-0.381] | 0.23 [0.221-0.243] | -0.13 |
+| 2-year template | gradient | origin | homogeneous | tilt0deg_gain0pct | 1.2e+03 | 0.199 [0.183-0.208] | 0.354 [0.334-0.392] | 0.231 [0.223-0.244] | -0.14 |
+| 2-year template | gradient | origin | homogeneous | tilt1deg_gain1pct | 1.19e+03 | 0.198 [0.182-0.209] | 0.354 [0.333-0.393] | 0.232 [0.222-0.244] | -0.14 |
+| 2-year template | gradient | origin | homogeneous | tilt3deg_gain3pct | 1.18e+03 | 0.197 [0.179-0.207] | 0.353 [0.33-0.383] | 0.231 [0.222-0.243] | -0.13 |
+| 2-year template | uniform | neck | homogeneous+gradient | tilt0deg_gain0pct | 6.58e-12 | - | - | - | +0.00 |
+| 2-year template | gradient | neck | homogeneous+gradient | tilt0deg_gain0pct | 8.99e-13 | - | - | - | +0.00 |
+| 2-year template | uniform | neck | homogeneous+gradient | tilt1deg_gain1pct | 232 | 0.397 [0.368-0.477] | 0.818 [0.772-0.939] | 0.425 [0.383-0.471] | -0.02 |
+| 2-year template | gradient | neck | homogeneous+gradient | tilt1deg_gain1pct | 23.3 | 3.92 [3.28-4.49] | - | 3.77 [3.38-4.14] | -0.03 |
+| 2-year template | uniform | neck | homogeneous+gradient | tilt3deg_gain3pct | 691 | 0.134 [0.123-0.147] | 0.264 [0.245-0.285] | 0.143 [0.127-0.151] | -0.02 |
+| 2-year template | gradient | neck | homogeneous+gradient | tilt3deg_gain3pct | 72.9 | 1.27 [1.2-1.44] | 2.53 [2.39-2.8] | 1.25 [1.18-1.35] | -0.03 |
+| 2-year template | gradient | origin | homogeneous+gradient | tilt0deg_gain0pct | 7.66e-13 | - | - | - | +0.00 |
+| 2-year template | gradient | origin | homogeneous+gradient | tilt1deg_gain1pct | 20.2 | - | - | 4.81 [4.15-4.84] | -0.03 |
+| 2-year template | gradient | origin | homogeneous+gradient | tilt3deg_gain3pct | 61.1 | 1.53 [1.4-1.67] | 2.93 [2.73-3.13] | 1.54 [1.39-1.61] | -0.03 |
+| 12-month template | uniform | neck | none | tilt0deg_gain0pct | 1.5e+04 | 0.0228 [0.0204-0.0238] | 0.0489 [0.037-0.0521] | 0.0329 [0.0266-0.0359] | -0.03 |
+| 12-month template | gradient | neck | none | tilt0deg_gain0pct | 1.55e+03 | 0.209 [0.189-0.223] | 0.396 [0.342-0.461] | 0.282 [0.26-0.313] | -0.07 |
+| 12-month template | uniform | neck | none | tilt1deg_gain1pct | 1.5e+04 | 0.0227 [0.0203-0.0238] | 0.0485 [0.037-0.052] | 0.0328 [0.0266-0.0359] | -0.03 |
+| 12-month template | gradient | neck | none | tilt1deg_gain1pct | 1.54e+03 | 0.209 [0.187-0.223] | 0.396 [0.34-0.46] | 0.282 [0.259-0.312] | -0.07 |
+| 12-month template | uniform | neck | none | tilt3deg_gain3pct | 1.48e+04 | 0.0222 [0.0201-0.0232] | 0.0456 [0.0361-0.0507] | 0.0318 [0.0263-0.0351] | -0.03 |
+| 12-month template | gradient | neck | none | tilt3deg_gain3pct | 1.53e+03 | 0.206 [0.183-0.221] | 0.383 [0.334-0.453] | 0.279 [0.258-0.308] | -0.07 |
+| 12-month template | uniform | neck | homogeneous | tilt0deg_gain0pct | 5.93e-12 | - | - | - | +0.00 |
+| 12-month template | gradient | neck | homogeneous | tilt0deg_gain0pct | 1.14e+03 | 0.207 [0.203-0.215] | 0.386 [0.37-0.421] | 0.27 [0.26-0.286] | -0.13 |
+| 12-month template | uniform | neck | homogeneous | tilt1deg_gain1pct | 227 | 0.425 [0.367-0.488] | 0.863 [0.771-0.954] | 0.591 [0.557-0.632] | -0.02 |
+| 12-month template | gradient | neck | homogeneous | tilt1deg_gain1pct | 1.14e+03 | 0.207 [0.202-0.215] | 0.383 [0.366-0.421] | 0.27 [0.261-0.288] | -0.13 |
+| 12-month template | uniform | neck | homogeneous | tilt3deg_gain3pct | 722 | 0.136 [0.125-0.152] | 0.267 [0.248-0.293] | 0.206 [0.19-0.215] | -0.02 |
+| 12-month template | gradient | neck | homogeneous | tilt3deg_gain3pct | 1.14e+03 | 0.206 [0.201-0.213] | 0.379 [0.36-0.414] | 0.268 [0.255-0.283] | -0.12 |
+| 12-month template | gradient | origin | homogeneous | tilt0deg_gain0pct | 1.14e+03 | 0.207 [0.203-0.215] | 0.386 [0.37-0.421] | 0.27 [0.26-0.286] | -0.13 |
+| 12-month template | gradient | origin | homogeneous | tilt1deg_gain1pct | 1.14e+03 | 0.207 [0.203-0.215] | 0.383 [0.368-0.423] | 0.27 [0.261-0.288] | -0.13 |
+| 12-month template | gradient | origin | homogeneous | tilt3deg_gain3pct | 1.13e+03 | 0.206 [0.202-0.214] | 0.382 [0.365-0.415] | 0.269 [0.257-0.285] | -0.12 |
+| 12-month template | uniform | neck | homogeneous+gradient | tilt0deg_gain0pct | 6.35e-12 | - | - | - | +0.00 |
+| 12-month template | gradient | neck | homogeneous+gradient | tilt0deg_gain0pct | 7.06e-13 | - | - | - | +0.00 |
+| 12-month template | uniform | neck | homogeneous+gradient | tilt1deg_gain1pct | 224 | 0.39 [0.342-0.436] | 0.808 [0.729-0.878] | 0.508 [0.481-0.547] | -0.02 |
+| 12-month template | gradient | neck | homogeneous+gradient | tilt1deg_gain1pct | 23.2 | 3.78 [3.37-4.47] | - | 4.64 [4.06-4.88] | -0.03 |
+| 12-month template | uniform | neck | homogeneous+gradient | tilt3deg_gain3pct | 707 | 0.132 [0.12-0.142] | 0.261 [0.239-0.277] | 0.164 [0.151-0.177] | -0.02 |
+| 12-month template | gradient | neck | homogeneous+gradient | tilt3deg_gain3pct | 69.6 | 1.29 [1.17-1.39] | 2.56 [2.33-2.71] | 1.49 [1.37-1.59] | -0.03 |
+| 12-month template | gradient | origin | homogeneous+gradient | tilt0deg_gain0pct | 5.89e-13 | - | - | - | +0.00 |
+| 12-month template | gradient | origin | homogeneous+gradient | tilt1deg_gain1pct | 19.2 | - | - | - | -0.03 |
+| 12-month template | gradient | origin | homogeneous+gradient | tilt3deg_gain3pct | 57.2 | 1.6 [1.38-1.73] | 3.03 [2.7-3.21] | 1.91 [1.71-2.03] | -0.03 |
 
 ## B'. Exact rigid motion over 60 s (adult)
 
 Slow drift up to 5 deg per axis plus in-band jitter of 0.05 deg RMS per axis (measured: 0.050, 0.050, 0.050 deg), in B0 = 2 nT and G = 5 nT/m, calibration errors [1.0, 0.01] (tilt deg, gain). Peak field change at a sensor (drift included): median 127 pT, maximum 274 pT; this offset moves the sensors' operating point (dynamic range, gain), which is not modelled beyond the calibration errors.
 
-| correction | in-band RMS, exact [fT] | linear prediction [fT] | exact / linear |
-|---|---|---|---|
-| none | 1387.3 | 1387.7 | 1.00 |
-| homogeneous | 364.7 | 364.4 | 1.00 |
-| homogeneous+gradient | 21.3 | 21.3 | 1.00 |
+| correction | in-band RMS, exact [fT] | linear prediction [fT] | exact / linear, per channel: median [5th-95th percentile] | largest deviation |
+|---|---|---|---|---|
+| none | 1387.3 | 1387.7 | 1.0003 [0.9996-1.0013] | 0.5 % |
+| homogeneous | 364.7 | 364.4 | 1.0002 [0.9984-1.0024] | 0.9 % |
+| homogeneous+gradient | 21.3 | 21.3 | 1.0004 [0.9997-1.0011] | 0.6 % |
 
 ## Notes
 
 - A head-mounted array moving rigidly with the head keeps its sensor-to-head geometry, so sustained head displacement changes only the SQUID geometry; the OPM's geometry changes only if the cap slips. The 'known' rows are the ideal limit of movement compensation (continuous head-position tracking for the SQUID, a measured slip for the OPM).
-- In a perfectly calibrated array, rotation in a uniform field changes every reading by a uniform field in the head frame and is removed exactly by the homogeneous-field projection; translation in a gradient is uniform too; rotation in a gradient adds a symmetric traceless gradient, removed to first order by the 8-term projection (tests/test_motion.py). Calibration errors leave residuals proportional to the field change.
+- In a perfectly calibrated array any rigid motion changes the readings by a uniform field plus a symmetric traceless gradient in the head frame, which the 8-term projection removes exactly; in a uniform field the change is uniform and the homogeneous projection removes it exactly; translation in a gradient is uniform, rotation in a gradient is not (tests/test_motion.py, finite rotations included). Calibration errors leave residuals proportional to the field change.
+- D compares the OPM after its correction with Neuromag without any projection or SSS (none is charged to it), which is conservative for the OPM. The gradient is defined about x_ref = r0 of G2 (0, 0, 40 mm, head frame), which sets the uniform part of a translated gradient.
+- A slipped rigid cap must lift where the head is in its way: sensors that would enter the scalp are moved out along their axes without the 5-mm limit of A-OPM-CLEAR (a flexible cap or sliding holders), so the slip rows include the lifts (count and largest lift per row in the table).
 - The static room field is treated as in G2 for both systems (removed exactly by the projection in the projected condition); the same calibration errors would also leave part of it, for both systems, which is not modelled here.
 - Not modelled: sensor dynamic range, gain change with the operating field and cross-axis projection beyond the declared calibration errors; head-motion statistics of real children; specific movement-compensation algorithms; field changes from moving magnetic material.
 - Field strengths, motion amplitudes, pivot and calibration errors are declared sweeps (A-MOT-*), not measurements of a particular room or device; results scale linearly with rotation x field.

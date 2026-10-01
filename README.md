@@ -107,7 +107,7 @@ Head motion and OPM slippage (G4, NEW, a bounded secondary extension; `docs/meth
   about 0.02 deg RMS of in-band rotation in a 1-nT residual field without correction, and at 0.4 deg
   after a homogeneous or 8-term field projection with 1-deg/1-% sensor calibration errors (0.13-0.15
   deg with 3 deg/3 %); the thresholds scale inversely with the field (0.04 deg in 10 nT), and a
-  homogeneous projection alone leaves the gradient term (1 dB at about 0.2 deg in a 1-nT/m
+  homogeneous projection alone leaves the gradient term (1 dB at 0.14-0.21 deg in a 1-nT/m
   gradient). If the artefact is modelled (oracle covariance), the loss stays below 0.15 dB.
   These are bounds on two mechanisms, not a motion-robustness result; real head-motion statistics,
   sensor dynamic range and gain changes are not modelled.
