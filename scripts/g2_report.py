@@ -101,7 +101,7 @@ def main():
                 f"{r:g} mm {2 ** pa[f'{name}/combined/intrinsic+brain/{r:g}mm']['median_log2']:.2f}x" for r in d["patches"]["radii_mm"]) + ".")
             s = d["sensitivity"]
             if name in ("opm_matched", "opm_dense") and "sensitivity_joint_asd_gap" in d:
-                L.append("- Joint OPM noise x scalp gap (vs combined, intrinsic+brain; the arrays are rebuilt for each gap): " + "; ".join(
+                L.append("- Joint OPM noise x scalp gap (vs combined, intrinsic+brain; the same sites moved outward): " + "; ".join(
                     f"{k.replace('/', ', ')} {v[name]['ratio']:.2f}x" for k, v in d["sensitivity_joint_asd_gap"].items()) + ".")
             if "break_even_opm_asd_fT" in d:
                 L.append("- Intrinsic noise only, break-even OPM noise (ratio = 1): " + ", ".join(

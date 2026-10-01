@@ -1,8 +1,11 @@
 import unittest
 
+import mne
 import numpy as np
 
 from opmsquid import anatomy, neuromag, paths
+
+mne.set_log_level("WARNING")
 
 HAVE_SAMPLE = (paths.SAMPLE_MEG / neuromag.RAW_FILE).exists()
 
@@ -71,3 +74,17 @@ def _closest_on_triangle(p, a, b, c):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestMeshDistance(unittest.TestCase):
+    def test_exact_distance_to_a_tetrahedron(self):
+        from mne.io.constants import FIFF
+
+        rr = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+        tris = np.array([[0, 2, 1], [0, 1, 3], [0, 3, 2], [1, 2, 3]])  # outward-facing
+        surf = dict(rr=rr, tris=tris, np=4, ntri=4, coord_frame=FIFF.FIFFV_COORD_MRI, id=FIFF.FIFFV_BEM_SURF_ID_HEAD)
+        surf = mne.surface.complete_surface_info(surf, copy=False, verbose=False)
+        md = anatomy.MeshDistance(surf, k=4)
+        pts = np.array([[-1.0, 0.2, 0.2], [0.1, 0.1, 0.1], [2.0, 0.0, 0.0], [1.0, 1.0, 1.0]])
+        expected = [1.0, -0.1, 1.0, np.sqrt(3) * (1 - 1 / 3)]  # face x=0 (outside), inside, beyond vertex 1, above face 123
+        np.testing.assert_allclose(md.signed(pts), expected, atol=1e-12)

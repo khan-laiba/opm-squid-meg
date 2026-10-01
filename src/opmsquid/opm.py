@@ -13,9 +13,9 @@ Sensor model (study assumptions, labelled in docs/provenance_register.md)
 * Sites are defined on the MRI scalp; the sensitive axis is the normal of a smooth reference
   surface averaged within ``normal_radius`` (G2: the BEM head surface within 15 mm; without
   ``axis_surface``, the MRI scalp itself). Clearance, coverage and packing rules are documented
-  in the builders below (A-OPM-CLEAR, A-OPM-COVER, A-OPM-PACK). Known limitation: the clearance
-  rules check the sensing centre, not the cell's integration points, which can come within 1 mm
-  of the BEM head surface (docs/methods.md section 8).
+  in the builders below (A-OPM-CLEAR, A-OPM-COVER, A-OPM-PACK); the clearance rules check the
+  sensing centre and every integration point of the cell, as oriented in the forward model, with
+  exact point-to-triangle distances to the BEM head surface.
 
 In MNE 1.13.2, ``mne.use_coil_def(fname)`` *adds* the coils defined in ``fname`` to the standard
 ``coil_def.dat`` (``_read_coil_defs``), and its parser rejects blank lines. ``coil_def_file``
@@ -140,9 +140,16 @@ def cell_frame(n: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     return ex, np.cross(n, ex)
 
 
-def cell_points(pos: np.ndarray, n: np.ndarray, cell_size: float = CELL_SIZE) -> np.ndarray:
-    """The 27 integration points (MNE 'accurate' level) of a cell centred at ``pos`` with axis ``n``."""
-    ex, ey = cell_frame(n)
+def cell_points(pos: np.ndarray, n: np.ndarray, cell_size: float = CELL_SIZE, to_head: np.ndarray | None = None) -> np.ndarray:
+    """The 27 integration points (MNE 'accurate' level) of a cell centred at ``pos`` with axis ``n``.
+    The cell's in-plane orientation is the one ``make_info`` writes, which ``cell_frame`` derives
+    from the head-frame axis: for ``pos``/``n`` in another frame (e.g. MRI), pass ``to_head``, the
+    rotation taking that frame's vectors to the head frame."""
+    if to_head is None:
+        ex, ey = cell_frame(n)
+    else:
+        ex_h, ey_h = cell_frame(to_head @ n)
+        ex, ey = to_head.T @ ex_h, to_head.T @ ey_h
     g = _gauss_cube(3, cell_size)[1]
     return pos + g[:, :1] * ex + g[:, 1:2] * ey + g[:, 2:] * n
 
@@ -218,33 +225,29 @@ def above_brow_plane(points_head: np.ndarray, fids: dict, brow_offset: float = 0
 
 def resolve_clearance(pos: np.ndarray, axis: np.ndarray, scalp, min_clearance: float, step: float = 0.0005,
                       max_extra: float = 0.015, model_surface: dict | None = None,
-                      model_clearance: float = 0.0, cell_clearance: float | None = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+                      model_clearance: float = 0.0, cell_clearance: float | None = None,
+                      to_head: np.ndarray | None = None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Move sensing centres outward along their axes until every point is at least
     ``min_clearance`` from the scalp (e.g. over the ear pinna or brow ridge, where the offset
     along a smoothed normal comes close to other parts of the head) and, with ``model_surface``
-    (the BEM head surface, same frame), the centre is at least ``model_clearance`` from it and,
+    (the BEM head surface, same frame), the centre is at least ``model_clearance`` outside it and,
     with ``cell_clearance``, every integration point of the cell at least that far outside it.
-    Returns (positions, extra outward shift per site, feasible mask: False if more than
-    ``max_extra`` would be needed)."""
-    from .anatomy import Surface
+    Distances to the model surface are exact point-to-triangle distances with the inside test;
+    the cell has the orientation the forward model uses (``to_head``: rotation from this frame to
+    the head frame, see ``cell_points``). Returns (positions, extra outward shift per site,
+    feasible mask: False if more than ``max_extra`` would be needed)."""
+    from .anatomy import MeshDistance
 
     tree = cKDTree(scalp.rr)
-    model = fine = None
-    if model_surface is not None:
-        fine = Surface(model_surface["rr"], model_surface["tris"], model_surface["nn"]).subdivided(3)
-        model = cKDTree(fine.rr)
-
-    def cell_low(p, n):  # lowest integration-point height above the model surface (sign from the outward normal)
-        pts = cell_points(p, n)
-        _, j = model.query(pts)
-        return float(np.min(np.sum((pts - fine.rr[j]) * fine.nn[j], axis=1)))
+    model = MeshDistance(model_surface) if model_surface is not None else None
 
     def too_close(p, n):
         if tree.query(p)[0] < min_clearance:
             return True
-        if model is not None and model.query(p)[0] < model_clearance:
+        if model is not None and model.signed(p)[0] < model_clearance:
             return True
-        return model is not None and cell_clearance is not None and cell_low(p, n) < cell_clearance
+        return (model is not None and cell_clearance is not None
+                and model.signed(cell_points(p, n, to_head=to_head)).min() < cell_clearance)
 
     pos = pos.copy()
     extra = np.zeros(len(pos))
@@ -332,7 +335,7 @@ def dense_array(scalp, trans: mne.transforms.Transform, digitisation: mne.Info, 
     centres = sp_mri + (scalp_gap + standoff) * nrm
     centres, extra, feasible = resolve_clearance(centres, nrm, scalp, standoff - 0.001, max_extra=max_extra_shift,
                                                  model_surface=outer_skin, model_clearance=MODEL_CLEARANCE,
-                                                 cell_clearance=CELL_CLEARANCE)
+                                                 cell_clearance=CELL_CLEARANCE, to_head=mri_head[:3, :3])
     keep = feasible & prune_to_spacing(centres, min_center_spacing, feasible)
     arr = OPMArray(pos=centres[keep] @ mri_head[:3, :3].T + mri_head[:3, 3], axis=nrm[keep] @ mri_head[:3, :3].T,
                    scalp_point=sp_mri[keep] @ mri_head[:3, :3].T + mri_head[:3, 3], site_id=np.arange(int(keep.sum())),
@@ -375,7 +378,7 @@ def matched_to_neuromag(squid_info: mne.Info, trans: mne.transforms.Transform, s
     min_clearance = standoff - 0.001 if min_clearance is None else min_clearance
     centres, extra, feasible = resolve_clearance(centres, nrm, scalp, min_clearance, max_extra=max_extra_shift,
                                                  model_surface=outer_skin, model_clearance=MODEL_CLEARANCE,
-                                                 cell_clearance=CELL_CLEARANCE)
+                                                 cell_clearance=CELL_CLEARANCE, to_head=mri_head[:3, :3])
     keep &= feasible
     arr = OPMArray(pos=centres[keep] @ mri_head[:3, :3].T + mri_head[:3, 3], axis=nrm[keep] @ mri_head[:3, :3].T,
                    scalp_point=pts_head[keep], site_id=geo.site[mags][keep], standoff=standoff, scalp_gap=scalp_gap,

@@ -135,6 +135,64 @@ def load_sample(spacing: str = "oct6") -> Subject:
     return Subject("sample", sd, src, surfs, _outward(head), _outward(inner), trans)
 
 
+def closest_point_on_triangles(p: np.ndarray, a: np.ndarray, b: np.ndarray, c: np.ndarray) -> np.ndarray:
+    """Closest points to ``p`` (3,) on triangles (a, b, c) (each (m, 3)); Ericson, Real-Time
+    Collision Detection, 5.1.5 (Voronoi regions of vertices, edges and face)."""
+    ab, ac, ap = b - a, c - a, p - a
+    d1, d2 = np.einsum("ij,ij->i", ab, ap), np.einsum("ij,ij->i", ac, ap)
+    bp = p - b
+    d3, d4 = np.einsum("ij,ij->i", ab, bp), np.einsum("ij,ij->i", ac, bp)
+    cp = p - c
+    d5, d6 = np.einsum("ij,ij->i", ab, cp), np.einsum("ij,ij->i", ac, cp)
+    va, vb, vc = d3 * d6 - d5 * d4, d5 * d2 - d1 * d6, d1 * d4 - d3 * d2
+    with np.errstate(divide="ignore", invalid="ignore"):
+        denom = 1.0 / (va + vb + vc)
+        out = a + ab * (vb * denom)[:, None] + ac * (vc * denom)[:, None]  # inside the face
+        rbc = (va <= 0) & (d4 - d3 >= 0) & (d5 - d6 >= 0)
+        w = (d4 - d3) / ((d4 - d3) + (d5 - d6))
+        out = np.where(rbc[:, None], b + w[:, None] * (c - b), out)
+        rac = (vb <= 0) & (d2 >= 0) & (d6 <= 0)
+        out = np.where(rac[:, None], a + (d2 / (d2 - d6))[:, None] * ac, out)
+        rab = (vc <= 0) & (d1 >= 0) & (d3 <= 0)
+        out = np.where(rab[:, None], a + (d1 / (d1 - d3))[:, None] * ab, out)
+    out = np.where(((d6 >= 0) & (d5 <= d6))[:, None], c, out)
+    out = np.where(((d3 >= 0) & (d4 <= d3))[:, None], b, out)
+    out = np.where(((d1 <= 0) & (d2 <= 0))[:, None], a, out)
+    return out
+
+
+class MeshDistance:
+    """Exact point-to-mesh distance (closest point on the triangles around the ``k`` nearest
+    vertices) with the sign of the inside test (negative inside the closed surface ``surf``)."""
+
+    def __init__(self, surf: dict, k: int = 10):
+        from mne.surface import _CheckInside
+
+        self.rr, self.tris, self.k = np.asarray(surf["rr"], float), np.asarray(surf["tris"]), k
+        self.tree = cKDTree(self.rr)
+        inc = [[] for _ in range(len(self.rr))]
+        for t, tri in enumerate(self.tris):
+            for v in tri:
+                inc[v].append(t)
+        self.incident = [np.array(x, int) for x in inc]
+        self.inside = _CheckInside(surf)
+
+    def unsigned(self, points: np.ndarray) -> np.ndarray:
+        points = np.atleast_2d(points)
+        _, nearest = self.tree.query(points, k=self.k)
+        out = np.empty(len(points))
+        for i, (p, near) in enumerate(zip(points, nearest)):
+            t = np.unique(np.concatenate([self.incident[v] for v in near]))
+            a, b, c = (self.rr[self.tris[t, j]] for j in range(3))
+            out[i] = np.min(np.linalg.norm(closest_point_on_triangles(p, a, b, c) - p, axis=1))
+        return out
+
+    def signed(self, points: np.ndarray) -> np.ndarray:
+        points = np.atleast_2d(points)
+        d = self.unsigned(points)
+        return np.where(self.inside(points), -d, d)
+
+
 def depth_to_surface(points: np.ndarray, surface: Surface) -> np.ndarray:
     """Distance [m] from each point to the nearest vertex of a (dense) surface."""
     return cKDTree(surface.rr).query(points)[0]

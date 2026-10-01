@@ -248,6 +248,7 @@ def summarise(state):
 
     modes = ["oracle"] + [f"practical@{op}" for op in thr[keys[0]]]
     rng = np.random.default_rng(7)
+    tables = {}  # (detector, mode) -> detection rate per location and strength (focal)
     summary = dict(status="NEW (G4 adult: IED detection, G2 noise model in the time domain)", config=cfg, fs_out=state["fs"],
                    simulated_at_commit=state.get("simulated_at_commit"),
                    n_events=len(events), n_locations=len(state["locations"]), n_dictionary=state["n_dictionary"],
@@ -278,6 +279,7 @@ def summarise(state):
                     m = (fam == "focal") & (loc_i == L) & (stren == s_)
                     if m.any():
                         table[L, j] = det[m].mean()
+            tables[(key, mode)] = table
             for db in range(len(DEPTH_BANDS)):
                 locs = np.unique(loc_i[band == db])
                 if len(locs) == 0:
@@ -323,11 +325,25 @@ def summarise(state):
                     d_loc = np.array([np.sum((da & ~db_)[sel][loc_s == L]) - np.sum((~da & db_)[sel][loc_s == L]) for L in locs])
                     per = [diff[loc_s == L] for L in locs]
                     bs = [np.median(np.concatenate([per[j] for j in rng.integers(0, len(per), len(per))])) for _ in range(1000)]
+                    # S50 ratio (Neuromag / OPM; > 1: the OPM array needs less strength), paired over the same
+                    # location resamples; None when a resample does not reach 50 % within the tested range
+                    ta, tb = tables[(a, mode)][locs], tables[(b, mode)][locs]
+                    ratios = []
+                    for _ in range(1000):
+                        r_ = rng.integers(0, len(locs), len(locs))
+                        sa, sb = s50_from(ta[r_].mean(axis=0), strengths), s50_from(tb[r_].mean(axis=0), strengths)
+                        ratios.append(np.nan if sa is None or sb is None else sb / sa)
+                    ratios = np.array(ratios)
+                    sa0, sb0 = s50_from(ta.mean(axis=0), strengths), s50_from(tb.mean(axis=0), strengths)
+                    s50_ratio = dict(value=None if sa0 is None or sb0 is None else float(sb0 / sa0),
+                                     ci95=[float(x) for x in np.nanpercentile(ratios, [2.5, 97.5])] if np.isfinite(ratios).any() else None,
+                                     share_resamples_undefined=float(np.mean(~np.isfinite(ratios))))
                     res[f"depth{band_i}"] = dict(n=int(sel.sum()), n_locations=int(len(locs)), detected_only_opm=only_a,
                                                  detected_only_squid=only_b, locations_favouring_opm=int(np.sum(d_loc > 0)),
                                                  locations_favouring_squid=int(np.sum(d_loc < 0)), location_sign_flip_p=detection.sign_flip_p(d_loc),
                                                  mcnemar_exact_p_event_level=float(pval), median_stat_difference=float(np.median(diff)),
-                                                 ci95_location_bootstrap=[float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))])
+                                                 ci95_location_bootstrap=[float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))],
+                                                 s50_ratio_squid_over_opm=s50_ratio, p_values="uncorrected")
                 summary["paired"][f"{a}_vs_{b}/{mode}"] = res
     io.write_json(summary, OUT / "g4_adult_summary.json")
     with open(OUT / "g4_adult_events.csv", "w", newline="") as fh:

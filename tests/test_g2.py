@@ -69,7 +69,7 @@ class TestArrayComposition(unittest.TestCase):
     def test_channel_counts_and_coil_types(self):
         types = {name: sorted({ch["coil_type"] for ch in a.info["chs"]}) for name, a in self.arrays.items()}
         self.assertEqual({name: a.n for name, a in self.arrays.items()},
-                         {"squid": 306, "opm_matched": 97, "opm204": 204, "opm_dense": 211})
+                         {"squid": 306, "opm_matched": 97, "opm204": 204, "opm_dense": 212})
         self.assertEqual(types["squid"], [3014, 3024])
         self.assertEqual(sum(ch["coil_type"] == 3014 for ch in self.arrays["squid"].info["chs"]), 204)
         for name in ("opm_matched", "opm204", "opm_dense"):
@@ -113,17 +113,37 @@ class TestArrayComposition(unittest.TestCase):
                 self.assertGreaterEqual(tree.query(mne.transforms.apply_trans(t, pos))[0].min(), opm.STANDOFF - 0.001 - 1e-6)
 
     def test_cell_integration_points_outside_the_head_surface(self):
-        # A-OPM-CLEAR (v2): the rule keeps every point >= 1 mm out along the local normal; the exact
-        # nearest-point distance can be ~0.15 mm smaller
-        from opmsquid import opm
+        # A-OPM-CLEAR: every integration point of every cell, as the forward model builds it (MNE
+        # coil 9901, 'accurate'), >= 1 mm outside the BEM head surface by exact distance
+        from mne.forward._make_forward import _create_meg_coils
+
+        from opmsquid import anatomy, opm
 
         skin = next(s for s in self.subject.bem_surfaces if s["id"] == mne.io.constants.FIFF.FIFFV_BEM_SURF_ID_HEAD)
+        md = anatomy.MeshDistance(skin)
         t = self.subject.trans["trans"]
         for name in ("opm_matched", "opm_dense"):
-            pos, axis = self._geometry(self.arrays[name])
-            pts = np.concatenate([opm.cell_points(p, n) for p, n in zip(pos, axis)])
+            with mne.use_coil_def(opm.coil_def_file()):
+                coils = _create_meg_coils(self.arrays[name].info["chs"], "accurate")
+            pts = np.concatenate([c["rmag"] for c in coils])
+            self.assertEqual(len(pts), 27 * self.arrays[name].n)
             with self.subTest(name=name):
-                self.assertGreater(opm.signed_distance(mne.transforms.apply_trans(t, pts), skin).min(), 0.00085)
+                self.assertGreaterEqual(md.signed(mne.transforms.apply_trans(t, pts)).min(), opm.CELL_CLEARANCE - 1e-9)
+
+    def test_stored_lead_fields_match_the_arrays(self):
+        # every cached full-resolution matrix must have been computed for the arrays built here
+        from opmsquid import fullres
+
+        if not (fullres.directory() / "valid_index.npy").exists():
+            self.skipTest("no full-resolution cache")
+        idx = np.load(fullres.directory() / "valid_index.npy")
+        for job, (kind, bem_name) in fullres.JOBS.items():
+            if fullres.stored_fingerprint(job) is None:
+                continue
+            with self.subTest(job=job):
+                info = fullres.array_info(kind, self.subject)
+                fp = fullres.fingerprint(info, self.subject, self.subject.bem_model(fullres.BEMS[bem_name]), idx)
+                self.assertEqual(fullres.stored_fingerprint(job), fp)
 
     def test_lead_field_fingerprint_tracks_sensors_and_mesh(self):
         from opmsquid import fullres
@@ -151,7 +171,7 @@ class TestArrayComposition(unittest.TestCase):
     def test_opm204_is_a_subset_of_the_dense_array(self):
         dense, _ = self._geometry(self.arrays["opm_dense"])
         sub, _ = self._geometry(self.arrays["opm204"])
-        self.assertEqual(self.arrays["opm204"].meta["subset_of"], 211)
+        self.assertEqual(self.arrays["opm204"].meta["subset_of"], 212)
         self.assertTrue(all(np.any(np.all(np.isclose(dense, p, atol=1e-12), axis=1)) for p in sub))
 
 

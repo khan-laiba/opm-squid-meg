@@ -54,7 +54,9 @@ class TestSiteBuild(unittest.TestCase):
             # only PNG figures, result tables and the page assets: no PDF/SVG (licensed fonts), no data or caches
             self.assertEqual({p.suffix for p in copied} - {".html", ".css", ".png", ".json", ".csv", ".md"}, set())
             self.assertFalse(any(p.suffix in (".pdf", ".svg") for p in copied))
-            self.assertIn("frozen as adult-baseline-v1", (out / "index.html").read_text())
+            self.assertIn(f"frozen as {mod.FROZEN_TAG}", (out / "index.html").read_text())
+            g2 = json.loads((ROOT / "results" / "g2" / "g2_summary.json").read_text())
+            self.assertIn(f"dense {g2['arrays']['opm_dense']['channels']}-site", (out / "index.html").read_text())
 
 
 if __name__ == "__main__":

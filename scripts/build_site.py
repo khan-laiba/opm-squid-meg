@@ -32,8 +32,9 @@ RES = ROOT / "results"
 NAV = [("index.html", "Overview"), ("benchmarks.html", "Adult benchmarks (G1)"), ("adult.html", "Realistic adult (G2)"),
        ("pediatric.html", "Pediatric (G3)"), ("epilepsy.html", "Epilepsy (G4)"), ("methods.html", "Methods and limitations"),
        ("register.html", "Parameters and provenance"), ("reproduce.html", "Reproduce and download")]
-LABEL = {"squid": "Neuromag", "opm_matched": "OPM matched (98 sites)", "opm204": "OPM 204 (channel budget)",
-         "opm_dense": "OPM dense (215 sites)", "combined": "combined", "grad": "gradiometers", "mag": "magnetometers"}
+FROZEN_TAG = "adult-baseline-v2"
+LABEL = {"squid": "Neuromag", "opm_matched": "OPM matched", "opm204": "OPM 204 (channel budget)",
+         "opm_dense": "OPM dense", "combined": "combined", "grad": "gradiometers", "mag": "magnetometers"}
 DETECTORS = {"squid/combined": "Neuromag combined", "squid/grad": "Neuromag gradiometers", "squid/mag": "Neuromag magnetometers",
              "opm_matched/opm": "OPM matched", "opm_dense/opm": "OPM dense"}
 DEPTH_BANDS = ("10-20 mm", "20-30 mm", "30-45 mm", "45-70 mm")
@@ -87,7 +88,7 @@ def page_index(d):
               ("G1A Jas et al. 2026 analytical benchmark", "REPRO", "done, independently reviewed"),
               ("G1B Hunold et al. 2016 depth-orientation spike SNR (MEG)", "ADAPT (+ NEW OPM column)", "done, independently reviewed"),
               ("G1C Goldenholz et al. 2009 cortical SNR maps (MEG)", "ADAPT (+ NEW OPM extension)", "done, independently reviewed"),
-              ("G2 realistic adult OPM vs Neuromag", "NEW", "done, independently reviewed; frozen as adult-baseline-v1"),
+              ("G2 realistic adult OPM vs Neuromag", "NEW", f"done, independently reviewed; frozen as {FROZEN_TAG}"),
               ("G3A Jas head-size benchmark", "REPRO (+ NEW fixed shell)", "done" if d["g3a"] else "not run"),
               ("G3B pediatric fixed helmet vs head-adaptive OPM", "NEW", "blocked: pediatric anatomy needs an owner decision"),
               ("G4 epilepsy detection and bounded localization", "NEW", "adult done; pediatric waits for G3B"),
@@ -99,34 +100,44 @@ def page_index(d):
          f"unavailable, {label('NEW')} new experiment.</p>",
          "<h2 id=\"status\">Status</h2>", sb.table(["Milestone", "Label", "Status"], status),
          "<h2 id=\"findings\">Adult findings, with their conditions</h2>"]
+    n_dense, n_matched = g2["arrays"]["opm_dense"]["channels"], g2["arrays"]["opm_matched"]["channels"]
+
+    def bands(p):
+        return "; ".join(f"{DEPTH_BANDS[b]} {p[f'depth{b}']['locations_favouring_opm']}/{p[f'depth{b}']['locations_favouring_squid']} "
+                         f"(p = {p[f'depth{b}']['location_sign_flip_p']:.2g})" for b in range(4))
+
+    r0 = pr["depth0"].get("s50_ratio_squid_over_opm")
+    ratio_txt = (f" (Neuromag / dense strength ratio {r0['value']:.2f}, paired location-bootstrap 95 % interval "
+                 f"{r0['ci95'][0]:.2f}-{r0['ci95'][1]:.2f})") if r0 and r0.get("value") and r0.get("ci95") else ""
+    pl = loc["paired"]
+    dspm = {a: pl[f"{a}_vs_squid/patch/320nAm"]["dspm_error_mm"] for a in ("opm_matched", "opm_dense")}
     items = [
-        f"With realistic brain noise, the dense 215-site OPM array has <strong>{cmp_str(dense)}</strong> the known-topography "
+        f"With modelled brain noise, the dense {n_dense}-site OPM array has <strong>{cmp_str(dense)}</strong> the known-topography "
         f"detectability of the Neuromag system (all 306 channels; median over {g2['n_targets']:,} cortical targets, 95 % CI "
         f"from a bootstrap over cortical parcels; higher for {100 * dense['share_opm_better']:.0f} % of targets). An OPM array at "
-        f"Neuromag's own 98 sites ties it: {cmp_str(matched)}. Conditions: OPM white noise 15 fT/&radic;Hz, 3-layer BEM, no "
-        "extra scalp gap, the sample subject's measured head position.",
+        f"Neuromag's own sites ({n_matched} of 102 fit) ties it: {cmp_str(matched)}. Conditions: OPM white noise 15 fT/&radic;Hz, "
+        "3-layer BEM, no extra scalp gap, the sample subject's measured head position; the modelled brain noise predicts 0.73x "
+        "the measured magnetometer level.",
         f"The advantage depends on the assumptions: OPM noise 7 or 30 fT/&radic;Hz gives "
         f"{x(2 ** sens['opm_asd_7fT']['opm_dense/combined/intrinsic+brain']['median_log2'])} or "
         f"{x(2 ** sens['opm_asd_30fT']['opm_dense/combined/intrinsic+brain']['median_log2'])}; with 30 fT/&radic;Hz and a 6-mm "
         f"scalp gap together, {x(joint['gap6mm/asd30fT']['opm_dense']['ratio'])}; a 1-layer head model gives {x(bem1)}. Without "
-        f"brain noise (intrinsic sensor noise only) Neuromag wins: "
-        f"{cmp_str(P['opm_dense/combined/intrinsic'])}.",
+        f"brain noise (intrinsic sensor noise only) Neuromag wins: {cmp_str(P['opm_dense/combined/intrinsic'])}.",
         f"By depth (dense vs Neuromag): {x(depth['10-15'])} at 10-15 mm below the scalp, {x(depth['30-35'])} at 30-35 mm and "
         f"{x(depth['50-55'])} at 50-55 mm; the matched array falls from "
         f"{x(2 ** g2['log2_ratio_vs_depth']['opm_matched/combined/intrinsic+brain'][0]['median'])} to below 1 at depth.",
         f"Simulated interictal spikes, practical detector at 1 false event per minute: 50 % detection needs "
         f"{s50['opm_dense/opm']['practical@1/depth0']['value']:.0f} nAm with the dense OPM array vs "
-        f"{s50['squid/combined']['practical@1/depth0']['value']:.0f} nAm with Neuromag at 10-20 mm depth, and "
-        f"{s50['opm_dense/opm']['practical@1/depth3']['value']:.0f} vs {s50['squid/combined']['practical@1/depth3']['value']:.0f} "
-        f"nAm at 45-70 mm. Counting locations as the unit, the dense array detects more at every depth (locations favouring "
-        + ", ".join(f"{pr[f'depth{b}']['locations_favouring_opm']}/{pr[f'depth{b}']['locations_favouring_squid']}" for b in range(4))
-        + f"; sign-flip p &le; {max(pr[f'depth{b}']['location_sign_flip_p'] for b in range(4)):.2g}); the matched array does not "
-        f"differ (p &ge; {min(pm[f'depth{b}']['location_sign_flip_p'] for b in range(4)):.2f}).",
-        f"Bounded localization (24 locations): for detected 320-nAm focal spikes the dipole error on the MRI is "
+        f"{s50['squid/combined']['practical@1/depth0']['value']:.0f} nAm with Neuromag at 10-20 mm depth{ratio_txt}. Locations "
+        f"with more events detected only by the dense array / only by Neuromag (exact sign-flip p, uncorrected): {bands(pr)}. "
+        f"Matched array: {bands(pm)}.",
+        f"Bounded localization (24 locations, one event each): for detected 320-nAm focal spikes the dipole error on the MRI is "
         f"{L['squid/focal/320nAm']['ecd_error_mm_median_detected']:.1f}, {L['opm_matched/focal/320nAm']['ecd_error_mm_median_detected']:.1f} "
-        f"and {L['opm_dense/focal/320nAm']['ecd_error_mm_median_detected']:.1f} mm (Neuromag, matched, dense), with a 2-mm/2-deg "
-        "coregistration error in every inverse; no consistent array difference. The arrays differ more in detection than in "
-        "the accuracy of detected spikes.",
+        f"and {L['opm_dense/focal/320nAm']['ecd_error_mm_median_detected']:.1f} mm (Neuromag, matched, dense), limited by a "
+        "2-mm/2-deg coregistration error in every inverse. For 320-nAm patches the dSPM error changes by "
+        f"{dspm['opm_matched']['median_difference']:+.1f} mm (matched, p = {dspm['opm_matched']['wilcoxon_p']:.2g}) and "
+        f"{dspm['opm_dense']['median_difference']:+.1f} mm (dense, p = {dspm['opm_dense']['wilcoxon_p']:.2g}) relative to "
+        "Neuromag (uncorrected; 16 comparisons per array).",
         f"Benchmarks: the analytical sphere model reproduces Jas et al. (equal-SNR depth "
         f"{g1a['d_eq_mm']['3']:.3f} mm at &eta; = 3, printed about 28 mm); the Hunold adaptation reproduces the depth-orientation "
         f"pattern of the published maps (r = {min(v['pearson_r'] for f in ('dipole/p2p', 'patch/p2p') for v in g1b['variants']['fig6_calibrated']['comparison_with_paper'][f].values()):.2f}-"
@@ -240,8 +251,8 @@ def page_adult(d, out):
          "sqrt(s<sup>T</sup> C<sup>+</sup> s). The full generated report is <a href=\"g2-report.html\">here</a>; methods in "
          "section 8 of the <a href=\"methods.html\">methods</a>.</p>",
          fig(out, "g2/Figure_G2_arrays.png", "The four arrays on the sample head: Neuromag (306 channels at 102 sites), the matched "
-             "OPM array (98 of the 102 sites fit the OPM placement rules), the 204-channel budget control and the dense 215-site array.",
-             "Sensor arrays"),
+             f"OPM array ({g2['arrays']['opm_matched']['channels']} of the 102 sites fit the OPM placement rules), the 204-channel "
+             f"budget control and the dense {g2['arrays']['opm_dense']['channels']}-site array.", "Sensor arrays"),
          "<h2 id=\"headline\">Headline comparison</h2>",
          sb.table(["Noise condition", "OPM array", "vs Neuromag combined", "Targets OPM higher", "Parcels OPM higher", "vs gradiometers",
                    "vs magnetometers"], rows,
