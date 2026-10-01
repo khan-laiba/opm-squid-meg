@@ -2,7 +2,8 @@
 
 Simulation study comparing on-scalp optically pumped magnetometers (OPM) with the Neuromag
 (Vectorview/TRIUX-type) SQUID system: an analytical benchmark, adaptations of two published
-adult studies, a realistic adult comparison, and (planned) pediatric and epilepsy extensions.
+adult studies, a realistic adult comparison, a pediatric fixed-helmet versus head-adaptive
+extension, and epilepsy (interictal spike) detection and localization examples in both.
 The goal and milestones are in `GOAL.md`; the plan, status and decisions log in `PLAN.md`.
 
 This is a proposed study in development. It does not claim that any author of the reproduced
@@ -17,8 +18,8 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G1B Hunold et al. 2016 depth-orientation spike SNR (MEG part) | ADAPT (+ NEW OPM column) | done, independently reviewed |
 | G1C Goldenholz et al. 2009 cortical SNR maps (MEG part) | ADAPT (+ NEW OPM extension) | done, independently reviewed |
 | G2 realistic adult OPM vs Neuromag | NEW | done, independently reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2` |
-| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B follows this baseline (owner decision 2026-09-30: 2-year infant template and scaled-adult size controls) |
-| G4 epilepsy detection and localization | NEW | adult done; pediatric follows G3B |
+| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (2-year infant template and two scaled-adult size controls), after the adult freeze `adult-baseline-v2` |
+| G4 epilepsy detection and localization | NEW | adult done; pediatric done (2-year template, school-age size control) |
 | G5 software, reproduction, report | - | in progress (tests, `scripts/run_all.sh`, local report; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3, with the 87 tests of the time) |
 
 Adult findings so far (`adult-baseline-v2`), conditional on one adult head (MNE sample subject),
@@ -51,6 +52,36 @@ measured (not best) head position; details and caveats in `docs/methods.md` and
 - `adult-baseline-v1` reported 1.21x; that value was inflated by OPM cells reaching into the
   coarse BEM head surface, a numerical error corrected in v2 (see PLAN.md).
 
+Pediatric findings (G3B, NEW), conditional on one adult head, one 2-year average template
+(O'Reilly et al. 2021) and two scaled copies of the adult; the same Neuromag helmet, sensors and
+noise for every head; OPM arrays refitted to each head with the adult rules; details in
+`docs/methods.md` section 10 and `results/g3b/G3B_report.md`:
+- With the child raised to 20-mm contact with the top of the fixed helmet, the dense OPM array's
+  known-topography detectability relative to Neuromag combined (D) rises from +0.99 dB in the adult
+  to +1.49 dB (school-age-size control), +2.15 dB (2-year-size control) and +1.85 dB (2-year
+  template): Delta = D_child - D_adult = +0.47 [+0.38, +0.58], +1.13 [+0.99, +1.25] and +0.73
+  [+0.44, +1.16] dB. Against the gradiometers or magnetometers alone, after external-field
+  projection, for the matched-site OPM array and for extended sources the sign is the same.
+- The gain comes mainly from the helmet's fit: left at the adult's ear-line position Delta is
+  +1.15 to +1.79 dB; in a counterfactual helmet scaled with the head it is -0.17, -0.30 and
+  +0.28 dB. In the fixed helmet the child's cortex is farther from the SQUIDs, whose brain noise
+  falls towards their intrinsic floor while the on-scalp OPM's does not.
+- Delta stays positive for OPM noise 7-30 fT/sqrt(Hz), background variance x0.5 or x2 and a
+  1-layer head model; at 30 fT/sqrt(Hz) the adult's D is -0.04 dB (a tie) and the template's
+  +0.61 dB. In the template the gain is concentrated deeper than 30 mm and is regionally asymmetric
+  (it follows the head's offset in the helmet).
+- At 100 nAm (detectability >= 5, an operational threshold) both systems reach 66 % of the
+  adult's and 75 % of the template's usable cortex, the OPM alone a further 2 % and 5 %, and the
+  SQUID alone none.
+- Simulated spikes (same detectors and seeds as the adult): the full OPM array's superficial
+  detection advantage is about the same in the adult and both smaller heads (strength for 50 %
+  detection at 10-20 mm, Neuromag combined / dense OPM: 53/35, 52/37 and 45/30 nAm; 16 of 18
+  locations favour the OPM in each, and 0, 0 and 2 favour Neuromag); deeper, no location-level
+  difference is established for the
+  practical detector, so G3B's deeper gain is not resolved at this sample size. Localization: dipole
+  errors similar; dSPM of strong focal spikes in the template 7.5 vs 14.8 mm (p = 0.035,
+  uncorrected).
+
 Labels: REPRO = reproduction with the paper's definitions; ADAPT = adaptation where original
 data or details are unavailable; NEW = new experiment or study choice.
 
@@ -58,8 +89,8 @@ data or details are unavailable; NEW = new experiment or study choice.
 
 | Path | Content |
 |---|---|
-| `src/opmsquid/` | package: sphere model, sensors (Neuromag, OPM), anatomy, forward models (cached), noise, metrics, background, environment, paper-specific modules (`hunold`, `goldenholz`), G2 comparison |
-| `scripts/` | one driver per milestone (`g1a_*`, `g1b_*`, `g1c_*`, `g2_*`, `g3a_*`, `g4_*`), full-resolution forward jobs, Fig. 6 digitiser, `run_all.sh` |
+| `src/opmsquid/` | package: sphere model, sensors (Neuromag, OPM), anatomy (adult, infant template, scaled controls), forward models (cached), noise, metrics, background, environment, paper-specific modules (`hunold`, `goldenholz`), G2 comparison, pediatric helmet placements (`pediatric`) |
+| `scripts/` | one driver per milestone (`g1a_*`, `g1b_*`, `g1c_*`, `g2_*`, `g3a_*`, `g3b_*`, `g4_*`), full-resolution forward jobs, Fig. 6 digitiser, BEM accuracy studies, `run_all.sh` |
 | `configs/` | paper and study configurations, every value tagged as printed, chosen or digitised |
 | `tests/` | `unittest` suite (physics, units, metrics, geometry, noise, statistics, report builder) |
 | `site/` | templates and style of the local report (`scripts/build_site.py`; output in `site/_build/`, not committed) |
@@ -73,6 +104,7 @@ data or details are unavailable; NEW = new experiment or study choice.
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -c "import mne; mne.datasets.sample.data_path(path='data/external')"  # ~1.6 GB download
+.venv/bin/python -c "import mne; mne.datasets.fetch_infant_template('2yr', subjects_dir='data/external/infant_subjects')"  # ~392 MB (G3B, pediatric G4)
 bash scripts/run_all.sh     # tests, then every milestone in order (~2 h, of which ~40 min for lead fields)
 ```
 
@@ -93,6 +125,10 @@ release (release-ready and publicly deployed are separate statuses).
 
 ## Data and privacy
 
+- The 2-year infant template (O'Reilly et al. 2021, from the Neurodevelopmental MRI Database of
+  Richards et al. 2016; LGPL-2.1 repository) is not committed. Figures derived from it
+  (`results/g3b/*template*`, `*infant2yr*`) cite both papers; confirm their redistribution with the
+  owner before any public release (the source database has its own terms).
 - Not committed: the reference PDFs, the MNE sample data and anatomy (`data/`), computed caches
   (`cache/`). Results contain only derived quantities of the public MNE sample dataset.
 - Before any public release: PDFs in `results/g1a/` and `legacy/` embed licensed font subsets

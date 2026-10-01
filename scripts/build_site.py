@@ -100,8 +100,9 @@ def page_index(d):
                if d.get("g4p") else "adult done; pediatric in progress"),
               ("G5 software, reproduction, report", "-", "local report (not deployed); clean-environment smoke test passed")]
     h = ["<p>Simulation study comparing on-scalp optically pumped magnetometers (OPM) with the Neuromag SQUID system: "
-         "an analytical benchmark and adaptations of two published adult studies, a realistic adult comparison, and "
-         "(planned) pediatric and epilepsy extensions. The OPM advantage is tested, not assumed. Labels: "
+         "an analytical benchmark and adaptations of two published adult studies, a realistic adult comparison, a pediatric "
+         "fixed-helmet versus head-adaptive extension, and interictal-spike detection and localization examples in both. The "
+         "OPM advantage is tested, not assumed. Labels: "
          f"{label('REPRO')} reproduction with the paper's definitions, {label('ADAPT')} adaptation where data or details are "
          f"unavailable, {label('NEW')} new experiment.</p>",
          "<h2 id=\"status\">Status</h2>", sb.table(["Milestone", "Label", "Status"], status),

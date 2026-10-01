@@ -612,6 +612,39 @@ detectability; area-weighted medians without the medial wall, parcel-bootstrap 9
   template is not a population; the comparison with the adult mixes head size, anatomy and the
   fixed-helmet fit, which G3B separates for detectability.
 
-## To be written
-
-G3B and pediatric G4 results.
+Pediatric G4 results (`results/g4/G4_pediatric_report.md`, `g4_pediatric_comparison.json`; template
+simulated at 1b2cb02, school-age control at 2c5735d, comparison at 0eada3a; 18 locations per depth
+band in every anatomy; p-values uncorrected; 16 paired comparisons per OPM array and anatomy)
+* Held-out null: 0.55-1.7 false events per minute at the 1-per-minute thresholds (template
+  magnetometers 1.7, matched OPM 1.55; adult 0.5-1.1): thresholds calibrated on 20 min and
+  checked on 20 min differ by up to this much, so operating points are approximate.
+* Strength for 50 % detection, practical detector, Neuromag combined vs dense OPM: 10-20 mm adult
+  53 vs 35, school-age size 52 vs 37, template 45 vs 30 nAm; 45-70 mm 290 vs 271, 275 vs 245 and
+  243 vs 229 nAm. The template needs less strength than the adult at 10-30 and 45-70 mm for every
+  array (thinner tissues bring sources closer to the scalp; Neuromag 71 vs 89 nAm at 20-30 mm), but
+  not at 30-45 mm (Neuromag 140 vs 132 nAm).
+* Paired, dense OPM vs Neuromag combined (locations favouring OPM / Neuromag; paired strength ratio
+  Neuromag / OPM): at 10-20 mm 16/0 (1.51 [1.25-1.66]) adult, 16/0 (1.42 [1.20-1.57]) school-age
+  size, 16/2 (1.50 [1.26-1.68]) template; deeper no location-level difference is established in
+  any anatomy (p >= 0.11; ratios 1.00-1.12). With the oracle all three favour the OPM at 10-20 mm
+  (16/0, 15/0, 12/1); at 20-30 mm the adult (13/0) and the template (13/1) but not the school-age
+  control (6/2, p = 0.15); at 30-45 mm only the school-age control (8/1, p = 0.03); at 45-70 mm the
+  school-age control (9/1, p = 0.008) and the template (10/1, p = 0.03) but not the adult (5/5).
+  The matched array shows no established difference in either child (template 11/5 at 10-20 mm,
+  p = 0.05); the adult's deficit in the deepest band (0/7) is not seen in the children (school-age
+  2/4, template 5/4).
+* So the detectability gain of G3B (Delta +0.5 to +1.1 dB, concentrated deeper than 30 mm in the
+  template) is not resolved by the practical detector with 18 locations per band; it appears only
+  in the oracle's deeper bands. The superficial detection advantage of the full OPM array is about
+  the same in the adult and in both smaller heads (strength ratio 1.4-1.5).
+* Localization (24 locations, detected events; Neuromag, matched, dense): ECD similar in every
+  anatomy (template 320-nAm focal 4.5, 4.7, 5.8 mm; school-age 7.8, 5.2, 6.3 mm). dSPM, all
+  events, 320-nAm focal: template 14.8, 8.9, 7.5 mm (dense - Neuromag -4.7 mm paired, p = 0.035),
+  school-age 15.9, 10.5, 12.0 mm (matched -5.5 mm, p = 0.011; dense -1.1 mm, p = 0.049); 320-nAm
+  patches: template -1.1 and -1.2 mm (p = 0.007, 0.008), school-age no difference. Detected and
+  localized within 10 mm (dSPM) for 320-nAm focal spikes: template 0.29, 0.54, 0.54; adult 0.21,
+  0.38, 0.33. None of these survives a correction over 16 comparisons; in the adult the
+  significance of such differences varied between runs (section 9).
+* The pediatric epilepsy examples use the same framework as the adult; detection and
+  reconstruction claims rest on separate results. Simulated IED-source recovery does not
+  identify an epileptogenic zone or establish surgical benefit.
