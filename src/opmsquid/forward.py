@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 
 import numpy as np
@@ -54,7 +55,7 @@ def _load(key: str):
 def _save(key: str, gain: np.ndarray, meta: dict) -> None:
     f = paths.CACHE / "fwd" / f"{key}.npz"
     f.parent.mkdir(parents=True, exist_ok=True)
-    tmp = f.with_suffix(".tmp.npz")
+    tmp = f.with_name(f"{key}.{os.getpid()}.tmp.npz")  # per process: concurrent runs may compute the same entry
     np.savez(tmp, gain=gain, meta=json.dumps(meta))
     tmp.replace(f)
 
