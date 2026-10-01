@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""G4 (adult): bounded IED localization study (NEW).
+"""G4: bounded IED localization study (NEW), adult (this script) and, through
+``g4_epilepsy_adult.Context``, any anatomy with its arrays (scripts/g4_epilepsy_pediatric.py).
 
 Truth: events simulated as in scripts/g4_epilepsy_adult.py (3-layer BEM, exact positions, shared
 noise across arrays). Inverse model with bounded mismatch: 1-layer (inner skull) BEM and a
@@ -45,9 +46,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import mne  # noqa: E402
 
-import g2_adult_comparison as G  # noqa: E402
 import g4_epilepsy_adult as G4  # noqa: E402
-from opmsquid import background, detection, environment, forward, g2, goldenholz, ied, io, localization, metrics, opm  # noqa: E402
+from opmsquid import detection, environment, forward, g2, goldenholz, ied, io, localization, metrics, opm  # noqa: E402
 
 OUT = ROOT / "results" / "g4"
 
@@ -70,58 +70,53 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     cfg = tomllib.loads((ROOT / "configs" / "g4_epilepsy.toml").read_text())
     cfg2 = tomllib.loads((ROOT / "configs" / "g2_adult.toml").read_text())
+    lc = cfg["localization"]
+    ctx = G4.adult_context(cfg2, tuple(lc["arrays"]))
+    localize(ctx, cfg, np.random.default_rng(lc["seed"]))
+    log(f"done in {time.time() - t0:.0f} s")
+
+
+def localize(ctx, cfg, rng):
+    """The bounded localization study for one anatomy (see the module docstring); writes
+    results/g4/g4_localization[_<label>]_{events.csv,summary.json} and the figure."""
     sim, lc = cfg["simulation"], cfg["localization"]
-    st = G.Study(cfg2)
-    rng = np.random.default_rng(lc["seed"])
-    arrays = {k: v for k, v in g2.build_arrays(st.subject, st.dig).items() if k in lc["arrays"]}
-    squid = arrays["squid"]
-    bads = cfg2["sensors"]["bads"]
-    good = ~np.isin(squid.info.ch_names, bads)
-    grads = good & (squid.kinds == "grad")
-    meas = g2.measured_noise(squid.info, st.filt, bads)
-    env = meas["environment"]
-    G_t, G_g = {}, {}
-    for name, a in arrays.items():
-        G_t[name], G_g[name] = st.gains(a)
-    brain_scale = background.calibrate(st.unit_brain(G_g["squid"]), grads, float(np.nanmedian(meas["brain"][grads])))
+    arrays, G_t, G_g, env = ctx.arrays, ctx.G_t, ctx.G_g, ctx.env
     specs = {name: ied.ArraySpec(G_g[name], environment.external_basis(a.info, env.r0, a.coil_def),
                                  np.array([g2.SQUID_ASD[k] for k in a.kinds]) if name == "squid"
                                  else np.full(a.n, sim["opm_asd_fT_per_rtHz"] * 1e-15)) for name, a in arrays.items()}
-    gen = ied.NoiseGenerator(specs, brain_scale * st.src.grid_area, env.coef_timecourses, env.coef_cov, st.filt,
+    gen = ied.NoiseGenerator(specs, ctx.brain_scale * ctx.src.grid_area, env.coef_timecourses, env.coef_cov, ctx.filt,
                              decimate=sim["decimate"], env_fs=env.sfreq)
     fs = gen.fs_out
-    tpl, pk = ied.filtered_template(st.filt, 1.0, sim["decimate"])
+    tpl, pk = ied.filtered_template(ctx.filt, 1.0, sim["decimate"])
 
     # events: 2 locations per depth x orientation stratum, focal and 10-mm patch, two strengths
-    loc, strata = G4.stratified_locations(st, lc["n_locations"], rng)
-    tgt = st.src.target[loc]
-    members = goldenholz.geodesic_patches(st.cortex.adjacency, tgt, cfg["events"]["patch_radius_mm"] * 1e-3, st.cortex.usable)
+    loc, strata = G4.stratified_locations(ctx, lc["n_locations"], rng)
+    tgt = ctx.src.target[loc]
+    members = goldenholz.geodesic_patches(ctx.cortex.adjacency, tgt, cfg["events"]["patch_radius_mm"] * 1e-3, ctx.cortex.usable)
     topo, centre = {}, {}
-    for name, a in arrays.items():
-        full, col = g2.fullres_matrix(a, st.subject, st.cortex, g2.FULLRES_JOBS[name])
-        unit = goldenholz.patch_topographies(full, members, col, st.cortex.area)
+    for name in arrays:
+        unit = ctx.patch_topographies(name, members)
         for i in range(len(loc)):
             topo[(name, i, "focal")] = G_t[name][:, loc[i]]
-            topo[(name, i, "patch")] = unit[:, i] / st.cortex.area[members[i]].sum()
-        del full
+            topo[(name, i, "patch")] = unit[:, i] / ctx.cortex.area[members[i]].sum()
     for i in range(len(loc)):
-        centre[i] = st.cortex.rr[tgt[i]]
+        centre[i] = ctx.cortex.rr[tgt[i]]
 
     # inverse model: 5-mm off-grid source grid, 1-layer BEM, K coregistration-error draws shared by all arrays
-    valid = np.flatnonzero(st.cortex.usable)
-    grid = np.setdiff1d(valid[goldenholz.poisson_disk(st.cortex.rr[valid], lc["grid_spacing_mm"] * 1e-3, rng)], tgt)
-    bem1 = st.subject.bem_model((0.3,))
+    valid = np.flatnonzero(ctx.cortex.usable)
+    grid = np.setdiff1d(valid[goldenholz.poisson_disk(ctx.cortex.rr[valid], lc["grid_spacing_mm"] * 1e-3, rng)], tgt)
+    bem1 = ctx.subject.bem_model((0.3,))
     bem1_sol = mne.make_bem_solution(bem1, verbose=False)
     n_draws = lc["coreg_draws"]
     trans_used = [mne.transforms.Transform("head", "mri", localization.perturb_trans(
-        st.subject.trans["trans"], rng, lc["coreg_shift_mm"] * 1e-3, lc["coreg_angle_deg"])) for _ in range(n_draws)]
-    mri_to_head = mne.transforms.invert_transform(st.subject.trans)
+        ctx.subject.trans["trans"], rng, lc["coreg_shift_mm"] * 1e-3, lc["coreg_angle_deg"])) for _ in range(n_draws)]
+    mri_to_head = mne.transforms.invert_transform(ctx.subject.trans)
     inv = {}
     for name, a in arrays.items():
         for k in range(n_draws):
-            g_inv, _ = forward.discrete_gain(a.info, trans_used[k], st.cortex.rr[grid], st.cortex.nn[grid], bem1, opm.coil_def_file())
+            g_inv, _ = forward.discrete_gain(a.info, trans_used[k], ctx.cortex.rr[grid], ctx.cortex.nn[grid], bem1, opm.coil_def_file())
             inv[name, k] = g_inv.astype(np.float64)
-    log(f"{len(loc)} locations, inverse grid {len(grid)} sources (5 mm, off-grid), {n_draws} coregistration draws")
+    log(f"{ctx.label}: {len(loc)} locations, inverse grid {len(grid)} sources (5 mm, off-grid), {n_draws} coregistration draws")
 
     # noise covariance (5 min) and a practical detector (thresholds from 10 min) per array, independent null data
     def null_data(minutes):
@@ -136,13 +131,13 @@ def main():
     whit = {name: metrics.whitener(covs[name]) for name in arrays}
     del base
     cal = null_data(lc["calibration_min"])
-    valid_c = np.flatnonzero(st.cortex.usable)
-    cand = np.setdiff1d(valid_c[goldenholz.poisson_disk(st.cortex.rr[valid_c], cfg["detector"]["dictionary_spacing_mm"] * 1e-3, rng)], tgt)
-    templates = {s: ied.filtered_template(st.filt, s, sim["decimate"]) for s in cfg["events"]["stretches"]}
+    valid_c = np.flatnonzero(ctx.cortex.usable)
+    cand = np.setdiff1d(valid_c[goldenholz.poisson_disk(ctx.cortex.rr[valid_c], cfg["detector"]["dictionary_spacing_mm"] * 1e-3, rng)], tgt)
+    templates = {s: ied.filtered_template(ctx.filt, s, sim["decimate"]) for s in cfg["events"]["stretches"]}
     dets, thr = {}, {}
     refr = int(round(cfg["detector"]["refractory_s"] * fs))
     for name, a in arrays.items():
-        cg = g2.gains(a, st.subject, st.cortex, cand, g2.FULLRES_JOBS[name])
+        cg = ctx.gain(name, cand)
         dets[name] = detection.ScanDetector.build(cal[name], whit[name], templates, cg, refr)
         _, h = dets[name].events(dets[name].statistic(cal[name])[0])
         thr[name] = detection.threshold_for_rate(h, lc["calibration_min"], 1.0)
@@ -167,36 +162,37 @@ def main():
             stat, _ = dets[name].statistic(y)
             detected = bool(stat[t_peak - tol:t_peak + tol + 1].max() > thr[name])
             d = minv[name, k].apply(y[:, [t_peak]], "dSPM")[:, 0]
-            err, j = localization.peak_error(d, st.cortex.rr[grid], centre[i])
-            sup = localization.support_recovery(d, st.cortex.rr[grid], centre[i], cfg["events"]["patch_radius_mm"] * 1e-3) if fam == "patch" else np.nan
+            err, j = localization.peak_error(d, ctx.cortex.rr[grid], centre[i])
+            sup = localization.support_recovery(d, ctx.cortex.rr[grid], centre[i], cfg["events"]["patch_radius_mm"] * 1e-3) if fam == "patch" else np.nan
             ev_ = evoked_for(a, y[:, t_peak:t_peak + 1], fs)
             with mne.use_coil_def(opm.coil_def_file()):
                 dip, _ = mne.fit_dipole(ev_, mne_cov[name], bem1_sol, trans_used[k], min_dist=lc["ecd_min_dist_mm"], verbose=False)
             # where the analyst reads the dipole (MRI via the perturbed transform), and in the sensor frame (true transform)
             ecd_mri = mne.transforms.apply_trans(trans_used[k], dip.pos[0])
-            ecd_sensor = mne.transforms.apply_trans(st.subject.trans, dip.pos[0])
+            ecd_sensor = mne.transforms.apply_trans(ctx.subject.trans, dip.pos[0])
             rows.append(dict(event=e_idx, location=i, family=fam, strength_nAm=s, array=name, coreg_draw=k, detected=detected,
                              dspm_error_mm=err * 1e3, dspm_peak=float(np.abs(d).max()), support=sup,
                              ecd_error_mm=1e3 * float(np.linalg.norm(ecd_mri - centre[i])),
                              ecd_error_sensor_frame_mm=1e3 * float(np.linalg.norm(ecd_sensor - centre[i])),
                              coreg_displacement_mm=coreg_mm, ecd_gof=float(dip.gof[0]), ecd_conf_vol_mm3=float(dip.conf["vol"][0]) * 1e9,
                              ecd_khi2_per_dof=float(dip.khi2[0] / dip.nfree[0]),
-                             depth_mm=float(st.src.depth_mm[loc[i]]), stratum=[int(x) for x in strata[i]]))
+                             depth_mm=float(ctx.src.depth_mm[loc[i]]), stratum=[int(x) for x in strata[i]]))
         if e_idx % 20 == 0:
             log(f"event {e_idx + 1}/{len(events)}")
-    with open(OUT / "g4_localization_events.csv", "w", newline="") as fh:
+    tag = "" if ctx.label == "adult" else f"_{ctx.label}"
+    with open(OUT / f"g4_localization{tag}_events.csv", "w", newline="") as fh:
         wr = csv.DictWriter(fh, fieldnames=[k for k in rows[0] if k != "stratum"])
         wr.writeheader()
         for r in rows:
             wr.writerow({k: v for k, v in r.items() if k != "stratum"})
-    summary = dict(status="NEW (G4 adult: bounded localization; 1-layer BEM and 2-mm/2-deg coregistration error in the inverse, "
-                          f"{n_draws} draws shared by all arrays)",
+    summary = dict(status=f"NEW (G4 {ctx.label}: bounded localization; 1-layer BEM and 2-mm/2-deg coregistration error in the "
+                          f"inverse, {n_draws} draws shared by all arrays)", anatomy=ctx.notes,
                    config=cfg["localization"], n_events=len(events), inverse_grid=int(len(grid)), thresholds_1_per_min=thr,
                    coreg_displacement_mm_median=float(np.median([r["coreg_displacement_mm"] for r in rows])),
                    results=summarise(rows, arrays, lc), paired=paired(rows, arrays, lc, rng))
-    io.write_json(summary, OUT / "g4_localization_summary.json")
-    figure(rows, arrays, lc)
-    log(f"done in {time.time() - t0:.0f} s")
+    io.write_json(summary, OUT / f"g4_localization{tag}_summary.json")
+    figure(rows, arrays, lc, ctx.label)
+    return rows, summary
 
 
 def _med(v):
@@ -252,7 +248,7 @@ def paired(rows, arrays, lc, rng, n_boot=2000):
     return out
 
 
-def figure(rows, arrays, lc):
+def figure(rows, arrays, lc, label="adult"):
     colors = {"squid": "k", "opm_matched": "tab:green", "opm204": "tab:blue", "opm_dense": "tab:purple"}
     conds = [(f, s) for f in ("focal", "patch") for s in lc["strengths_nAm"]]
     fig, axs = plt.subplots(1, 3, figsize=(15, 4.4))
@@ -282,9 +278,10 @@ def figure(rows, arrays, lc):
     for name in arrays:
         axs[0].plot([], [], "s", color=colors.get(name, "0.5"), alpha=0.5, label=name)
     axs[0].legend(fontsize=8)
-    fig.suptitle("G4 adult: localization with a 1-layer BEM and 2-mm/2-deg coregistration error (same draws for all arrays)", fontsize=10)
+    fig.suptitle(f"G4 {label}: localization with a 1-layer BEM and 2-mm/2-deg coregistration error (same draws for all arrays)",
+                 fontsize=10)
     fig.tight_layout()
-    fig.savefig(OUT / "Figure_G4_localization.png", dpi=150)
+    fig.savefig(OUT / f"Figure_G4_localization{'' if label == 'adult' else '_' + label}.png", dpi=150)
     plt.close(fig)
 
 if __name__ == "__main__":

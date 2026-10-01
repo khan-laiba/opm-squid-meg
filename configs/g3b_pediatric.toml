@@ -1,0 +1,41 @@
+# G3B pediatric fixed adult helmet vs head-adaptive OPM (NEW). Values are study choices [C] unless
+# tagged (HW-*, A-*, D-* entries of docs/provenance_register.md). The analysis band, sensor noise,
+# OPM sensor model, background grid and calibration, room field and source seed are those of G2
+# (configs/g2_adult.toml), read from there so that the conventions cannot drift apart.
+
+[anatomy]
+template = "ANTS2-0Years3T"              # D-G3-ANAT: 2-year infant template (O'Reilly et al. 2021), native dimensions
+school_age_scale = 0.8947368421052632    # 85/95: Jas et al. 2026 Table 1 child (8 y) / adult head radius (size-only control)
+size_matched_rule = "ofc"                # second size-only control: adult scaled by the template/adult occipitofrontal circumference
+bem_conductivity = [0.3, 0.006, 0.3]     # as G2 (geometry-only comparison first; 1-layer BEM as the conductivity-free check)
+
+[placement]                              # A-G3-PLACE (src/opmsquid/pediatric.py)
+primary = "top"                          # head raised to 20-mm contact with the top of the helmet
+clearance_mm = 20.0                      # nearest magnetometer coil centre to scalp at contact (HW-18mm + 2 mm, as G2 'well_fitted')
+dewar_spacing_mm = 18.0                  # feasibility (HW-18mm)
+translation_mm = 5.0
+pitch_deg = 10.0
+roll_deg = 5.0
+
+[sources]
+patch_radii_mm = [5.0, 10.0]             # geodesic radius on the white surface (native mm)
+patch_total_nAm = 10.0                   # fixed-total convention (D is independent of the moment)
+n_patch_centres = 300                    # bounded subset of targets (homologous for the scaled controls)
+
+[usefulness]                             # A-G3-USEFUL: operational, not a clinical standard
+detectability_threshold = 5.0            # known-topography detectability at which a source counts as usable
+reference_moments_nAm = [20.0, 50.0, 100.0, 200.0]
+primary_reference_nAm = 100.0
+
+[background]
+variance_factors = [0.5, 2.0]            # bounded sensitivity of the brain-background variance (not an age-specific estimate)
+
+[conditions]
+all = ["intrinsic", "intrinsic+brain", "projected"]
+headline = ["intrinsic+brain", "projected"]
+
+[strata]
+depth_edges_mm = [0.0, 10.0, 15.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 90.0]
+orientation_edges_deg = [0.0, 30.0, 60.0, 90.1]
+min_n = 10                               # fewer targets: stratum or parcel reported as sparse, not summarised
+n_boot = 1000

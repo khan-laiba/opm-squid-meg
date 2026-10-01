@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""G4 (adult): IED-like event detection with the G2 framework (NEW).
+"""G4: IED-like event detection with the G2 framework (NEW), adult (this script) and, through
+``Context``, any anatomy with its arrays (scripts/g4_epilepsy_pediatric.py).
 
 Arrays, gains, noise model and calibration are those of G2 (configs/g2_adult.toml); the recordings
 are simulated in the time domain (opmsquid.ied) with one noise realization per segment shared by
@@ -25,7 +26,9 @@ import pickle
 import sys
 import time
 import tomllib
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -61,6 +64,52 @@ def wilson(k, n, z=1.96):
     return [float(c - h), float(c + h)]
 
 
+@dataclass
+class Context:
+    """One anatomy with its arrays ('squid', 'opm_matched', 'opm_dense'): what the detection and
+    localization studies need. ``gain(name, vertices)`` gives lead fields at global vertices and
+    ``patch_topographies(name, members)`` the summed lead fields of patches (per unit density)."""
+
+    label: str
+    subject: object
+    cortex: object
+    src: object
+    filt: object
+    arrays: dict
+    G_t: dict
+    G_g: dict
+    brain_scale: float
+    env: object
+    gain: Callable
+    patch_topographies: Callable
+    notes: str = ""
+
+
+def adult_context(cfg2, names=("squid", "opm_matched", "opm_dense")) -> Context:
+    """The G2 adult: sample subject, measured head position, full-resolution lead fields."""
+    st = G.Study(cfg2)
+    arrays = {k: v for k, v in g2.build_arrays(st.subject, st.dig).items() if k in names}
+    squid = arrays["squid"]
+    bads = cfg2["sensors"]["bads"]
+    good = ~np.isin(squid.info.ch_names, bads)
+    grads = good & (squid.kinds == "grad")
+    meas = g2.measured_noise(squid.info, st.filt, bads)
+    G_t, G_g = {}, {}
+    for name, a in arrays.items():
+        G_t[name], G_g[name] = st.gains(a)
+    brain_scale = background.calibrate(st.unit_brain(G_g["squid"]), grads, float(np.nanmedian(meas["brain"][grads])))
+
+    def gain(name, vertices):
+        return g2.gains(arrays[name], st.subject, st.cortex, vertices, g2.FULLRES_JOBS[name])
+
+    def patch_topographies(name, members):
+        full, col = g2.fullres_matrix(arrays[name], st.subject, st.cortex, g2.FULLRES_JOBS[name])
+        return goldenholz.patch_topographies(full, members, col, st.cortex.area)
+
+    return Context("adult", st.subject, st.cortex, st.src, st.filt, arrays, G_t, G_g, brain_scale, meas["environment"], gain,
+                   patch_topographies, "MNE sample subject, measured head position (G2)")
+
+
 def stratified_locations(st, n, rng):
     """Up to n/12 targets per depth x orientation stratum (fewer if the stratum is small), never on
     the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum, not cortex)."""
@@ -85,54 +134,56 @@ def main(overrides: dict | None = None):
     for section, values in (overrides or {}).items():
         cfg[section].update(values)
     cfg2 = tomllib.loads((ROOT / "configs" / "g2_adult.toml").read_text())
+    ctx = adult_context(cfg2)
+    state = simulate(ctx, cfg, np.random.default_rng(cfg["simulation"]["seed"]))
+    save_state(state, STATE)
+    summarise(state)
+    log(f"done in {time.time() - t_start:.0f} s")
+
+
+def save_state(state, path):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "wb") as fh:
+        pickle.dump(state, fh)
+
+
+def simulate(ctx: Context, cfg: dict, rng: np.random.Generator) -> dict:
+    """Null data, frozen detectors and the event simulation for one anatomy (see the module
+    docstring); returns the checkpoint state that ``summarise`` reads."""
     sim, ev, dc = cfg["simulation"], cfg["events"], cfg["detector"]
-    st = G.Study(cfg2)
-    rng = np.random.default_rng(sim["seed"])
-    arrays = {k: v for k, v in g2.build_arrays(st.subject, st.dig).items() if k in ("squid", "opm_matched", "opm_dense")}
-    squid = arrays["squid"]
-    bads = cfg2["sensors"]["bads"]
-    good = ~np.isin(squid.info.ch_names, bads)
-    grads = good & (squid.kinds == "grad")
-    meas = g2.measured_noise(squid.info, st.filt, bads)
-    env = meas["environment"]
-    G_t, G_g = {}, {}
-    for name, a in arrays.items():
-        G_t[name], G_g[name] = st.gains(a)
-    brain_scale = background.calibrate(st.unit_brain(G_g["squid"]), grads, float(np.nanmedian(meas["brain"][grads])))
+    arrays, G_t, G_g, env = ctx.arrays, ctx.G_t, ctx.G_g, ctx.env
     specs = {}
     for name, a in arrays.items():
         asd = (np.array([g2.SQUID_ASD[k] for k in a.kinds]) if name == "squid"
                else np.full(a.n, sim["opm_asd_fT_per_rtHz"] * 1e-15))
         specs[name] = ied.ArraySpec(G_g[name], environment.external_basis(a.info, env.r0, a.coil_def), asd)
-    gen = ied.NoiseGenerator(specs, brain_scale * st.src.grid_area, env.coef_timecourses, env.coef_cov, st.filt,
+    gen = ied.NoiseGenerator(specs, ctx.brain_scale * ctx.src.grid_area, env.coef_timecourses, env.coef_cov, ctx.filt,
                              decimate=sim["decimate"], env_fs=env.sfreq)
     fs = gen.fs_out
-    log(f"generator ready: output rate {fs:.1f} Hz, brain scale {brain_scale:.3e}")
+    log(f"{ctx.label}: generator ready: output rate {fs:.1f} Hz, brain scale {ctx.brain_scale:.3e}")
 
     # detectors: array/channel set -> row mask
     det_sets = {}
     for key in dc["arrays"]:
         name, cs = key.split("/")
         det_sets[key] = (name, g2.channel_sets(arrays[name])[cs])
-    templates = {s: ied.filtered_template(st.filt, s, sim["decimate"]) for s in ev["stretches"]}
+    templates = {s: ied.filtered_template(ctx.filt, s, sim["decimate"]) for s in ev["stretches"]}
 
     # event sources and the candidate dictionary
-    loc, strata = stratified_locations(st, ev["n_locations"], rng)
-    tgt = st.src.target[loc]
-    members = goldenholz.geodesic_patches(st.cortex.adjacency, tgt, ev["patch_radius_mm"] * 1e-3, st.cortex.usable)
+    loc, strata = stratified_locations(ctx, ev["n_locations"], rng)
+    tgt = ctx.src.target[loc]
+    members = goldenholz.geodesic_patches(ctx.cortex.adjacency, tgt, ev["patch_radius_mm"] * 1e-3, ctx.cortex.usable)
     topo = {}
-    for name, a in arrays.items():
-        full, col = g2.fullres_matrix(a, st.subject, st.cortex, g2.FULLRES_JOBS[name])
-        unit = goldenholz.patch_topographies(full, members, col, st.cortex.area)
-        area = np.array([st.cortex.area[m].sum() for m in members])
+    area = np.array([ctx.cortex.area[m].sum() for m in members])
+    for name in arrays:
+        unit = ctx.patch_topographies(name, members)
         for i in range(len(loc)):
             topo[(name, i, "focal")] = G_t[name][:, loc[i]]
             topo[(name, i, "patch")] = unit[:, i] / area[i]  # per unit total scalar moment
-        del full
-    valid = np.flatnonzero(st.cortex.usable)
-    cand = valid[goldenholz.poisson_disk(st.cortex.rr[valid], dc["dictionary_spacing_mm"] * 1e-3, rng)]
+    valid = np.flatnonzero(ctx.cortex.usable)
+    cand = valid[goldenholz.poisson_disk(ctx.cortex.rr[valid], dc["dictionary_spacing_mm"] * 1e-3, rng)]
     cand = np.setdiff1d(cand, tgt)
-    cand_gain = {name: g2.gains(a, st.subject, st.cortex, cand, g2.FULLRES_JOBS[name]) for name, a in arrays.items()}
+    cand_gain = {name: ctx.gain(name, cand) for name in arrays}
     log(f"{len(loc)} event locations, {len(cand)} dictionary candidates")
 
     # baseline null -> whiteners; independent calibration null -> detector normalisation, oracle
@@ -204,17 +255,13 @@ def main(overrides: dict | None = None):
             log(f"events {start + len(batch)}/{len(events)}")
 
     # checkpoint, then summaries (``--resummarise`` redoes them from the checkpoint)
-    state = dict(cfg=cfg, fs=fs, events=events, strata=strata, rec=rec, held_heights=held_heights, thr=thr, zcrit=zcrit,
-                 minutes_held=cfg["null"]["heldout_min"], n_dictionary=int(len(cand)), simulated_at_commit=io.RUN_COMMIT,
-                 locations=[dict(vertex=int(st.cortex.vertno[v]), hemi=int(st.cortex.hemi[v]), depth_mm=float(st.src.depth_mm[li]),
-                                 orientation_deg=float(st.src.orientation_deg[li]), lobe=str(st.src.lobe[li]),
-                                 region=str(st.src.region[li]), stratum=[int(a) for a in strata[k]])
-                            for k, (v, li) in enumerate(zip(tgt, loc))])
-    STATE.parent.mkdir(parents=True, exist_ok=True)
-    with open(STATE, "wb") as fh:
-        pickle.dump(state, fh)
-    summarise(state)
-    log(f"done in {time.time() - t_start:.0f} s")
+    return dict(cfg=cfg, label=ctx.label, context=ctx.notes, fs=fs, events=events, strata=strata, rec=rec, held_heights=held_heights,
+                thr=thr, zcrit=zcrit, minutes_held=cfg["null"]["heldout_min"], n_dictionary=int(len(cand)),
+                simulated_at_commit=io.RUN_COMMIT,
+                locations=[dict(vertex=int(ctx.cortex.vertno[v]), hemi=int(ctx.cortex.hemi[v]), depth_mm=float(ctx.src.depth_mm[li]),
+                                orientation_deg=float(ctx.src.orientation_deg[li]), lobe=str(ctx.src.lobe[li]),
+                                region=str(ctx.src.region[li]), stratum=[int(a) for a in strata[k]])
+                           for k, (v, li) in enumerate(zip(tgt, loc))])
 
 
 def s50_from(p, strengths):
@@ -233,6 +280,7 @@ def s50_from(p, strengths):
 
 def summarise(state):
     cfg, events, strata, rec = state["cfg"], state["events"], state["strata"], state["rec"]
+    label = state.get("label", "adult")
     ev = cfg["events"]
     strengths = np.array(ev["strengths_nAm"], float)
     thr, zcrit, held, minutes = state["thr"], state["zcrit"], state["held_heights"], state["minutes_held"]
@@ -249,7 +297,8 @@ def summarise(state):
     modes = ["oracle"] + [f"practical@{op}" for op in thr[keys[0]]]
     rng = np.random.default_rng(7)
     tables = {}  # (detector, mode) -> detection rate per location and strength (focal)
-    summary = dict(status="NEW (G4 adult: IED detection, G2 noise model in the time domain)", config=cfg, fs_out=state["fs"],
+    summary = dict(status=f"NEW (G4 {label}: IED detection, G2 noise model in the time domain)", config=cfg, fs_out=state["fs"],
+                   anatomy=state.get("context", ""),
                    simulated_at_commit=state.get("simulated_at_commit"),
                    n_events=len(events), n_locations=len(state["locations"]), n_dictionary=state["n_dictionary"],
                    locations=state["locations"], detectors={}, paired={})
@@ -345,16 +394,17 @@ def summarise(state):
                                                  ci95_location_bootstrap=[float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))],
                                                  s50_ratio_squid_over_opm=s50_ratio, p_values="uncorrected")
                 summary["paired"][f"{a}_vs_{b}/{mode}"] = res
-    io.write_json(summary, OUT / "g4_adult_summary.json")
-    with open(OUT / "g4_adult_events.csv", "w", newline="") as fh:
+    io.write_json(summary, OUT / f"g4_{label}_summary.json")
+    with open(OUT / f"g4_{label}_events.csv", "w", newline="") as fh:
         wr = csv.writer(fh)
         wr.writerow(["location", "family", "strength_nAm", "stretch", "depth_band"] + [f"{k}_{v}" for k in keys for v in ("oracle_z", "near_height")])
         for n, (i, f_, s_, x) in enumerate(events):
             wr.writerow([i, f_, s_, x, int(band[n])] + [f"{rec[k][v][n]:.3f}" for k in keys for v in ("oracle_z", "near_height")])
-    figures(summary, ev)
+    figures(summary, ev, label)
 
 
-def figures(summary, ev):
+def figures(summary, ev, label="adult"):
+    suffix = "" if label == "adult" else f"_{label}"
     colors = {"squid/combined": "k", "squid/grad": "tab:red", "squid/mag": "tab:blue", "opm_matched/opm": "tab:green", "opm_dense/opm": "tab:purple"}
     fig, axs = plt.subplots(2, len(DEPTH_BANDS), figsize=(16, 7.5), sharey=True)
     for row, mode in enumerate(("oracle", "practical@1")):
@@ -373,9 +423,9 @@ def figures(summary, ev):
             if db == 0:
                 ax.set_ylabel("detection probability (3 morphologies pooled)")
     axs[0, 0].legend(fontsize=7)
-    fig.suptitle("G4 adult: IED detection vs strength (Wilson 95 % bands; the oracle knows source and time)", fontsize=10)
+    fig.suptitle(f"G4 {label}: IED detection vs strength (Wilson 95 % bands; the oracle knows source and time)", fontsize=10)
     fig.tight_layout()
-    fig.savefig(OUT / "Figure_G4_detection.png", dpi=150)
+    fig.savefig(OUT / f"Figure_G4_detection{suffix}.png", dpi=150)
     plt.close(fig)
     fig, axs = plt.subplots(1, 2, figsize=(11, 4.3))
     for ax, lab in zip(axs, ("superficial_10-30mm_40nAm", "deep_30-70mm_160nAm")):
@@ -389,9 +439,9 @@ def figures(summary, ev):
         ax.set_ylabel("sensitivity")
         ax.set_title(f"{lab.replace('_', ' ')} (focal, 3 morphologies; n = {r['n_events']})", fontsize=9)
         ax.legend(fontsize=7)
-    fig.suptitle("G4 adult: practical detector, sensitivity vs false events per minute", fontsize=10)
+    fig.suptitle(f"G4 {label}: practical detector, sensitivity vs false events per minute", fontsize=10)
     fig.tight_layout()
-    fig.savefig(OUT / "Figure_G4_roc.png", dpi=150)
+    fig.savefig(OUT / f"Figure_G4_roc{suffix}.png", dpi=150)
     plt.close(fig)
 
 

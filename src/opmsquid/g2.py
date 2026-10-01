@@ -72,9 +72,13 @@ def skin_surface(subject: anatomy.Subject) -> anatomy.Surface:
     return anatomy._outward(next(s for s in subject.bem_surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_HEAD))
 
 
-def matched_opm(subject: anatomy.Subject, digitisation: mne.Info, scalp_gap: float = 0.0) -> Array:
+def matched_opm(subject: anatomy.Subject, digitisation: mne.Info, scalp_gap: float = 0.0,
+                squid_info: mne.Info | None = None) -> Array:
+    """Matched-site array: the Neuromag sites of ``squid_info`` (default: the sample recording, i.e.
+    the measured head position) projected onto the scalp, under the OPM placement rules."""
     skin = next(s for s in subject.bem_surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_HEAD)
-    arr, rep = opm.matched_to_neuromag(neuromag.load_info("T3"), subject.trans, subject.scalp, digitisation,
+    squid_info = neuromag.load_info("T3") if squid_info is None else squid_info
+    arr, rep = opm.matched_to_neuromag(squid_info, subject.trans, subject.scalp, digitisation,
                                        scalp_gap=scalp_gap, normal_radius=AXIS_RADIUS, axis_surface=skin_surface(subject),
                                        ear_clearance=EAR_CLEARANCE, outer_skin=skin)
     return _opm_array("opm_matched", arr, dict(role="matched-site coverage control", **_rep(rep)))
@@ -154,8 +158,7 @@ def make_sources(subject, cortex, rng) -> Sources:
     grid_area = noisemodel.grid_areas(cortex.rr[grid], cortex.rr[valid], cortex.area[valid])
     depth = anatomy.depth_to_surface(cortex.rr[target], subject.scalp) * 1e3
     orient = anatomy.orientation_angle(cortex.rr[target], cortex.nn[target], subject.inner_skull)
-    names = np.concatenate([plotting.read_freesurfer_annot(paths.SUBJECTS_DIR / subject.name / "label" / f"{h}.aparc.annot")
-                            for h in ("lh", "rh")])
+    names = np.concatenate([plotting.read_freesurfer_annot(subject.labels / f"{h}.aparc.annot") for h in ("lh", "rh")])
     region = np.array([f"{'lh' if cortex.hemi[v] == 0 else 'rh'}.{names[v]}" for v in target], dtype=object)
     return Sources(target, grid, grid_area, depth, orient, plotting.lobe_of(names[target]), region,
                    cortex.dist_inner_skull[target] * 1e3)

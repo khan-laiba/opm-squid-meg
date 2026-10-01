@@ -5,6 +5,12 @@ Primary adult anatomy: the MNE ``sample`` subject (individual adult MRI with Fre
 the head-MRI transform of its Neuromag recording). Coordinates are in the MRI frame [m] unless
 stated otherwise.
 
+Pediatric anatomies (G3B): ``load_template`` reads an infant template of O'Reilly et al. (2021)
+as packaged by ``mne.datasets.fetch_infant_template`` (FreeSurfer surfaces, 3-layer BEM, dense
+head surface, oct-6 source space, MRI-frame fiducials; native dimensions, head frame from its
+fiducials); ``scaled`` makes a size-only control by scaling every coordinate of a subject about
+its MRI origin (a scaled adult is not pediatric anatomy).
+
 Source descriptors (Hunold et al. 2016 definitions, see docs/literature/hunold2016.md):
 * depth: distance from the source to the scalp (nearest point of the dense scalp surface);
 * orientation: angle between the source's cortical normal and the normal of the inner skull at
@@ -59,6 +65,23 @@ class Subject:
     scalp: Surface  # dense head surface
     inner_skull: Surface
     trans: mne.transforms.Transform  # head -> MRI
+    label_dir: Path | None = None  # FreeSurfer label directory (aparc annotations); default subjects_dir/name/label
+    surface_src: Path | None = None  # source space holding the full white surface; default bem/{name}-all-src.fif
+    fiducials: dict | None = None  # LPA, nasion, RPA [m], head frame (None: those of the sample recording)
+    parent: "Subject | None" = None  # the subject a scaled control was made from
+    scale: float = 1.0  # linear scale factor relative to ``parent``
+    description: str = ""
+
+    @property
+    def labels(self) -> Path:
+        return self.label_dir if self.label_dir is not None else self.subjects_dir / self.name / "label"
+
+    def digitisation(self) -> mne.Info:
+        """Measurement info carrying only the head-frame fiducials (what the OPM coverage rules
+        use); for the sample subject, the digitisation of its recording."""
+        if self.fiducials is None:
+            return mne.io.read_info(paths.SAMPLE_MEG / "sample_audvis_raw.fif", verbose=False)
+        return fiducial_info(self.fiducials)
 
     @property
     def src_rr(self) -> np.ndarray:
@@ -98,10 +121,16 @@ _REFINED: dict = {}
 
 
 def _refined_surface(name: str, surf: dict, times: int) -> dict:
-    """A BEM surface subdivided ``times`` by flat midpoints (same shape, 4^times triangles), cached."""
+    """A BEM surface subdivided ``times`` by flat midpoints (same shape, 4^times triangles), cached
+    by subject name, surface id, refinement and a hash of the geometry (a scaled control shares
+    the name and mesh size of nothing else, but the hash makes the key safe regardless)."""
+    import hashlib
+
     from mne.surface import complete_surface_info
 
-    key = (name, int(surf["id"]), times, surf["rr"].shape)
+    geometry = hashlib.sha1(np.ascontiguousarray(surf["rr"], np.float64).tobytes()
+                            + np.ascontiguousarray(surf["tris"], np.int64).tobytes()).hexdigest()
+    key = (name, int(surf["id"]), times, geometry)
     if key not in _REFINED:
         fine = Surface(surf["rr"], surf["tris"], surf["nn"]).subdivided(times)
         new = dict(id=surf["id"], sigma=surf.get("sigma", 1.0), coord_frame=surf["coord_frame"], rr=fine.rr.copy(),
@@ -132,7 +161,92 @@ def load_sample(spacing: str = "oct6") -> Subject:
     head = mne.read_bem_surfaces(bem_dir / "sample-head.fif", verbose=False)[0]
     inner = next(s for s in surfs if s["id"] == FIFF.FIFFV_BEM_SURF_ID_BRAIN)
     trans = mne.read_trans(paths.require(paths.SAMPLE_MEG / "sample_audvis_raw-trans.fif", "sample trans"))
-    return Subject("sample", sd, src, surfs, _outward(head), _outward(inner), trans)
+    return Subject("sample", sd, src, surfs, _outward(head), _outward(inner), trans,
+                   description="MNE sample subject (adult; individual MRI)")
+
+
+def fiducial_info(fiducials: dict) -> mne.Info:
+    """An empty measurement info whose digitisation is LPA, nasion and RPA (head frame [m])."""
+    info = mne.create_info(["dummy"], 1000.0, "misc")
+    montage = mne.channels.make_dig_montage(nasion=np.asarray(fiducials["nasion"], float), lpa=np.asarray(fiducials["lpa"], float),
+                                            rpa=np.asarray(fiducials["rpa"], float), coord_frame="head")
+    info.set_montage(montage, on_missing="ignore")
+    return info
+
+
+INFANT_SUBJECTS = "infant_subjects"  # data/external/infant_subjects (mne.datasets.fetch_infant_template)
+
+
+def load_template(name: str = "ANTS2-0Years3T") -> Subject:
+    """An infant template (O'Reilly et al. 2021, via ``mne.datasets.fetch_infant_template``) in its
+    native dimensions: 3-layer BEM (5,120 triangles per surface), dense head surface, oct-6 source
+    space (whose full white surface also provides the full-resolution cortex), aparc labels. The
+    head frame is defined by the template's MRI-frame fiducials (Neuromag convention), so the
+    head-to-MRI transform follows from them."""
+    sd = paths.require(paths.EXTERNAL / INFANT_SUBJECTS, "infant template directory")
+    bem_dir = paths.require(sd / name / "bem", f"{name} BEM directory")
+    src_file = bem_dir / f"{name}-oct-6-src.fif"
+    src = mne.read_source_spaces(src_file, verbose=False)
+    surfs = mne.read_bem_surfaces(bem_dir / f"{name}-5120-5120-5120-bem.fif", verbose=False)
+    head = mne.read_bem_surfaces(bem_dir / f"{name}-head.fif", verbose=False)[0]
+    inner = next(s for s in surfs if s["id"] == FIFF.FIFFV_BEM_SURF_ID_BRAIN)
+    fids, frame = mne.io.read_fiducials(bem_dir / f"{name}-fiducials.fif", verbose=False)
+    if frame != FIFF.FIFFV_COORD_MRI:
+        raise ValueError(f"{name} fiducials are not in the MRI frame")
+    key = {FIFF.FIFFV_POINT_LPA: "lpa", FIFF.FIFFV_POINT_NASION: "nasion", FIFF.FIFFV_POINT_RPA: "rpa"}
+    mri = {key[f["ident"]]: np.asarray(f["r"], float) for f in fids if f["ident"] in key}
+    mri_head = mne.transforms.get_ras_to_neuromag_trans(mri["nasion"], mri["lpa"], mri["rpa"])
+    trans = mne.transforms.Transform("head", "mri", np.linalg.inv(mri_head))
+    fid_head = {k: mne.transforms.apply_trans(mri_head, v) for k, v in mri.items()}
+    return Subject(name, sd, src, surfs, _outward(head), _outward(inner), trans, label_dir=sd / name / "label",
+                   surface_src=src_file, fiducials=fid_head,
+                   description=f"infant template {name} (O'Reilly et al. 2021; native dimensions)")
+
+
+def _scaled_surface(surf: dict, s: float) -> dict:
+    from mne.surface import complete_surface_info
+
+    new = dict(id=surf["id"], sigma=surf.get("sigma", 1.0), coord_frame=surf["coord_frame"], rr=np.asarray(surf["rr"], float) * s,
+               tris=np.asarray(surf["tris"]).copy(), np=len(surf["rr"]), ntri=len(surf["tris"]))
+    return complete_surface_info(new, copy=False, verbose=False)
+
+
+_SRC_LENGTHS = ("rr", "tri_cent", "use_tri_cent", "nearest_dist", "dist_limit")
+_SRC_AREAS = ("tri_area", "use_tri_area")
+
+
+def scaled(subject: Subject, factor: float, name: str | None = None) -> Subject:
+    """Size-only control: every MRI-frame coordinate of ``subject`` multiplied by ``factor`` (about
+    the MRI origin). Directions, the mesh topology and the vertex correspondence are unchanged, so
+    every vertex is homologous to the original; areas scale by factor^2. The head frame (defined by
+    the scaled fiducials) is the original one scaled about its origin, so the head-to-MRI transform
+    keeps its rotation and scales its translation. Not pediatric anatomy (GOAL G3)."""
+    s = float(factor)
+    src = subject.src.copy()
+    for hemi in src:
+        for k in _SRC_LENGTHS:
+            if hemi.get(k) is not None:
+                hemi[k] = np.asarray(hemi[k], float) * s
+        for k in _SRC_AREAS:
+            if hemi.get(k) is not None:
+                hemi[k] = np.asarray(hemi[k], float) * s**2
+        if hemi.get("dist") is not None:
+            hemi["dist"] = hemi["dist"] * s
+    t = np.array(subject.trans["trans"], float)
+    t[:3, 3] *= s
+    fids = subject.fiducials if subject.fiducials is not None else _sample_fiducials()
+    return Subject(name or f"{subject.name}_x{s:.3f}", subject.subjects_dir, src, [_scaled_surface(b, s) for b in subject.bem_surfaces],
+                   Surface(subject.scalp.rr * s, subject.scalp.tris, subject.scalp.nn),
+                   Surface(subject.inner_skull.rr * s, subject.inner_skull.tris, subject.inner_skull.nn),
+                   mne.transforms.Transform("head", "mri", t), label_dir=subject.labels, surface_src=subject.surface_src,
+                   fiducials={k: np.asarray(v, float) * s for k, v in fids.items()}, parent=subject, scale=s,
+                   description=f"{subject.name} scaled by {s:.3f} (size-only control)")
+
+
+def _sample_fiducials() -> dict:
+    from .opm import fiducials_head
+
+    return fiducials_head(mne.io.read_info(paths.SAMPLE_MEG / "sample_audvis_raw.fif", verbose=False))
 
 
 def closest_point_on_triangles(p: np.ndarray, a: np.ndarray, b: np.ndarray, c: np.ndarray) -> np.ndarray:
@@ -258,10 +372,19 @@ def inner_skull_distance(subject: "Subject", points: np.ndarray) -> np.ndarray:
 
 
 def full_resolution(subject: Subject) -> FullResCortex:
-    """Build (or load from ``cache/anatomy``) the full-resolution cortex of ``subject``."""
+    """Build (or load from ``cache/anatomy``) the full-resolution cortex of ``subject``. A scaled
+    control is its parent's cortex scaled (same vertices; validity and the distance to the inner
+    skull recomputed on the scaled meshes)."""
     import scipy.sparse as sp
     from mne.surface import _CheckInside
 
+    if subject.parent is not None:
+        p = full_resolution(subject.parent)
+        s = subject.scale
+        rr = p.rr * s
+        inner = next(b for b in subject.bem_surfaces if b["id"] == FIFF.FIFFV_BEM_SURF_ID_BRAIN)
+        return FullResCortex(rr, p.nn.copy(), p.area * s**2, p.hemi, p.vertno, p.tris, _CheckInside(inner)(rr),
+                             (p.adjacency * s).tocsr(), inner_skull_distance(subject, rr))
     cache = paths.CACHE / "anatomy" / f"{subject.name}_fullres.npz"
     if cache.exists():
         z = np.load(cache)
@@ -269,8 +392,8 @@ def full_resolution(subject: Subject) -> FullResCortex:
         return FullResCortex(z["rr"], z["nn"], z["area"], z["hemi"], z["vertno"], z["tris"], z["valid"], adj,
                              inner_skull_distance(subject, z["rr"]))
 
-    src = mne.read_source_spaces(subject.subjects_dir / subject.name / "bem" / f"{subject.name}-all-src.fif",
-                                 verbose=False)
+    src_file = subject.surface_src or subject.subjects_dir / subject.name / "bem" / f"{subject.name}-all-src.fif"
+    src = mne.read_source_spaces(src_file, verbose=False)  # every MNE surface source space holds the full surface
     rr, nn, area, hemi, vertno, tris = [], [], [], [], [], []
     offset = 0
     for h, s in enumerate(src):
