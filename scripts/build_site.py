@@ -93,9 +93,12 @@ def page_index(d):
               ("G1C Goldenholz et al. 2009 cortical SNR maps (MEG)", "ADAPT (+ NEW OPM extension)", "done, independently reviewed"),
               ("G2 realistic adult OPM vs Neuromag", "NEW", f"done, independently reviewed; frozen as {FROZEN_TAG}"),
               ("G3A Jas head-size benchmark", "REPRO (+ NEW fixed shell)", "done" if d["g3a"] else "not run"),
-              ("G3B pediatric fixed helmet vs head-adaptive OPM", "NEW", "blocked: pediatric anatomy needs an owner decision"),
-              ("G4 epilepsy detection and bounded localization", "NEW", "adult done; pediatric waits for G3B"),
-              ("G5 software, reproduction, report", "-", "in progress (this local report; smoke test pending)")]
+              ("G3B pediatric fixed helmet vs head-adaptive OPM", "NEW",
+               "done (2-year infant template and scaled-adult size controls)" if d.get("g3b") else "in progress"),
+              ("G4 epilepsy detection and bounded localization", "NEW",
+               "adult done; pediatric done (" + ", ".join(ANAT[x] for x in d["g4p"]["labels"] if x != "adult") + ")"
+               if d.get("g4p") else "adult done; pediatric in progress"),
+              ("G5 software, reproduction, report", "-", "local report (not deployed); clean-environment smoke test passed")]
     h = ["<p>Simulation study comparing on-scalp optically pumped magnetometers (OPM) with the Neuromag SQUID system: "
          "an analytical benchmark and adaptations of two published adult studies, a realistic adult comparison, and "
          "(planned) pediatric and epilepsy extensions. The OPM advantage is tested, not assumed. Labels: "
@@ -157,8 +160,57 @@ def page_index(d):
              "uses simulated events in simulated noise.</li>"
              "<li>Confidence intervals resample cortical parcels or locations of one anatomy; they do not include model "
              "uncertainty, which the sensitivity analyses show instead (one factor at a time, plus a joint noise x gap grid).</li>"
-             "<li>No pediatric result yet (G3B needs pediatric anatomy).</li></ul>")
+             "<li>Pediatric results rest on one 2-year average template and two scaled copies of the adult: no anatomical "
+             "variability, no age-specific background physiology (only a bounded sensitivity), adult conductivities.</li></ul>")
+    if d.get("g3b"):
+        k = next(i for i, x in enumerate(h) if x.startswith('<h2 id="not-shown">'))
+        h.insert(k, pediatric_findings(d))
     return "\n".join(h)
+
+
+def pediatric_findings(d):
+    g3b, g4p = d["g3b"], d.get("g4p")
+    C, dec, sens = g3b["comparisons"], g3b["delta_other_placements"], g3b["sensitivity_median_D_dB"]
+
+    def ci(s):
+        c = s.get("ci95")
+        return f"{s['median']:+.2f} dB" + (f" [{c[0]:+.2f}, {c[1]:+.2f}]" if c else "")
+
+    r = {c: C[f"{c}/opm_dense/combined/intrinsic+brain/detect"] for c in CHILDREN}
+    items = [
+        f"In the fixed Neuromag helmet, raised to 20-mm contact with its top, the dense OPM array's known-topography "
+        f"detectability relative to Neuromag combined (D, in dB) grows from <strong>{r['school']['d_adult']['median']:+.2f} dB</strong> "
+        f"in the adult to {r['school']['d_child']['median']:+.2f}, {r['size2yr']['d_child']['median']:+.2f} and "
+        f"<strong>{r['infant2yr']['d_child']['median']:+.2f} dB</strong> in the school-age-size control, the 2-year-size control "
+        f"and the 2-year template: Delta = {ci(r['school']['delta'])}, {ci(r['size2yr']['delta'])} and "
+        f"{ci(r['infant2yr']['delta'])} (vertex-wise for the scaled adults; by parcel for the template). OPM arrays refitted "
+        "with the adult rules (nothing shrunk); background, room field and sensor noise unchanged.",
+        "The gain comes mainly from the fixed helmet's fit: left at the adult's ear-line position, Delta is "
+        + ", ".join(f"{dec[f'{c}/centred_vs_adult_centred/combined']['delta']['median']:+.2f}" for c in CHILDREN)
+        + " dB; in a counterfactual helmet scaled with the head it is "
+        + ", ".join(f"{dec[f'{c}/counterfactual_vs_adult_centred/combined']['delta']['median']:+.2f}" for c in CHILDREN)
+        + " dB (it reverses for the scaled adults, because the OPM's 7-mm standoff and 10-mm cell do not shrink; the "
+        "template, whose shape fits the scaled helmet less closely, keeps a small gain). In the fixed helmet the child's cortex is "
+        "farther from the SQUIDs, whose brain noise falls towards their intrinsic floor while the OPM's does not.",
+        f"Delta stays positive for OPM noise 7-30 fT/&radic;Hz, background variance x0.5 or x2, a 1-layer head model and the "
+        f"matched-site OPM array; at 30 fT/&radic;Hz the adult's D is {sens['adult/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f} dB "
+        f"and the template's {sens['infant2yr/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f} dB. A positive Delta is a "
+        "relative gain for the head-adaptive array, not by itself a clinical advantage.",
+    ]
+    if g4p:
+        cmp_ = g4p["comparison"]
+
+        def s50(lab, key):
+            v = cmp_.get(f"{lab}/{key}/practical@1/depth0/s50")
+            return "-" if not v or v["value"] is None else f"{v['value']:.0f}"
+
+        labs = [x for x in g4p["labels"] if x != "adult"]
+        items.append("Simulated spikes in the same framework (practical detector, 1 false event/min, 10-20 mm depth): strength for "
+                     "50 % detection, dense OPM vs Neuromag combined: " + "; ".join(
+                         f"{ANAT[lab]} {s50(lab, 'opm_dense/opm')} vs {s50(lab, 'squid/combined')} nAm" for lab in ["adult"] + labs)
+                     + ". Details on the <a href=\"epilepsy.html#pediatric\">epilepsy page</a>.")
+    return ("<h2 id=\"pediatric-findings\">Pediatric findings (G3B), with their conditions</h2>"
+            + "".join(f'<div class="finding">{x}</div>' for x in items))
 
 
 def page_benchmarks(d, out):
@@ -542,7 +594,7 @@ def main(argv=None):
     manifest = build_manifest(out)
     methods = sb.md_to_html((ROOT / "docs" / "methods.md").read_text(), heading_offset=1)
     pages = {
-        "index.html": ("OPM vs SQUID MEG: adult baseline", page_index(d)),
+        "index.html": ("OPM vs SQUID MEG: adult baseline and pediatric extension", page_index(d)),
         "benchmarks.html": ("Adult reference benchmarks (G1)", page_benchmarks(d, out)),
         "adult.html": ("Realistic adult comparison (G2)", page_adult(d, out)),
         "g2-report.html": ("G2 report", sb.md_to_html((RES / "g2" / "G2_report.md").read_text(), heading_offset=1)),
