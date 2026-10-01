@@ -73,12 +73,13 @@ noise for every head; OPM arrays refitted to each head with the adult rules; det
 - Delta stays positive for OPM noise 7-30 fT/sqrt(Hz), background variance x0.5 or x2 and a
   1-layer head model; at 30 fT/sqrt(Hz) the adult's D is -0.04 dB (a tie) and the template's
   +0.61 dB. In the scaled controls the gain is largest near the surface (vertex-wise +2.25 dB at
-  10-15 mm for the 2-year size); in the template most of it comes from the 50-90 mm strata (mostly
-  isthmus cingulate) and from radial sources, and it is regionally asymmetric (it follows the
-  head's lateral offset in the helmet).
+  10-15 mm for the 2-year size). In the template the within-stratum gain is largest for deep and
+  radial sources, but most of its pooled gain reflects its shallower cortex (reweighted to the
+  adult's depth mix, +0.33 instead of +0.85 dB at target level); it is also regionally
+  asymmetric, with the template off-centre in the helmet.
 - At 100 nAm (detectability >= 5, an operational threshold) both systems reach 66 % of the
   adult's and 75 % of the template's usable cortex, the OPM alone a further 2 % and 5 %, and the
-  SQUID alone none.
+  SQUID alone at most 0.15 %.
 - Simulated spikes (same detectors and seeds as the adult): the full OPM array's superficial
   detection advantage is about the same in the adult and both smaller heads (strength for 50 %
   detection at 10-20 mm, Neuromag combined / dense OPM: 53/35, 52/37 and 45/30 nAm; 16 of 18

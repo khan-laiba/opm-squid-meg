@@ -494,7 +494,7 @@ Neuromag combined, matched OPM, dense OPM)
   stays where it is). After the independent review two variants were added: 'x-centred' shifts the
   centred head along device x until the left and right helmet halves have equal median gaps
   (geometry only), then applies the top contact; 'top-18mm' raises it to true contact at the Dewar
-  spacing (the most SQUID-favourable placement of the family). A placement is feasible if no
+  spacing. A placement is feasible if no
   magnetometer coil centre is within 18 mm of the scalp. Regional gaps use MNE's Vectorview
   selections (left/right frontal, temporal, parietal, occipital).
 * Counterfactual helmet (A-G3-COUNTERFACTUAL; a mechanistic control, not a pediatric SQUID
@@ -564,51 +564,59 @@ dB of detectability; area-weighted medians without the medial wall, parcel-boots
   +0.77, +1.76, +1.65 dB; mean-power SNR (D_adult +0.55 dB) Delta +0.18, +0.58, +0.57 dB.
 * By depth (template vs adult, combined, native depth strata): Delta +0.12 to +0.35 dB down to 30 mm
   (intervals include 0), +0.33 [+0.17, +0.60] at 30-40 mm, +0.37 at 40-50 mm, +1.12 at 50-60 mm and
-  +2.23 at 60-90 mm (83 template vs 26 adult targets, 79 of them isthmus cingulate): most of the
-  template's gain comes from the 50-90 mm strata; at 30-50 mm it is about that at 10-15 mm. For the
+  +2.23 at 60-90 mm (83 template vs 26 adult targets, 79 of them isthmus cingulate). Within strata the
+  template's Delta is largest deep and for radial sources, but those strata hold little of its area
+  (2.9 % of it is deeper than 50 mm); most of its pooled gain reflects its shallower cortex (42 % of its area at
+  10-20 mm vs 22 % in the adult, area-weighted median depth 21.8 vs 26.2 mm): reweighted to the
+  adult's depth mix, the target-level difference of the medians falls from +0.85 to +0.33 dB. For the
   scaled controls the homologous (vertex-wise) Delta is largest near the surface and falls with
   depth: 2-year size +2.25 [+1.67, +2.53] dB at an adult depth of 10-15 mm, +1.56 at 20-25 mm,
   +0.68 at 30-40 mm, +0.45 at 40-50 mm; school-age size +0.73, +0.70, +0.31 and +0.22 dB. By
   orientation: the scaled controls gain about equally for radial and tangential sources (+0.70 /
   +0.47 dB; +1.23 / +1.24 dB), the template far more for radial sources (0-30 deg +2.22 [+1.58,
-  +2.82], 30-60 deg +1.00, 60-90 deg +0.53 dB).
+  +2.82], 30-60 deg +1.00, 60-90 deg +0.53 dB; radial sources are 16 % of its targets).
   Regionally the template's Delta is asymmetric (left inferior temporal, entorhinal, fusiform and
   pars orbitalis +2.3 to +3.0 dB; right orbitofrontal -0.8 to -0.9 dB): at top contact under the
   adult's measured pose its left frontal, temporal and parietal gaps are about 8 mm wider than the
-  right ones (occipital 1.5 mm); the x-5mm variant, which roughly re-centres it, changes the median
+  right ones (occipital 1.7 mm); the x-5mm variant, which roughly re-centres it, changes the median
   D by -0.1 dB.
 * What drives Delta (each child placement against the adult at the same rule): with the child left
   centred (ear line where the adult's was) Delta is +1.15, +1.73 and +1.79 dB; at top contact +0.47,
   +1.13 and +0.73 dB; laterally centred, then top contact, +0.47, +1.12 and +0.68 dB; at true 18-mm
   contact +0.46, +1.16 and +0.70 dB; back contact +0.89, +1.30 and +1.39 dB. In the counterfactual
-  helmet scaled with the head it is -0.17 [-0.22, -0.12], -0.30 [-0.36, -0.25] and +0.28 [+0.06,
+  helmet scaled with the head it is -0.17 [-0.21, -0.12], -0.30 [-0.35, -0.24] and +0.28 [+0.06,
   +0.53] dB, and about the laterally centred head -0.17, -0.30 and -0.37 [-0.54, +0.11] dB: the
   template's positive residual came from its lateral offset. The relative gain of the
   head-adaptive array in children therefore comes from the fixed helmet's fit; with a helmet that
   fits as the adult's does, it vanishes or reverses slightly.
-* Mechanism. With the background fixed per unit cortical area, a smaller cortex carries less
-  background power, and both systems' detectability rises in the smaller heads: vertex-wise from
-  the adult, the dense OPM gains +1.15 and +1.74 dB in the two scaled controls, Neuromag combined
-  +0.65 and +0.54 dB (gradiometers +0.45 and +0.10, magnetometers +0.69 and +0.64 dB). In the fixed
-  helmet the cortex is also farther from the SQUIDs (median target-to-magnetometer distance at
-  15-20 mm depth 48 mm adult, 50-57 mm children; OPM 26 mm in every head), so their brain noise
-  falls (magnetometers 203 -> 150, 125 and 120 fT; gradiometers 41 -> 30, 23 and 23 fT/cm against
-  21 fT/cm intrinsic) while their signal falls too, and the OPM gains more. Absolute detectability
+* Mechanism. Both systems' detectability rises in the smaller heads, by different routes:
+  vertex-wise from the adult, the dense OPM gains +1.15 and +1.74 dB in the two scaled controls,
+  Neuromag combined +0.65 and +0.54 dB (gradiometers +0.45 and +0.10, magnetometers +0.69 and
+  +0.64 dB). The on-scalp OPM sees more signal from a cortex closer in absolute terms (median peak
+  field of a 10-nAm dipole 211 fT in the adult, 242, 262 and 271 fT in the children) while its
+  brain noise stays near 490-540 fT. In the fixed helmet the cortex is farther from the SQUIDs
+  (median target-to-magnetometer distance at 15-20 mm depth 48 mm adult, 50-57 mm children; OPM
+  26 mm in every head) and, with the background fixed per unit area, the smaller cortex carries
+  less background power, so their brain noise falls (magnetometers 203 -> 150, 125 and 120 fT;
+  gradiometers 41 -> 30, 23 and 23 fT/cm against 21 fT/cm intrinsic) more than their signal
+  (magnetometer peak 70 -> 66, 54 and 65 fT). Absolute detectability
   of a 10-nAm dipole (median dB): dense OPM -1.60 (adult), -0.66, -0.19 and +0.93 (template);
   Neuromag combined -2.66, -2.15, -2.27 and -1.19. In the counterfactual helmet the SQUID gains at
   least as much as the OPM: the counterfactual Delta depends on the comparator (gradiometers -0.32
-  and -0.52 dB, magnetometers -0.12 and -0.21 dB for the scaled controls), so the residual is a
-  SQUID-side effect (signal against fixed intrinsic noise, largest for the gradiometers, whose
-  brain noise is only about twice their intrinsic noise), not an effect of the OPM's fixed
-  standoff alone.
+  and -0.52 dB, magnetometers -0.12 and -0.21 dB for the scaled controls), which points to a
+  SQUID-side component (signal against fixed intrinsic noise, largest for the gradiometers, whose
+  brain noise is only about twice their intrinsic noise) rather than to the OPM's fixed standoff
+  alone; the noise composition in the counterfactual helmet is not reported.
 * Channel count: the children's dense arrays have fewer sites (171, 155, 151). The adult's dense
-  array subsampled to those counts has D +0.66, +0.52 and +0.49 dB (full array +0.99), so at an
+  array subsampled (farthest-point) to those counts has D +0.66, +0.52 and +0.49 dB (full array
+  +0.99), so at an
   equal channel count Delta would be +0.72, +1.50 and +1.36 dB: the smaller site count of the
   head-adaptive array works against it, and the headline Delta includes that loss.
 * Placements: the source-blind variants (+-5 mm, pitch +-10 deg, roll +-5 deg, back contact) give
   D_child 1.45-2.52 (school-age size), 1.70-3.06 (2-year size) and 1.75-2.51 dB (template), adult
-  0.96-1.41 dB; top contact (the primary) ranks in the middle of the family, and true 18-mm
-  contact is the most SQUID-favourable (D_child 1.35, 2.05, 1.70 dB; adult 0.86). Regions:
+  0.96-1.41 dB; top contact (the primary) ranks in the middle of the family. True 18-mm contact
+  gives the lowest D for the adult, the school-age size control and the template (0.86, 1.35,
+  1.70 dB), but not for the 2-year size control (2.05 dB; pitch +10 deg gives 1.70). Regions:
   raising the head (centred -> top) lowers D in every lobe, most in the parietal and frontal
   lobes (template frontal +3.71 -> +2.02, parietal +3.02 -> +1.39 dB); back contact favours the
   SQUID at the occiput (template occipital +1.25 dB vs +2.08 at top) and disfavours it frontally
@@ -623,7 +631,7 @@ dB of detectability; area-weighted medians without the medial wall, parcel-boots
 * Usefulness (d >= 5) at 100 nAm, share of usable cortical area, both / OPM only / SQUID only /
   neither: adult 0.66 / 0.02 / 0.00 / 0.32, school-age size 0.69 / 0.04 / 0.00 / 0.28, 2-year size
   0.69 / 0.05 / 0.00 / 0.26, template 0.75 / 0.05 / 0.00 / 0.20; at 50 nAm OPM only 0.07, 0.10, 0.14
-  and 0.12. The SQUID alone is usable on at most 0.1 % of the area; the cortex neither reaches is
+  and 0.12. The SQUID alone is usable on at most 0.15 % of the area; the cortex neither reaches is
   mostly deep and medial.
 * Limits: one adult, one template and two scaled copies; no anatomical variability; the template
   is an average with a smooth cortex; no age-specific background physiology (only the bounded x0.5/
@@ -663,8 +671,8 @@ children's 22-28 mm.
   53 vs 35, school-age size 52 vs 37, template 45 vs 30 nAm; 45-70 mm 290 vs 271, 275 vs 245 and
   243 vs 229 nAm. The template's point estimates are lower than the adult's at 10-30 and 45-70 mm
   but the intervals overlap (e.g. Neuromag 71 [61-96] vs 89 [67-122] nAm at 20-30 mm), and the
-  sampled locations are not shallower (median depth 15.1 vs 16.9 mm at 10-20 mm, 52.9 vs 51.7 mm at
-  45-70 mm): no difference between the anatomies is claimed.
+  sampled locations' median depths differ from the adult's by less than 2 mm (15.1 vs 16.9 mm at
+  10-20 mm, 52.9 vs 51.7 mm at 45-70 mm): no difference between the anatomies is claimed.
 * Paired, dense OPM vs Neuromag combined (locations favouring OPM / Neuromag; paired strength ratio
   Neuromag / OPM): at 10-20 mm 16/0 (1.51 [1.25-1.66]) adult, 16/0 (1.42 [1.20-1.57]) school-age
   size, 16/2 (1.50 [1.26-1.68]) template; deeper no location-level difference is established in
@@ -676,9 +684,9 @@ children's 22-28 mm.
   The matched array shows no established difference in either child (template 11/5 at 10-20 mm,
   p = 0.05); the adult's deficit in the deepest band (0/7) is not seen in the children (school-age
   2/4, template 5/4).
-* So the detectability gain of G3B for these two anatomies (Delta +0.47 and +0.73 dB; in the
-  template mostly from the 50-90 mm strata) is not resolved by the practical detector with 18
-  locations per band; it appears only in the oracle's deeper bands. The superficial detection advantage of the full OPM array is about
+* So the detectability gain of G3B for these two anatomies (Delta +0.47 and +0.73 dB) is not
+  resolved by the practical detector with 18 locations per band; it appears only in the oracle's
+  deeper bands. The superficial detection advantage of the full OPM array is about
   the same in the adult and in both smaller heads (strength ratio 1.4-1.5).
 * Localization (24 locations, detected events; Neuromag, matched, dense): ECD similar in every
   anatomy (template 320-nAm focal 4.5, 4.7, 5.8 mm; school-age 7.8, 5.2, 6.3 mm). dSPM, all

@@ -159,8 +159,9 @@ GATE G1: all three run reproducibly; each output states REPRO/ADAPT status and a
 5. [x] Independent review of G3B and pediatric G4 (approve with notes): no code or provenance
    problem; the mechanism statements were wrong (both systems gain in the smaller heads, the OPM
    more; the counterfactual Delta depends on the SQUID comparator, so it is not explained by the
-   OPM's fixed standoff) and the template's counterfactual residual is confounded by its lateral
-   offset. Fixed: wording, absolute detectability per system, orientation strata, a laterally
+   OPM's fixed standoff alone) and the template's counterfactual residual is confounded by its
+   lateral offset. A re-check found six remaining text defects (depth apportionment, the 18-mm
+   placement, three numbers, G4 depths), fixed. Fixed: wording, absolute detectability per system, orientation strata, a laterally
    centred placement with its own counterfactual, an 18-mm contact bound, a channel-count control.
 6. [x] The refactored G4 scripts (`Context`, 225ffc4) reproduce the adult G4 results of 81168f3
    exactly: the detection and localization summaries are identical apart from provenance and the

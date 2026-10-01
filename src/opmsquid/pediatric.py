@@ -22,7 +22,7 @@ Placement rules (A-G3-PLACE; chosen without reference to any test source):
   distances of the left and right helmet halves are equal (a lateral centring that uses geometry
   only; the adult's measured pose leaves a head with other fiducials off-centre), then top contact.
 * ``top-18mm``: the centred head raised until the nearest coil is at the 18-mm Dewar spacing itself
-  (true contact; the most SQUID-favourable placement of this family).
+  (true contact).
 Feasibility: every magnetometer coil centre at least ``dewar`` (18 mm) from the scalp.
 """
 from __future__ import annotations
