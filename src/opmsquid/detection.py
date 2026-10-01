@@ -122,6 +122,14 @@ class ScanDetector:
         return peaks, props["peak_heights"]
 
 
+def event_height(times: np.ndarray, heights: np.ndarray, t0: int, tol: int) -> float:
+    """Height of the highest emitted event (``ScanDetector.events``) within +/- ``tol`` samples of
+    ``t0``, 0 if there is none: an injected event is scored with the same events that are counted
+    as false events on the null data."""
+    near = (times >= t0 - tol) & (times <= t0 + tol)
+    return float(heights[near].max()) if near.any() else 0.0
+
+
 def threshold_for_rate(heights: np.ndarray, minutes: float, rate_per_min: float) -> float:
     """Smallest threshold with at most rate x minutes null events above it."""
     h = np.sort(np.asarray(heights))[::-1]
@@ -154,3 +162,16 @@ def sign_flip_p(x, n_mc=20000, seed=0):
     else:
         signs = np.random.default_rng(seed).choice(np.array([-1, 1], np.int8), (n_mc, len(x)))
     return float(np.mean(np.abs(signs @ x) >= abs(x.sum()) - 1e-9))
+
+
+def format_s50_ratio(sr: dict) -> str:
+    """'1.51 [1.25-1.66]' for a paired S50 ratio (Neuromag / OPM); an open interval end (a censored
+    resample: one system does not reach 50 % within the tested strengths) is written 'open', and an
+    undefined point estimate names the system that does not reach 50 %."""
+    v = sr.get("value")
+    txt = f"{v:.2f}" if v is not None else (sr.get("value_censored") or "n/a")
+    ci = sr.get("ci95")
+    if ci:
+        lo, hi = ("open" if x is None else f"{x:.2f}" for x in ci)
+        txt += f" [{lo}-{hi}]"
+    return txt

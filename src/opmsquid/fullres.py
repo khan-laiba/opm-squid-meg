@@ -44,10 +44,14 @@ def array_info(kind: str, subject) -> mne.Info:
     return neuromag.load_info(kind)
 
 
-def fingerprint(info: mne.Info, subject, bem: list, valid_idx: np.ndarray) -> str:
-    """Hash of the channels (names, coil types, positions, orientations, device-to-head), the
-    head-to-MRI transform, the BEM (conductivities and surface geometry) and the vertex set."""
+def fingerprint(info: mne.Info, subject, bem: list, valid_idx: np.ndarray, cortex) -> str:
+    """Hash of every input of the matrix: the channels (names, coil types, positions, orientations,
+    device-to-head), the coil definitions in use, the head-to-MRI transform, the BEM (conductivities
+    and surface geometry), the source vertices with their positions and normals, and the MNE
+    version."""
     h = hashlib.sha256()
+    h.update(mne.__version__.encode())
+    h.update(opm.coil_def_file().read_bytes())
     h.update("\n".join(info.ch_names).encode())
     for ch in info["chs"]:
         h.update(np.int64(ch["coil_type"]).tobytes())
@@ -60,6 +64,8 @@ def fingerprint(info: mne.Info, subject, bem: list, valid_idx: np.ndarray) -> st
         h.update(np.round(np.asarray(surf["rr"], float), 9).tobytes())
         h.update(np.asarray(surf["tris"], np.int64).tobytes())
     h.update(np.asarray(valid_idx, np.int64).tobytes())
+    h.update(np.round(np.asarray(cortex.rr[valid_idx], float), 9).tobytes())
+    h.update(np.round(np.asarray(cortex.nn[valid_idx], float), 9).tobytes())
     return h.hexdigest()
 
 
@@ -81,7 +87,7 @@ def compute(job: str, subject, cortex, force: bool = False, log=print) -> Path:
     np.save(out_dir / "valid_index.npy", idx)
     info = array_info(kind, subject)
     bem = subject.bem_model(BEMS[bem_name])
-    fp = fingerprint(info, subject, bem, idx)
+    fp = fingerprint(info, subject, bem, idx, cortex)
     target = out_dir / f"{job}.npy"
     if target.exists() and not force and stored_fingerprint(job) == fp:
         log(f"{job}: up to date, kept")
@@ -110,7 +116,7 @@ def load(job: str, info: mne.Info, subject, cortex, n_check: int = 6):
     full = np.load(target, mmap_mode="r")
     valid_idx = np.load(directory() / "valid_index.npy")
     bem = subject.bem_model(BEMS[bem_name])
-    fp = fingerprint(info, subject, bem, valid_idx)
+    fp = fingerprint(info, subject, bem, valid_idx, cortex)
     stored = stored_fingerprint(job)
     if stored is not None and stored != fp:
         raise ValueError(f"{job}.npy was computed for a different array or BEM (fingerprint mismatch): recompute it")

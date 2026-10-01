@@ -26,13 +26,14 @@ sys.path.insert(0, str(ROOT / "src"))
 import jinja2  # noqa: E402
 from markupsafe import Markup  # noqa: E402
 
-from opmsquid import io, sitebuild as sb  # noqa: E402
+from opmsquid import detection, io, sitebuild as sb  # noqa: E402
 
 RES = ROOT / "results"
 NAV = [("index.html", "Overview"), ("benchmarks.html", "Adult benchmarks (G1)"), ("adult.html", "Realistic adult (G2)"),
        ("pediatric.html", "Pediatric (G3)"), ("epilepsy.html", "Epilepsy (G4)"), ("methods.html", "Methods and limitations"),
        ("register.html", "Parameters and provenance"), ("reproduce.html", "Reproduce and download")]
 FROZEN_TAG = "adult-baseline-v2"
+MARKER = ".opmsquid_site_build"  # marks an output directory as the builder's own (safe to replace)
 LABEL = {"squid": "Neuromag", "opm_matched": "OPM matched", "opm204": "OPM 204 (channel budget)",
          "opm_dense": "OPM dense", "combined": "combined", "grad": "gradiometers", "mag": "magnetometers"}
 DETECTORS = {"squid/combined": "Neuromag combined", "squid/grad": "Neuromag gradiometers", "squid/mag": "Neuromag magnetometers",
@@ -116,8 +117,8 @@ def page_index(d):
                          f"(p = {p[f'depth{b}']['location_sign_flip_p']:.2g})" for b in range(4))
 
     r0 = pr["depth0"].get("s50_ratio_squid_over_opm")
-    ratio_txt = (f" (Neuromag / dense strength ratio {r0['value']:.2f}, paired location-bootstrap 95 % interval "
-                 f"{r0['ci95'][0]:.2f}-{r0['ci95'][1]:.2f})") if r0 and r0.get("value") and r0.get("ci95") else ""
+    ratio_txt = (f" (Neuromag / dense strength ratio and paired location-bootstrap 95 % interval "
+                 f"{detection.format_s50_ratio(r0)})") if r0 else ""
     pl = loc["paired"]
     dspm = {a: pl[f"{a}_vs_squid/patch/320nAm"]["dspm_error_mm"] for a in ("opm_matched", "opm_dense")}
     items = [
@@ -513,10 +514,8 @@ def page_epilepsy_pediatric(d, out):
             if r is None:
                 cells.append("no locations")
                 continue
-            sr = r["s50_ratio_squid_over_opm"]
-            ratio = "" if sr["value"] is None else f"; ratio {sr['value']:.2f}" + (
-                f" [{sr['ci95'][0]:.2f}-{sr['ci95'][1]:.2f}]" if sr.get("ci95") else "")
-            cells.append(f"{r['locations_favouring_opm']}/{r['locations_favouring_squid']} (p {r['location_sign_flip_p']:.2g}){ratio}")
+            cells.append(f"{r['locations_favouring_opm']}/{r['locations_favouring_squid']} (p {r['location_sign_flip_p']:.2g}); "
+                         f"ratio {detection.format_s50_ratio(r['s50_ratio_squid_over_opm'])}")
         prow.append([ANAT[lab], *cells])
     h = [f"<h2 id=\"pediatric\">Pediatric: the same framework on smaller heads in the fixed helmet {label('NEW')}</h2>",
          "<p>The adult detection and localization studies rerun unchanged (configuration, seeds, detectors, operating points) on "
@@ -570,9 +569,12 @@ def page_motion(d, out):
 
                     def f(r):
                         v, q = r["median_curve"], r.get("per_draw_p10_p90")
-                        if v is None:
-                            return "not reached"
-                        return f"{v:.3g}" + (f" [{q[0]:.3g}-{q[1]:.3g}]" if q else "")
+                        txt = "not reached" if v is None else f"{v:.3g}"
+                        if q:
+                            lo, hi = (f"beyond {m['config']['coupling']['rotation_rms_deg'][-1]:g}" if x is None else f"{x:.3g}"
+                                      for x in q)
+                            txt += f" [{lo}-{hi}]"
+                        return txt
 
                     brows.append([ANAT[k], corr, cal.replace("tilt", "").replace("deg_gain", " deg, ").replace("pct", " %"),
                                   "1 nT" if field == "uniform" else "1 nT/m", f(be["loss_1dB"]), f(be["D_0dB"]),
@@ -635,7 +637,9 @@ WRITTEN_BY = {"g1a_curves.csv": "g1a_benchmark.json", "g1b_sources.csv": "g1b_su
               "g3a_deq.csv": "g3a_size_benchmark.json", "g4_adult_events.csv": "g4_adult_summary.json",
               "g4_localization_events.csv": "g4_localization_summary.json", "G3B_report.md": "g3b_summary.json",
               "G4_pediatric_report.md": "g4_pediatric_comparison.json", "G4_motion_report.md": "g4_motion_summary.json",
-              "G4_matched_rate_report.md": "g4_matched_rate.json"}
+              "G4_matched_rate_report.md": "g4_matched_rate.json", "g4_motion_timecourse_example.csv": "g4_motion_summary.json"}
+# result folders whose files carry no provenance of their own: the run that wrote them
+PARENT_RUN = {"g1a/fig3": "g1a/g1a_benchmark.json"}
 for _k in ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo"):
     WRITTEN_BY[f"g3b_targets_{_k}.csv"] = "g3b_summary.json"
     WRITTEN_BY[f"g4_{_k}_events.csv"] = f"g4_{_k}_summary.json"
@@ -656,6 +660,9 @@ def build_manifest(out):
         commit = "-"
         if src.suffix == ".json" and src.exists():
             commit = (json.loads(src.read_text()).get("provenance") or {}).get("commit", "-")
+        parent = PARENT_RUN.get(str(rel.parent))
+        if commit == "-" and parent:
+            commit = (json.loads((RES / parent).read_text()).get("provenance") or {}).get("commit", "-")
         manifest.append(dict(path=str(rel), href=f"data/{rel}", size=f"{p.stat().st_size / 1024:.0f} kB", sha256=sb.sha256(p),
                              commit=commit))
     (out / "data" / "MANIFEST.json").write_text(json.dumps(manifest, indent=1))
@@ -666,10 +673,14 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--out", default=str(ROOT / "site" / "_build"))
     args = ap.parse_args(argv)
-    out = Path(args.out)
+    out = Path(args.out).resolve()
     if out.exists():
+        # delete only a directory this builder made (its marker file) or an empty one, never a source tree
+        if not (out / MARKER).is_file() and any(out.iterdir()):
+            raise SystemExit(f"{out} exists and was not made by build_site.py; choose an empty or new directory")
         shutil.rmtree(out)
     (out / "static").mkdir(parents=True)
+    (out / MARKER).write_text("generated by scripts/build_site.py; safe to delete\n")
     shutil.copy2(ROOT / "site" / "static" / "style.css", out / "static" / "style.css")
     d = dict(g1a=load("g1a/g1a_benchmark.json"), g1b=load("g1b/g1b_summary.json"), g1c=load("g1c/g1c_summary.json"),
              g2=load("g2/g2_summary.json"), bands=load("g2/g2_band_sensitivity.json"), g3a=load("g3a/g3a_size_benchmark.json"),

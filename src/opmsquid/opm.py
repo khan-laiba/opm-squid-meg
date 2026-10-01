@@ -37,6 +37,7 @@ from . import paths
 
 OPM_COIL_TYPE = 9901  # study-specific id (unused by MNE 1.13.2's coil_def.dat)
 CELL_SIZE = 0.010  # m, cubic vapour cell (assumption A-OPM-CELL)
+CELL_EDGE_SAMPLES = 11  # samples per cell edge in the clearance test (1-mm spacing for the 10-mm cell)
 STANDOFF = 0.007  # m, sensing centre to helmet inner surface (assumption A-OPM-STANDOFF)
 
 
@@ -154,6 +155,34 @@ def cell_points(pos: np.ndarray, n: np.ndarray, cell_size: float = CELL_SIZE, to
     return pos + g[:, :1] * ex + g[:, 1:2] * ey + g[:, 2:] * n
 
 
+def cell_volume_points(pos: np.ndarray, n: np.ndarray, cell_size: float = CELL_SIZE, to_head: np.ndarray | None = None,
+                       per_edge: int = CELL_EDGE_SAMPLES) -> np.ndarray:
+    """Points that bound the whole cell: its 27 integration points and its surface sampled with
+    ``per_edge`` x ``per_edge`` points per face (corners and edges included), with the orientation
+    of ``cell_points``. A clearance test on these covers the cell volume, not only the quadrature
+    nodes (the nodes reach only +-3.87 mm of the +-5-mm faces): every point of the surface lies
+    within h / sqrt(2) of a sample (h = cell_size / (per_edge - 1), 0.71 mm by default) and the
+    signed distance is 1-Lipschitz, so samples at least c outside a closed surface put the whole
+    surface, and with it the convex cell, at least c - h / sqrt(2) outside it."""
+    if to_head is None:
+        ex, ey = cell_frame(n)
+    else:
+        ex_h, ey_h = cell_frame(to_head @ n)
+        ex, ey = to_head.T @ ex_h, to_head.T @ ey_h
+    u = np.linspace(-0.5, 0.5, per_edge) * cell_size
+    a, b = np.meshgrid(u, u, indexing="ij")
+    a, b = a.ravel(), b.ravel()
+    face = []
+    for k in range(3):
+        for s in (-0.5 * cell_size, 0.5 * cell_size):
+            q = np.zeros((len(a), 3))
+            q[:, k] = s
+            q[:, [j for j in range(3) if j != k]] = np.column_stack([a, b])
+            face.append(q)
+    g = np.unique(np.round(np.concatenate(face + [_gauss_cube(3, cell_size)[1]]), 12), axis=0)
+    return pos + g[:, :1] * ex + g[:, 1:2] * ey + g[:, 2:] * n
+
+
 def make_info(array: OPMArray, sfreq: float = 1000.0) -> mne.Info:
     """MNE info for a single-axis OPM array; device frame = head frame (head-mounted array)."""
     names = [f"OPM{i:03d}" for i in range(len(array.pos))]
@@ -231,13 +260,21 @@ def resolve_clearance(pos: np.ndarray, axis: np.ndarray, scalp, min_clearance: f
     ``min_clearance`` from the scalp (e.g. over the ear pinna or brow ridge, where the offset
     along a smoothed normal comes close to other parts of the head) and, with ``model_surface``
     (the BEM head surface, same frame), the centre is at least ``model_clearance`` outside it and,
-    with ``cell_clearance``, every integration point of the cell at least that far outside it.
+    with ``cell_clearance``, the whole cell (``cell_volume_points``: its integration points and its
+    surface) at least that far outside it.
     Distances to the model surface are exact point-to-triangle distances with the inside test;
     the cell has the orientation the forward model uses (``to_head``: rotation from this frame to
-    the head frame, see ``cell_points``). Returns (positions, extra outward shift per site,
-    feasible mask: False if more than ``max_extra`` would be needed)."""
+    the head frame, see ``cell_points``). The cell test needs no inside test: it runs only for a
+    centre outside the closed surface, and samples whose unsigned distance is at least
+    ``cell_clearance`` (more than the sampling bound of ``cell_volume_points``) put the whole cell
+    surface off the head surface, so the convex cell is outside and every signed distance equals
+    the unsigned one. Returns (positions, extra outward shift per site, feasible mask: False if
+    more than ``max_extra`` would be needed)."""
     from .anatomy import MeshDistance
 
+    if cell_clearance is not None and not (model_clearance >= 0.0 and
+                                           cell_clearance > CELL_SIZE / (CELL_EDGE_SAMPLES - 1) / np.sqrt(2)):
+        raise ValueError("the cell test needs the centre outside the surface and a clearance above the sampling bound")
     tree = cKDTree(scalp.rr)
     model = MeshDistance(model_surface) if model_surface is not None else None
 
@@ -247,7 +284,7 @@ def resolve_clearance(pos: np.ndarray, axis: np.ndarray, scalp, min_clearance: f
         if model is not None and model.signed(p)[0] < model_clearance:
             return True
         return (model is not None and cell_clearance is not None
-                and model.signed(cell_points(p, n, to_head=to_head)).min() < cell_clearance)
+                and model.unsigned(cell_volume_points(p, n, to_head=to_head)).min() < cell_clearance)
 
     pos = pos.copy()
     extra = np.zeros(len(pos))
@@ -264,7 +301,7 @@ def resolve_clearance(pos: np.ndarray, axis: np.ndarray, scalp, min_clearance: f
 
 MIN_CENTER_SPACING = 0.017  # m, packing assumption A-OPM-PACK (10-mm cell in a ~12-17 mm package)
 MODEL_CLEARANCE = 0.004  # m, A-OPM-CLEAR: sensing centre to the BEM head surface (the forward model's outer boundary)
-CELL_CLEARANCE = 0.001  # m, A-OPM-CLEAR: every integration point of the cell outside the BEM head surface by this much
+CELL_CLEARANCE = 0.001  # m, A-OPM-CLEAR: the whole cell (integration points and surface) outside the BEM head surface by this much
 MAX_EXTRA_SHIFT = 0.005  # m, A-OPM-CLEAR: a package may sit up to 5 mm beyond its nominal standoff to clear the
 # scalp (pinna, brow, occipital curvature); a site needing more (e.g. in the occipito-cervical crease) is infeasible
 

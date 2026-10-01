@@ -87,10 +87,8 @@ def main():
 
 
 def cell(r: dict) -> str:
-    sr = r["s50_ratio_squid_over_opm"]
-    ratio = "n/a" if sr["value"] is None else f"{sr['value']:.2f}"
-    ci = "" if not sr.get("ci95") else f" [{sr['ci95'][0]:.2f}-{sr['ci95'][1]:.2f}]"
-    return f"{r['locations_favouring_opm']}/{r['locations_favouring_squid']}, p {r['location_sign_flip_p']:.2g}, {ratio}{ci}"
+    return (f"{r['locations_favouring_opm']}/{r['locations_favouring_squid']}, p {r['location_sign_flip_p']:.2g}, "
+            + detection.format_s50_ratio(r["s50_ratio_squid_over_opm"]))
 
 
 def report(res: dict) -> str:

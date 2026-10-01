@@ -58,6 +58,7 @@ class TestArrayComposition(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.subject = anatomy.load_sample()
+        cls.cortex = anatomy.full_resolution(cls.subject)
         cls.dig = mne.io.read_info(paths.SAMPLE_MEG / neuromag.RAW_FILE, verbose=False)
         cls.arrays = g2.build_arrays(cls.subject, cls.dig)
 
@@ -69,7 +70,7 @@ class TestArrayComposition(unittest.TestCase):
     def test_channel_counts_and_coil_types(self):
         types = {name: sorted({ch["coil_type"] for ch in a.info["chs"]}) for name, a in self.arrays.items()}
         self.assertEqual({name: a.n for name, a in self.arrays.items()},
-                         {"squid": 306, "opm_matched": 97, "opm204": 204, "opm_dense": 212})
+                         {"squid": 306, "opm_matched": 95, "opm204": 204, "opm_dense": 205})
         self.assertEqual(types["squid"], [3014, 3024])
         self.assertEqual(sum(ch["coil_type"] == 3014 for ch in self.arrays["squid"].info["chs"]), 204)
         for name in ("opm_matched", "opm204", "opm_dense"):
@@ -96,7 +97,7 @@ class TestArrayComposition(unittest.TestCase):
                     s for s in self.subject.bem_surfaces if s["id"] == mne.io.constants.FIFF.FIFFV_BEM_SURF_ID_HEAD)) > 0.004 - 1e-6))
                 self.assertLess(d.max(), 0.012)  # nominal 7 mm + at most 5 mm clearance shift
                 # axis = BEM head-surface normal averaged within 15 mm (A-OPM-AXIS); against the nearest vertex's normal the
-                # matched array stays within 5.5 deg and the dense one within 7.1 deg (one midline occipital site at 7.05 deg)
+                # matched array stays within 4.4 deg and the dense one within 6.6 deg (a lower occipital site)
                 self.assertLess(angle.max(), 6.0 if name == "opm_matched" else 7.5)
                 self.assertGreater(ear.min(), 0.019)  # no sensor on the ear
                 self.assertGreater(pos_mri[:, 2].min(), zmin)  # nothing at the MRI field-of-view cut
@@ -129,8 +130,11 @@ class TestArrayComposition(unittest.TestCase):
                 coils = _create_meg_coils(self.arrays[name].info["chs"], "accurate")
             pts = np.concatenate([c["rmag"] for c in coils])
             self.assertEqual(len(pts), 27 * self.arrays[name].n)
+            # the whole cell, not only its quadrature nodes: corners, edges and faces (head frame, as the forward model)
+            cells = np.concatenate([opm.cell_volume_points(ch["loc"][:3], ch["loc"][9:12]) for ch in self.arrays[name].info["chs"]])
             with self.subTest(name=name):
                 self.assertGreaterEqual(md.signed(mne.transforms.apply_trans(t, pts)).min(), opm.CELL_CLEARANCE - 1e-9)
+                self.assertGreaterEqual(md.signed(mne.transforms.apply_trans(t, cells)).min(), opm.CELL_CLEARANCE - 1e-9)
 
     def test_stored_lead_fields_match_the_arrays(self):
         # every cached full-resolution matrix must have been computed for the arrays built here
@@ -144,7 +148,7 @@ class TestArrayComposition(unittest.TestCase):
                 continue
             with self.subTest(job=job):
                 info = fullres.array_info(kind, self.subject)
-                fp = fullres.fingerprint(info, self.subject, self.subject.bem_model(fullres.BEMS[bem_name]), idx)
+                fp = fullres.fingerprint(info, self.subject, self.subject.bem_model(fullres.BEMS[bem_name]), idx, self.cortex)
                 self.assertEqual(fullres.stored_fingerprint(job), fp)
 
     def test_lead_field_fingerprint_tracks_sensors_and_mesh(self):
@@ -153,10 +157,10 @@ class TestArrayComposition(unittest.TestCase):
         a = self.arrays["opm_matched"]
         idx = np.arange(10)
         bem = self.subject.bem_model(g2.BEM_CONDUCTIVITY)
-        fp = fullres.fingerprint(a.info, self.subject, bem, idx)
-        self.assertEqual(fp, fullres.fingerprint(a.info, self.subject, self.subject.bem_model(g2.BEM_CONDUCTIVITY), idx))
-        self.assertNotEqual(fp, fullres.fingerprint(g2.with_scalp_gap(a, 1e-4).info, self.subject, bem, idx))
-        self.assertNotEqual(fp, fullres.fingerprint(a.info, self.subject, self.subject.bem_model(g2.BEM_CONDUCTIVITY, head_refine=0), idx))
+        fp = fullres.fingerprint(a.info, self.subject, bem, idx, self.cortex)
+        self.assertEqual(fp, fullres.fingerprint(a.info, self.subject, self.subject.bem_model(g2.BEM_CONDUCTIVITY), idx, self.cortex))
+        self.assertNotEqual(fp, fullres.fingerprint(g2.with_scalp_gap(a, 1e-4).info, self.subject, bem, idx, self.cortex))
+        self.assertNotEqual(fp, fullres.fingerprint(a.info, self.subject, self.subject.bem_model(g2.BEM_CONDUCTIVITY, head_refine=0), idx, self.cortex))
         self.assertEqual(len(bem[0]["tris"]), 20480)  # A-BEM-SKIN: refined head surface by default
 
     def test_scalp_gap_variant_keeps_the_sites(self):
@@ -173,7 +177,7 @@ class TestArrayComposition(unittest.TestCase):
     def test_opm204_is_a_subset_of_the_dense_array(self):
         dense, _ = self._geometry(self.arrays["opm_dense"])
         sub, _ = self._geometry(self.arrays["opm204"])
-        self.assertEqual(self.arrays["opm204"].meta["subset_of"], 212)
+        self.assertEqual(self.arrays["opm204"].meta["subset_of"], 205)
         self.assertTrue(all(np.any(np.all(np.isclose(dense, p, atol=1e-12), axis=1)) for p in sub))
 
 

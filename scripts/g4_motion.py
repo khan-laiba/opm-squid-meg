@@ -220,11 +220,12 @@ def part_b(an, ref, com, cfg) -> dict:
     def thresholds(curves_l, curves_d):
         res = {}
         for name, cv, level in [(f"loss_{x:g}dB", curves_l, -x) for x in cb["loss_db"]] + [("D_0dB", curves_d, 0.0)]:
-            per = [motion.crossing(grid, c, level) for c in cv]
-            reached = [v for v in per if v is not None]
+            # draws that never reach the level within the tested rotations are censored (beyond the grid), not dropped
+            per = np.array([np.inf if v is None else v for v in (motion.crossing(grid, c, level) for c in cv)])
+            q = np.percentile(per, [10, 90], method="inverted_cdf")
             res[name] = dict(median_curve=motion.crossing(grid, np.median(cv, axis=0), level),
-                             per_draw_p10_p90=[float(np.percentile(reached, 10)), float(np.percentile(reached, 90))] if reached else None,
-                             draws_reached=len(reached))
+                             per_draw_p10_p90=[None if not np.isfinite(x) else float(x) for x in q],
+                             draws_reached=int(np.isfinite(per).sum()))
         return res
 
     for corr, pm in proj.items():
@@ -486,14 +487,17 @@ def report(s) -> str:
         v = r["median_curve"]
         txt = "-" if v is None else (f"<= {grid[0]:g}" if v == grid[0] else f"{v:.3g}")
         q = r.get("per_draw_p10_p90")
-        return txt + (f" [{q[0]:.3g}-{q[1]:.3g}]" if q and v is not None else "")
+        if q:
+            lo, hi = (f"> {grid[-1]:g}" if x is None else f"{x:.3g}" for x in q)
+            txt += f" [{lo}-{hi}]"
+        return txt
 
     L += ["", f"In-band artefact per channel (median over channels, then over {s['coupling'][s['anatomies'][0]].get('n_draws', '?')} "
           "draws) for 1 deg RMS rotation per axis in the unit field, after each correction [fT]. Then the in-band rotation (deg "
           "RMS per axis, in the unit field) at which the median OPM detectability falls by 1 or 3 dB, or D falls to 0 dB, when "
           "the artefact is not part of the analyst's noise model (matched filter of the static covariance applied to data that "
-          f"contain it), from the median curve over draws, with the 10th-90th percentiles of the per-draw thresholds ('-': not "
-          f"reached up to {max(grid):g} deg). The draws are common random numbers: the same fields and calibration errors in "
+          f"contain it), from the median curve over draws, with the 10th-90th percentiles of the per-draw thresholds (draws that "
+          f"do not reach the level within the tested rotations count as beyond them; '-': not reached up to {max(grid):g} deg). The draws are common random numbers: the same fields and calibration errors in "
           f"every correction, pivot and anatomy. Last column: the loss at {max(grid):g} deg when the artefact is part of the "
           "known noise covariance (the optimal filter nulls its at most 3 spatial patterns: the bound for data-driven nulling or "
           "regression on measured head motion).", "",

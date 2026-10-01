@@ -160,10 +160,10 @@ def localize(ctx, cfg, rng):
             y = seg[name]
             ied.inject(y, topo[(name, i, fam)], tpl, pk, s * 1e-9, t_peak)
             stat, _ = dets[name].statistic(y)
-            detected = bool(stat[t_peak - tol:t_peak + tol + 1].max() > thr[name])
+            detected = detection.event_height(*dets[name].events(stat), t_peak, tol) > thr[name]
             d = minv[name, k].apply(y[:, [t_peak]], "dSPM")[:, 0]
             err, j = localization.peak_error(d, ctx.cortex.rr[grid], centre[i])
-            sup = localization.support_recovery(d, ctx.cortex.rr[grid], centre[i], cfg["events"]["patch_radius_mm"] * 1e-3) if fam == "patch" else np.nan
+            sup = localization.support_recovery(d, np.isin(grid, members[i])) if fam == "patch" else np.nan
             ev_ = evoked_for(a, y[:, t_peak:t_peak + 1], fs)
             with mne.use_coil_def(opm.coil_def_file()):
                 dip, _ = mne.fit_dipole(ev_, mne_cov[name], bem1_sol, trans_used[k], min_dist=lc["ecd_min_dist_mm"], verbose=False)

@@ -35,6 +35,19 @@ class TestMarkdown(unittest.TestCase):
 
 @unittest.skipUnless((ROOT / "results" / "g2" / "g2_summary.json").exists(), "results not available")
 class TestSiteBuild(unittest.TestCase):
+    def test_build_refuses_a_foreign_directory(self):
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location("build_site", ROOT / "scripts" / "build_site.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        with tempfile.TemporaryDirectory() as d:
+            precious = Path(d) / "keep.txt"
+            precious.write_text("not a build")
+            with self.assertRaises(SystemExit):
+                mod.main(["--out", d])
+            self.assertTrue(precious.is_file())
+
     def test_build(self):
         import importlib.util
 
@@ -50,7 +63,7 @@ class TestSiteBuild(unittest.TestCase):
             manifest = json.loads((out / "data" / "MANIFEST.json").read_text())
             for m in manifest:
                 self.assertEqual(sb.sha256(out / m["href"]), sb.sha256(ROOT / "results" / m["path"]))
-            copied = [p for p in out.rglob("*") if p.is_file()]
+            copied = [p for p in out.rglob("*") if p.is_file() and p.name != mod.MARKER]
             # only PNG figures, result tables and the page assets: no PDF/SVG (licensed fonts), no data or caches
             self.assertEqual({p.suffix for p in copied} - {".html", ".css", ".png", ".json", ".csv", ".md"}, set())
             self.assertFalse(any(p.suffix in (".pdf", ".svg") for p in copied))

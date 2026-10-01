@@ -36,7 +36,7 @@ import mne  # noqa: E402
 import g3b_pediatric_helmet as G3  # noqa: E402
 import g4_epilepsy_adult as G4  # noqa: E402
 import g4_localization as G4L  # noqa: E402
-from opmsquid import background, forward, goldenholz, io, opm  # noqa: E402
+from opmsquid import background, detection, forward, goldenholz, io, opm  # noqa: E402
 
 OUT = ROOT / "results" / "g4"
 DETECTORS = ("squid/combined", "squid/grad", "squid/mag", "opm_matched/opm", "opm_dense/opm")
@@ -176,11 +176,8 @@ def report(cmp: dict, labels) -> str:
             if r is None:
                 cells.append("no locations")
                 continue
-            sr = r["s50_ratio_squid_over_opm"]
-            ratio = "n/a" if sr["value"] is None else f"{sr['value']:.2f}"
-            ci = "" if not sr["ci95"] else f" [{sr['ci95'][0]:.2f}-{sr['ci95'][1]:.2f}]"
             cells.append(f"{r['locations_favouring_opm']}/{r['locations_favouring_squid']}, p {r['location_sign_flip_p']:.3g}, "
-                         f"{ratio}{ci}")
+                         + detection.format_s50_ratio(r["s50_ratio_squid_over_opm"]))
         L.append(f"| {lab} | " + " | ".join(cells) + " |")
     L += ["", "## Localization (median error [mm]; joint detection + localization within 10 mm)", "",
           "| anatomy | array | condition | dSPM error (all) | ECD error (detected) | detected | joint dSPM | joint ECD |",

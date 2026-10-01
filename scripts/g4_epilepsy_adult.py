@@ -234,7 +234,9 @@ def simulate(ctx: Context, cfg: dict, rng: np.random.Generator) -> dict:
     order = rng.permutation(len(events))
     per_seg = int((seg_s - 1.5) // sim["event_spacing_s"])  # events at 1.5, 3.5, ... s, the last >= 2 s before the end
     times = (1.5 + sim["event_spacing_s"] * np.arange(per_seg)) * fs
-    rec = {key: dict(oracle_z=np.zeros(len(events)), near_height=np.zeros(len(events))) for key in det_sets}
+    # injected events are scored with the detector's own emitted events (local maxima >= refractory apart,
+    # as on the null data): the height of the highest emitted event within +/- tol of the true peak (0 if none)
+    rec = {key: dict(oracle_z=np.zeros(len(events)), event_height=np.zeros(len(events))) for key in det_sets}
     for start in range(0, len(order), per_seg):
         batch = order[start:start + per_seg]
         seg = gen.segment(seg_s, rng)
@@ -246,10 +248,11 @@ def simulate(ctx: Context, cfg: dict, rng: np.random.Generator) -> dict:
         for key, (name, m) in det_sets.items():
             y = seg[name][m]
             stat, _ = dets[key].statistic(y)
+            emitted = dets[key].events(stat)
             for e_idx, t0 in zip(batch, times):
                 i, fam, s, x = events[e_idx]
                 t0 = int(round(t0))
-                rec[key]["near_height"][e_idx] = float(stat[max(t0 - tol, 0):t0 + tol + 1].max())
+                rec[key]["event_height"][e_idx] = detection.event_height(*emitted, t0, tol)
                 rec[key]["oracle_z"][e_idx] = oracles[key].statistic(y, (i, fam), x, topo[(name, i, fam)][m], t0)
         if (start // per_seg) % 20 == 0:
             log(f"events {start + len(batch)}/{len(events)}")
@@ -278,6 +281,40 @@ def s50_from(p, strengths):
     return float(np.exp(np.interp(0.5, [p[k - 1], p[k]], [ls[k - 1], ls[k]])))
 
 
+def s50_ratio_censored(s_opm, s_squid) -> float:
+    """S50 ratio Neuromag / OPM of one resample with censoring kept: +inf when only Neuromag does
+    not reach 50 % within the tested strengths (the OPM is better by more than the range shows), 0
+    when only the OPM does not, NaN when neither does."""
+    if s_opm is None and s_squid is None:
+        return float("nan")
+    if s_squid is None:
+        return float("inf")
+    if s_opm is None:
+        return 0.0
+    return float(s_squid / s_opm)
+
+
+def censored_label(s_opm, s_squid) -> str | None:
+    if s_opm is None and s_squid is None:
+        return "neither reaches 50 %"
+    if s_squid is None:
+        return "Neuromag does not reach 50 %"
+    if s_opm is None:
+        return "the OPM does not reach 50 %"
+    return None
+
+
+def censored_interval(ratios: np.ndarray) -> list | None:
+    """2.5th and 97.5th percentiles over the resamples where at least one system reaches 50 %,
+    censored values included (0 and +inf sort to the ends); an end that falls on a censored value is
+    open (None). None if no resample is defined."""
+    r = ratios[~np.isnan(ratios)]
+    if not len(r):
+        return None
+    lo, hi = np.percentile(r, [2.5, 97.5], method="inverted_cdf")
+    return [None if lo == 0.0 else float(lo), None if not np.isfinite(hi) else float(hi)]
+
+
 def summarise(state):
     cfg, events, strata, rec = state["cfg"], state["events"], state["strata"], state["rec"]
     label = state.get("label", "adult")
@@ -292,7 +329,7 @@ def summarise(state):
     keys = list(rec)
 
     def detected(key, mode):
-        return rec[key]["oracle_z"] > zcrit[key] if mode == "oracle" else rec[key]["near_height"] > thr[key][mode.split("@")[1]]
+        return rec[key]["oracle_z"] > zcrit[key] if mode == "oracle" else rec[key]["event_height"] > thr[key][mode.split("@")[1]]
 
     modes = ["oracle"] + [f"practical@{op}" for op in thr[keys[0]]]
     rng = np.random.default_rng(7)
@@ -349,8 +386,8 @@ def summarise(state):
         roc = {}
         for lab, sel in (("superficial_10-30mm_40nAm", (fam == "focal") & (band <= 1) & (stren == 40.0)),
                          ("deep_30-70mm_160nAm", (fam == "focal") & (band >= 2) & (stren == 160.0))):
-            roc[lab] = dict(false_per_min=[float((i + 1) / minutes) for i in range(len(ths))],
-                            sensitivity=[float(np.mean(rec[key]["near_height"][sel] > t)) for t in ths], n_events=int(sel.sum()))
+            roc[lab] = dict(false_per_min=[float(np.sum(held[key] > t) / minutes) for t in ths],
+                            sensitivity=[float(np.mean(rec[key]["event_height"][sel] > t)) for t in ths], n_events=int(sel.sum()))
         out["roc"] = roc
         summary["detectors"][key] = out
     # paired comparisons on identical events: OPM vs each Neuromag channel set
@@ -365,8 +402,8 @@ def summarise(state):
                     from scipy.stats import binomtest
 
                     pval = binomtest(only_a, only_a + only_b, 0.5).pvalue if only_a + only_b else 1.0
-                    stat_a = rec[a]["oracle_z" if mode == "oracle" else "near_height"][sel]
-                    stat_b = rec[b]["oracle_z" if mode == "oracle" else "near_height"][sel]
+                    stat_a = rec[a]["oracle_z" if mode == "oracle" else "event_height"][sel]
+                    stat_b = rec[b]["oracle_z" if mode == "oracle" else "event_height"][sel]
                     diff = stat_a - stat_b
                     # events share locations (6 strengths x 3 morphologies each): the location is the unit
                     loc_s = loc_i[sel]
@@ -381,12 +418,14 @@ def summarise(state):
                     for _ in range(1000):
                         r_ = rng.integers(0, len(locs), len(locs))
                         sa, sb = s50_from(ta[r_].mean(axis=0), strengths), s50_from(tb[r_].mean(axis=0), strengths)
-                        ratios.append(np.nan if sa is None or sb is None else sb / sa)
+                        ratios.append(s50_ratio_censored(sa, sb))
                     ratios = np.array(ratios)
                     sa0, sb0 = s50_from(ta.mean(axis=0), strengths), s50_from(tb.mean(axis=0), strengths)
                     s50_ratio = dict(value=None if sa0 is None or sb0 is None else float(sb0 / sa0),
-                                     ci95=[float(x) for x in np.nanpercentile(ratios, [2.5, 97.5])] if np.isfinite(ratios).any() else None,
-                                     share_resamples_undefined=float(np.mean(~np.isfinite(ratios))))
+                                     value_censored=censored_label(sa0, sb0), ci95=censored_interval(ratios),
+                                     share_resamples_undefined=float(np.mean(np.isnan(ratios))),
+                                     share_resamples_opm_not_reached=float(np.mean(ratios == 0.0)),
+                                     share_resamples_squid_not_reached=float(np.mean(np.isposinf(ratios))))
                     res[f"depth{band_i}"] = dict(n=int(sel.sum()), n_locations=int(len(locs)), detected_only_opm=only_a,
                                                  detected_only_squid=only_b, locations_favouring_opm=int(np.sum(d_loc > 0)),
                                                  locations_favouring_squid=int(np.sum(d_loc < 0)), location_sign_flip_p=detection.sign_flip_p(d_loc),
@@ -397,9 +436,9 @@ def summarise(state):
     io.write_json(summary, OUT / f"g4_{label}_summary.json")
     with open(OUT / f"g4_{label}_events.csv", "w", newline="") as fh:
         wr = csv.writer(fh)
-        wr.writerow(["location", "family", "strength_nAm", "stretch", "depth_band"] + [f"{k}_{v}" for k in keys for v in ("oracle_z", "near_height")])
+        wr.writerow(["location", "family", "strength_nAm", "stretch", "depth_band"] + [f"{k}_{v}" for k in keys for v in ("oracle_z", "event_height")])
         for n, (i, f_, s_, x) in enumerate(events):
-            wr.writerow([i, f_, s_, x, int(band[n])] + [f"{rec[k][v][n]:.3f}" for k in keys for v in ("oracle_z", "near_height")])
+            wr.writerow([i, f_, s_, x, int(band[n])] + [f"{rec[k][v][n]:.3f}" for k in keys for v in ("oracle_z", "event_height")])
     figures(summary, ev, label)
 
 

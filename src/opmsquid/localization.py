@@ -47,10 +47,11 @@ def peak_error(estimate: np.ndarray, src_rr: np.ndarray, true_rr: np.ndarray) ->
     return float(np.linalg.norm(src_rr[i] - true_rr)), i
 
 
-def support_recovery(estimate: np.ndarray, src_rr: np.ndarray, centre: np.ndarray, radius: float) -> float:
-    """Share of the N strongest sources (N = number of grid sources within ``radius`` of the
-    patch centre) that lie within ``radius`` of it (1 = support recovered, chance ~ N / n_src)."""
-    inside = np.linalg.norm(src_rr - centre, axis=1) <= radius
+def support_recovery(estimate: np.ndarray, inside: np.ndarray) -> float:
+    """Share of the N strongest sources that belong to the simulated patch, N being the number of
+    inverse-grid sources inside it (``inside``: boolean mask of the grid sources that are patch
+    members, e.g. ``np.isin(grid, members)``); 1 = support recovered, chance N / n_src."""
+    inside = np.asarray(inside, bool)
     n = int(inside.sum())
     if n == 0:
         return float("nan")

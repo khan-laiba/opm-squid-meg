@@ -250,28 +250,32 @@ def _sample_fiducials() -> dict:
 
 
 def closest_point_on_triangles(p: np.ndarray, a: np.ndarray, b: np.ndarray, c: np.ndarray) -> np.ndarray:
-    """Closest points to ``p`` (3,) on triangles (a, b, c) (each (m, 3)); Ericson, Real-Time
+    """Closest points to ``p`` on triangles (a, b, c): ``p`` (3,) with triangles (m, 3), or any
+    shapes that broadcast, e.g. points (n, 1, 3) with triangles (n, m, 3); Ericson, Real-Time
     Collision Detection, 5.1.5 (Voronoi regions of vertices, edges and face)."""
+    def dot(x, y):
+        return np.einsum("...j,...j->...", x, y)
+
     ab, ac, ap = b - a, c - a, p - a
-    d1, d2 = np.einsum("ij,ij->i", ab, ap), np.einsum("ij,ij->i", ac, ap)
+    d1, d2 = dot(ab, ap), dot(ac, ap)
     bp = p - b
-    d3, d4 = np.einsum("ij,ij->i", ab, bp), np.einsum("ij,ij->i", ac, bp)
+    d3, d4 = dot(ab, bp), dot(ac, bp)
     cp = p - c
-    d5, d6 = np.einsum("ij,ij->i", ab, cp), np.einsum("ij,ij->i", ac, cp)
+    d5, d6 = dot(ab, cp), dot(ac, cp)
     va, vb, vc = d3 * d6 - d5 * d4, d5 * d2 - d1 * d6, d1 * d4 - d3 * d2
     with np.errstate(divide="ignore", invalid="ignore"):
         denom = 1.0 / (va + vb + vc)
-        out = a + ab * (vb * denom)[:, None] + ac * (vc * denom)[:, None]  # inside the face
+        out = a + ab * (vb * denom)[..., None] + ac * (vc * denom)[..., None]  # inside the face
         rbc = (va <= 0) & (d4 - d3 >= 0) & (d5 - d6 >= 0)
         w = (d4 - d3) / ((d4 - d3) + (d5 - d6))
-        out = np.where(rbc[:, None], b + w[:, None] * (c - b), out)
+        out = np.where(rbc[..., None], b + w[..., None] * (c - b), out)
         rac = (vb <= 0) & (d2 >= 0) & (d6 <= 0)
-        out = np.where(rac[:, None], a + (d2 / (d2 - d6))[:, None] * ac, out)
+        out = np.where(rac[..., None], a + (d2 / (d2 - d6))[..., None] * ac, out)
         rab = (vc <= 0) & (d1 >= 0) & (d3 <= 0)
-        out = np.where(rab[:, None], a + (d1 / (d1 - d3))[:, None] * ab, out)
-    out = np.where(((d6 >= 0) & (d5 <= d6))[:, None], c, out)
-    out = np.where(((d3 >= 0) & (d4 <= d3))[:, None], b, out)
-    out = np.where(((d1 <= 0) & (d2 <= 0))[:, None], a, out)
+        out = np.where(rab[..., None], a + (d1 / (d1 - d3))[..., None] * ab, out)
+    out = np.where(((d6 >= 0) & (d5 <= d6))[..., None], c, out)
+    out = np.where(((d3 >= 0) & (d4 <= d3))[..., None], b, out)
+    out = np.where(((d1 <= 0) & (d2 <= 0))[..., None], a, out)
     return out
 
 
@@ -289,16 +293,21 @@ class MeshDistance:
             for v in tri:
                 inc[v].append(t)
         self.incident = [np.array(x, int) for x in inc]
+        # the same as a table, each row padded with a repeat of its first triangle (or triangle 0 for
+        # an unused vertex): repeats leave the minimum distance unchanged
+        width = max(len(x) for x in inc)
+        self.incident_table = np.array([x + [x[0] if x else 0] * (width - len(x)) for x in inc], int)
         self.inside = _CheckInside(surf)
 
-    def unsigned(self, points: np.ndarray) -> np.ndarray:
+    def unsigned(self, points: np.ndarray, chunk: int = 2000) -> np.ndarray:
         points = np.atleast_2d(points)
         _, nearest = self.tree.query(points, k=self.k)
         out = np.empty(len(points))
-        for i, (p, near) in enumerate(zip(points, nearest)):
-            t = np.unique(np.concatenate([self.incident[v] for v in near]))
+        for lo in range(0, len(points), chunk):
+            p = points[lo:lo + chunk, None, :]
+            t = self.incident_table[nearest[lo:lo + chunk]].reshape(len(p), -1)  # triangles around the k nearest vertices
             a, b, c = (self.rr[self.tris[t, j]] for j in range(3))
-            out[i] = np.min(np.linalg.norm(closest_point_on_triangles(p, a, b, c) - p, axis=1))
+            out[lo:lo + chunk] = np.linalg.norm(closest_point_on_triangles(p, a, b, c) - p, axis=-1).min(axis=1)
         return out
 
     def signed(self, points: np.ndarray) -> np.ndarray:

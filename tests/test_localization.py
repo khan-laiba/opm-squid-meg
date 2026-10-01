@@ -34,9 +34,16 @@ class TestLocalization(unittest.TestCase):
 
     def test_support_recovery(self):
         est = np.exp(-0.5 * ((np.arange(self.n_src) - 55) / 3.0) ** 2)  # peaked at source 55
-        centre = self.src_rr[55]
-        self.assertEqual(localization.support_recovery(est, self.src_rr, centre, 0.04), 1.0)
-        self.assertEqual(localization.support_recovery(-est, self.src_rr, self.src_rr[5], 0.04), 0.0)
+        members = np.zeros(self.n_src, bool)
+        members[53:58] = True  # the simulated patch: 5 sources around 55
+        self.assertEqual(localization.support_recovery(est, members), 1.0)
+        far = np.zeros(self.n_src, bool)
+        far[3:8] = True
+        self.assertEqual(localization.support_recovery(est, far), 0.0)
+        # a neighbour outside the patch gets no credit, even if it is close to the centre
+        lopsided = np.zeros(self.n_src, bool)
+        lopsided[[55, 56, 57, 58, 59]] = True
+        self.assertEqual(localization.support_recovery(est, lopsided), 0.6)  # the 5 strongest are 53-57
 
     def test_perturb_trans_bounds(self):
         rng = np.random.default_rng(3)

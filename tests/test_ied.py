@@ -34,6 +34,23 @@ class TestIED(unittest.TestCase):
         k = np.argmin(np.abs(fx - 10))
         self.assertAlmostEqual(coh_x[k], coh_y[k], delta=0.03)
 
+    def test_csd_synthesis_keeps_the_cross_spectral_phase(self):
+        """x2 lags x1 by 5 samples: the synthesised pair must keep the sign of the cross-spectral
+        phase (a conjugated convention would reverse the lag)."""
+        rng = np.random.default_rng(2)
+        fs, n, lag = 200.0, 400_000, 5
+        b, a_ = signal.butter(2, [5, 20], btype="bandpass", fs=fs)
+        x1 = signal.lfilter(b, a_, rng.standard_normal(n + lag))
+        x = np.vstack([x1[lag:], x1[:-lag]])  # row 1 is row 0 delayed by ``lag`` samples
+        f, s = ied.csd_matrix(x, fs, nperseg=1024)
+        y = ied.synthesize_from_csd(f, s, 200_000, fs, np.random.default_rng(3))
+        fx, pxy = signal.csd(x[0], x[1], fs=fs, nperseg=1024)
+        _, pyy = signal.csd(y[0], y[1], fs=fs, nperseg=1024)
+        for f0 in (8.0, 10.0, 15.0):
+            k = np.argmin(np.abs(fx - f0))
+            self.assertAlmostEqual(np.angle(pyy[k]), np.angle(pxy[k]), delta=0.1)
+            self.assertGreater(abs(np.angle(pxy[k])), 0.5)  # a real lag, not an in-phase pair
+
     def test_noise_generator_matches_band_covariance(self):
         """Per-channel variance of the generated noise = diag(G S G^T + B C B^T) + ASD^2 ENBW."""
         rng = np.random.default_rng(2)

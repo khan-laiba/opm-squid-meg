@@ -39,15 +39,17 @@ def ied_waveform(fs: float, stretch: float = 1.0) -> np.ndarray:
 
 
 def csd_matrix(x: np.ndarray, fs: float, nperseg: int = 4096):
-    """One-sided cross-spectral density matrices S(f) (n_f, n, n) of the rows of x (Welch)."""
+    """One-sided cross-spectral density matrices S(f) (n_f, n, n) of the rows of x (Welch), in the
+    convention S_ij = E[X_i conj(X_j)] that ``synthesize_from_csd`` reproduces. ``scipy.signal.csd``
+    returns E[conj(X_i) X_j], hence the conjugate."""
     n = x.shape[0]
     f, _ = signal.welch(x[0], fs=fs, nperseg=nperseg)
     s = np.zeros((len(f), n, n), complex)
     for i in range(n):
         for j in range(i, n):
             _, sij = signal.csd(x[i], x[j], fs=fs, nperseg=nperseg)
-            s[:, i, j] = sij
-            s[:, j, i] = np.conj(sij)
+            s[:, i, j] = np.conj(sij)
+            s[:, j, i] = sij
     return f, s
 
 

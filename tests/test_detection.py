@@ -75,6 +75,22 @@ class TestDetection(unittest.TestCase):
         hit = detection.match_events(peaks, heights, np.array([12, 50, 95, 200]), tol=3, threshold=2.0)
         np.testing.assert_array_equal(hit, [True, False, False, False])
 
+    def test_event_height_scores_with_the_emitted_events(self):
+        peaks = np.array([10, 13, 50, 90])
+        heights = np.array([5.0, 7.0, 1.0, 5.0])
+        truth = [12, 50, 95, 200]
+        h = [detection.event_height(peaks, heights, t, 3) for t in truth]
+        self.assertEqual(h, [7.0, 1.0, 0.0, 0.0])  # the highest emitted event within +/- 3 samples, 0 if none
+        # the same decision as match_events at any threshold
+        for thr in (0.5, 2.0, 6.0):
+            np.testing.assert_array_equal(np.array(h) > thr, detection.match_events(peaks, heights, np.array(truth), 3, thr))
+        # an injected peak the refractory period removed (a higher event 20 samples away) is not scored
+        stat = np.zeros(200)
+        stat[100], stat[120] = 4.0, 6.0
+        det = detection.ScanDetector(None, {}, np.zeros((1, 1)), np.ones((1, 1)), refractory=50)
+        self.assertEqual(detection.event_height(*det.events(stat), 100, 3), 0.0)
+        self.assertEqual(detection.event_height(*det.events(stat), 118, 3), 6.0)
+
 
 class TestSignFlip(unittest.TestCase):
     def test_exact_values(self):
