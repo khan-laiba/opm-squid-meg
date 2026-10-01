@@ -255,6 +255,14 @@ Scaled controls, vertex-wise (homologous) Delta by the adult's depth:
 | 2-year size (scaled adult) | 50-60 | 320 | +0.49 [+0.30, +0.70] |
 | 2-year size (scaled adult) | 60-90 | 26 | +1.10 [-0.26, +1.62] |
 
+Templates: the pooled difference of the medians (D_child - D_adult over all targets) and the same with the template's targets reweighted to the adult's area share per depth stratum; then radial (0-30 deg) and tangential (60-90 deg) sources at matched depth (difference of the medians; '-': fewer than 10 targets):
+
+| template | pooled | depth-reweighted | area at 10-20 mm (adult) | median depth [mm] (adult) | radial 0-15 / 15-25 / 25-40 / 40-90 mm | tangential 0-15 / 15-25 / 25-40 / 40-90 mm |
+|---|---|---|---|---|---|---|
+| 2-year template | +0.85 | +0.33 | 42% (21%) | 21.8 (26.2) | +0.64 / +0.72 / +0.81 / +0.48 | +0.21 / +0.19 / +0.09 / +0.70 |
+| 18-month template | +0.91 | +0.54 | 36% (21%) | 23.2 (26.2) | +1.06 / +1.38 / +1.07 / +0.51 | +0.37 / +0.38 / +0.19 / +0.62 |
+| 12-month template | +1.07 | +0.32 | 46% (21%) | 20.6 (26.2) | +1.36 / +0.71 / +0.91 / +0.51 | +0.50 / +0.30 / +0.08 / +0.67 |
+
 ## Delta by orientation stratum (0 deg = radial to the inner skull; dense OPM vs Neuromag combined)
 
 | child anatomy | orientation [deg] | n child / adult | D_child | D_adult | Delta [95 % CI] |
@@ -433,7 +441,7 @@ A source counts as usable when its detectability reaches 5 at the reference mome
 
 - D = 20 log10(d_OPM / d_SQUID) of a 10-nAm cortical-normal dipole (known-topography detectability with the oracle noise covariance; independent of the moment). Delta = D_child - D_adult. A positive Delta is an increase in relative OPM performance under these matching assumptions; it does not by itself mean that OPM beats SQUID in the child.
 - Scaled controls: the adult's vertices, so Delta is vertex-wise. The absolute 4-mm usable-source rule drops 154 and 248 superficial adult targets in the scaled copies, so D_child and D_adult are medians over slightly different target sets while Delta uses the common vertices. The templates: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per declared depth/orientation stratum from area-weighted medians.
-- Intervals: bootstrap over parcels of one anatomy (or of each anatomy, for between-anatomy strata); they do not include between-subject variability. 3 average templates of one database (2-year template, 18-month template, 12-month template) are not a population: template results are conditional simulations.
+- Intervals: bootstrap over parcels of one anatomy (or of each anatomy, for between-anatomy strata); they do not include between-subject variability. Three average templates of one database (2-year template, 18-month template, 12-month template) are not a population: template results are conditional simulations.
 - Every child array uses the adult's conventions: background moment variance per unit cortical area, room field, intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. Both systems' detectability rises in the smaller heads, the OPM's more (absolute detectability table), by different routes: the on-scalp OPM sees more signal from a cortex that is closer in absolute terms at about the same brain noise, while the SQUIDs' brain noise falls (the cortex is farther from the fixed helmet and, with the background fixed per unit area, smaller) more than their signal. The templates' averaged white surfaces are smoother than an individual cortex (usable area 1,062, 975, 895 cm^2 for the 2-year template, 18-month template, 12-month template vs 1,878 cm^2 for the adult), which lowers their background power and their patch cancellation further; scaling the background variance x0.5 or x2 leaves D_child almost unchanged.
 - Placements are chosen from the scalp and helmet geometry only. Under the adult's measured pose a head with other fiducials need not be centred laterally; 'x-centred' shifts each head along device x to equal left/right median gaps before the top contact (shift: adult -1.5 mm, school-age size (scaled adult) -0.5 mm, 2-year size (scaled adult) -0.5 mm, 2-year template -6.5 mm, 18-month template -5.5 mm, 12-month template -2.5 mm; negative = to the left), and 'counterfactual_x-centred' scales the helmet about that laterally centred head. The counterfactual helmet (scaled with the head) is a mechanistic control, not a pediatric SQUID system.
 - Targets on the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum and midbrain, not cortex) are left out of every summary; they would otherwise dominate the deepest strata.

@@ -1,5 +1,5 @@
 {
-  "status": "NEW (G3B: fixed adult Neuromag helmet vs head-adaptive OPM on smaller heads; size-only controls and one 2-year template)",
+  "status": "NEW (G3B: fixed adult Neuromag helmet vs head-adaptive OPM on smaller heads; size-only controls and the 12-, 18- and 24-month templates)",
   "config": {
     "anatomy": {
       "templates": [
@@ -122053,6 +122053,116 @@
     "size2yr/squid:top/grad/projected": 0.059454601805632515,
     "size2yr/squid:top/mag/projected": 0.6324668371705449
   },
+  "template_depth_checks": {
+    "infant2yr": {
+      "pooled_difference_db": 0.8542052421605529,
+      "depth_reweighted_difference_db": 0.3342062440689474,
+      "area_share_10_20mm": 0.4244297252305591,
+      "adult_area_share_10_20mm": 0.2147310581395102,
+      "area_share_deeper_50mm": 0.02873892271871642,
+      "median_depth_mm": 21.759346625732675,
+      "adult_median_depth_mm": 26.22196512321467,
+      "radial_share": 0.16587686021787446,
+      "orientation_at_matched_depth": [
+        {
+          "lo": 0,
+          "hi": 15,
+          "radial": 0.6423373157943932,
+          "tangential": 0.20523486882093822
+        },
+        {
+          "lo": 15,
+          "hi": 25,
+          "radial": 0.720297304778956,
+          "tangential": 0.1882827796092028
+        },
+        {
+          "lo": 25,
+          "hi": 40,
+          "radial": 0.8104897895155313,
+          "tangential": 0.0905296013617074
+        },
+        {
+          "lo": 40,
+          "hi": 90,
+          "radial": 0.477065742842946,
+          "tangential": 0.7046535802311045
+        }
+      ]
+    },
+    "infant18mo": {
+      "pooled_difference_db": 0.9070086227127804,
+      "depth_reweighted_difference_db": 0.5425934128364919,
+      "area_share_10_20mm": 0.3557496049962407,
+      "adult_area_share_10_20mm": 0.2147310581395102,
+      "area_share_deeper_50mm": 0.025375225601148424,
+      "median_depth_mm": 23.246668709931573,
+      "adult_median_depth_mm": 26.22196512321467,
+      "radial_share": 0.14069151659668155,
+      "orientation_at_matched_depth": [
+        {
+          "lo": 0,
+          "hi": 15,
+          "radial": 1.0560126161559658,
+          "tangential": 0.365191488091718
+        },
+        {
+          "lo": 15,
+          "hi": 25,
+          "radial": 1.3848098657816783,
+          "tangential": 0.38134645321936156
+        },
+        {
+          "lo": 25,
+          "hi": 40,
+          "radial": 1.0696503666989212,
+          "tangential": 0.1870000166876249
+        },
+        {
+          "lo": 40,
+          "hi": 90,
+          "radial": 0.5095810317714612,
+          "tangential": 0.6236864318486774
+        }
+      ]
+    },
+    "infant12mo": {
+      "pooled_difference_db": 1.065000217402809,
+      "depth_reweighted_difference_db": 0.3240436578583684,
+      "area_share_10_20mm": 0.4619982980540239,
+      "adult_area_share_10_20mm": 0.2147310581395102,
+      "area_share_deeper_50mm": 0.01975237287849055,
+      "median_depth_mm": 20.649491188046895,
+      "adult_median_depth_mm": 26.22196512321467,
+      "radial_share": 0.17293187226233922,
+      "orientation_at_matched_depth": [
+        {
+          "lo": 0,
+          "hi": 15,
+          "radial": 1.3586887934730494,
+          "tangential": 0.5035958980047845
+        },
+        {
+          "lo": 15,
+          "hi": 25,
+          "radial": 0.7116453626750878,
+          "tangential": 0.30020639095455537
+        },
+        {
+          "lo": 25,
+          "hi": 40,
+          "radial": 0.9104300196141145,
+          "tangential": 0.08017148037417954
+        },
+        {
+          "lo": 40,
+          "hi": 90,
+          "radial": 0.5124996904180991,
+          "tangential": 0.667898792067491
+        }
+      ]
+    }
+  },
   "channel_count_control": {
     "school/combined": {
       "n_sites": 171,
@@ -129094,11 +129204,12 @@
   "notes": [
     "D = 20 log10(d_OPM / d_SQUID) of a 10-nAm cortical-normal dipole (known-topography detectability with the oracle noise covariance; independent of the moment). Delta = D_child - D_adult. A positive Delta is an increase in relative OPM performance under these matching assumptions; it does not by itself mean that OPM beats SQUID in the child.",
     "Scaled controls: the adult's vertices, so Delta is vertex-wise. The absolute 4-mm usable-source rule drops 154 and 248 superficial adult targets in the scaled copies, so D_child and D_adult are medians over slightly different target sets while Delta uses the common vertices. The templates: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per declared depth/orientation stratum from area-weighted medians.",
-    "Intervals: bootstrap over parcels of one anatomy (or of each anatomy, for between-anatomy strata); they do not include between-subject variability. 3 average templates of one database (2-year template, 18-month template, 12-month template) are not a population: template results are conditional simulations.",
+    "Intervals: bootstrap over parcels of one anatomy (or of each anatomy, for between-anatomy strata); they do not include between-subject variability. Three average templates of one database (2-year template, 18-month template, 12-month template) are not a population: template results are conditional simulations.",
     "Every child array uses the adult's conventions: background moment variance per unit cortical area, room field, intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. Both systems' detectability rises in the smaller heads, the OPM's more (absolute detectability table), by different routes: the on-scalp OPM sees more signal from a cortex that is closer in absolute terms at about the same brain noise, while the SQUIDs' brain noise falls (the cortex is farther from the fixed helmet and, with the background fixed per unit area, smaller) more than their signal. The templates' averaged white surfaces are smoother than an individual cortex (usable area 1,062, 975, 895 cm^2 for the 2-year template, 18-month template, 12-month template vs 1,878 cm^2 for the adult), which lowers their background power and their patch cancellation further; scaling the background variance x0.5 or x2 leaves D_child almost unchanged.",
     "Placements are chosen from the scalp and helmet geometry only. Under the adult's measured pose a head with other fiducials need not be centred laterally; 'x-centred' shifts each head along device x to equal left/right median gaps before the top contact (shift: adult -1.5 mm, school-age size (scaled adult) -0.5 mm, 2-year size (scaled adult) -0.5 mm, 2-year template -6.5 mm, 18-month template -5.5 mm, 12-month template -2.5 mm; negative = to the left), and 'counterfactual_x-centred' scales the helmet about that laterally centred head. The counterfactual helmet (scaled with the head) is a mechanistic control, not a pediatric SQUID system.",
     "Targets on the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum and midbrain, not cortex) are left out of every summary; they would otherwise dominate the deepest strata."
   ],
+  "replotted_at_commit": "fd40dfe",
   "provenance": {
     "commit": "cb1b8a9",
     "mne_version": "1.13.2",
