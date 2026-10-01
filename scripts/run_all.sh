@@ -31,4 +31,5 @@ $PY scripts/g4_epilepsy_pediatric.py infant12mo --detection --localization  # G4
 $PY scripts/g4_epilepsy_pediatric.py school --detection --localization      # G4  the same, school-age size control
 $PY scripts/g4_epilepsy_pediatric.py size2yr --detection --localization     # G4  the same, 2-year size control
 $PY scripts/g4_epilepsy_pediatric.py --compare                              # G4  pediatric vs adult comparison and report
+$PY scripts/g4_motion.py                                                    # G4  head motion and OPM slippage (bounded extension)
 $PY scripts/build_site.py                                # G5   local report in site/_build (not deployed)

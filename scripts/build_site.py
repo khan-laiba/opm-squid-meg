@@ -95,10 +95,11 @@ def page_index(d):
               ("G2 realistic adult OPM vs Neuromag", "NEW", f"done, independently reviewed; frozen as {FROZEN_TAG}"),
               ("G3A Jas head-size benchmark", "REPRO (+ NEW fixed shell)", "done" if d["g3a"] else "not run"),
               ("G3B pediatric fixed helmet vs head-adaptive OPM", "NEW",
-               "done (2-year infant template and scaled-adult size controls)" if d.get("g3b") else "in progress"),
+               "done (12-, 18- and 24-month infant templates and scaled-adult size controls)" if d.get("g3b") else "in progress"),
               ("G4 epilepsy detection and bounded localization", "NEW",
-               "adult done; pediatric done (" + ", ".join(ANAT[x] for x in d["g4p"]["labels"] if x != "adult") + ")"
-               if d.get("g4p") else "adult done; pediatric in progress"),
+               ("adult done; pediatric done (" + ", ".join(ANAT[x] for x in d["g4p"]["labels"] if x != "adult") + ")"
+                if d.get("g4p") else "adult done; pediatric in progress")
+               + ("; head motion and OPM slippage: bounded extension done" if d.get("motion") else "")),
               ("G5 software, reproduction, report", "-", "local report (not deployed); clean-environment smoke test passed")]
     h = ["<p>Simulation study comparing on-scalp optically pumped magnetometers (OPM) with the Neuromag SQUID system: "
          "an analytical benchmark and adaptations of two published adult studies, a realistic adult comparison, a pediatric "
@@ -156,14 +157,16 @@ def page_index(d):
     h.append("".join(f'<div class="finding">{t}</div>' for t in items))
     h.append("<h2 id=\"not-shown\">What these results do not show</h2><ul>"
              "<li>One adult anatomy and one measured head position: no between-subject variability.</li>"
-             "<li>OPM intrinsic noise is a declared sweep (7-30 fT/&radic;Hz), not a device specification; OPM movement "
-             "artefacts, cross-talk and calibration errors are not modelled.</li>"
+             "<li>OPM intrinsic noise is a declared sweep (7-30 fT/&radic;Hz), not a device specification; cross-talk is not "
+             "modelled, and head motion, cap slippage and calibration errors only in a bounded extension "
+             "(<a href=\"epilepsy.html#motion\">motion</a>) that does not establish motion robustness.</li>"
              "<li>Detectability is a known-topography matched-filter SNR, not a clinical detection rate; the spike study "
              "uses simulated events in simulated noise.</li>"
              "<li>Confidence intervals resample cortical parcels or locations of one anatomy; they do not include model "
              "uncertainty, which the sensitivity analyses show instead (one factor at a time, plus a joint noise x gap grid).</li>"
-             "<li>Pediatric results rest on one 2-year average template and two scaled copies of the adult: no anatomical "
-             "variability, no age-specific background physiology (only a bounded sensitivity), adult conductivities.</li></ul>")
+             "<li>Pediatric results rest on three average templates of one database (12, 18 and 24 months) and two scaled "
+             "copies of the adult: no between-child variability, no age-specific background physiology (only a bounded "
+             "sensitivity), adult conductivities.</li></ul>")
     if d.get("g3b"):
         k = next(i for i, x in enumerate(h) if x.startswith('<h2 id="not-shown">'))
         h.insert(k, pediatric_findings(d))
@@ -199,8 +202,10 @@ def pediatric_findings(d):
         "gradiometers most, gains as much or slightly more.",
         f"Delta stays positive for OPM noise 7-30 fT/&radic;Hz, background variance x0.5 or x2, a 1-layer head model and the "
         f"matched-site OPM array; at 30 fT/&radic;Hz the adult's D is {sens['adult/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f} dB "
-        f"and the template's {sens['infant2yr/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f} dB. A positive Delta is a "
-        "relative gain for the head-adaptive array, not by itself a clinical advantage.",
+        "and the templates' " + ", ".join(f"{sens[f'{k}/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f}" for k in TEMPLATES
+                                          if f"{k}/opm_asd_30fT/opm_dense/combined/intrinsic+brain" in sens)
+        + " dB (" + ", ".join(ANAT[k] for k in TEMPLATES) + "). A positive Delta is a relative gain for the head-adaptive array, "
+        "not by itself a clinical advantage.",
     ]
     if g4p:
         cmp_ = g4p["comparison"]
@@ -380,13 +385,13 @@ def page_pediatric(d, out):
             for k, a in A.items()]
     h += [f"<h2 id=\"g3b\">G3B: fixed adult helmet vs head-adaptive OPM {label('NEW')}</h2>",
           "<p>The same Neuromag helmet (sensors, coil types and intrinsic noise unchanged) holds the adult, two size-only controls "
-          "(the adult scaled to school-age and to 2-year head size; every vertex homologous to the adult's) and a 2-year infant "
-          "template in its native dimensions, at placements chosen from the scalp and helmet geometry only (primary: raised to "
+          "(the adult scaled to school-age and to 2-year head size; every vertex homologous to the adult's) and the 24-, 18- and "
+          "12-month infant templates of O'Reilly et al. (2021) in their native dimensions, at placements chosen from the scalp and helmet geometry only (primary: raised to "
           "20-mm contact with the top of the helmet). The OPM arrays are refitted to each head with the adult rules (10-mm cell, "
           "17-mm packing, nothing shrunk). Brain-background variance per unit cortical area, room field and intrinsic noise are "
           "the adult's. D = OPM minus Neuromag known-topography detectability in dB; Delta = D<sub>child</sub> - "
           "D<sub>adult</sub> on homologous sources (vertex-wise for the scaled controls; parcels and depth strata for the "
-          "template). A positive Delta is a relative gain for OPM, not by itself an OPM advantage in the child. Methods: section "
+          "templates). A positive Delta is a relative gain for OPM, not by itself an OPM advantage in the child. Methods: section "
           "10 of the <a href=\"methods.html\">methods</a>; full tables in the <a href=\"g3b-report.html\">G3B report</a>.</p>",
           sb.table(["Anatomy", "Construction", "Head circumference [mm]", "Breadth x length [mm]", "Targets", "Usable cortex [cm2]",
                     "OPM dense / matched sites", "Neuromag gap centred / top [mm]"], rows,
@@ -478,6 +483,7 @@ def page_epilepsy(d, out):
           sb.table(["Array", "Source", "Strength", "Detected", "ECD error, detected [mm]", "dSPM error, detected [mm]",
                     "Detected + ECD <= 10 mm", "Detected + dSPM <= 10 mm"], rows, "Medians per condition (one event per location)")]
     h.append(page_epilepsy_pediatric(d, out))
+    h.append(page_motion(d, out))
     return "\n".join(h)
 
 
@@ -515,8 +521,8 @@ def page_epilepsy_pediatric(d, out):
     h = [f"<h2 id=\"pediatric\">Pediatric: the same framework on smaller heads in the fixed helmet {label('NEW')}</h2>",
          "<p>The adult detection and localization studies rerun unchanged (configuration, seeds, detectors, operating points) on "
          "the G3B anatomies with Neuromag at the primary placement (top contact) and the refitted OPM arrays; thresholds are "
-         "calibrated on each anatomy's own null data. The 2-year template is an average template and the school-age head a "
-         "scaled adult; neither is a population. Full tables: <code>results/g4/G4_pediatric_report.md</code>.</p>",
+         "calibrated on each anatomy's own null data. The templates are averages and the school-age and 2-year-size heads scaled "
+         "adults; none is a population. Full tables: <code>results/g4/G4_pediatric_report.md</code>.</p>",
          sb.table(["Anatomy", "Array", *DEPTH_BANDS], rows, "Strength for 50 % detection [nAm], practical detector at 1 false "
                   "event/min, 95 % interval from a bootstrap over locations"),
          sb.table(["Anatomy", *DEPTH_BANDS], prow, "Dense OPM vs Neuromag combined on identical events: locations favouring OPM / "
@@ -528,6 +534,75 @@ def page_epilepsy_pediatric(d, out):
             png = RES / "g4" / f"Figure_G4_{kind}_{lab}.png"
             if png.exists():
                 h.append(fig(out, f"g4/Figure_G4_{kind}_{lab}.png", f"{ANAT[lab]}: {cap}.", f"{ANAT[lab]} {kind}"))
+    return "\n".join(h)
+
+
+def page_motion(d, out):
+    m = d.get("motion")
+    if not m:
+        return "<h2 id=\"motion\">Head motion and OPM slippage</h2><p>The bounded motion extension has not been run yet.</p>"
+    keys = m["anatomies"]
+    pick_sq = ("down 5 mm", "down 10 mm", "x+5 mm", "y-5 mm", "pitch +10 deg", "pitch -10 deg", "yaw +10 deg")
+    pick_op = ("slip x +3 deg", "slip y +3 deg", "slip z +3 deg")
+    rows = []
+    for k in keys:
+        for sysname, names in (("squid", pick_sq), ("opm", pick_op)):
+            for n in names:
+                r = m["geometry"][k][sysname].get(n)
+                if r is None:
+                    continue
+                if not r["feasible"]:
+                    rows.append([ANAT[k], "Neuromag combined", n, "infeasible", "", f"nearest magnetometer {r['min_dist_mm']:.1f} mm"])
+                    continue
+                note = (f"nearest magnetometer {r['min_dist_mm']:.1f} mm" if sysname == "squid"
+                        else f"sensors moved {r['median_sensor_shift_mm']:.1f} mm (median)")
+                rows.append([ANAT[k], "Neuromag combined" if sysname == "squid" else "OPM dense", n, f"{r['known']['median_db']:+.2f}",
+                             f"{r['mismatched']['median_db']:+.2f}", note])
+    brows = []
+    for k in keys:
+        for corr in ("none", "homogeneous", "homogeneous+gradient"):
+            for cal in m["calibration_labels"]:
+                for field in ("uniform", "gradient"):
+                    c = m["coupling"][k]["cases"].get(f"{corr}/{cal}/{field}/neck")
+                    if c is None:
+                        continue
+                    be = c["unmodelled"]["breakeven_deg_x_unit"]
+
+                    def f(v):
+                        return "not reached" if v is None else f"{v:.3g}"
+
+                    brows.append([ANAT[k], corr, cal.replace("tilt", "").replace("deg_gain", " deg, ").replace("pct", " %"),
+                                  "1 nT" if field == "uniform" else "1 nT/m", f(be["loss_1dB"]), f(be["D_0dB"]),
+                                  f"{c['oracle']['opm_change_db_median'][-1]:+.2f}"])
+    tc = m["timecourse"]
+    h = [f"<h2 id=\"motion\">Head motion and OPM slippage (bounded extension) {label('NEW')}</h2>",
+         "<p>Static fit is studied first; this extension bounds the two motion mechanisms the static maps cannot show, on the G3B "
+         "arrays and noise conventions (intrinsic + brain noise). <strong>A.</strong> A sustained displacement moves the head "
+         "inside the fixed Neuromag helmet, while a head-mounted OPM array moves with the head and changes geometry only if the "
+         "cap slips. 'Known': the displaced geometry is used (the ideal limit of movement compensation); 'mismatched': the "
+         "template of the reference geometry is applied to the displaced data. <strong>B.</strong> In-band head rotation moves "
+         "the OPM array through the static residual field of the room; the SQUIDs are fixed and see no such term. Results are "
+         "per unit field and scale linearly with rotation x field. It does not establish motion robustness; sensor dynamic "
+         "range, gain changes and real head-motion statistics are not modelled. Methods: section 12 of the "
+         "<a href=\"methods.html\">methods</a>; all tables in the <a href=\"motion-report.html\">motion report</a>.</p>",
+         fig(out, "g4/Figure_G4_motion.png", "A: median change in detectability for sustained displacements (dots: template of the "
+             "reference geometry; bars: geometry known). B: OPM detectability vs in-band rotation in a 1-nT uniform field and a "
+             "1-nT/m gradient, when the artefact is not part of the noise model (red: no correction; blue: homogeneous-field "
+             "projection; green: 8-term projection; lighter: larger calibration errors). B': exact rigid motion over a recording.",
+             "Motion and slippage"),
+         sb.table(["Anatomy", "System", "Displacement", "Known [dB]", "Mismatched [dB]", "Note"], rows,
+                  "A. Sustained displacement: median change in detectability (dense OPM or Neuromag combined), cortical targets"),
+         sb.table(["Anatomy", "Correction", "Calibration error (axis tilt, gain)", "Unit field", "1-dB loss at [deg RMS]",
+                   "OPM no longer ahead at [deg RMS]", "Oracle loss at 5 deg [dB]"], brows,
+                  "B. In-band rotation (per axis, RMS, about a pivot 60 mm below the head origin) in a unit field at which the "
+                  "dense OPM array loses 1 dB, or falls to Neuromag's static detectability, with the artefact outside the noise "
+                  "model; divide by the field in nT (or nT/m) for another room. Last column: artefact inside the noise model."),
+         f"<p>B'. Exact rigid motion over {tc['config']['duration_s']:g} s ({ANAT[tc['config']['anatomy']]}; drift up to "
+         f"{tc['config']['drift_deg']:g} deg, in-band jitter {tc['config']['inband_rotation_rms_deg']:g} deg RMS per axis, "
+         f"{tc['config']['b0_nT']:g} nT and {tc['config']['gradient_nT_per_m']:g} nT/m): peak field change at a sensor "
+         f"{tc['peak_field_change_pT']['median']:.0f} pT (median), in-band residual after the 8-term projection "
+         f"{tc['corrections']['homogeneous+gradient']['inband_rms_fT_median']:.0f} fT RMS; the linear model predicts the exact "
+         f"in-band artefact to within {max(abs(r['exact_over_linear_median'] - 1) for r in tc['corrections'].values()) * 100:.0f} %.</p>"]
     return "\n".join(h)
 
 
@@ -552,8 +627,8 @@ WRITTEN_BY = {"g1a_curves.csv": "g1a_benchmark.json", "g1b_sources.csv": "g1b_su
               "g2_targets.csv": "g2_summary.json", "g2_patch_targets.csv": "g2_summary.json", "G2_report.md": "g2_summary.json",
               "g3a_deq.csv": "g3a_size_benchmark.json", "g4_adult_events.csv": "g4_adult_summary.json",
               "g4_localization_events.csv": "g4_localization_summary.json", "G3B_report.md": "g3b_summary.json",
-              "G4_pediatric_report.md": "g4_pediatric_comparison.json"}
-for _k in ("adult", "school", "size2yr", "infant2yr"):
+              "G4_pediatric_report.md": "g4_pediatric_comparison.json", "G4_motion_report.md": "g4_motion_summary.json"}
+for _k in ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo"):
     WRITTEN_BY[f"g3b_targets_{_k}.csv"] = "g3b_summary.json"
     WRITTEN_BY[f"g4_{_k}_events.csv"] = f"g4_{_k}_summary.json"
     WRITTEN_BY[f"g4_localization_{_k}_events.csv"] = f"g4_localization_{_k}_summary.json"
@@ -591,7 +666,7 @@ def main(argv=None):
     d = dict(g1a=load("g1a/g1a_benchmark.json"), g1b=load("g1b/g1b_summary.json"), g1c=load("g1c/g1c_summary.json"),
              g2=load("g2/g2_summary.json"), bands=load("g2/g2_band_sensitivity.json"), g3a=load("g3a/g3a_size_benchmark.json"),
              g4=load("g4/g4_adult_summary.json"), loc=load("g4/g4_localization_summary.json"), g3b=load("g3b/g3b_summary.json"),
-             g4p=load("g4/g4_pediatric_comparison.json"))
+             g4p=load("g4/g4_pediatric_comparison.json"), motion=load("g4/g4_motion_summary.json"))
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(ROOT / "site" / "templates"), autoescape=True)
     tpl = env.get_template("base.html")
     head = git("rev-parse", "--short", "HEAD") + ("+dirty" if git("status", "--porcelain", "--", *io.CODE_PATHS, "site") else "")
@@ -608,13 +683,15 @@ def main(argv=None):
         "g3b-report.html": ("G3B report", sb.md_to_html((RES / "g3b" / "G3B_report.md").read_text(), heading_offset=1)
                             if (RES / "g3b" / "G3B_report.md").exists() else "<p>G3B has not been run yet.</p>"),
         "epilepsy.html": ("Epilepsy relevance (G4)", page_epilepsy(d, out)),
+        "motion-report.html": ("G4 motion and slippage report", sb.md_to_html((RES / "g4" / "G4_motion_report.md").read_text(), heading_offset=1)
+                               if (RES / "g4" / "G4_motion_report.md").exists() else "<p>The motion extension has not been run yet.</p>"),
         "methods.html": ("Methods, uncertainty and limitations", methods),
         "register.html": ("Parameters, provenance and assumptions",
                           sb.md_to_html((ROOT / "docs" / "provenance_register.md").read_text(), heading_offset=1)),
         "reproduce.html": ("Reproduce and download", page_reproduce(out, manifest)),
     }
     for fname, (title, content) in pages.items():
-        current = {"g2-report.html": "adult.html", "g3b-report.html": "pediatric.html"}.get(fname, fname)
+        current = {"g2-report.html": "adult.html", "g3b-report.html": "pediatric.html", "motion-report.html": "epilepsy.html"}.get(fname, fname)
         (out / fname).write_text(tpl.render(title=title, content=Markup(content), nav=nav, current=current,
                                             head=head, head_date=head_date))
     problems = sb.check_links(out)
