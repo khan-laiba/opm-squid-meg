@@ -163,9 +163,9 @@
       }
     ]
   },
-  "runtime_s": 219.05152201652527,
+  "runtime_s": 295.43925309181213,
   "provenance": {
-    "commit": "271a36d+dirty",
+    "commit": "81168f3",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

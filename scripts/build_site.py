@@ -90,9 +90,10 @@ def page_index(d):
               ("G1C Goldenholz et al. 2009 cortical SNR maps (MEG)", "ADAPT (+ NEW OPM extension)", "done, independently reviewed"),
               ("G2 realistic adult OPM vs Neuromag", "NEW", f"done, independently reviewed; frozen as {FROZEN_TAG}"),
               ("G3A Jas head-size benchmark", "REPRO (+ NEW fixed shell)", "done" if d["g3a"] else "not run"),
-              ("G3B pediatric fixed helmet vs head-adaptive OPM", "NEW", "blocked: pediatric anatomy needs an owner decision"),
+              ("G3B pediatric fixed helmet vs head-adaptive OPM", "NEW",
+               "in progress (2-year infant template and scaled-adult size controls; owner decision 2026-09-30)"),
               ("G4 epilepsy detection and bounded localization", "NEW", "adult done; pediatric waits for G3B"),
-              ("G5 software, reproduction, report", "-", "in progress (this local report; smoke test pending)")]
+              ("G5 software, reproduction, report", "-", "in progress (this local report; clean-environment smoke test passed)")]
     h = ["<p>Simulation study comparing on-scalp optically pumped magnetometers (OPM) with the Neuromag SQUID system: "
          "an analytical benchmark and adaptations of two published adult studies, a realistic adult comparison, and "
          "(planned) pediatric and epilepsy extensions. The OPM advantage is tested, not assumed. Labels: "
@@ -154,7 +155,7 @@ def page_index(d):
              "uses simulated events in simulated noise.</li>"
              "<li>Confidence intervals resample cortical parcels or locations of one anatomy; they do not include model "
              "uncertainty, which the sensitivity analyses show instead (one factor at a time, plus a joint noise x gap grid).</li>"
-             "<li>No pediatric result yet (G3B needs pediatric anatomy).</li></ul>")
+             "<li>No pediatric result in this adult baseline (G3B follows it).</li></ul>")
     return "\n".join(h)
 
 
@@ -309,9 +310,9 @@ def page_pediatric(d, out):
     else:
         h.append("<p>G3A (the Jas et al. head-size benchmark) has not been run yet.</p>")
     h.append("<h2 id=\"g3b\">G3B: fixed adult helmet vs head-adaptive OPM</h2>"
-             "<p class=\"status-blocked\">Blocked: needs pediatric anatomy (FreeSurfer surfaces, BEM and scalp). The candidates "
-             "(an infant template from MNE, owner-supplied school-aged anatomy, a scaled adult as a size-only control) need the "
-             "owner's decision and download approval.</p>")
+             "<p>In progress, after the adult baseline: the 2-year infant template (O'Reilly et al. 2021) in its native "
+             "dimensions and the adult scaled to school-age and 2-year head size as size-only controls (owner decision and "
+             "download approval 2026-09-30).</p>")
     return "\n".join(h)
 
 

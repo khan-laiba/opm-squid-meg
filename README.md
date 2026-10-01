@@ -26,21 +26,24 @@ an assumed OPM noise of 15 fT/sqrt(Hz), OPM sensors with no gap to the scalp and
 measured (not best) head position; details and caveats in `docs/methods.md` and
 `results/g2/G2_report.md`:
 - With modelled brain noise (calibrated on gradiometers; it predicts 0.73x the measured
-  magnetometer brain noise), a dense on-scalp OPM array (211 single-axis sensors) has 1.13x
+  magnetometer brain noise), a dense on-scalp OPM array (212 single-axis sensors) has 1.13x
   [1.10-1.16] the known-topography detectability of the Neuromag system: about 1.7x for sources
-  10-15 mm below the scalp, falling to 1.0-1.05x below 35 mm. An OPM array at Neuromag's own 97
+  10-15 mm below the scalp, falling to 1.02-1.05x below 35 mm. An OPM array at Neuromag's own 97
   sites ties it (1.00x), and falls behind after external-field projection (0.90x [0.81-0.95]).
 - The advantage disappears with worse assumptions: 1.01x at an OPM noise of 30 fT/sqrt(Hz),
   0.97x with 30 fT/sqrt(Hz) and a 3-mm scalp gap, 0.93x with a 6-mm gap. Without brain noise,
-  Neuromag wins (0.76x). The 3- and 1-layer head models agree (1.13x and 1.12x).
-- Simulated interictal spikes: at 10-20 mm depth the dense array needs about 40 % less source
-  strength for 50 % detection (point estimates 32 [26-44] vs 53 [41-67] nAm); by location it
-  detects more at 10-30 mm (p <= 0.03) but no difference was detected below 45 mm; the matched
-  array brings no advantage and detects deep spikes less often.
+  Neuromag wins (0.76x). The 3- and 1-layer head models agree (1.13x on both).
+- Simulated interictal spikes: at 10-20 mm depth the dense array needs about a third less source
+  strength for 50 % detection (35 [28-50] vs 53 [44-66] nAm; the intervals overlap, the paired
+  strength ratio is 1.51 [1.25-1.66]) and detects more events at 16 of the 18 locations, none
+  favouring Neuromag (p < 0.001, uncorrected). Deeper, no location-level difference is established
+  (at 20-30 mm, p = 0.23 here but 0.03 in an earlier run whose noise draws differed: not robust);
+  the matched array helps only at 10-20 mm and detects the deepest spikes less often.
 - Bounded localization (24 locations, one event each): dipole errors are similar across arrays
-  (about 5 mm, limited by a 2-mm/2-deg coregistration error); for extended 320-nAm sources the
-  distributed (dSPM) estimate is 3.7-4.8 mm more accurate with either OPM array. Differences not
-  detected are not excluded.
+  (about 4-5 mm, limited by a 2-mm/2-deg coregistration error); for extended 320-nAm sources the
+  distributed (dSPM) estimate tends to be about 5 mm more accurate with either OPM array (p = 0.14
+  and 0.046 uncorrected here, 0.003 and 0.01 in an earlier run with different noise draws: the
+  direction is stable, the significance is not). Differences not detected are not excluded.
 - `adult-baseline-v1` reported 1.21x; that value was inflated by OPM cells reaching into the
   coarse BEM head surface, a numerical error corrected in v2 (see PLAN.md).
 

@@ -47,19 +47,22 @@ each magnetometer pickup coil to the MRI scalp along its inward normal is 25.1-4
 Single-axis magnetometers with a 10-mm cubic sensing volume (A-OPM-CELL; custom MNE coil 9901,
 27 integration points), sensing centre 7 mm from the helmet inner surface (A-OPM-STANDOFF) plus
 a declared helmet-to-scalp gap (A-OPM-GAP), sensitive axis along the normal of the smooth BEM
-head surface averaged within 15 mm (A-OPM-AXIS; within 6 deg of the local normal at every site).
+head surface averaged within 15 mm (A-OPM-AXIS; within 7.1 deg of the local normal at every site, 95 % of sites within
+3.5 deg; the largest deviation is at a midline occipital site of the dense array).
 Clearance (A-OPM-CLEAR): every sensing centre is at least 6 mm (standoff - 1 mm) from the MRI
 scalp and 4 mm from the BEM head surface, and every integration point of the 10-mm cell is at
-least 1 mm outside the BEM head surface (height along the local normal of a 1-mm-spaced version of
-that surface; the exact nearest-point distance is >= 0.87 mm); sites are moved outward along their
-axis by at most 5 mm, otherwise they are infeasible and dropped. The cell rule (v2) keeps the
+least 1 mm outside the BEM head surface (exact point-to-triangle distance with the inside test,
+the cell oriented as the forward model builds it in the head frame; the first v2 check built it in
+the MRI frame, with its in-plane axes rotated by up to ~100 deg, a fault found by the second
+review); sites are moved outward along their axis by at most 5 mm, otherwise they are infeasible
+and dropped. The cell rule (v2) keeps the
 forward model's outer boundary out of the cell (see section 3, A-BEM-SKIN).
 
 Matched-site array: each Neuromag location is projected along its inward coil normal onto the
 MRI scalp; sites below the brow plane (face/neck) or within 20 mm of a preauricular point are
 dropped (A-OPM-COVER). Sample subject: 97 of 102 sites; 19 moved out by 0.5-5 mm (pinnae, brow,
-occiput); nearest-neighbour spacing 22.9-30.4 mm (median 26.6 mm); sensing centres 5.4-10.3 mm
-(median 6.4 mm) above the BEM head surface (Neuromag coils: 25-41 mm from the scalp, median 31).
+occiput); nearest-neighbour spacing 22.9-30.3 mm (median 26.6 mm); sensing centres 5.4-10.3 mm
+(median 6.3 mm) above the BEM head surface (Neuromag coils: 25-41 mm from the scalp, median 31).
 
 Dense arrays (G2): farthest-point sampling (15-mm spacing) of the scalp in the same coverage
 region, excluding scalp points more than 2 mm inside or 4 mm outside the smooth BEM head surface
@@ -67,11 +70,11 @@ region, excluding scalp points more than 2 mm inside or 4 mm outside the smooth 
 view, then clearance as above and pruning to a 17-mm minimum centre spacing (A-OPM-PACK). The
 field-of-view rule matters because the sample MRI is pitched ~36 deg relative to the head frame:
 the flat cap where its head surface is cut lies above the brow plane at the back of the head.
-The densest array found has 211 sites (`opm_dense`; greedy, not proven maximal; nearest-neighbour
-spacing median 18.7 mm; 49 sites moved out by up to 5 mm; centres 5.2-11.5 mm above the BEM head
+The densest array found has 212 sites (`opm_dense`; greedy, not proven maximal; nearest-neighbour
+spacing median 18.7 mm; 50 sites moved out by up to 5 mm; centres 5.3-11.5 mm above the BEM head
 surface); the channel-budget control `opm204` takes 204 of them by farthest-point sampling. The
 dense array reaches lower at the back than the matched array (lowest scalp point MRI z -105 vs
--67 mm), with one isolated lower-occipital site (nearest neighbour 45 mm) beyond the infeasible
+-67 mm), with one isolated lower-occipital site (nearest neighbour 43 mm) beyond the infeasible
 occipito-cervical crease. A 306-channel single-axis array appears infeasible under this rule
 (best spacing found 13.7-14.2 mm < 17 mm), though that is not proven. The composition and
 placement of every array are pinned by `tests/test_g2.py`.
@@ -82,20 +85,25 @@ MNE-Python 1.13.2 BEM forward models (single-compartment inner skull, 0.3 S/m, u
 configuration prescribes otherwise; G2 uses the 3-layer 0.3/0.006/0.3 S/m model). Every 3-layer
 model subdivides the 5,120-triangle head surface once (20,480 triangles, same flat geometry;
 A-BEM-SKIN, v2): on-scalp sensors sit a few millimetres from it, where the field of the coarse
-surface is not converged on this head. Refining it changed the field at OPM integration points by
-a median 0.7-0.8 % of the array field scale at 3-4 mm (95th percentile 8-12 %), more below 2 mm,
-and the dense-array headline by -2.4 %, while Neuromag gains changed by 0.08 %
-(`scripts/study_opm_near_mesh.py`, `scripts/study_bem_skin_refinement.py`). An exact test on a
+surface is not converged on this head. On the v1 arrays (cells up to 2.4 mm inside the coarse
+surface) refining it changed the field at OPM integration points by a median 0.7-0.8 % of the
+array field scale at 3-4 mm (95th percentile 8-12 %), more below 2 mm, and the dense-array
+headline by -2.4 % (`results/g2/*_v1_arrays.*`). On the v2 arrays (every integration point
+>= 1 mm outside) the same comparison gives a median 0.66-0.74 % at 3-4 mm (95th percentile
+7.5-9.8 %), 1.3-1.6 % at 2-2.5 mm and 4-5 % below 1.5 mm; the dense-array headline changes by
+-1.6 % (1.147x coarse, 1.129x refined on the 1,000-target subset; matched 1.008x vs 1.004x), while
+Neuromag gains change by 0.08 % (`scripts/study_opm_near_mesh.py`,
+`scripts/study_bem_skin_refinement.py`). An exact test on a
 3-shell sphere shows MNE's BEM is accurate near a regular surface (95th percentile 0.45 % at 2 mm
 with 5,120 triangles, 0.07 % with 20,480; `scripts/study_bem_sphere_accuracy.py`); the sample head
 surface has larger triangles (median edge 7.3 mm, 95th percentile 13.5 mm) and a scalp as thin as
 3.5-4.7 mm in places. A second refinement is too large for a full BEM solution here. At the v2
-array geometry (every cell integration point >= 1 mm outside the surface) the coarse surface still
-differs from the refined one by more than 2 % on 47 dense and fewer matched channels (up to 18 %
-on single channels), but the G2 headline ratios differ by only 0.4 %, and in the refined model the
-10-mm cell and a point sensor agree within 1.2 % on every channel; if the error falls with the
-square of the mesh size, as on the sphere, the refined surface is several times more accurate
-still. (v1 geometry: 1.207x coarse vs 1.178x refined for the dense array.) Sources are
+array geometry the coarse surface still differs from the refined one by more than 2 % on 50 dense
+and 26 matched channels (up to 22 % on a single channel), and in the refined model the
+10-mm cell and a point sensor agree within 2.8 % (dense array; 1.0 % matched) in the peak channel
+of each of 1,000 targets (median 0.03 %). Assuming, as on the sphere, that the error falls with the square of the mesh size
+(an assumption: a second refinement does not fit in memory, so it is not verified on this head),
+the refined surface is several times more accurate still. (v1 geometry: 1.207x coarse vs 1.178x refined for the dense array.) Sources are
 taken only among usable vertices, inside the inner skull and at least 4 mm from its
 5120-triangle mesh (A-BEM-DIST; 91.3 % of the valid vertices). Within 0.5 mm of the mesh, linear
 collocation gives lead-field energies up to ~4000x those of neighbouring vertices; refining the
@@ -222,7 +230,7 @@ Configuration: `configs/g2_adult.toml`; assumptions A-G2-*, D-G2-COND in the reg
 Design
 * Arrays: Neuromag T3 at the sample recording's measured head position (channel sets mag, grad and
   combined, with the full cross-type covariance); OPM arrays `opm_matched` (97 matched sites,
-  coverage control), `opm204` (channel-budget control) and `opm_dense` (211 sites, full system),
+  coverage control), `opm204` (channel-budget control) and `opm_dense` (212 sites, full system),
   all single-axis, 10-mm cell, 7-mm standoff, no extra scalp gap in the primary run (section 2.2).
 * Targets: 10-nAm dipoles along the cortical normal at the 7,661 usable oct-6 vertices; geodesic
   patches of 5, 10 and 20 mm radius around each (signed sums; fixed total 10 nAm or fixed density
@@ -261,8 +269,9 @@ Design
   d_eq(eta) (intrinsic noise only, peak-channel SNR) against the sphere benchmark. d_eq comes from
   the depth-binned medians of the ratio, not from per-source crossings.
 
-Results (`results/g2/g2_summary.json`, v2: refined head surface and cell clearance; medians over
-the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 15 fT/sqrt(Hz); 3-layer BEM)
+Results (`results/g2/g2_summary.json`, v2 arrays, run at 81168f3: refined head surface and cell
+clearance; medians over the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 15 fT/sqrt(Hz);
+3-layer BEM)
 * Noise validation: the empty-room model (brochure intrinsic noise + fitted room field) gives
   115 fT (magnetometers) and 21.4 fT/cm (gradiometers) against 115 fT and 20.2 fT/cm measured; the
   room field explains 94 % of the magnetometer and 1.6 % of the gradiometer empty-room variance.
@@ -274,27 +283,27 @@ the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 15 fT/sqrt(Hz); 3-layer BE
   [0.74-0.79], matched 0.53x; OPM higher for <= 5 % of targets); OPMs beat the gradiometers alone
   (2.3-3.3x). The ratio scales as 1/(OPM noise): break-even at 11.5 (dense) and 7.9 (matched)
   fT/sqrt(Hz) against Neuromag combined.
-* With brain noise (intrinsic+brain): matched 97-site OPM 1.00x [0.98-1.03] Neuromag combined
-  (higher for 52 % of targets and 44 % of parcels: a tie), OPM 204 1.12x [1.09-1.16], dense
-  211-site OPM 1.13x [1.10-1.16] (higher for 96 % of targets and all parcels); vs gradiometers
-  alone 1.12-1.31x, vs magnetometers alone 1.03-1.18x. Adding the room field changes little (1.00,
-  1.13, 1.13x). After the external projection (rank n - 8): 0.90x [0.81-0.95], 1.07x, 1.07x
+* With brain noise (intrinsic+brain): matched 97-site OPM 1.00x [0.98-1.02] Neuromag combined
+  (higher for 52 % of targets and 43 % of parcels: a tie), OPM 204 1.13x [1.10-1.16], dense
+  212-site OPM 1.13x [1.10-1.16] (higher for 98 % of targets and all parcels); vs gradiometers
+  alone 1.12-1.32x, vs magnetometers alone 1.03-1.18x. Adding the room field changes little (1.00,
+  1.13, 1.14x). After the external projection (rank n - 8): 0.90x [0.81-0.95], 1.07x, 1.07x
   [1.01-1.12] (dense higher for 62 % of targets); relative to the unprojected room-field condition
   the projection costs the matched array 10 % of its detectability, the dense array 5 % and
   Neuromag 0.5 %.
 * Depth (dense vs combined, intrinsic+brain): 1.66x at 10-15 mm, 1.39x at 15-20 mm, 1.23x at
-  20-25 mm, 1.13x at 25-30 mm, 1.07x at 30-35 mm and 1.01-1.05x below 35 mm; the matched array is
+  20-25 mm, 1.13x at 25-30 mm, 1.07x at 30-35 mm and 1.02-1.05x below 35 mm; the matched array is
   1.20x at 10-15 mm and falls to 0.91-0.95x below 40 mm. By distance from the inner skull (dense):
-  1.44x at 4-5 mm, 1.08x beyond 10 mm. By lobe (dense): frontal 1.23x, parietal 1.14x, temporal
-  1.13x, occipital 1.08x, insula 1.06x, cingulate 1.03x. Without the 558 medial-wall targets
+  1.44x at 4-5 mm, 1.09x beyond 10 mm. By lobe (dense): frontal 1.23x, parietal 1.14x, temporal
+  1.14x, occipital 1.09x, insula 1.07x, cingulate 1.03x. Without the 558 medial-wall targets
   (7.3 %): dense 1.14x, matched 1.01x. (v1's rise of the dense ratio again below 45 mm, to 1.25x,
   was produced by cells too close to the coarse head surface.)
 * Metric dependence: best single channel (peak-channel SNR) dense OPM 0.89x Neuromag (its best
   channel is usually a gradiometer), mean-power SNR 1.06x; detectability 1.13x.
 * Estimated covariance (plug-in, Ledoit-Wolf): 10 s of data cost Neuromag combined 15 % and the
-  dense OPM 10 % of the oracle detectability (60 s: 3 % and 2 %), so the dense/combined ratio is
-  1.20x (10 s) and 1.14x (60 s); matched 1.12x and 1.03x.
-* Extended sources: the ratio barely depends on patch size (dense 1.13, 1.14, 1.13x for 5, 10,
+  dense OPM 9 % of the oracle detectability (60 s: 3 % and 2 %), so the dense/combined ratio is
+  1.21x (10 s) and 1.14x (60 s); matched 1.12x and 1.03x.
+* Extended sources: the ratio barely depends on patch size (dense 1.14, 1.14, 1.13x for 5, 10,
   20 mm radius; matched 1.01x), although cancellation reduces the net moment to 0.78, 0.53 and
   0.33 of the scalar moment.
 * Sensitivity (dense | matched vs combined, intrinsic+brain): OPM noise 7 -> 30 fT/sqrt(Hz):
@@ -306,14 +315,16 @@ the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 15 fT/sqrt(Hz); 3-layer BE
   recalibrated per band): dense 1.13x (1-10 Hz), 1.13x (8-30 Hz), 1.11x (30-80 Hz; 1.08x with a
   100-Hz first-order OPM response); matched 0.99-1.01x.
 * Convergence: background grid vs every usable vertex changes the median log2 ratios by <= 0.007;
-  the 1-layer BEM refined from 5,120 to 20,480 triangles by <= 0.0043; Neuromag 4-point vs
+  the 1-layer BEM refined from 5,120 to 20,480 triangles by <= 0.0023; Neuromag 4-point vs
   accurate integration 0.6 % in the gains; OPM 10-mm cell vs point 0.03 % median (95th percentile
-  0.2 %, max 1.2 %) in the peak field; oct-6 vs random full-resolution targets <= 0.036; whitening
-  tolerance none. Head model: on the convergence subset the dense/combined ratio is 1.127x
-  (primary), 1.132x with the v1 5,120-triangle head surface and 1.124x with a 1-layer BEM (matched
-  1.004, 1.007, 1.013x); gains differ by 11-12 % between 3 and 1 layers but the ratios hardly at
-  all. In v1 (cells up to 2.4 mm inside the coarse head surface) the same comparison gave 1.21x vs
-  1.13x: the difference was numerical, not the skull and scalp.
+  0.2 %; at most 1.0 % in the matched and 2.8 % in the dense array) in the peak-channel field of
+  each of the 1,000 convergence targets; oct-6 vs random full-resolution targets <= 0.036;
+  whitening tolerance none. Head model: on the convergence subset the dense/combined ratio is
+  1.129x (primary), 1.147x with the v1 5,120-triangle head surface and 1.127x with a 1-layer BEM
+  (matched 1.004, 1.008, 1.013x); gains differ by 11-12 % between 3 and 1 layers but the ratios
+  hardly at all, and the 3- and 1-layer models agree to 0.2 %. In v1 (cells up to 2.4 mm inside the
+  coarse head surface) the same comparison gave 1.21x vs 1.13x: the difference was numerical, not
+  the skull and scalp.
 * Bridge to G1A (intrinsic noise, peak-channel SNR): the realistic OPM/Neuromag magnetometer
   peak-field ratio follows the sphere with the real standoffs (7 mm OPM, 29.8 mm median SQUID);
   the equal-SNR depth at eta = 3 is 29.6 mm (matched) and 32.0 mm (dense) vs 29.1 mm (sphere, real
@@ -326,11 +337,11 @@ the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 15 fT/sqrt(Hz); 3-layer BE
 ## 9. Epilepsy relevance, adult (G4, NEW) — `opmsquid.ied`, `opmsquid.detection`, `opmsquid.localization`, `scripts/g4_*.py`
 
 Configuration: `configs/g4_epilepsy.toml`; assumptions A-G4-* in the register. The pediatric part
-waits for G3 anatomy.
+is section 11.
 
 Detection design (`scripts/g4_epilepsy_adult.py`)
 * Recordings: the G2 noise model in the time domain (A-G4-TS), one realization per 30-s segment
-  shared by Neuromag, the matched 97-site OPM and the dense 211-site OPM array (OPM 15
+  shared by Neuromag, the matched 97-site OPM and the dense 212-site OPM array (OPM 15
   fT/sqrt(Hz)); 1-40 Hz, 150 Hz after decimation. Identical events (source, strength, morphology,
   time) in every array: 72 locations stratified by depth (10-20, 20-30, 30-45, 45-70 mm) and
   orientation, focal dipoles at 10-320 nAm with three spike-wave morphologies, and 10-mm patches;
@@ -339,9 +350,9 @@ Detection design (`scripts/g4_epilepsy_adult.py`)
   false-positive probability 0.001) and a practical scanner that knows neither time nor source
   (three waveform templates x 716 cortical candidates distinct from the true sources). Whitener from
   10 min of baseline null data; thresholds for 1 and 0.2 false events per minute from 20 min of
-  independent calibration null data, frozen; held-out null (20 min) gives 0.65-1.4 and 0.05-0.2
-  false events per minute. A hit is the scan statistic above threshold within +/-50 ms of the true
-  spike peak.
+  independent calibration null data, frozen; held-out null (20 min) gives 0.5-1.1 and 0-0.2 false
+  events per minute. A hit is the scan statistic above threshold within +/-50 ms of the true spike
+  peak.
 * Statistics: events share locations (18 per depth band, each with 6 strengths x 3 morphologies),
   so the location is the unit. Paired comparisons count, per location, the events detected by only
   one system and test the per-location differences with an exact sign-flip test
@@ -349,28 +360,37 @@ Detection design (`scripts/g4_epilepsy_adult.py`)
   intervals come from a bootstrap over locations; the Wilson bands in the figure are event-level
   and descriptive.
 
-Detection results (v2; focal, three morphologies pooled; strength for 50 % detection, S50, with a
-bootstrap over locations; practical detector at 1 false event per minute; the 72 locations never
-lie on the medial wall; held-out null gives 0.75-1.25 and 0.1-0.3 false events per minute)
-* S50, Neuromag combined vs dense OPM vs matched OPM: 53 vs 32 vs 48 nAm at 10-20 mm, 91 vs 83 vs
-  83 nAm at 20-30 mm, 138 vs 124 vs 142 nAm at 30-45 mm, 310 vs 285 nAm vs not reached at 45-70 mm
-  (95 % intervals 41-67, 26-44 and 36-61 nAm at 10-20 mm; the deepest band's upper limits lie
-  beyond the tested 320 nAm). The oracle needs about half the strength (27 vs 14 vs 22 nAm at
-  10-20 mm): searching over time and sources costs roughly a factor 2.
+Detection results (v2 arrays, run at 81168f3; focal, three morphologies pooled; strength for 50 %
+detection, S50, with a bootstrap over locations; practical detector at 1 false event per minute; the
+72 locations never lie on the medial wall; p-values uncorrected)
+* S50, Neuromag combined vs dense OPM vs matched OPM: 53 vs 35 vs 41 nAm at 10-20 mm, 89 vs 82 vs
+  88 nAm at 20-30 mm, 132 vs 127 vs 137 nAm at 30-45 mm, 290 vs 271 nAm vs not reached at 45-70 mm
+  (95 % intervals 44-66, 28-50 and 32-59 nAm at 10-20 mm, which overlap; the deepest band's
+  upper limits lie beyond the tested 320 nAm). The oracle
+  needs about half the strength (25 vs 16 vs 20 nAm at 10-20 mm): searching over time and
+  sources costs roughly a factor 2. The intervals of separate systems overlap even where the paired
+  comparison is clear; the paired S50 ratio (same location resamples for both systems) is the
+  comparison: Neuromag / dense 1.51 [1.25-1.66] at 10-20 mm, 1.08 [1.00-1.20], 1.04 [0.99-1.12] and
+  1.07 [1.00-1.16] in the deeper bands.
 * Paired, by location (locations with more events detected only by OPM / only by Neuromag
-  combined; exact sign-flip p): dense OPM 13/0, 8/1, 8/2 and 5/2 across the four depth bands
-  (p = 0.0002, 0.03, 0.08, 0.8); matched OPM 9/2, 6/2, 4/5 and 1/8 (p = 0.14, 0.23, 1, 0.02:
-  worse in the deepest band). With the oracle: dense 14/1, 9/0, 8/1, 7/4 (p = 0.0004, 0.004, 0.02,
-  0.3); matched 9/5, 6/3, 3/4, 3/4 (p >= 0.55).
-* Sensitivity at 1 false event per minute: superficial (10-30 mm) 40-nAm spikes 0.18 (Neuromag),
-  0.21 (matched OPM), 0.39 (dense OPM); deep (30-70 mm) 160-nAm spikes 0.35, 0.30, 0.39.
+  combined; exact sign-flip p): dense OPM 16/0, 6/2, 6/1 and 6/1 across the four depth bands
+  (p < 0.001, 0.23, 0.28, 0.13); matched OPM 9/3, 5/4, 4/5 and 0/7 (p = 0.04, 0.85, 0.62, 0.016:
+  worse in the deepest band). With the oracle: dense 16/0, 13/0, 7/1, 5/5 (p < 0.001, < 0.001,
+  0.06, 1); matched 10/5, 4/6, 2/5, 2/6 (p >= 0.22).
+* Run-to-run variability: an earlier v2 run whose dense array differed by one site (so every noise
+  draw differed) gave dense 13/0, 8/1, 8/2 and 5/2 (p = 0.0002, 0.03, 0.08, 0.8). The 10-20 mm
+  advantage is stable; the 20-30 mm location-level result is not (p 0.03 there, 0.23 here) and is
+  not claimed.
+* Sensitivity at 1 false event per minute: superficial (10-30 mm) 40-nAm spikes 0.17 (Neuromag),
+  0.29 (matched OPM), 0.31 (dense OPM); deep (30-70 mm) 160-nAm spikes 0.35, 0.34, 0.38.
 * Consistency with G2: at the same 18 locations per band, the G2 detectability ratio dense /
   combined (intrinsic+brain+env) has medians 1.46, 1.15, 1.07 and 1.03, and the oracle S50 ratio is
-  1.87, 1.21, 1.18 and 1.07: the same ordering and direction; S50 pools the detection curves of 18
+  1.62, 1.36, 1.10 and 0.98: the same ordering and direction; S50 pools the detection curves of 18
   locations over a factor-2 strength grid, so it need not equal the median ratio.
 * Detection agrees with G2: the full OPM system detects superficial spikes at lower strength
-  (about 40 % lower at 10-20 mm), the advantage fades with depth and is not detectable below
-  45 mm; a matched-site OPM array brings no advantage and is worse for the deepest sources.
+  (about a third lower at 10-20 mm) and the advantage fades with depth: by location it is
+  established at 10-20 mm for the practical detector (and at 20-30 mm only for the oracle); a
+  matched-site OPM array helps only the most superficial sources and is worse for the deepest.
 
 Localization design (`scripts/g4_localization.py`, bounded)
 * 24 locations (2 per depth x orientation stratum), focal dipoles and 10-mm patches at 80 and
@@ -388,34 +408,37 @@ Localization design (`scripts/g4_localization.py`, bounded)
   decomposition. Each event also passes through the practical detector (1 false event per
   minute, thresholds from 10 min of independent null data).
 * No goodness-of-fit cut: MNE computes GOF on whitened data, where noise adds about one unit per
-  channel, so at equal SNR it is higher for arrays with fewer channels (median at 320 nAm: 63 %
-  matched OPM, 53 % dense OPM, 38 % Neuromag). GOF, chi2/dof and the 95 % confidence volume are
-  descriptive.
+  channel, so at equal SNR it is higher for arrays with fewer channels (median for detected 320-nAm
+  focal events: 66 % matched OPM, 57 % dense OPM, 38 % Neuromag). GOF, chi2/dof and the 95 %
+  confidence volume are descriptive.
 * Paired OPM-minus-Neuromag comparisons on identical events (one per location): median error
   difference with a bootstrap CI and Wilcoxon signed-rank p; exact McNemar p for joint detection +
   localization within 10 mm; 16 comparisons per OPM array, uncorrected.
 
-Localization results (v2, `results/g4/g4_localization_summary.json`; Neuromag combined, matched
-OPM, dense OPM)
-* Detection in this subset: 320-nAm focal 0.92, 0.92, 0.92; 320-nAm patches 0.79, 0.83, 0.83;
-  80-nAm patches 0-0.08 (too weak: their "localization" is that of noise).
-* ECD, detected events: 320-nAm focal 4.8, 5.2, 4.7 mm on the MRI (2.7, 3.0, 2.4 mm in the sensor
+Localization results (v2 arrays, run at 81168f3, `results/g4/g4_localization_summary.json`;
+Neuromag combined, matched OPM, dense OPM)
+* Detection in this subset: 320-nAm focal 0.92, 0.92, 0.92; 320-nAm patches 0.83 for every array;
+  80-nAm patches 0.08-0.17 (too weak: their "localization" is that of noise).
+* ECD, detected events: 320-nAm focal 4.3, 4.8, 4.2 mm on the MRI (2.8, 4.6, 2.5 mm in the sensor
   frame; the coregistration error alone displaces the source by a median 2.9 mm); 320-nAm patches
-  7.8, 8.2, 7.0 mm; 80-nAm focal 7.0, 5.4, 4.8 mm. chi2/dof 0.8-1.1: the head-model and
+  7.2, 8.5, 6.7 mm; 80-nAm focal 5.1, 6.7, 3.7 mm. chi2/dof 0.9-1.1: the head-model and
   coregistration mismatch is small against the noise at these SNRs.
-* dSPM peak, detected events: 320-nAm focal 14.4, 12.3, 12.7 mm; 320-nAm patches 14.9, 9.3,
-  9.5 mm. Support recovery of the 320-nAm patches (share of the N strongest grid sources inside the
-  patch; chance ~N/3,821): medians 0.2, 0.3, 0.3.
-* Detected and localized within 10 mm (dSPM | ECD): 320-nAm focal 0.17 | 0.71, 0.33 | 0.67,
-  0.25 | 0.67; 320-nAm patches 0.08 | 0.62, 0.46 | 0.67, 0.50 | 0.62.
+* dSPM peak, detected events: 320-nAm focal 13.6, 11.1, 11.2 mm; 320-nAm patches 18.5, 13.5,
+  10.1 mm. Support recovery of the 320-nAm patches (share of the N strongest grid sources inside the
+  patch; chance ~N/3,821): medians 0.1, 0.1, 0.3.
+* Detected and localized within 10 mm (dSPM | ECD): 320-nAm focal 0.21 | 0.71, 0.38 | 0.62,
+  0.33 | 0.75; 320-nAm patches 0.17 | 0.58, 0.38 | 0.58, 0.42 | 0.58.
 * Paired (24 locations; 16 comparisons per OPM array, uncorrected p): for 320-nAm patches both OPM
-  arrays localize better with dSPM (median error -4.8 mm matched, p = 0.003; -3.7 mm dense,
-  p = 0.01) and more patches are both detected and localized within 10 mm (9/0, p = 0.004;
-  10/0, p = 0.002; the dense result survives a Bonferroni correction over 16 comparisons). No ECD
-  difference and no focal-source difference was detected; differences are not excluded.
+  arrays localize better with dSPM (median error -4.8 mm matched, p = 0.14; -5.3 mm dense,
+  p = 0.046) and more patches are both detected and localized within 10 mm (5/0, p = 0.06; 6/0,
+  p = 0.03); none of these survives a correction over 16 comparisons. An earlier v2 run (one dense
+  site fewer, hence different noise draws) gave -4.8 mm (p = 0.003) and -3.7 mm (p = 0.01): the
+  direction and size are stable, the significance is not. No ECD difference and no focal-source
+  difference was detected; differences are not excluded.
 * With 24 locations the study bounds rather than resolves localization differences. In this model
   the dipole fit is limited by the coregistration error (about 3 mm) for every array, while the
-  distributed estimate of extended sources benefits from on-scalp sensors, matched or dense.
+  distributed estimate of extended sources tends to benefit from on-scalp sensors, matched or
+  dense (about 5 mm; not established at this sample size).
 
 ## 10. Pediatric extension (G3) — `scripts/g3a_jas_size_benchmark.py`; G3B pending
 

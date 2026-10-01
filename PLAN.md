@@ -17,9 +17,9 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | G1A Jas analytical benchmark | done; independently reviewed (approve with notes; notes addressed) | `scripts/g1a_jas_benchmark.py` -> `results/g1a/`; Eq. 1 vs Sarvas 2-D maximum 4.7e-15, vs MNE sphere 5.4e-8; d_eq(eta 3) = 27.665 mm |
 | G1B Hunold depth-orientation spikes | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule and a realization-averaged Fig. 6 calibration | `scripts/g1b_hunold.py` -> `results/g1b/`; calibrated background (scalar 0.47; one realization alone 0.44-0.52), p2p: bin means 0.78-0.91x the paper (0.68-1.01x over the calibration range), noisy p2p 0.97-1.04x, r 0.91-0.97, 2.5-classification agreement 80-93 %, GM-MM sign agreement 100 % |
 | G1C Goldenholz cortical SNR maps | done; independently reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.76 nAm at 4,000 sources (paper 1.6-1.9); focal median -22.1 dB, 56 % inside the paper's -29/-19 dB range; deep medial cortex darkest |
-| G2 realistic adult OPM-Neuromag comparison | done; independently reviewed; `adult-baseline-v1` (1.21x) corrected in `adult-baseline-v2` (near-surface BEM error, see below) | `scripts/g2_adult_comparison.py` -> `results/g2/` (`G2_report.md`); with modelled brain noise the dense 211-site OPM array is 1.13x [1.10-1.16] Neuromag combined (1.01-1.27x for OPM noise 30-7 fT/sqrt(Hz), 0.93-1.13x jointly with a 0-6 mm scalp gap; 3- and 1-layer BEM agree), the matched 97-site array 1.00x (a tie); 1.4-1.7x for sources within 20 mm of the scalp, 1.0-1.05x below 35 mm; without brain noise Neuromag wins (dense 0.76x) |
+| G2 realistic adult OPM-Neuromag comparison | done; independently reviewed; `adult-baseline-v1` (1.21x) corrected in `adult-baseline-v2` (near-surface BEM error, see below) | `scripts/g2_adult_comparison.py` -> `results/g2/` (`G2_report.md`); with modelled brain noise the dense 212-site OPM array is 1.13x [1.10-1.16] Neuromag combined (1.01-1.28x for OPM noise 30-7 fT/sqrt(Hz), 0.93-1.13x jointly with a 0-6 mm scalp gap; 3- and 1-layer BEM agree), the matched 97-site array 1.00x (a tie); 1.4-1.7x for sources within 20 mm of the scalp, 1.02-1.05x below 35 mm; without brain noise Neuromag wins (dense 0.76x); all adult results rerun at 81168f3 |
 | G3 pediatric extension | G3A done (REPRO size benchmark); G3B blocked: pediatric anatomy needs an owner decision (see Inputs) | `scripts/g3a_jas_size_benchmark.py` -> `results/g3a/`; normalized d_eq at eta = 3: newborn 49.6 % (printed 50 %), adult 15.8 % (15 %) |
-| G4 epilepsy detection and localization | adult done (detection; bounded localization); pediatric waits for G3 | `scripts/g4_epilepsy_adult.py`, `scripts/g4_localization.py` -> `results/g4/`; 50 % detection at 1 false event/min: dense OPM 32 vs Neuromag combined 53 nAm (10-20 mm), 285 vs 310 nAm (45-70 mm); practical detector: dense better by location at 10-30 mm (p <= 0.03), not below 45 mm; matched no advantage (worse at 45-70 mm); localization: ECD similar (~5 mm), dSPM of extended sources 3.7-4.8 mm better with OPM |
+| G4 epilepsy detection and localization | adult done (detection; bounded localization), rerun at 81168f3; pediatric waits for G3B | `scripts/g4_epilepsy_adult.py`, `scripts/g4_localization.py` -> `results/g4/`; 50 % detection at 1 false event/min: dense OPM 35 vs Neuromag combined 53 nAm at 10-20 mm (paired ratio 1.51 [1.25-1.66]; 16/0 locations, p < 0.001), 271 vs 290 nAm at 45-70 mm; no location-level advantage established below 20 mm (the 20-30 mm result varied between runs); matched helps only at 10-20 mm, worse at 45-70 mm; localization: ECD similar (~4-5 mm), dSPM of 320-nAm patches ~5 mm better with OPM (not established: p = 0.14 / 0.046 uncorrected) |
 | G5 repository, tests, report | private repository `khan-laiba/opm-squid-meg` (no Pages, verified); unittest suite; `scripts/run_all.sh`; local report (`scripts/build_site.py` -> `site/_build/`, link-checked, not deployed); clean-environment smoke test pending (needs download approval) | |
 
 ## Decisions log
@@ -33,6 +33,9 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | 2026-09-30 | Primary adult anatomy for G1B/G1C/G2: MNE `sample` subject (individual adult MRI, BEM surfaces, real head position in a Vectorview helmet). fsaverage is a secondary template. | NEW (see Inputs) |
 | 2026-09-30 | G1B: p2p numerator primary (Fig. 6 digitisation); two background levels (as specified; one scalar from the Fig. 6 magnetometer baselines, gradiometers as independent check); paper maps never used for calibration. | NEW (U-HU-numerator, U-HU-bglevel) |
 | 2026-09-30 | Channels marked bad in the sample recording (MEG 2443) are excluded wherever recorded noise enters (G1C; G2 measured-noise calibration). | NEW |
+| 2026-09-30 | Pediatric anatomy for G3B: the 2-year infant template (`mne.datasets.fetch_infant_template('2yr')`, `ANTS2-0Years3T.zip`, 391,756,700 bytes, github.com/christian-oreilly/infant_template_paper, LGPL-2.1), plus the adult scaled to school-age and 2-year head size as size-only controls. No school-aged native anatomy (another download would be needed). | owner (download approved) |
+| 2026-09-30 | Clean-environment smoke test: fresh venv from `requirements.txt` (pinned packages downloaded with approval), clone of the repository, unit tests and G1A: passed (87 tests; G1A identical apart from provenance). | owner (download approved) |
+| 2026-09-30 | `adult-baseline-v2` results recomputed at one clean commit (81168f3) after the second independent review (cell clearance checked in the forward model's frame). | NEW (review v2) |
 
 ## Inputs and availability
 
@@ -47,7 +50,7 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | Neuromag 3-D geometry, `dev_head_t`, head-MRI trans | G2 | MNE sample data (MGH Vectorview: 204 grads coil 3012 T1, 102 mags coil 3024 T3) |
 | Measured SQUID noise | G2 measured-noise scenario | MNE sample `ernoise_raw.fif` (empty room) and baseline covariance |
 | Adult anatomy | G1B, G1C, G2 | MNE `sample` subject (3-layer BEM surfaces, oct-6 source space); fsaverage (sibling folder, read-only) |
-| School-aged anatomy (FreeSurfer surfaces, BEM surfaces, scalp) | G3 | **missing**. FreeSurfer is not installed; MNE only packages infant templates (up to 2 years, Neurodevelopmental MRI Database via `mne.datasets.fetch_infant_template`). Candidate routes (owner decision + download approval at G3): (a) age-specific average templates of the Neurodevelopmental MRI Database (registration required); (b) an OpenNeuro school-aged dataset that ships FreeSurfer outputs (e.g. fMRIPrep `sourcedata/freesurfer`); (c) the 2-year infant template as an additional young-child anatomy; (d) scaled adult surfaces as a labelled size-only control only. |
+| School-aged anatomy (FreeSurfer surfaces, BEM surfaces, scalp) | G3 | **missing** (owner decision 2026-09-30: route (c) + (d)). FreeSurfer is not installed; MNE only packages infant templates (up to 2 years, Neurodevelopmental MRI Database via `mne.datasets.fetch_infant_template`). Routes: (a) age-specific average templates of the Neurodevelopmental MRI Database (registration required); (b) an OpenNeuro school-aged dataset that ships FreeSurfer outputs (e.g. fMRIPrep `sourcedata/freesurfer`); (c) the 2-year infant template as a young-child anatomy (**downloaded**, `data/external/infant_subjects/ANTS2-0Years3T`); (d) scaled adult surfaces as a labelled size-only control (**used**: school-age and 2-year size). A school-aged native anatomy and more than one pediatric anatomy remain open. |
 | Original Hunold/Goldenholz participant data and recordings | exact reproduction | unavailable; G1B and G1C are adaptations |
 | Jas SEF recordings | experimental validation | unavailable; used as context only |
 
@@ -169,15 +172,27 @@ clean-environment smoke test (needs a package download; ask first), local static
    head (an exact sphere test shows the code itself is accurate near a regular surface). v2 refines
    the 3-layer head surface to 20,480 triangles (A-BEM-SKIN) and keeps every integration point
    >= 1 mm outside it (A-OPM-CLEAR). Effect: the dense-array headline fell from 1.21x to 1.13x;
-   the 3- and 1-layer models now agree (1.127x vs 1.124x) and cell vs point differs by <= 1.2 %.
+   the 3- and 1-layer models now agree (1.129x vs 1.127x on the convergence subset, final arrays) and
+   cell vs point differs by <= 2.8 % in the peak channel (median 0.03 %).
 2. [x] Scalp-gap variants move the primary sites outward (same sites) instead of rebuilding.
 3. [x] G4 localization: location i uses coregistration draw i mod 8 (all draws in every condition).
 4. [x] Provenance: full-resolution lead fields carry fingerprint sidecars (sensors, transforms,
    BEM conductivities and geometry) checked on every load (G1B, G1C, G2, G4); the G4 detection
    summary records its simulation commit.
-5. [x] Tests: array composition (97/204/211), cell clearance, MRI-scalp clearance, gap variants,
-   lead-field fingerprints.
+5. [x] Tests: array composition (97/204/212), cell clearance (exact distances on MNE's own coil
+   integration points), MRI-scalp clearance, gap variants, lead-field fingerprints, exact
+   point-to-mesh distance.
 6. [x] G4 locations are never on the medial wall.
+7. [x] Second independent review (approve with notes): the cell-clearance check built each cell in
+   the MRI frame while the forward model builds it in the head frame (in-plane axes rotated by up
+   to ~100 deg); now checked in the head frame with exact point-to-triangle distances (every
+   integration point >= 1.000 mm outside). Arrays: matched 97, dense 212 (was 211), 204-site subset
+   of the 212. Every adult result recomputed at one clean commit (81168f3); documentation fixes
+   (held-out false-event rates, cell-vs-point wording, coverage counts, the h^2 convergence
+   assumption, uncorrected p-values, paired S50 ratios instead of overlapping intervals). The three
+   Neuromag full-resolution lead fields (inputs unchanged in v2, so kept by fingerprint) were
+   recomputed at 81168f3 without the chunk cache: bit-identical to the matrices the reruns used; every
+   lead-field sidecar now records 81168f3.
 
 ## Open questions and risks
 
@@ -185,6 +200,6 @@ clean-environment smoke test (needs a package download; ask first), local static
 2. The TRIUX specification image was not found; values from GOAL.md are used and flagged.
 3. OPM device noise: no single verified device specification; a declared 7-30 fT/sqrt(Hz)
    sweep is used instead.
-4. Clean-environment smoke test requires installing packages into a fresh venv (download).
+4. Clean-environment smoke test: done (passed, 2026-09-30).
 5. MEG 2443 is bad in the sample recording (baseline RMS 23x the gradiometer median): exclude it from
    every measured-noise computation (G2 brain-noise calibration, empty-room fit).

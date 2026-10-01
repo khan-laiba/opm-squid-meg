@@ -560,209 +560,209 @@
       "median_db": -20.768925175001073
     },
     "focal/opm@7": {
-      "median_db": -20.917860922517427
+      "median_db": -20.91709167248816
     },
     "patch10/opm@7": {
-      "median_db": -25.975890734515353
+      "median_db": -25.974184753722447
     },
     "patch16/opm@7": {
-      "median_db": -20.773810392239255
+      "median_db": -20.77501742691833
     },
     "focal/opm@10": {
-      "median_db": -21.015261439324032
+      "median_db": -21.01344158424157
     },
     "patch10/opm@10": {
-      "median_db": -26.066746601011893
+      "median_db": -26.066919304455762
     },
     "patch16/opm@10": {
-      "median_db": -20.871831408990754
+      "median_db": -20.871273145309544
     },
     "focal/opm@15": {
-      "median_db": -21.2197140460534
+      "median_db": -21.217734474908436
     },
     "patch10/opm@15": {
-      "median_db": -26.269805298132248
+      "median_db": -26.265051977413805
     },
     "patch16/opm@15": {
-      "median_db": -21.09993045185879
+      "median_db": -21.099064850996005
     },
     "brain_only/focal/opm": {
-      "median_db": -20.81804999691957
+      "median_db": -20.817872470367863
     },
     "brain_only/patch10/opm": {
-      "median_db": -25.875574334732203
+      "median_db": -25.872515800852682
     },
     "brain_only/patch16/opm": {
-      "median_db": -20.669067254158932
+      "median_db": -20.671321969329387
     },
     "focal/opm@20": {
-      "median_db": -21.466723407603606
+      "median_db": -21.464568374703397
     },
     "patch10/opm@20": {
-      "median_db": -26.4984698627567
+      "median_db": -26.497722135800373
     },
     "patch16/opm@20": {
-      "median_db": -21.36054685448753
+      "median_db": -21.360216526613236
     },
     "focal/opm@30": {
-      "median_db": -22.047089742642832
+      "median_db": -22.044658556574753
     },
     "patch10/opm@30": {
-      "median_db": -27.053490748937726
+      "median_db": -27.05178905326237
     },
     "patch16/opm@30": {
-      "median_db": -21.934411942351907
+      "median_db": -21.932381188127486
     },
     "focal/opm@7_minus_mag": {
-      "median_db": 0.18598923878877827,
-      "share_opm_better": 0.5665643041395406
+      "median_db": 0.1869893908736202,
+      "share_opm_better": 0.5669047326583255
     },
     "focal/opm@7_minus_grad": {
-      "median_db": 2.383659955745962,
-      "share_opm_better": 0.9922508642321933
+      "median_db": 2.3841186906578073,
+      "share_opm_better": 0.9923842279818205
     },
     "focal/opm@10_minus_mag": {
-      "median_db": 0.08490219611892513,
-      "share_opm_better": 0.5315949251583695
+      "median_db": 0.08589808868796212,
+      "share_opm_better": 0.5320511695649885
     },
     "focal/opm@10_minus_grad": {
-      "median_db": 2.301608133131996,
-      "share_opm_better": 0.9908084299928054
+      "median_db": 2.3022856188184058,
+      "share_opm_better": 0.9909488128871498
     },
     "focal/opm@15_minus_mag": {
-      "median_db": -0.13343522925331897,
-      "share_opm_better": 0.44632986470598557
+      "median_db": -0.13186704752772727,
+      "share_opm_better": 0.44693000157930757
     },
     "focal/opm@15_minus_grad": {
-      "median_db": 2.1192752164348185,
-      "share_opm_better": 0.9868882376682401
+      "median_db": 2.1200549333942433,
+      "share_opm_better": 0.9870988120097566
     },
     "focal/opm@20_minus_mag": {
-      "median_db": -0.38850826730750043,
-      "share_opm_better": 0.3476933335673048
+      "median_db": -0.3864640275593487,
+      "share_opm_better": 0.3484022671837437
     },
     "focal/opm@20_minus_grad": {
-      "median_db": 1.8874721243519836,
-      "share_opm_better": 0.9797813536420588
+      "median_db": 1.8889584383438773,
+      "share_opm_better": 0.9800305332795199
     },
     "focal/opm@30_minus_mag": {
-      "median_db": -0.966310032956823,
-      "share_opm_better": 0.1934616666959131
+      "median_db": -0.9637945472072467,
+      "share_opm_better": 0.19397055468791127
     },
     "focal/opm@30_minus_grad": {
-      "median_db": 1.3115812649166543,
-      "share_opm_better": 0.9482899608682682
+      "median_db": 1.313527490636762,
+      "share_opm_better": 0.9485917840911084
     },
     "patch10/opm@7_minus_mag": {
-      "median_db": 0.09218500371895999,
-      "share_opm_better": 0.5298263934212244
+      "median_db": 0.09253059722010448,
+      "share_opm_better": 0.5295653308967497
     },
     "patch10/opm@7_minus_grad": {
-      "median_db": 2.3604381841485065,
+      "median_db": 2.3613696442375414,
       "share_opm_better": 0.992298655527999
     },
     "patch10/opm@10_minus_mag": {
-      "median_db": 0.0037806870898329237,
-      "share_opm_better": 0.501892703302441
+      "median_db": 0.004081483927361518,
+      "share_opm_better": 0.5021537658269155
     },
     "patch10/opm@10_minus_grad": {
-      "median_db": 2.276521694535109,
+      "median_db": 2.277470648122147,
       "share_opm_better": 0.9903406865944394
     },
     "patch10/opm@15_minus_mag": {
-      "median_db": -0.20320830057676176,
-      "share_opm_better": 0.4230518209111082
+      "median_db": -0.2016245229912137,
+      "share_opm_better": 0.42357394596005743
     },
     "patch10/opm@15_minus_grad": {
-      "median_db": 2.0858802593970367,
-      "share_opm_better": 0.9866858112517948
+      "median_db": 2.086007714707968,
+      "share_opm_better": 0.9869468737762694
     },
     "patch10/opm@20_minus_mag": {
-      "median_db": -0.4455121419522108,
-      "share_opm_better": 0.3358569377365879
+      "median_db": -0.4441068898074576,
+      "share_opm_better": 0.3370317190967237
     },
     "patch10/opm@20_minus_grad": {
-      "median_db": 1.8529744536367687,
-      "share_opm_better": 0.980811904451116
+      "median_db": 1.8536567101158852,
+      "share_opm_better": 0.9809424357133534
     },
     "patch10/opm@30_minus_mag": {
-      "median_db": -1.0152034810214232,
-      "share_opm_better": 0.20441195666362094
+      "median_db": -1.0121632130647384,
+      "share_opm_better": 0.20480355045033286
     },
     "patch10/opm@30_minus_grad": {
-      "median_db": 1.2884490332995284,
-      "share_opm_better": 0.9515729017099596
+      "median_db": 1.290613342868216,
+      "share_opm_better": 0.9517034329721968
     },
     "patch16/opm@7_minus_mag": {
-      "median_db": 0.11372906881305056,
-      "share_opm_better": 0.5410520819736326
+      "median_db": 0.11388248781741339,
+      "share_opm_better": 0.5413131444981073
     },
     "patch16/opm@7_minus_grad": {
-      "median_db": 2.3547057046166486,
-      "share_opm_better": 0.9920375930035243
+      "median_db": 2.3558841021034027,
+      "share_opm_better": 0.9921681242657616
     },
     "patch16/opm@10_minus_mag": {
-      "median_db": 0.02400599119576441,
-      "share_opm_better": 0.5089413914632555
+      "median_db": 0.024099578145818867,
+      "share_opm_better": 0.50920245398773
     },
     "patch16/opm@10_minus_grad": {
-      "median_db": 2.270523063014572,
+      "median_db": 2.27127467856279,
       "share_opm_better": 0.9909933429056259
     },
     "patch16/opm@15_minus_mag": {
-      "median_db": -0.1739702727356125,
-      "share_opm_better": 0.43192794674324503
+      "median_db": -0.17410575557023833,
+      "share_opm_better": 0.4323195405299569
     },
     "patch16/opm@15_minus_grad": {
-      "median_db": 2.0819658079784986,
-      "share_opm_better": 0.9886437801853544
+      "median_db": 2.082670600827239,
+      "share_opm_better": 0.9885132489231171
     },
     "patch16/opm@20_minus_mag": {
-      "median_db": -0.41472091811274225,
-      "share_opm_better": 0.3494321890092677
+      "median_db": -0.4120938079411687,
+      "share_opm_better": 0.3496932515337423
     },
     "patch16/opm@20_minus_grad": {
-      "median_db": 1.8461743891754878,
-      "share_opm_better": 0.9851194361049471
+      "median_db": 1.8467232856165445,
+      "share_opm_better": 0.9852499673671844
     },
     "patch16/opm@30_minus_mag": {
-      "median_db": -0.9843801464044581,
-      "share_opm_better": 0.21198276987338469
+      "median_db": -0.9816948696947172,
+      "share_opm_better": 0.2122438323978593
     },
     "patch16/opm@30_minus_grad": {
-      "median_db": 1.286712653808408,
-      "share_opm_better": 0.9587521211330113
+      "median_db": 1.2885768260748307,
+      "share_opm_better": 0.9592742461819606
     },
     "brain_only/focal/opm_minus_mag": {
-      "median_db": 0.08594645460173034,
-      "share_opm_better": 0.5298998017091617
+      "median_db": 0.08652810087019702,
+      "share_opm_better": 0.5300612420376577
     },
     "brain_only/focal/opm_minus_grad": {
-      "median_db": -0.030973203278254147,
-      "share_opm_better": 0.48282239809079264
+      "median_db": -0.030938229823689767,
+      "share_opm_better": 0.4828504746696615
     },
     "brain_only/patch10/opm_minus_mag": {
-      "median_db": -0.017807254876537115,
-      "share_opm_better": 0.4948440151416264
+      "median_db": -0.014715632129490785,
+      "share_opm_better": 0.495105077666101
     },
     "brain_only/patch10/opm_minus_grad": {
-      "median_db": -0.07459246816486598,
-      "share_opm_better": 0.46103641822216423
+      "median_db": -0.0744907984057086,
+      "share_opm_better": 0.46077535569768957
     },
     "brain_only/patch16/opm_minus_mag": {
-      "median_db": 0.004413100808871917,
-      "share_opm_better": 0.501501109515729
+      "median_db": 0.0049003883482541255,
+      "share_opm_better": 0.5017621720402037
     },
     "brain_only/patch16/opm_minus_grad": {
-      "median_db": -0.09180547176191212,
+      "median_db": -0.09154145493831933,
       "share_opm_better": 0.4565983553060958
     }
   },
   "extension_note": "brain-noise sources calibrated on recorded minus empty-room variance (same SSP and band); intrinsic noise added explicitly; 'brain_only/' rows omit it",
-  "runtime_s": 334.7066957950592,
+  "runtime_s": 270.54322504997253,
   "note": "Magnetometer, gradiometer and pooled Eq. 1 values are kept separate; the paper reports only MEG (pooling unstated) vs EEG. D = SNR_MEG - SNR_EEG is out of scope (no EEG).",
   "provenance": {
-    "commit": "26985d4",
+    "commit": "81168f3",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

@@ -1,0 +1,134 @@
+{
+  "status": "NEW check (review F2 follow-up)",
+  "n_targets": 1000,
+  "n_grid": 1755,
+  "models": {
+    "bem3_5120": {
+      "median_log2": {
+        "opm_matched/combined/intrinsic+brain": 0.011443912834302895,
+        "opm_matched/combined/projected": -0.16385468468607517,
+        "opm_matched/grad/intrinsic+brain": 0.16102003295287193,
+        "opm_matched/grad/projected": -0.05170674549669854,
+        "opm_matched/mag/intrinsic+brain": 0.04706611952507066,
+        "opm_matched/mag/projected": -0.08528959075097085,
+        "opm_dense/combined/intrinsic+brain": 0.19780691918252213,
+        "opm_dense/combined/projected": 0.10702774534710055,
+        "opm_dense/grad/intrinsic+brain": 0.407074184636289,
+        "opm_dense/grad/projected": 0.2610869032835028,
+        "opm_dense/mag/intrinsic+brain": 0.2524706740647944,
+        "opm_dense/mag/projected": 0.20795275928157908
+      },
+      "ratio": {
+        "opm_matched/combined/intrinsic+brain": 1.0079638600845051,
+        "opm_matched/combined/projected": 0.8926368777053699,
+        "opm_matched/grad/intrinsic+brain": 1.1180773762399092,
+        "opm_matched/grad/projected": 0.9647942769702638,
+        "opm_matched/mag/intrinsic+brain": 1.0331617369825399,
+        "opm_matched/mag/projected": 0.9425953107014264,
+        "opm_dense/combined/intrinsic+brain": 1.146953513237806,
+        "opm_dense/combined/projected": 1.0770070885732246,
+        "opm_dense/grad/intrinsic+brain": 1.3259939423097507,
+        "opm_dense/grad/projected": 1.1983812057735193,
+        "opm_dense/mag/intrinsic+brain": 1.1912454255084874,
+        "opm_dense/mag/projected": 1.1550479621535827
+      },
+      "brain_scale": 3.53402743830472e-14
+    },
+    "bem3_skin20480": {
+      "median_log2": {
+        "opm_matched/combined/intrinsic+brain": 0.005635628072957732,
+        "opm_matched/combined/projected": -0.16615455898760784,
+        "opm_matched/grad/intrinsic+brain": 0.15644563694965408,
+        "opm_matched/grad/projected": -0.053832029015743056,
+        "opm_matched/mag/intrinsic+brain": 0.03941858944367556,
+        "opm_matched/mag/projected": -0.08569698409138943,
+        "opm_dense/combined/intrinsic+brain": 0.1744859417719232,
+        "opm_dense/combined/projected": 0.095210721470067,
+        "opm_dense/grad/intrinsic+brain": 0.38607842546822024,
+        "opm_dense/grad/projected": 0.2393071363889211,
+        "opm_dense/mag/intrinsic+brain": 0.22969091139156023,
+        "opm_dense/mag/projected": 0.18471040627281127
+      },
+      "ratio": {
+        "opm_matched/combined/intrinsic+brain": 1.0039139593206403,
+        "opm_matched/combined/projected": 0.8912150130229154,
+        "opm_matched/grad/intrinsic+brain": 1.1145378694796373,
+        "opm_matched/grad/projected": 0.9633740517965962,
+        "opm_matched/mag/intrinsic+brain": 1.0276995770867827,
+        "opm_matched/mag/projected": 0.9423291748737745,
+        "opm_dense/combined/intrinsic+brain": 1.1285622061140042,
+        "opm_dense/combined/projected": 1.0682214221352997,
+        "opm_dense/grad/intrinsic+brain": 1.3068362920956782,
+        "opm_dense/grad/projected": 1.1804256182503734,
+        "opm_dense/mag/intrinsic+brain": 1.1725837034161533,
+        "opm_dense/mag/projected": 1.1365888016436505
+      },
+      "brain_scale": 3.5343599673452536e-14,
+      "gain_rel_diff_vs_bem3_5120": {
+        "squid": {
+          "median": 0.0007987283409683289,
+          "p95": 0.00364233330202097
+        },
+        "opm_matched": {
+          "median": 0.004207555006527667,
+          "p95": 0.019954463233639044
+        },
+        "opm_dense": {
+          "median": 0.005330867153638575,
+          "p95": 0.027297431940110802
+        }
+      }
+    },
+    "bem1_5120": {
+      "median_log2": {
+        "opm_matched/combined/intrinsic+brain": 0.018610073640824246,
+        "opm_matched/combined/projected": -0.1379834733451254,
+        "opm_matched/grad/intrinsic+brain": 0.1475760760849778,
+        "opm_matched/grad/projected": -0.02826164088336003,
+        "opm_matched/mag/intrinsic+brain": 0.0506336855751398,
+        "opm_matched/mag/projected": -0.07367575351913766,
+        "opm_dense/combined/intrinsic+brain": 0.17191124966789006,
+        "opm_dense/combined/projected": 0.0956750877341598,
+        "opm_dense/grad/intrinsic+brain": 0.35835708704437785,
+        "opm_dense/grad/projected": 0.22910353020602925,
+        "opm_dense/mag/intrinsic+brain": 0.21608987202679408,
+        "opm_dense/mag/projected": 0.17659984773200835
+      },
+      "ratio": {
+        "opm_matched/combined/intrinsic+brain": 1.0129830777814477,
+        "opm_matched/combined/projected": 0.9087885269288277,
+        "opm_matched/grad/intrinsic+brain": 1.107706809624019,
+        "opm_matched/grad/projected": 0.9806011503118472,
+        "opm_matched/mag/intrinsic+brain": 1.0357197507647187,
+        "opm_matched/mag/projected": 0.9502139199636412,
+        "opm_dense/combined/intrinsic+brain": 1.1265499243460608,
+        "opm_dense/combined/projected": 1.0685653103568022,
+        "opm_dense/grad/intrinsic+brain": 1.281965189070279,
+        "opm_dense/grad/projected": 1.172106392969226,
+        "opm_dense/mag/intrinsic+brain": 1.1615810898339152,
+        "opm_dense/mag/projected": 1.1302170416560864
+      },
+      "brain_scale": 3.625285590545858e-14,
+      "gain_rel_diff_vs_bem3_5120": {
+        "squid": {
+          "median": 0.11288349462594363,
+          "p95": 0.5615869063340599
+        },
+        "opm_matched": {
+          "median": 0.10758781108657785,
+          "p95": 0.536401832946449
+        },
+        "opm_dense": {
+          "median": 0.12172593668984304,
+          "p95": 0.6080783212362517
+        }
+      }
+    }
+  },
+  "runtime_s": 285.5565547943115,
+  "provenance": {
+    "commit": "81168f3",
+    "mne_version": "1.13.2",
+    "numpy_version": "2.5.3"
+  }
+}
