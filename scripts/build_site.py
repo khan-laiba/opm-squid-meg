@@ -355,7 +355,8 @@ def page_pediatric(d, out):
           fig(out, "g3b/Figure_G3B_delta.png", "Delta per depth stratum (child minus adult) for each comparator.", "Delta vs depth"),
           fig(out, "g3b/Figure_G3B_placements.png", "D for every source-blind placement and the counterfactual helmet (left) and "
               "the regional magnetometer-to-scalp gaps (right).", "Placements"),
-          fig(out, "g3b/Figure_G3B_maps_scaled.png", "D and Delta on the adult's inflated cortex (scaled controls).", "Maps, scaled"),
+          fig(out, "g3b/Figure_G3B_maps_scaled.png", "D on the adult's inflated cortex (adult and scaled controls).", "Maps, scaled"),
+          fig(out, "g3b/Figure_G3B_maps_delta.png", "Delta at every vertex (scaled controls).", "Maps, Delta"),
           fig(out, "g3b/Figure_G3B_maps_template.png", "D on the 2-year template's inflated cortex (derived from O'Reilly et al. "
               "2021 / Richards et al. 2016).", "Maps, template"),
           fig(out, "g3b/Figure_G3B_usefulness_adult.png", "Where the dense OPM array, Neuromag, both or neither reach "

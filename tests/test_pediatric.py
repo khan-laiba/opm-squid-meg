@@ -121,6 +121,12 @@ class TestSummaries(unittest.TestCase):
         self.assertEqual(P.weighted_median(np.array([1.0, 2.0, 3.0]), np.array([1.0, 1.0, 10.0])), 3.0)
         self.assertEqual(P.weighted_median(np.array([1.0, np.nan, 3.0, 2.0]), np.ones(4)), 2.0)
 
+    def test_categorical_maps_are_not_averaged(self):
+        from opmsquid import plotting
+
+        v = np.array([[3.0, 0.0, 0.0], [1.0, 2.0, 3.0], [2.0, 2.0, 1.0], [0.0, 3.0, 3.0]])
+        np.testing.assert_array_equal(plotting.triangle_mode(v), [0.0, 1.0, 2.0, 3.0])  # never the mean (1.0 for 3, 0, 0)
+
     def test_grouped_bootstrap_of_a_constant(self):
         rng = np.random.default_rng(0)
         ci = P.grouped_bootstrap(np.full(30, 1.5), np.repeat(["a", "b", "c"], 10), None, rng, 50)

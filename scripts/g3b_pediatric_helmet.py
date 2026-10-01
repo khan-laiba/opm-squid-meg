@@ -824,9 +824,11 @@ def figures(anats, state, s, cfg):
     names = ["centred", "top", "back", "x+5mm", "x-5mm", "y+5mm", "y-5mm", "pitch+10deg", "pitch-10deg", "roll+5deg", "roll-5deg",
              "counterfactual"]
     fig, axs = plt.subplots(1, 2, figsize=(15, 4.8))
-    for k in ANATOMIES:
+    for i, k in enumerate(ANATOMIES):
         y = [s["placement_D"][f"{k}/{n}/combined/intrinsic+brain"]["median"] for n in names]
-        axs[0].plot(range(len(names)), y, "o-", color=COLORS[k], label=LABEL[k])
+        axs[0].plot(np.arange(len(names)) + (i - 1.5) * 0.12, y, "o", color=COLORS[k], label=LABEL[k], ms=6)
+    for xv in np.arange(len(names) - 1) + 0.5:
+        axs[0].axvline(xv, color="0.9", lw=0.6, zorder=0)
     axs[0].set_xticks(range(len(names)))
     axs[0].set_xticklabels(names, rotation=45, ha="right", fontsize=8)
     axs[0].axhline(0, color="0.5", lw=0.8)
@@ -870,6 +872,10 @@ def figures(anats, state, s, cfg):
     for k in ("adult", "school", "size2yr"):
         v, n_lh = on_map(anats[k], d_db(runs[k]["res"], "opm_dense", primary, "combined", "intrinsic+brain"))
         rows.append((f"{LABEL[k]}\nD", v))
+    plotting.cortex_map_figure(hemis_a, rows, n_lh, plt.get_cmap("RdBu_r"), norm,
+                               "G3B: dense OPM vs Neuromag combined (top contact, intrinsic + brain), D [dB] on the adult's inflated "
+                               "cortex (scaled controls are vertex-homologous)", "D [dB]", OUT / "Figure_G3B_maps_scaled.png")
+    rows = []
     for c in SCALED:
         an = anats[c]
         idx = np.searchsorted(a.src.target, an.src.target)
@@ -877,9 +883,9 @@ def figures(anats, state, s, cfg):
             d_db(runs["adult"]["res"], "opm_dense", primary, "combined", "intrinsic+brain")[idx]
         v, n_lh = on_map(an, dv)
         rows.append((f"{LABEL[c]}\nDelta", v))
-    plotting.cortex_map_figure(hemis_a, rows, n_lh, plt.get_cmap("RdBu_r"), norm,
-                               "G3B: dense OPM vs Neuromag combined (top contact, intrinsic + brain), D and Delta [dB] on the adult's "
-                               "inflated cortex (scaled controls are vertex-homologous)", "dB", OUT / "Figure_G3B_maps_scaled.png")
+    plotting.cortex_map_figure(hemis_a, rows, n_lh, plt.get_cmap("RdBu_r"), plt.Normalize(-2, 2),
+                               "G3B: Delta = D_child - D_adult [dB] at every vertex (dense OPM vs Neuromag combined, top contact, "
+                               "intrinsic + brain)", "Delta [dB]", OUT / "Figure_G3B_maps_delta.png")
     v, n_lh_t = on_map(t, d_db(runs["infant2yr"]["res"], "opm_dense", primary, "combined", "intrinsic+brain"))
     rows = [("2-year template\nD", v)]
     vm, _ = on_map(t, d_db(runs["infant2yr"]["res"], "opm_matched", primary, "combined", "intrinsic+brain"))
@@ -891,7 +897,7 @@ def figures(anats, state, s, cfg):
     # 5. usefulness maps at the primary reference moment
     qr = cfg["usefulness"]["primary_reference_nAm"]
     thr = cfg["usefulness"]["detectability_threshold"]
-    cmap = matplotlib.colors.ListedColormap(["0.85", "tab:orange", "tab:blue", "tab:purple"])  # neither, SQUID only, OPM only, both
+    cmap = matplotlib.colors.ListedColormap(["#efe3c8", "tab:orange", "tab:blue", "tab:purple"])  # neither, SQUID only, OPM only, both
     for k, hem in (("adult", hemis_a), ("infant2yr", hemis_t)):
         an = anats[k]
         rows = []
@@ -902,9 +908,9 @@ def figures(anats, state, s, cfg):
                 v, n_lh = on_map(an, (o.astype(float) * 2 + sq.astype(float)))
                 rows.append((f"{LABEL[k]}\nOPM dense vs\n{LABEL[ref]}", v))
         plotting.cortex_map_figure(hem, rows, n_lh, cmap, matplotlib.colors.BoundaryNorm([-0.5, 0.5, 1.5, 2.5, 3.5], 4),
-                                   f"G3B usefulness at {qr:g} nAm (detectability >= {thr:g}; grey neither, orange SQUID only, blue OPM "
-                                   f"only, purple both)", "0 neither, 1 SQUID only, 2 OPM only, 3 both",
-                                   OUT / f"Figure_G3B_usefulness_{k}.png")
+                                   f"G3B usefulness at {qr:g} nAm (detectability >= {thr:g}; beige neither, orange SQUID only, blue OPM "
+                                   f"only, purple both; grey: medial wall)", "0 neither, 1 SQUID only, 2 OPM only, 3 both",
+                                   OUT / f"Figure_G3B_usefulness_{k}.png", categorical=True)
 
     # 6. geometry: sagittal and coronal sections with both helmets and the dense OPM sites
     info = neuromag.load_info("T3")
@@ -925,13 +931,15 @@ def figures(anats, state, s, cfg):
                 pts = rr[np.abs(rr[:, ax_idx]) < 0.004] @ hd[:3, :3].T + hd[:3, 3]
                 ax.plot(pts[:, 1 - ax_idx], pts[:, 2], ".", ms=0.5, color=col, alpha=0.5)
             for m, mk, col, lab in ((mags, "s", "tab:orange", "Neuromag magnetometers"),
-                                    (mags_cf, "x", "tab:green", f"counterfactual helmet (x{pls['counterfactual']['k']:.3f})"),
+                                    (mags_cf, "x", "tab:green", f"counterfactual helmet (x{pls['counterfactual']['k']:.3f}), "
+                                                                 "around the grey head"),
                                     (opm_dev, "o", "tab:blue", "dense OPM sites (top contact)")):
                 sel = np.abs(m[:, ax_idx] - centre[ax_idx]) < 0.02
                 ax.plot(m[sel, 1 - ax_idx], m[sel, 2], mk, color=col, ms=3.5, mfc="none" if mk == "o" else col, label=lab)
             ax.set_aspect("equal")
             ax.set_title(f"{LABEL[k]}, {plane}", fontsize=8)
             ax.set_xlabel(("device y [m] (anterior +)" if plane == "sagittal" else "device x [m] (right +)"), fontsize=7)
+            ax.set_ylabel("device z [m] (up +)", fontsize=7)
             ax.tick_params(labelsize=7)
         axs[0, j].legend(fontsize=6, loc="lower left")
     fig.suptitle("G3B geometry: scalp sections at the centred (grey) and top-contact (black) placements in the fixed helmet; the "
