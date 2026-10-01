@@ -66,16 +66,26 @@ separately after any change.
    the terms for derived figures and per-vertex tables.
 5. **Published figure raster.** `legacy/figure3_output/Figure3_published_extracted.png`,
    `Figure3_overlay.png`, `Figure3_side_by_side.png` and `Figure3_difference.png` contain the
-   published Jas et al. Fig. 3 raster (bioRxiv 2026.08.17.744953; CC-BY 4.0 as recorded in the
-   README). Keep the attribution with them, or leave them out of the release.
+   published Jas et al. Fig. 3 raster (bioRxiv, doi 10.64898/2026.08.17.744953; the preprint's own
+   header states a CC-BY 4.0 International licence, checked 2026-10-01). Keep the attribution with
+   them, or leave them out of the release.
 6. **Digitised figure data.** `scripts/digitise_hunold_fig6.py` and its output reproduce a
    waveform digitised from Hunold et al. (2016) Fig. 6; confirm that publishing the digitised
    values is acceptable.
 7. **Local references.** `docs/audit.md` and `goal_condition.txt` name the local working folders,
    and `legacy/realistic_head_output/realistic_head_results.npz` stores the local SUBJECTS_DIR of
    the original run; edit or drop before publication if the folder names should not appear.
-8. **Visibility and Pages.** Only after 1-7: change visibility and, separately, enable Pages;
-   re-run section 1.
+8. **Literature extractions.** `docs/literature/{jas2026,hunold2016,goldenholz2009}.md` are long
+   paraphrased extractions, with parameter tables and digitised figure values, of three papers, two
+   of them paywalled; confirm that publishing them is acceptable, or keep them private and cite page
+   numbers only.
+9. **The goal text.** `GOAL.md` and its copy `OPM_SQUID_Adult_to_Pediatric_Goal.md` name a third
+   person and describe a mentoring relationship; decide whether they belong in a public release.
+10. **Historic diagnoses.** `results/g2/bem_skin_refinement_v1_arrays.json` and
+    `results/g2/near_mesh_check_v1_arrays.json` record a dirty commit (historic v1 diagnoses, labelled
+    in `docs/methods.md` and in the report's download list); keep them labelled or drop them.
+11. **Visibility and Pages.** Only after 1-10: change visibility and, separately, enable Pages;
+    re-run section 1.
 
 ## 4. Re-run before release
 

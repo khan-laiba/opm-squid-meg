@@ -89,10 +89,10 @@ def page_index(d):
     pm = g4["paired"]["opm_matched/opm_vs_squid/combined/practical@1"]
     L = loc["results"]
     status = [("G0 audit, provenance, plan", "-", "done"),
-              ("G1A Jas et al. 2026 analytical benchmark", "REPRO", "done, independently reviewed"),
-              ("G1B Hunold et al. 2016 depth-orientation spike SNR (MEG)", "ADAPT (+ NEW OPM column)", "done, independently reviewed"),
-              ("G1C Goldenholz et al. 2009 cortical SNR maps (MEG)", "ADAPT (+ NEW OPM extension)", "done, independently reviewed"),
-              ("G2 realistic adult OPM vs Neuromag", "NEW", f"done, independently reviewed; frozen as {FROZEN_TAG}"),
+              ("G1A Jas et al. 2026 analytical benchmark", "REPRO", "done, internally reviewed"),
+              ("G1B Hunold et al. 2016 depth-orientation spike SNR (MEG)", "ADAPT (+ NEW OPM column)", "done, internally reviewed"),
+              ("G1C Goldenholz et al. 2009 cortical SNR maps (MEG)", "ADAPT (+ NEW OPM extension)", "done, internally reviewed"),
+              ("G2 realistic adult OPM vs Neuromag", "NEW", f"done, internally reviewed; frozen as {FROZEN_TAG}"),
               ("G3A Jas head-size benchmark", "REPRO (+ NEW fixed shell)", "done" if d["g3a"] else "not run"),
               ("G3B pediatric fixed helmet vs head-adaptive OPM", "NEW",
                "done (12-, 18- and 24-month infant templates and scaled-adult size controls)" if d.get("g3b") else "in progress"),
@@ -623,7 +623,8 @@ def page_reproduce(out, manifest):
          "<p>Result files as committed. The commit is the one recorded in the result file; tables and reports carry the commit "
          "of the run that wrote them. The full SHA-256 of every file is in <a href=\"data/MANIFEST.json\">data/MANIFEST.json</a>.</p>",
          sb.table(["File", "Size", "SHA-256 (first 16)", "Code commit"],
-                  [[f'<a href="{html.escape(m["href"])}">{html.escape(m["path"])}</a>', m["size"], m["sha256"][:16], m["commit"]]
+                  [[f'<a href="{html.escape(m["href"])}">{html.escape(m["path"])}</a>', m["size"], m["sha256"][:16],
+                    m["commit"] + (" (historic diagnosis, not reproducible: see the methods)" if m["commit"].endswith("+dirty") else "")]
                    for m in manifest], cls="downloads", html_cols=(0,))]
     return "\n".join(h)
 
@@ -633,7 +634,8 @@ WRITTEN_BY = {"g1a_curves.csv": "g1a_benchmark.json", "g1b_sources.csv": "g1b_su
               "g2_targets.csv": "g2_summary.json", "g2_patch_targets.csv": "g2_summary.json", "G2_report.md": "g2_summary.json",
               "g3a_deq.csv": "g3a_size_benchmark.json", "g4_adult_events.csv": "g4_adult_summary.json",
               "g4_localization_events.csv": "g4_localization_summary.json", "G3B_report.md": "g3b_summary.json",
-              "G4_pediatric_report.md": "g4_pediatric_comparison.json", "G4_motion_report.md": "g4_motion_summary.json"}
+              "G4_pediatric_report.md": "g4_pediatric_comparison.json", "G4_motion_report.md": "g4_motion_summary.json",
+              "G4_matched_rate_report.md": "g4_matched_rate.json"}
 for _k in ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo"):
     WRITTEN_BY[f"g3b_targets_{_k}.csv"] = "g3b_summary.json"
     WRITTEN_BY[f"g4_{_k}_events.csv"] = f"g4_{_k}_summary.json"

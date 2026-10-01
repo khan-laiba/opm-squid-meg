@@ -281,7 +281,17 @@ clearance; medians over the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 15
   Brain noise (task baseline minus empty room, 1-40 Hz): gradiometers 37.1 fT/cm (calibrated),
   magnetometers 262 fT measured vs 192 fT predicted (0.73x; the independent cortical background
   under-predicts magnetometer noise, likely distant and non-cortical sources). Median brain-noise
-  RMS is ~500-525 fT at the OPM sites and 192 fT at the SQUID magnetometers.
+  RMS is ~500-525 fT at the OPM sites and 192 fT at the SQUID magnetometers. The model matches one
+  scalar of the measured brain noise: per channel the model/measured ratio spans 0.16-1.90
+  (gradiometers, 5th-95th percentile, median 0.88) and 0.13-0.78 (magnetometers, median 0.55),
+  part of which is measurement noise (one good gradiometer has a negative measured brain variance).
+* Not modelled (limitations of every G2-G4 comparison): non-cortical physiological fields
+  (cardiac, ocular, muscle), which on-scalp OPMs, being magnetometers, would see at about the
+  amplitude of the SQUID magnetometers and which the 8-term projection removes only in their
+  uniform-plus-gradient part; the 1/f rise of real OPM noise at low frequencies (white OPM noise is
+  assumed; the 30-fT/sqrt(Hz) end of the sweep bounds a uniformly worse sensor, not a coloured
+  one); multi-axis OPMs (single-axis sensors: 212 channels against Neuromag's 306, so the
+  comparison is not channel-count matched).
 * Intrinsic noise only (no brain noise): Neuromag combined beats every OPM array (dense 0.76x
   [0.74-0.79], matched 0.53x; OPM higher for <= 5 % of targets); OPMs beat the gradiometers alone
   (2.3-3.3x). The ratio scales as 1/(OPM noise): break-even at 11.5 (dense) and 7.9 (matched)
@@ -352,7 +362,9 @@ Detection design (`scripts/g4_epilepsy_adult.py`)
   1,728 events, one every 2 s.
 * Detectors, per array and Neuromag channel set: a known-source/onset oracle (per-trial
   false-positive probability 0.001) and a practical scanner that knows neither time nor source
-  (three waveform templates x 716 cortical candidates distinct from the true sources). Whitener from
+  (three waveform templates x 716 cortical candidates distinct from the true sources). The
+  scanner's templates are the three simulated morphologies, so its absolute sensitivity and
+  false-event rates are optimistic; the paired comparison between arrays is less affected. Whitener from
   10 min of baseline null data; thresholds for 1 and 0.2 false events per minute from 20 min of
   independent calibration null data, frozen; held-out null (20 min) gives 0.5-1.1 and 0-0.2 false
   events per minute. A hit is the scan statistic above threshold within +/-50 ms of the true spike
@@ -389,6 +401,12 @@ detection, S50, with a bootstrap over locations; practical detector at 1 false e
 * Sensitivity at 1 false event per minute: superficial (10-30 mm) 40-nAm spikes 0.17 (Neuromag),
   0.28 (matched OPM), 0.31 (dense OPM); deep (30-70 mm) 160-nAm spikes 0.35, 0.31, 0.38 (frozen
   1-per-minute thresholds).
+* Matched operating points (`scripts/study_g4_matched_rate.py`, after the final review; the stored
+  simulations re-evaluated with every detector's threshold set on the held-out null to 1 false
+  event per minute, in-sample for those data; the re-summarised frozen-threshold values reproduce
+  the committed ones exactly): dense OPM 16/0, 6/2, 7/1 and 6/1 (p < 0.001, 0.23, 0.15, 0.12; S50
+  ratio 1.51 [1.25-1.66] at 10-20 mm); matched OPM 9/2, 6/4, 4/3 and 0/6 (p = 0.019, 1, 1, 0.031).
+  The conclusions do not change.
 * Consistency with G2 (`scripts/study_g4_vs_g2.py`): at the same 18 locations per band, the G2 detectability ratio dense /
   combined (intrinsic+brain+env) has medians 1.46, 1.15, 1.07 and 1.03, and the oracle S50 ratio is
   1.62, 1.36, 1.10 and 0.98: the same ordering and direction; S50 pools the detection curves of 18
@@ -554,7 +572,9 @@ means the 2-year template; the 18- and 12-month templates are named.)
 * Heads: occipitofrontal circumference 586 mm (adult), 525 (school-age size, x0.895), 495 (2-year
   size, x0.844) and 495 mm (template); usable cortex 1,878, 1,470, 1,290 and 1,062 cm^2. Refitted
   OPM arrays: dense 212, 171, 155 and 151 sites (23.5-25.9 per 100 cm^2 of covered scalp, which
-  shrinks from 901 to 584 cm^2), matched 96, 89, 90 and 83. Top contact raises the heads by 5.5,
+  shrinks from 901 to 584 cm^2), matched 96, 89, 90 and 83 (built from the Neuromag sites at the
+  primary placement, which for the adult is 5.5 mm above G2's measured position: one site fewer
+  passes the site rules there than G2's 97). Top contact raises the heads by 5.5,
   22, 22 and 28 mm; the median magnetometer-to-scalp gap is then 28.4, 34.1, 39.1 and 38.5 mm
   (centred 29.8, 41.3, 46.9, 47.3 mm). Every placement and the counterfactual helmets are feasible;
   the counterfactual factors are 0.895, 0.844 and 0.904 (template: under the adult's pose it sits
@@ -715,7 +735,14 @@ mm. Order below: school-age size, 2-year size, 2-year template, 18 months, 12 mo
   Neuromag combined: 1.0 vs 0.55, 0.9 vs 0.4, 1.25 vs 0.65, 1.05 vs 0.95, 0.70 vs 1.25 per minute).
   At a matched held-out rate of 1 per minute the superficial advantage remains (sensitivity for
   40-nAm spikes at 10-30 mm, dense OPM vs Neuromag combined: 0.31 vs 0.18, 0.31 vs 0.13, 0.43 vs
-  0.23, 0.50 vs 0.38, 0.46 vs 0.32; adult 0.31 vs 0.17).
+  0.23, 0.50 vs 0.38, 0.46 vs 0.32; adult 0.31 vs 0.17). With every detector's threshold set on the
+  held-out null to 1 false event per minute (`scripts/study_g4_matched_rate.py`,
+  `results/g4/G4_matched_rate_report.md`; in-sample for the held-out data) the paired 10-20 mm
+  result is unchanged in every anatomy (15-16 locations favour the dense OPM; strength ratio 1.39,
+  1.62, 1.49, 1.30 and 1.49; p <= 0.0008), the 2-year size control keeps its 30-45 mm difference
+  (9/1, p = 0.016, ratio 1.18 [1.04-1.30]) but not its 45-70 mm one (p = 0.062), and the 18-month
+  template's 45-70 mm difference is no longer significant (7/1, p = 0.12). For the matched-site
+  array, 10-20 mm: 8/3, 12/0, 11/5, 10/1, 10/1 (p = 0.24, 0.0005, 0.30, 0.008, 0.007).
 * Strength for 50 % detection, practical detector, Neuromag combined vs dense OPM, 10-20 mm: adult
   53 vs 35, then 52 vs 37, 59 vs 36, 45 vs 30, 36 vs 27 and 40 vs 29 nAm; 45-70 mm adult 290 vs 271,
   then 275 vs 245, 273 vs 243, 243 vs 229, not reached vs 282 and 279 vs 259 nAm. The templates'

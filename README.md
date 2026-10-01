@@ -14,13 +14,16 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | Milestone | Label | Status |
 |---|---|---|
 | G0 audit, provenance, plan | - | done |
-| G1A Jas et al. 2026 analytical benchmark | REPRO | done, independently reviewed |
-| G1B Hunold et al. 2016 depth-orientation spike SNR (MEG part) | ADAPT (+ NEW OPM column) | done, independently reviewed |
-| G1C Goldenholz et al. 2009 cortical SNR maps (MEG part) | ADAPT (+ NEW OPM extension) | done, independently reviewed |
-| G2 realistic adult OPM vs Neuromag | NEW | done, independently reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2` |
-| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`; the 2-year-template pass independently reviewed (approve with notes; fixes re-verified); the 18- and 12-month templates added on 2026-10-01 |
-| G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates and both size controls); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts independently reviewed |
+| G1A Jas et al. 2026 analytical benchmark | REPRO | done, internally reviewed |
+| G1B Hunold et al. 2016 depth-orientation spike SNR (MEG part) | ADAPT (+ NEW OPM column) | done, internally reviewed |
+| G1C Goldenholz et al. 2009 cortical SNR maps (MEG part) | ADAPT (+ NEW OPM extension) | done, internally reviewed |
+| G2 realistic adult OPM vs Neuromag | NEW | done, internally reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2` |
+| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`; the 2-year-template pass internally reviewed (approve with notes; fixes re-verified); the 18- and 12-month templates added on 2026-10-01 |
+| G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates and both size controls); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts internally reviewed |
 | G5 software, reproduction, report | - | 124 unit tests pass (also in a clean clone of 57a025e: 123 pass, the full-resolution lead-field check skips without the local cache); `scripts/run_all.sh`; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
+
+"Internally reviewed" means separate review passes by reviewer agents, with fixes re-verified
+(on 2026-10-01 also complete reviews by two other models), not external peer review.
 
 Adult findings so far (`adult-baseline-v2`), conditional on one adult head (MNE sample subject),
 an assumed OPM noise of 15 fT/sqrt(Hz), OPM sensors with no helmet-to-scalp gap beyond the 7-mm
@@ -28,17 +31,29 @@ standoff and Neuromag at its
 measured (not best) head position; details and caveats in `docs/methods.md` and
 `results/g2/G2_report.md`:
 - With modelled brain noise (calibrated on gradiometers; it predicts 0.73x the measured
-  magnetometer brain noise), a dense on-scalp OPM array (212 single-axis sensors) has 1.13x
-  [1.10-1.16] the known-topography detectability of the Neuromag system: about 1.7x for sources
-  10-15 mm below the scalp, falling to 1.02-1.05x below 35 mm. An OPM array at Neuromag's own 97
-  sites ties it (1.00x), and falls behind after external-field projection (0.90x [0.81-0.95]).
+  magnetometer brain noise), a dense on-scalp OPM array (212 single-axis sensors, against
+  Neuromag's 306 channels) has 1.13x [1.10-1.16] the known-topography detectability of the
+  Neuromag system: about 1.7x for sources 10-15 mm below the scalp, falling to 1.02-1.05x below
+  35 mm. After the 8-term external-field projection, the study's second headline condition, the
+  ratio is 1.07x [1.01-1.13] (higher for 62 % of targets; the projection costs the dense array 5 %
+  and Neuromag 0.5 % of their detectability). An OPM array at Neuromag's own 97 sites ties it
+  (1.00x), and falls behind after the projection (0.90x [0.81-0.95]). With covariances estimated
+  from 10 or 60 s of data instead of the oracle, the dense ratio is 1.21x or 1.14x (Neuromag's 306
+  channels lose more to estimation). The ratio hardly depends on the brain-background level; it is
+  set by signal outside the brain-noise subspace.
 - The advantage disappears with worse assumptions: 1.01x at an OPM noise of 30 fT/sqrt(Hz),
   0.97x with 30 fT/sqrt(Hz) and a 3-mm scalp gap, 0.93x with a 6-mm gap. Without brain noise,
-  Neuromag wins (0.76x). The 3- and 1-layer head models agree (1.13x on both).
+  Neuromag wins (0.76x). The 3- and 1-layer head models agree (1.13x on both). Not modelled:
+  non-cortical physiological fields (cardiac, ocular), which the OPMs would see as magnetometers;
+  the 1/f rise of real OPM noise at low frequencies (white noise assumed); and the measured brain
+  noise's spatial pattern, which the cortical background matches only in its median gradiometer
+  level (per channel the model/measured ratio spans 0.16-1.90).
 - Simulated interictal spikes: at 10-20 mm depth the dense array needs about a third less source
   strength for 50 % detection (35 [28-50] vs 53 [44-66] nAm; the intervals overlap, the paired
-  strength ratio is 1.51 [1.25-1.66]) and detects more events at 16 of the 18 locations, none
-  favouring Neuromag (p < 0.001, uncorrected). Deeper, no location-level difference is established
+  strength ratio is 1.51 [1.25-1.66]); 16 of the 18 locations favour the OPM, none Neuromag, 2
+  tie (p < 0.001, uncorrected). The practical detector knows the three simulated spike
+  morphologies, so absolute sensitivities and false-event rates are optimistic; the paired
+  comparison is less affected. Deeper, no location-level difference is established
   (at 20-30 mm, p = 0.23 here but 0.03 in an earlier run whose noise draws differed: not robust).
   The matched array is ahead by location only at 10-20 mm (9/3, p = 0.04 uncorrected; 0.14 in the
   earlier run: not robust) and behind at 45-70 mm (0/7, p = 0.016 uncorrected; the same direction in
@@ -53,7 +68,8 @@ measured (not best) head position; details and caveats in `docs/methods.md` and
   coarse BEM head surface, a numerical error corrected in v2 (see PLAN.md).
 
 Pediatric findings (G3B, NEW), conditional on one adult head, three average infant templates of
-one database (24, 18 and 12 months; O'Reilly et al. 2021) and two scaled copies of the adult; the
+one database (24, 18 and 12 months; O'Reilly et al. 2021) and two scaled copies of the adult (no
+school-aged native anatomy was available, although the goal asked for one first); the
 same Neuromag helmet, sensors and noise for every head; OPM arrays refitted to each head with the
 adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report.md`:
 - With the child raised to 20-mm contact with the top of the fixed helmet, the dense OPM array's
@@ -88,7 +104,11 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   36/27 and 40/29 nAm; paired strength ratio 1.33-1.64 against the adult's 1.51; 14-16 of 18
   locations favour the OPM in each); deeper, a location-level difference appears only for the
   2-year size control (30-70 mm) and the 18-month template (45-70 mm), uncorrected and not
-  surviving a correction, so G3B's deeper gain is mostly not resolved at this sample size.
+  surviving a correction, so G3B's deeper gain is mostly not resolved at this sample size. The
+  frozen thresholds give unequal held-out false-event rates (0.4-1.7 per minute); with every
+  detector set to 1 per minute on the held-out null (`results/g4/G4_matched_rate_report.md`) the
+  superficial result is unchanged (ratios 1.30-1.62), the 18-month deep result is no longer
+  significant (p = 0.12) and the 2-year-size 30-45 mm one remains (p = 0.016, uncorrected).
   Localization: dipole errors similar; dSPM of strong focal spikes about 5 mm better with the
   dense OPM in all three templates (p = 0.035, 0.002 and 0.005, uncorrected; 16 comparisons per OPM
   array and anatomy: of these three only the 18-month value survives a Bonferroni correction within

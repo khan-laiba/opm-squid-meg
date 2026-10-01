@@ -8,8 +8,12 @@ correlation area of rho:
 * independent baseline: rho -> delta, Cov = s^2 a_i delta_ij. Moment variance is proportional
   to area, so refining the source mesh does not add background power.
 * correlated extension (bounded): rho = exp(-d / lambda) with Euclidean 3-D distance d
-  (positive definite), A_c = 2 pi lambda^2 (planar value), which tends to the independent model
-  as lambda -> 0. Opposite walls of a sulcus closer than lambda are correlated (documented).
+  (positive definite), A_c = 2 pi lambda^2 (planar value). As lambda -> 0 the correlation tends to
+  the identity, but each moment variance then scales with a_i^2 / (2 pi lambda^2) rather than a_i:
+  the constant is absorbed by the calibration, the area weighting is not, so the limit is not the
+  independent model; with the near-uniform areas of the 7-mm grid the difference is small (G2: 1.14-
+  1.16x at 5 and 10 mm vs 1.13x independent). Opposite walls of a sulcus closer than lambda are
+  correlated (documented).
 
 The source scale s is not a known constant; ``calibrate`` fixes it so that the background
 variance of a chosen channel set (default: Neuromag gradiometers, which are least affected by
