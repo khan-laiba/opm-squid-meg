@@ -62,14 +62,20 @@ noise for every head; OPM arrays refitted to each head with the adult rules; det
   template): Delta = D_child - D_adult = +0.47 [+0.38, +0.58], +1.13 [+0.99, +1.25] and +0.73
   [+0.44, +1.16] dB. Against the gradiometers or magnetometers alone, after external-field
   projection, for the matched-site OPM array and for extended sources the sign is the same.
-- The gain comes mainly from the helmet's fit: left at the adult's ear-line position Delta is
-  +1.15 to +1.79 dB; in a counterfactual helmet scaled with the head it is -0.17, -0.30 and
-  +0.28 dB. In the fixed helmet the child's cortex is farther from the SQUIDs, whose brain noise
-  falls towards their intrinsic floor while the on-scalp OPM's does not.
+- The gain comes from the fixed helmet's fit: left at the adult's ear-line position Delta is
+  +1.15 to +1.79 dB; laterally centred or at true 18-mm contact it stays +0.46 to +1.16 dB; in a
+  counterfactual helmet scaled with the head, centred laterally, it is -0.17, -0.30 and -0.37 dB
+  (without the lateral centring the off-centre template kept +0.28 dB). With the background fixed
+  per unit cortical area, both systems' detectability rises in the smaller heads and the on-scalp
+  OPM's rises more (vertex-wise +1.15 and +1.74 dB vs Neuromag +0.65 and +0.54 dB in the scaled
+  controls); with a helmet that fits, the SQUID gains about as much. The children's arrays also
+  have fewer OPM sites (171, 155, 151 vs 212); at an equal site count Delta would be larger.
 - Delta stays positive for OPM noise 7-30 fT/sqrt(Hz), background variance x0.5 or x2 and a
   1-layer head model; at 30 fT/sqrt(Hz) the adult's D is -0.04 dB (a tie) and the template's
-  +0.61 dB. In the template the gain is concentrated deeper than 30 mm and is regionally asymmetric
-  (it follows the head's offset in the helmet).
+  +0.61 dB. In the scaled controls the gain is largest near the surface (vertex-wise +2.25 dB at
+  10-15 mm for the 2-year size); in the template most of it comes from the 50-90 mm strata (mostly
+  isthmus cingulate) and from radial sources, and it is regionally asymmetric (it follows the
+  head's lateral offset in the helmet).
 - At 100 nAm (detectability >= 5, an operational threshold) both systems reach 66 % of the
   adult's and 75 % of the template's usable cortex, the OPM alone a further 2 % and 5 %, and the
   SQUID alone none.
@@ -80,7 +86,7 @@ noise for every head; OPM arrays refitted to each head with the adult rules; det
   difference is established for the
   practical detector, so G3B's deeper gain is not resolved at this sample size. Localization: dipole
   errors similar; dSPM of strong focal spikes in the template 7.5 vs 14.8 mm (p = 0.035,
-  uncorrected).
+  uncorrected; it does not survive a correction over the 16 comparisons).
 
 Labels: REPRO = reproduction with the paper's definitions; ADAPT = adaptation where original
 data or details are unavailable; NEW = new experiment or study choice.
@@ -126,9 +132,10 @@ release (release-ready and publicly deployed are separate statuses).
 ## Data and privacy
 
 - The 2-year infant template (O'Reilly et al. 2021, from the Neurodevelopmental MRI Database of
-  Richards et al. 2016; LGPL-2.1 repository) is not committed. Figures derived from it
-  (`results/g3b/*template*`, `*infant2yr*`) cite both papers; confirm their redistribution with the
-  owner before any public release (the source database has its own terms).
+  Richards et al. 2016; LGPL-2.1 repository) is not committed. Figures derived from it (every
+  `results/g3b` figure that shows the template, e.g. the geometry, depth, Delta, placement, map and
+  usefulness figures, and `results/g4/*infant2yr*`) cite both papers; confirm their redistribution
+  with the owner before any public release (the source database has its own terms).
 - Not committed: the reference PDFs, the MNE sample data and anatomy (`data/`), computed caches
   (`cache/`). Results contain only derived quantities of the public MNE sample dataset.
 - Before any public release: PDFs in `results/g1a/` and `legacy/` embed licensed font subsets

@@ -1,6 +1,6 @@
 # G4 pediatric: IED detection and bounded localization in the fixed adult helmet (NEW)
 
-Same framework, configuration and seeds as the adult (configs/g4_epilepsy.toml); the child anatomy, arrays and placement come from G3B (Neuromag at top contact, refitted OPM arrays). Thresholds are calibrated on each anatomy's own null data. p-values are uncorrected; the location is the statistical unit.
+Same framework, configuration and seeds as the adult (configs/g4_epilepsy.toml); the child anatomy, arrays and placement come from G3B (Neuromag at top contact, refitted OPM arrays). The adult rows are the frozen adult study (Neuromag at its measured head position; top contact would raise it by 5.5 mm). Thresholds are calibrated on each anatomy's own null data. p-values are uncorrected (24 paired detection comparisons per OPM array and anatomy); the location is the statistical unit.
 
 ## Strength for 50 % detection [nAm] (focal; practical detector at 1 false event/min)
 
@@ -21,6 +21,28 @@ Same framework, configuration and seeds as the adult (configs/g4_epilepsy.toml);
 | infant2yr | squid/mag | 45 [35-53] | 78 [63-103] | 139 [116-187] | 240 [203-289] |
 | infant2yr | opm_matched/opm | 35 [30-45] | 70 [58-92] | 150 [117-202] | 240 [208-295] |
 | infant2yr | opm_dense/opm | 30 [27-35] | 66 [58-88] | 138 [110-182] | 229 [196-279] |
+
+## Held-out false events per minute at the 1-per-minute thresholds, and sensitivity at a matched held-out rate
+
+Sensitivity for 40-nAm spikes at 10-30 mm with each detector's threshold set on the held-out null to 1 false event per minute (the frozen thresholds give 0.5-1.7 per minute, unequal between arrays).
+
+| anatomy | detector | held-out rate at the frozen threshold | sensitivity at a matched 1 per minute |
+|---|---|---|---|
+| adult | squid/combined | 0.95 | 0.17 |
+| adult | squid/grad | 0.70 | 0.15 |
+| adult | squid/mag | 1.10 | 0.17 |
+| adult | opm_matched/opm | 0.50 | 0.29 |
+| adult | opm_dense/opm | 0.90 | 0.31 |
+| school | squid/combined | 0.55 | 0.18 |
+| school | squid/grad | 1.55 | 0.14 |
+| school | squid/mag | 0.85 | 0.13 |
+| school | opm_matched/opm | 0.80 | 0.23 |
+| school | opm_dense/opm | 1.00 | 0.31 |
+| infant2yr | squid/combined | 0.65 | 0.23 |
+| infant2yr | squid/grad | 0.60 | 0.18 |
+| infant2yr | squid/mag | 1.70 | 0.20 |
+| infant2yr | opm_matched/opm | 1.55 | 0.34 |
+| infant2yr | opm_dense/opm | 1.25 | 0.43 |
 
 ## Paired OPM dense vs Neuromag combined (practical detector, 1 false event/min; locations favouring OPM / SQUID, sign-flip p, S50 ratio SQUID/OPM [95 % CI])
 

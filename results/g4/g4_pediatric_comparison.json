@@ -81,6 +81,7 @@
       "1": 0.95,
       "0.2": 0.15
     },
+    "adult/squid/combined/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.16666666666666666,
     "adult/squid/grad/oracle/depth0/s50": {
       "value": 27.540189023885382,
       "ci95": [
@@ -149,6 +150,7 @@
       "1": 0.7,
       "0.2": 0.2
     },
+    "adult/squid/grad/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.14814814814814814,
     "adult/squid/mag/oracle/depth0/s50": {
       "value": 27.5926824069081,
       "ci95": [
@@ -217,6 +219,7 @@
       "1": 1.1,
       "0.2": 0.0
     },
+    "adult/squid/mag/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.16666666666666666,
     "adult/opm_matched/opm/oracle/depth0/s50": {
       "value": 19.999999999999996,
       "ci95": [
@@ -285,6 +288,7 @@
       "1": 0.5,
       "0.2": 0.15
     },
+    "adult/opm_matched/opm/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.28703703703703703,
     "adult/opm_dense/opm/oracle/depth0/s50": {
       "value": 15.583291593209998,
       "ci95": [
@@ -353,6 +357,7 @@
       "1": 0.9,
       "0.2": 0.1
     },
+    "adult/opm_dense/opm/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.3148148148148148,
     "adult/paired/opm_dense/opm_vs_squid/combined/oracle/depth0": {
       "locations_favouring_opm": 16,
       "locations_favouring_squid": 0,
@@ -1148,6 +1153,7 @@
       "1": 0.55,
       "0.2": 0.15
     },
+    "school/squid/combined/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.17592592592592593,
     "school/squid/grad/oracle/depth0/s50": {
       "value": 30.63932714671947,
       "ci95": [
@@ -1216,6 +1222,7 @@
       "1": 1.55,
       "0.2": 0.9
     },
+    "school/squid/grad/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.1388888888888889,
     "school/squid/mag/oracle/depth0/s50": {
       "value": 27.13208654895344,
       "ci95": [
@@ -1284,6 +1291,7 @@
       "1": 0.85,
       "0.2": 0.15
     },
+    "school/squid/mag/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.12962962962962962,
     "school/opm_matched/opm/oracle/depth0/s50": {
       "value": 21.095321529632933,
       "ci95": [
@@ -1352,6 +1360,7 @@
       "1": 0.8,
       "0.2": 0.3
     },
+    "school/opm_matched/opm/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.23148148148148148,
     "school/opm_dense/opm/oracle/depth0/s50": {
       "value": 17.084964768365463,
       "ci95": [
@@ -1420,6 +1429,7 @@
       "1": 1.0,
       "0.2": 0.3
     },
+    "school/opm_dense/opm/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.3055555555555556,
     "school/paired/opm_dense/opm_vs_squid/combined/oracle/depth0": {
       "locations_favouring_opm": 15,
       "locations_favouring_squid": 0,
@@ -2215,6 +2225,7 @@
       "1": 0.65,
       "0.2": 0.15
     },
+    "infant2yr/squid/combined/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.23148148148148148,
     "infant2yr/squid/grad/oracle/depth0/s50": {
       "value": 25.853692951378807,
       "ci95": [
@@ -2283,6 +2294,7 @@
       "1": 0.6,
       "0.2": 0.25
     },
+    "infant2yr/squid/grad/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.17592592592592593,
     "infant2yr/squid/mag/oracle/depth0/s50": {
       "value": 23.64244614380536,
       "ci95": [
@@ -2351,6 +2363,7 @@
       "1": 1.7,
       "0.2": 0.55
     },
+    "infant2yr/squid/mag/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.2037037037037037,
     "infant2yr/opm_matched/opm/oracle/depth0/s50": {
       "value": 16.81792830507429,
       "ci95": [
@@ -2419,6 +2432,7 @@
       "1": 1.55,
       "0.2": 0.4
     },
+    "infant2yr/opm_matched/opm/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.3425925925925926,
     "infant2yr/opm_dense/opm/oracle/depth0/s50": {
       "value": 14.417067843579312,
       "ci95": [
@@ -2487,6 +2501,7 @@
       "1": 1.25,
       "0.2": 0.4
     },
+    "infant2yr/opm_dense/opm/sensitivity_superficial_40nAm_at_heldout_1_per_min": 0.42592592592592593,
     "infant2yr/paired/opm_dense/opm_vs_squid/combined/oracle/depth0": {
       "locations_favouring_opm": 12,
       "locations_favouring_squid": 1,
@@ -3977,7 +3992,7 @@
     }
   },
   "provenance": {
-    "commit": "0eada3a",
+    "commit": "beeb3c4",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

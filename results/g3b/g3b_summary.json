@@ -97,9 +97,9 @@
       "n_background_grid": 1755,
       "cortical_area_cm2": 1878.3170297746747,
       "target_depth_mm": {
-        "p5": 16.057520942192976,
-        "median": 27.858479964378215,
-        "p95": 53.8547265241911
+        "p5": 15.933546445609206,
+        "median": 26.92318660882973,
+        "p95": 49.728487498299565
       }
     },
     "school": {
@@ -119,9 +119,9 @@
       "n_background_grid": 1644,
       "cortical_area_cm2": 1469.5555771534434,
       "target_depth_mm": {
-        "p5": 14.64131548313244,
-        "median": 25.17019506960803,
-        "p95": 48.37258957512683
+        "p5": 14.502843800881712,
+        "median": 24.310390490556134,
+        "p95": 44.72944318431345
       }
     },
     "size2yr": {
@@ -141,9 +141,9 @@
       "n_background_grid": 1593,
       "cortical_area_cm2": 1289.8222374342545,
       "target_depth_mm": {
-        "p5": 13.974777529751327,
-        "median": 23.892883594335707,
-        "p95": 45.7600193208741
+        "p5": 13.870543362363383,
+        "median": 23.042982317887894,
+        "p95": 42.24215647954973
       }
     },
     "infant2yr": {
@@ -163,9 +163,9 @@
       "n_background_grid": 1188,
       "cortical_area_cm2": 1061.565861565162,
       "target_depth_mm": {
-        "p5": 11.925178474608833,
-        "median": 22.997184198276358,
-        "p95": 54.28831686857377
+        "p5": 11.851930090389075,
+        "median": 21.974965767451625,
+        "p95": 48.13974432576328
       }
     }
   },
@@ -270,6 +270,25 @@
         "max_dist_mm": 41.28805735089408,
         "feasible": true
       },
+      "squid:x-centred": {
+        "n": 306,
+        "shift_x_mm": -1.499999999999984,
+        "moved_mm": 5.5,
+        "rule": "centred, shifted -1.5 mm along device x to equal left/right median gaps, then up to 20-mm contact",
+        "min_dist_mm": 20.143408132111304,
+        "median_dist_mm": 28.317930116020605,
+        "max_dist_mm": 39.090855587401045,
+        "feasible": true
+      },
+      "squid:top-18mm": {
+        "n": 306,
+        "moved_mm": 8.0,
+        "rule": "centred, then up to 18-mm contact (true contact)",
+        "min_dist_mm": 18.01144894708765,
+        "median_dist_mm": 27.830370500709932,
+        "max_dist_mm": 40.721302286401745,
+        "feasible": true
+      },
       "squid:counterfactual": {
         "n": 306,
         "k": 1.0,
@@ -278,6 +297,16 @@
         "min_dist_mm": 23.19039674399305,
         "median_dist_mm": 29.825027689705387,
         "max_dist_mm": 38.332532829090496,
+        "feasible": true
+      },
+      "squid:counterfactual_x-centred": {
+        "n": 306,
+        "k": 1.0,
+        "k_nominal": 1.0,
+        "rule": "helmet scaled by 1.000 about the head origin (head-circumference ratio 1.000); laterally centred placement (x-centred, before the top contact)",
+        "min_dist_mm": 22.51595366500968,
+        "median_dist_mm": 29.55016691912663,
+        "max_dist_mm": 37.495385533285145,
         "feasible": true
       },
       "opm_dense": {
@@ -404,6 +433,25 @@
         "max_dist_mm": 47.3142060746154,
         "feasible": true
       },
+      "squid:x-centred": {
+        "n": 306,
+        "shift_x_mm": -0.4999999999999831,
+        "moved_mm": 22.0,
+        "rule": "centred, shifted -0.5 mm along device x to equal left/right median gaps, then up to 20-mm contact",
+        "min_dist_mm": 20.230116775441083,
+        "median_dist_mm": 34.411078019538564,
+        "max_dist_mm": 49.782119917657496,
+        "feasible": true
+      },
+      "squid:top-18mm": {
+        "n": 306,
+        "moved_mm": 24.5,
+        "rule": "centred, then up to 18-mm contact (true contact)",
+        "min_dist_mm": 18.000707441770384,
+        "median_dist_mm": 33.60794709096038,
+        "max_dist_mm": 47.638983688795456,
+        "feasible": true
+      },
       "squid:counterfactual": {
         "n": 306,
         "k": 0.8949046417490466,
@@ -412,6 +460,16 @@
         "min_dist_mm": 20.772463950120436,
         "median_dist_mm": 26.708069156562757,
         "max_dist_mm": 34.313499600179334,
+        "feasible": true
+      },
+      "squid:counterfactual_x-centred": {
+        "n": 306,
+        "k": 0.8949046417490466,
+        "k_nominal": 0.8949046417490466,
+        "rule": "helmet scaled by 0.895 about the head origin (head-circumference ratio 0.895); laterally centred placement (x-centred, before the top contact)",
+        "min_dist_mm": 20.937378184371457,
+        "median_dist_mm": 26.569004172966476,
+        "max_dist_mm": 34.096922045507725,
         "feasible": true
       },
       "opm_dense": {
@@ -538,6 +596,25 @@
         "max_dist_mm": 51.469337406465876,
         "feasible": true
       },
+      "squid:x-centred": {
+        "n": 306,
+        "shift_x_mm": -0.4999999999999831,
+        "moved_mm": 22.0,
+        "rule": "centred, shifted -0.5 mm along device x to equal left/right median gaps, then up to 20-mm contact",
+        "min_dist_mm": 20.0218028544894,
+        "median_dist_mm": 39.397238993212,
+        "max_dist_mm": 48.293016553537,
+        "feasible": true
+      },
+      "squid:top-18mm": {
+        "n": 306,
+        "moved_mm": 24.0,
+        "rule": "centred, then up to 18-mm contact (true contact)",
+        "min_dist_mm": 18.208966982951274,
+        "median_dist_mm": 38.45954379194945,
+        "max_dist_mm": 47.874282638806534,
+        "feasible": true
+      },
       "squid:counterfactual": {
         "n": 306,
         "k": 0.8444077253217732,
@@ -546,6 +623,16 @@
         "min_dist_mm": 19.608668192683098,
         "median_dist_mm": 25.208584206520392,
         "max_dist_mm": 32.38141288067067,
+        "feasible": true
+      },
+      "squid:counterfactual_x-centred": {
+        "n": 306,
+        "k": 0.8444077253217732,
+        "k_nominal": 0.8444077253217732,
+        "rule": "helmet scaled by 0.844 about the head origin (head-circumference ratio 0.844); laterally centred placement (x-centred, before the top contact)",
+        "min_dist_mm": 19.76143847032676,
+        "median_dist_mm": 25.078111643738836,
+        "max_dist_mm": 32.177011022640535,
         "feasible": true
       },
       "opm_dense": {
@@ -672,6 +759,25 @@
         "max_dist_mm": 56.63493335194107,
         "feasible": true
       },
+      "squid:x-centred": {
+        "n": 306,
+        "shift_x_mm": -6.4999999999999885,
+        "moved_mm": 31.0,
+        "rule": "centred, shifted -6.5 mm along device x to equal left/right median gaps, then up to 20-mm contact",
+        "min_dist_mm": 20.256971944166864,
+        "median_dist_mm": 37.549638977307005,
+        "max_dist_mm": 59.30354321945641,
+        "feasible": true
+      },
+      "squid:top-18mm": {
+        "n": 306,
+        "moved_mm": 30.5,
+        "rule": "centred, then up to 18-mm contact (true contact)",
+        "min_dist_mm": 18.100424141880183,
+        "median_dist_mm": 37.8102815955829,
+        "max_dist_mm": 55.94502540957168,
+        "feasible": true
+      },
       "squid:counterfactual": {
         "n": 306,
         "k": 0.9041768203796746,
@@ -680,6 +786,16 @@
         "min_dist_mm": 18.164795928171685,
         "median_dist_mm": 34.20493215298201,
         "max_dist_mm": 46.45599476861957,
+        "feasible": true
+      },
+      "squid:counterfactual_x-centred": {
+        "n": 306,
+        "k": 0.8641768203796746,
+        "k_nominal": 0.8441768203796746,
+        "rule": "helmet scaled by 0.864 about the head origin (head-circumference ratio 0.844); laterally centred placement (x-centred, before the top contact)",
+        "min_dist_mm": 18.170614103160297,
+        "median_dist_mm": 27.011506655447445,
+        "max_dist_mm": 37.82505516107395,
         "feasible": true
       },
       "opm_dense": {
@@ -797,6 +913,49 @@
         "max_dist_mm": 41.28805735089408,
         "feasible": true
       },
+      "x-centred": {
+        "pose": [
+          [
+            0.9914199709892273,
+            -0.039936363697052,
+            -0.12446729093790054,
+            -0.004642179112881438
+          ],
+          [
+            0.06066115200519562,
+            0.984011709690094,
+            0.1674562394618988,
+            0.00015459733456373118
+          ],
+          [
+            0.11578965932130814,
+            -0.17356973886489868,
+            0.9779911637306213,
+            0.06491520656272769
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "shift_x_mm": -1.499999999999984,
+        "moved_mm": 5.5,
+        "rule": "centred, shifted -1.5 mm along device x to equal left/right median gaps, then up to 20-mm contact",
+        "min_dist_mm": 20.143408132111304,
+        "median_dist_mm": 28.317930116020605,
+        "max_dist_mm": 39.090855587401045,
+        "feasible": true
+      },
+      "top-18mm": {
+        "moved_mm": 8.0,
+        "rule": "centred, then up to 18-mm contact (true contact)",
+        "min_dist_mm": 18.01144894708765,
+        "median_dist_mm": 27.830370500709932,
+        "max_dist_mm": 40.721302286401745,
+        "feasible": true
+      },
       "counterfactual": {
         "k": 1.0,
         "k_nominal": 1.0,
@@ -804,6 +963,15 @@
         "min_dist_mm": 23.19039674399305,
         "median_dist_mm": 29.825027689705387,
         "max_dist_mm": 38.332532829090496,
+        "feasible": true
+      },
+      "counterfactual_x-centred": {
+        "k": 1.0,
+        "k_nominal": 1.0,
+        "rule": "helmet scaled by 1.000 about the head origin (head-circumference ratio 1.000); laterally centred placement (x-centred, before the top contact)",
+        "min_dist_mm": 22.51595366500968,
+        "median_dist_mm": 29.55016691912663,
+        "max_dist_mm": 37.495385533285145,
         "feasible": true
       }
     },
@@ -896,6 +1064,49 @@
         "max_dist_mm": 47.3142060746154,
         "feasible": true
       },
+      "x-centred": {
+        "pose": [
+          [
+            0.9914199709892273,
+            -0.039936363697052,
+            -0.12446729093790054,
+            -0.005633599083870666
+          ],
+          [
+            0.06066115200519562,
+            0.984011709690094,
+            0.1674562394618988,
+            9.393618255853551e-05
+          ],
+          [
+            0.11578965932130814,
+            -0.17356973886489868,
+            0.9779911637306213,
+            0.06479941690340638
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "shift_x_mm": -0.4999999999999831,
+        "moved_mm": 22.0,
+        "rule": "centred, shifted -0.5 mm along device x to equal left/right median gaps, then up to 20-mm contact",
+        "min_dist_mm": 20.230116775441083,
+        "median_dist_mm": 34.411078019538564,
+        "max_dist_mm": 49.782119917657496,
+        "feasible": true
+      },
+      "top-18mm": {
+        "moved_mm": 24.5,
+        "rule": "centred, then up to 18-mm contact (true contact)",
+        "min_dist_mm": 18.000707441770384,
+        "median_dist_mm": 33.60794709096038,
+        "max_dist_mm": 47.638983688795456,
+        "feasible": true
+      },
       "counterfactual": {
         "k": 0.8949046417490466,
         "k_nominal": 0.8949046417490466,
@@ -903,6 +1114,15 @@
         "min_dist_mm": 20.772463950120436,
         "median_dist_mm": 26.708069156562757,
         "max_dist_mm": 34.313499600179334,
+        "feasible": true
+      },
+      "counterfactual_x-centred": {
+        "k": 0.8949046417490466,
+        "k_nominal": 0.8949046417490466,
+        "rule": "helmet scaled by 0.895 about the head origin (head-circumference ratio 0.895); laterally centred placement (x-centred, before the top contact)",
+        "min_dist_mm": 20.937378184371457,
+        "median_dist_mm": 26.569004172966476,
+        "max_dist_mm": 34.096922045507725,
         "feasible": true
       }
     },
@@ -995,6 +1215,49 @@
         "max_dist_mm": 51.469337406465876,
         "feasible": true
       },
+      "x-centred": {
+        "pose": [
+          [
+            0.9914199709892273,
+            -0.039936363697052,
+            -0.12446729093790054,
+            -0.005633599083870666
+          ],
+          [
+            0.06066115200519562,
+            0.984011709690094,
+            0.1674562394618988,
+            9.393618255853551e-05
+          ],
+          [
+            0.11578965932130814,
+            -0.17356973886489868,
+            0.9779911637306213,
+            0.06479941690340638
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "shift_x_mm": -0.4999999999999831,
+        "moved_mm": 22.0,
+        "rule": "centred, shifted -0.5 mm along device x to equal left/right median gaps, then up to 20-mm contact",
+        "min_dist_mm": 20.0218028544894,
+        "median_dist_mm": 39.397238993212,
+        "max_dist_mm": 48.293016553537,
+        "feasible": true
+      },
+      "top-18mm": {
+        "moved_mm": 24.0,
+        "rule": "centred, then up to 18-mm contact (true contact)",
+        "min_dist_mm": 18.208966982951274,
+        "median_dist_mm": 38.45954379194945,
+        "max_dist_mm": 47.874282638806534,
+        "feasible": true
+      },
       "counterfactual": {
         "k": 0.8444077253217732,
         "k_nominal": 0.8444077253217732,
@@ -1002,6 +1265,15 @@
         "min_dist_mm": 19.608668192683098,
         "median_dist_mm": 25.208584206520392,
         "max_dist_mm": 32.38141288067067,
+        "feasible": true
+      },
+      "counterfactual_x-centred": {
+        "k": 0.8444077253217732,
+        "k_nominal": 0.8444077253217732,
+        "rule": "helmet scaled by 0.844 about the head origin (head-circumference ratio 0.844); laterally centred placement (x-centred, before the top contact)",
+        "min_dist_mm": 19.76143847032676,
+        "median_dist_mm": 25.078111643738836,
+        "max_dist_mm": 32.177011022640535,
         "feasible": true
       }
     },
@@ -1094,6 +1366,49 @@
         "max_dist_mm": 56.63493335194107,
         "feasible": true
       },
+      "x-centred": {
+        "pose": [
+          [
+            0.9914199709892273,
+            -0.039936363697052,
+            -0.12446729093790054,
+            0.00031492074206470287
+          ],
+          [
+            0.06066115200519562,
+            0.984011709690094,
+            0.1674562394618988,
+            0.00045790309458970956
+          ],
+          [
+            0.11578965932130814,
+            -0.17356973886489868,
+            0.9779911637306213,
+            0.06549415485933423
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "shift_x_mm": -6.4999999999999885,
+        "moved_mm": 31.0,
+        "rule": "centred, shifted -6.5 mm along device x to equal left/right median gaps, then up to 20-mm contact",
+        "min_dist_mm": 20.256971944166864,
+        "median_dist_mm": 37.549638977307005,
+        "max_dist_mm": 59.30354321945641,
+        "feasible": true
+      },
+      "top-18mm": {
+        "moved_mm": 30.5,
+        "rule": "centred, then up to 18-mm contact (true contact)",
+        "min_dist_mm": 18.100424141880183,
+        "median_dist_mm": 37.8102815955829,
+        "max_dist_mm": 55.94502540957168,
+        "feasible": true
+      },
       "counterfactual": {
         "k": 0.9041768203796746,
         "k_nominal": 0.8441768203796746,
@@ -1101,6 +1416,15 @@
         "min_dist_mm": 18.164795928171685,
         "median_dist_mm": 34.20493215298201,
         "max_dist_mm": 46.45599476861957,
+        "feasible": true
+      },
+      "counterfactual_x-centred": {
+        "k": 0.8641768203796746,
+        "k_nominal": 0.8441768203796746,
+        "rule": "helmet scaled by 0.864 about the head origin (head-circumference ratio 0.844); laterally centred placement (x-centred, before the top contact)",
+        "min_dist_mm": 18.170614103160297,
+        "median_dist_mm": 27.011506655447445,
+        "max_dist_mm": 37.82505516107395,
         "feasible": true
       }
     }
@@ -1261,6 +1585,34 @@
           "right occipital": 27.03466237366402
         }
       },
+      "squid:x-centred": {
+        "median_mm": 28.317930116020605,
+        "min_mm": 20.143408132111304,
+        "regions": {
+          "left frontal": 30.734712405402675,
+          "left temporal": 28.791059856579892,
+          "left parietal": 25.584909149759536,
+          "left occipital": 28.55962512081215,
+          "right frontal": 29.242287003571196,
+          "right temporal": 28.021169745759643,
+          "right parietal": 24.60680909411639,
+          "right occipital": 29.275188653162182
+        }
+      },
+      "squid:top-18mm": {
+        "median_mm": 27.830370500709932,
+        "min_mm": 18.01144894708765,
+        "regions": {
+          "left frontal": 30.59174541262362,
+          "left temporal": 29.554047283706414,
+          "left parietal": 25.11610890956953,
+          "left occipital": 28.318728626942175,
+          "right frontal": 27.947283704530307,
+          "right temporal": 27.028389766713456,
+          "right parietal": 21.81777331758476,
+          "right occipital": 28.319121008417696
+        }
+      },
       "squid:counterfactual": {
         "median_mm": 29.825027689705387,
         "min_mm": 23.19039674399305,
@@ -1273,6 +1625,20 @@
           "right temporal": 27.41912752517997,
           "right parietal": 27.83396514615704,
           "right occipital": 28.892809749304547
+        }
+      },
+      "squid:counterfactual_x-centred": {
+        "median_mm": 29.55016691912663,
+        "min_mm": 22.51595366500968,
+        "regions": {
+          "left frontal": 33.02220877426327,
+          "left temporal": 28.694327509322264,
+          "left parietal": 28.773591908338478,
+          "left occipital": 29.52338682948625,
+          "right frontal": 31.24948726836766,
+          "right temporal": 28.780021944578188,
+          "right parietal": 28.04852575460327,
+          "right occipital": 29.598679425548728
         }
       },
       "opm_dense": {
@@ -1444,6 +1810,34 @@
           "right occipital": 34.187571863318524
         }
       },
+      "squid:x-centred": {
+        "median_mm": 34.411078019538564,
+        "min_mm": 20.230116775441083,
+        "regions": {
+          "left frontal": 37.07016979300551,
+          "left temporal": 35.88749175942868,
+          "left parietal": 28.7729676172755,
+          "left occipital": 36.394566703016,
+          "right frontal": 34.58256716171494,
+          "right temporal": 38.62039642929709,
+          "right parietal": 26.0238421228112,
+          "right occipital": 35.22529316192581
+        }
+      },
+      "squid:top-18mm": {
+        "median_mm": 33.60794709096038,
+        "min_mm": 18.000707441770384,
+        "regions": {
+          "left frontal": 36.69509244380834,
+          "left temporal": 36.29992466980881,
+          "left parietal": 27.372736480802963,
+          "left occipital": 36.34533557860194,
+          "right frontal": 33.99300307008985,
+          "right temporal": 38.87880629748157,
+          "right parietal": 23.991664547293016,
+          "right occipital": 34.95025089688022
+        }
+      },
       "squid:counterfactual": {
         "median_mm": 26.708069156562757,
         "min_mm": 20.772463950120436,
@@ -1456,6 +1850,20 @@
           "right temporal": 24.55238100491754,
           "right parietal": 24.9267099569514,
           "right occipital": 25.870837562981016
+        }
+      },
+      "squid:counterfactual_x-centred": {
+        "median_mm": 26.569004172966476,
+        "min_mm": 20.937378184371457,
+        "regions": {
+          "left frontal": 30.12496073182849,
+          "left temporal": 26.470256372454944,
+          "left parietal": 26.352076240104978,
+          "left occipital": 26.549252276592465,
+          "right frontal": 28.049847595533997,
+          "right temporal": 24.95868964098949,
+          "right parietal": 25.049933696952177,
+          "right occipital": 26.14155388997106
         }
       },
       "opm_dense": {
@@ -1627,6 +2035,34 @@
           "right occipital": 39.926723696021725
         }
       },
+      "squid:x-centred": {
+        "median_mm": 39.397238993212,
+        "min_mm": 20.0218028544894,
+        "regions": {
+          "left frontal": 42.456787103417554,
+          "left temporal": 39.99564947648394,
+          "left parietal": 34.49665177355843,
+          "left occipital": 41.24401215311825,
+          "right frontal": 39.53183819288415,
+          "right temporal": 42.32400397979517,
+          "right parietal": 32.89597282961083,
+          "right occipital": 40.04428972155673
+        }
+      },
+      "squid:top-18mm": {
+        "median_mm": 38.45954379194945,
+        "min_mm": 18.208966982951274,
+        "regions": {
+          "left frontal": 41.95695958289615,
+          "left temporal": 40.102508887724866,
+          "left parietal": 33.81852695294178,
+          "left occipital": 41.17941285704076,
+          "right frontal": 38.6482228214368,
+          "right temporal": 42.354403692692856,
+          "right parietal": 30.925348422071053,
+          "right occipital": 39.737888347857215
+        }
+      },
       "squid:counterfactual": {
         "median_mm": 25.208584206520392,
         "min_mm": 19.608668192683098,
@@ -1639,6 +2075,20 @@
           "right temporal": 23.173395764742413,
           "right parietal": 23.527938396120025,
           "right occipital": 24.417304696497446
+        }
+      },
+      "squid:counterfactual_x-centred": {
+        "median_mm": 25.078111643738836,
+        "min_mm": 19.76143847032676,
+        "regions": {
+          "left frontal": 28.433072149083536,
+          "left temporal": 24.9816029004074,
+          "left parietal": 24.873914060498247,
+          "left occipital": 25.05859247882717,
+          "right frontal": 26.477215867406606,
+          "right temporal": 23.556774632163954,
+          "right parietal": 23.64674693222038,
+          "right occipital": 24.673846135562254
         }
       },
       "opm_dense": {
@@ -1810,6 +2260,34 @@
           "right occipital": 36.13033155835653
         }
       },
+      "squid:x-centred": {
+        "median_mm": 37.549638977307005,
+        "min_mm": 20.256971944166864,
+        "regions": {
+          "left frontal": 41.36902872369147,
+          "left temporal": 39.456349119141755,
+          "left parietal": 27.03010697691217,
+          "left occipital": 37.29589199232534,
+          "right frontal": 40.91801341068843,
+          "right temporal": 45.05355554157172,
+          "right parietal": 24.687946010273226,
+          "right occipital": 45.13012145488397
+        }
+      },
+      "squid:top-18mm": {
+        "median_mm": 37.8102815955829,
+        "min_mm": 18.100424141880183,
+        "regions": {
+          "left frontal": 45.7371578590668,
+          "left temporal": 45.66139659018826,
+          "left parietal": 30.009831440266368,
+          "left occipital": 42.16986486911105,
+          "right frontal": 37.083131416964626,
+          "right temporal": 38.664261268467264,
+          "right parietal": 22.4343749852124,
+          "right occipital": 41.148645484256285
+        }
+      },
       "squid:counterfactual": {
         "median_mm": 34.20493215298201,
         "min_mm": 18.164795928171685,
@@ -1822,6 +2300,20 @@
           "right temporal": 22.832930355895805,
           "right parietal": 30.961700036959396,
           "right occipital": 23.723204728832158
+        }
+      },
+      "squid:counterfactual_x-centred": {
+        "median_mm": 27.011506655447445,
+        "min_mm": 18.170614103160297,
+        "regions": {
+          "left frontal": 33.64231265991232,
+          "left temporal": 27.168565561638694,
+          "left parietal": 26.69513951919208,
+          "left occipital": 22.96138814337393,
+          "right frontal": 30.04378729589615,
+          "right temporal": 23.76497207848207,
+          "right parietal": 24.791329202372392,
+          "right occipital": 21.176079088860767
         }
       },
       "opm_dense": {
@@ -1862,38 +2354,38 @@
       {
         "lo": 20.0,
         "hi": 25.0,
-        "n": 1590,
-        "median": 52.36948321679374
+        "n": 1572,
+        "median": 52.30904668214813
       },
       {
         "lo": 25.0,
         "hi": 30.0,
-        "n": 1336,
-        "median": 57.17485476462436
+        "n": 1289,
+        "median": 56.976094948082434
       },
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1662,
-        "median": 64.50340033559308
+        "n": 1539,
+        "median": 64.09240320974193
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 1027,
-        "median": 74.72958878169533
+        "n": 913,
+        "median": 73.78873425371275
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 482,
-        "median": 83.96974861417283
+        "n": 321,
+        "median": 81.80014318829434
       },
       {
         "lo": 60.0,
         "hi": 90.0,
-        "n": 121,
-        "median": 89.98335884067643
+        "n": 26,
+        "median": 86.78569002156203
       }
     ],
     "adult/squid:centred": [
@@ -1918,38 +2410,38 @@
       {
         "lo": 20.0,
         "hi": 25.0,
-        "n": 1590,
-        "median": 54.77632924813835
+        "n": 1572,
+        "median": 54.68242019463315
       },
       {
         "lo": 25.0,
         "hi": 30.0,
-        "n": 1336,
-        "median": 59.43934096642876
+        "n": 1289,
+        "median": 59.212096582973736
       },
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1662,
-        "median": 66.66818458733195
+        "n": 1539,
+        "median": 66.14934421334931
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 1027,
-        "median": 76.9946491296729
+        "n": 913,
+        "median": 76.28773613849457
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 482,
-        "median": 87.54510341534194
+        "n": 321,
+        "median": 85.71292989797739
       },
       {
         "lo": 60.0,
         "hi": 90.0,
-        "n": 121,
-        "median": 94.68191849623491
+        "n": 26,
+        "median": 91.0028431377284
       }
     ],
     "adult/opm_dense": [
@@ -1974,38 +2466,38 @@
       {
         "lo": 20.0,
         "hi": 25.0,
-        "n": 1590,
-        "median": 30.878016388154848
+        "n": 1572,
+        "median": 30.862574847579246
       },
       {
         "lo": 25.0,
         "hi": 30.0,
-        "n": 1336,
-        "median": 35.63642730063927
+        "n": 1289,
+        "median": 35.54150498690532
       },
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1662,
-        "median": 43.165340445755604
+        "n": 1539,
+        "median": 42.710340906923726
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 1027,
-        "median": 53.65601179298935
+        "n": 913,
+        "median": 53.142361275036045
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 482,
-        "median": 64.50332322213538
+        "n": 321,
+        "median": 63.325022093515464
       },
       {
         "lo": 60.0,
         "hi": 90.0,
-        "n": 121,
-        "median": 70.93151968751488
+        "n": 26,
+        "median": 68.79958026808973
       }
     ],
     "adult/opm_matched": [
@@ -2030,38 +2522,38 @@
       {
         "lo": 20.0,
         "hi": 25.0,
-        "n": 1590,
-        "median": 31.8019716159626
+        "n": 1572,
+        "median": 31.771572151882022
       },
       {
         "lo": 25.0,
         "hi": 30.0,
-        "n": 1336,
-        "median": 36.379793926041216
+        "n": 1289,
+        "median": 36.31171249480084
       },
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1662,
-        "median": 43.87290253643705
+        "n": 1539,
+        "median": 43.464639187712294
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 1027,
-        "median": 54.278947680466025
+        "n": 913,
+        "median": 53.58726736079318
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 482,
-        "median": 64.97710431507907
+        "n": 321,
+        "median": 63.53640540416859
       },
       {
         "lo": 60.0,
         "hi": 90.0,
-        "n": 121,
-        "median": 71.52212485016356
+        "n": 26,
+        "median": 68.9996512344444
       }
     ],
     "school/squid:top": [
@@ -2080,38 +2572,38 @@
       {
         "lo": 15.0,
         "hi": 20.0,
-        "n": 1611,
-        "median": 51.783159871371105
+        "n": 1604,
+        "median": 51.76928667956588
       },
       {
         "lo": 20.0,
         "hi": 25.0,
-        "n": 1638,
-        "median": 56.48236120246331
+        "n": 1604,
+        "median": 56.29022533739299
       },
       {
         "lo": 25.0,
         "hi": 30.0,
-        "n": 1212,
-        "median": 61.342983166105256
+        "n": 1144,
+        "median": 60.70695435244802
       },
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1536,
-        "median": 70.36103401069636
+        "n": 1399,
+        "median": 69.29770499999891
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 774,
-        "median": 76.93899037088309
+        "n": 633,
+        "median": 74.87905588510148
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 286,
-        "median": 82.37864172330613
+        "n": 115,
+        "median": 78.46729125392764
       },
       {
         "lo": 60.0,
@@ -2136,38 +2628,38 @@
       {
         "lo": 15.0,
         "hi": 20.0,
-        "n": 1611,
-        "median": 61.445370677613255
+        "n": 1604,
+        "median": 61.4397926486459
       },
       {
         "lo": 20.0,
         "hi": 25.0,
-        "n": 1638,
-        "median": 65.44337381403284
+        "n": 1604,
+        "median": 65.33038643666866
       },
       {
         "lo": 25.0,
         "hi": 30.0,
-        "n": 1212,
-        "median": 70.27386767909135
+        "n": 1144,
+        "median": 70.02202419827321
       },
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1536,
-        "median": 78.14975150597189
+        "n": 1399,
+        "median": 77.3579266072734
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 774,
-        "median": 89.48214316896781
+        "n": 633,
+        "median": 88.27911107868601
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 286,
-        "median": 99.46414514223426
+        "n": 115,
+        "median": 96.09256726220697
       },
       {
         "lo": 60.0,
@@ -2192,38 +2684,38 @@
       {
         "lo": 15.0,
         "hi": 20.0,
-        "n": 1611,
-        "median": 26.225875153373693
+        "n": 1604,
+        "median": 26.22153073035684
       },
       {
         "lo": 20.0,
         "hi": 25.0,
-        "n": 1638,
-        "median": 30.7936180389774
+        "n": 1604,
+        "median": 30.74175815336953
       },
       {
         "lo": 25.0,
         "hi": 30.0,
-        "n": 1212,
-        "median": 35.6493563199695
+        "n": 1144,
+        "median": 35.45301104182889
       },
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1536,
-        "median": 43.56499090025291
+        "n": 1399,
+        "median": 43.0174444825108
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 774,
-        "median": 53.48331049737121
+        "n": 633,
+        "median": 52.247058629767814
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 286,
-        "median": 62.73316893627434
+        "n": 115,
+        "median": 60.817972190228915
       },
       {
         "lo": 60.0,
@@ -2248,38 +2740,38 @@
       {
         "lo": 15.0,
         "hi": 20.0,
-        "n": 1611,
-        "median": 26.961660433526234
+        "n": 1604,
+        "median": 26.94931927259759
       },
       {
         "lo": 20.0,
         "hi": 25.0,
-        "n": 1638,
-        "median": 31.407594776853173
+        "n": 1604,
+        "median": 31.353122093590017
       },
       {
         "lo": 25.0,
         "hi": 30.0,
-        "n": 1212,
-        "median": 36.19179951713236
+        "n": 1144,
+        "median": 35.984937630074946
       },
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1536,
-        "median": 44.070414971507375
+        "n": 1399,
+        "median": 43.519141253659605
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 774,
-        "median": 53.82094974577156
+        "n": 633,
+        "median": 52.753896247767415
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 286,
-        "median": 63.06096995201117
+        "n": 115,
+        "median": 61.028774055822744
       },
       {
         "lo": 60.0,
@@ -2304,38 +2796,38 @@
       {
         "lo": 15.0,
         "hi": 20.0,
-        "n": 1779,
-        "median": 57.11263056433317
+        "n": 1768,
+        "median": 57.06814940121494
       },
       {
         "lo": 20.0,
         "hi": 25.0,
-        "n": 1660,
-        "median": 62.10776260144284
+        "n": 1610,
+        "median": 61.872322319532614
       },
       {
         "lo": 25.0,
         "hi": 30.0,
-        "n": 1128,
-        "median": 67.5827463677906
+        "n": 1055,
+        "median": 66.86259332521469
       },
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1440,
-        "median": 75.71525225917182
+        "n": 1301,
+        "median": 74.76110570486641
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 639,
-        "median": 82.23100474171072
+        "n": 463,
+        "median": 79.90473707075812
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 155,
-        "median": 87.11805042040213
+        "n": 46,
+        "median": 84.01838484578849
       },
       {
         "lo": 60.0,
@@ -2360,38 +2852,38 @@
       {
         "lo": 15.0,
         "hi": 20.0,
-        "n": 1779,
-        "median": 66.5070250509023
+        "n": 1768,
+        "median": 66.44073803171797
       },
       {
         "lo": 20.0,
         "hi": 25.0,
-        "n": 1660,
-        "median": 70.74816991300095
+        "n": 1610,
+        "median": 70.58088950329268
       },
       {
         "lo": 25.0,
         "hi": 30.0,
-        "n": 1128,
-        "median": 75.55758098927919
+        "n": 1055,
+        "median": 75.15213909026866
       },
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1440,
-        "median": 83.59052718826868
+        "n": 1301,
+        "median": 82.69922845136037
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 639,
-        "median": 96.2874238612643
+        "n": 463,
+        "median": 94.38479153171569
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 155,
-        "median": 103.04895886872781
+        "n": 46,
+        "median": 99.57055482408593
       },
       {
         "lo": 60.0,
@@ -2416,38 +2908,38 @@
       {
         "lo": 15.0,
         "hi": 20.0,
-        "n": 1779,
-        "median": 26.10798676017069
+        "n": 1768,
+        "median": 26.090279463903038
       },
       {
         "lo": 20.0,
         "hi": 25.0,
-        "n": 1660,
-        "median": 30.767685810497564
+        "n": 1610,
+        "median": 30.669847371771645
       },
       {
         "lo": 25.0,
         "hi": 30.0,
-        "n": 1128,
-        "median": 35.79628100490254
+        "n": 1055,
+        "median": 35.58365897468402
       },
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1440,
-        "median": 43.68643202130515
+        "n": 1301,
+        "median": 43.08238535549697
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 639,
-        "median": 54.02434263847402
+        "n": 463,
+        "median": 52.70143836180166
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 155,
-        "median": 60.912759208565234
+        "n": 46,
+        "median": 58.719281240851736
       },
       {
         "lo": 60.0,
@@ -2472,38 +2964,38 @@
       {
         "lo": 15.0,
         "hi": 20.0,
-        "n": 1779,
-        "median": 26.74124699723102
+        "n": 1768,
+        "median": 26.730370618343485
       },
       {
         "lo": 20.0,
         "hi": 25.0,
-        "n": 1660,
-        "median": 31.327604320983042
+        "n": 1610,
+        "median": 31.238502042007653
       },
       {
         "lo": 25.0,
         "hi": 30.0,
-        "n": 1128,
-        "median": 36.318716109445354
+        "n": 1055,
+        "median": 36.11447263515703
       },
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1440,
-        "median": 44.22945638914498
+        "n": 1301,
+        "median": 43.66530168661889
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 639,
-        "median": 54.269636277141224
+        "n": 463,
+        "median": 53.016203113744446
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 155,
-        "median": 61.07760295708765
+        "n": 46,
+        "median": 59.059293622195504
       },
       {
         "lo": 60.0,
@@ -2546,26 +3038,26 @@
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1263,
-        "median": 70.48287118684273
+        "n": 1175,
+        "median": 69.09451540104318
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 687,
-        "median": 77.1900699843058
+        "n": 502,
+        "median": 73.64492992987263
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 411,
-        "median": 86.25144512614413
+        "n": 229,
+        "median": 82.58826260255235
       },
       {
         "lo": 60.0,
         "hi": 90.0,
-        "n": 203,
-        "median": 93.50895130341769
+        "n": 83,
+        "median": 88.68336738518487
       }
     ],
     "infant2yr/squid:centred": [
@@ -2602,26 +3094,26 @@
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1263,
-        "median": 80.38183854589664
+        "n": 1175,
+        "median": 80.26886811617611
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 687,
-        "median": 89.84947218939178
+        "n": 502,
+        "median": 90.07424669410153
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 411,
-        "median": 97.4946377034338
+        "n": 229,
+        "median": 95.86770197869525
       },
       {
         "lo": 60.0,
         "hi": 90.0,
-        "n": 203,
-        "median": 100.09360192091306
+        "n": 83,
+        "median": 98.26694500449375
       }
     ],
     "infant2yr/opm_dense": [
@@ -2658,26 +3150,26 @@
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1263,
-        "median": 42.64353241402739
+        "n": 1175,
+        "median": 42.27326657135591
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 687,
-        "median": 52.2347156367522
+        "n": 502,
+        "median": 51.78522806592408
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 411,
-        "median": 61.59176283305351
+        "n": 229,
+        "median": 61.28723160255911
       },
       {
         "lo": 60.0,
         "hi": 90.0,
-        "n": 203,
-        "median": 70.36228152060366
+        "n": 83,
+        "median": 69.95708795802277
       }
     ],
     "infant2yr/opm_matched": [
@@ -2714,26 +3206,26 @@
       {
         "lo": 30.0,
         "hi": 40.0,
-        "n": 1263,
-        "median": 43.29031424617485
+        "n": 1175,
+        "median": 42.94132835881503
       },
       {
         "lo": 40.0,
         "hi": 50.0,
-        "n": 687,
-        "median": 52.83555013956928
+        "n": 502,
+        "median": 52.34912124577352
       },
       {
         "lo": 50.0,
         "hi": 60.0,
-        "n": 411,
-        "median": 62.0961886232489
+        "n": 229,
+        "median": 61.984903418446876
       },
       {
         "lo": 60.0,
         "hi": 90.0,
-        "n": 203,
-        "median": 70.60076923155516
+        "n": 83,
+        "median": 70.26505785629216
       }
     ]
   },
@@ -51564,6 +52056,138 @@
         "insula": -0.11613101726416147
       }
     },
+    "adult/x-centred/combined/intrinsic+brain": {
+      "median": 1.001933429996571,
+      "by_lobe": {
+        "frontal": 1.515020805131454,
+        "parietal": 0.8662853086846557,
+        "temporal": 1.0461285374122715,
+        "occipital": 0.629261715971682,
+        "cingulate": 0.15631644694491106,
+        "insula": 0.3709726140952623
+      }
+    },
+    "adult/x-centred/combined/projected": {
+      "median": 0.6836487213160207,
+      "by_lobe": {
+        "frontal": 1.2931538081546936,
+        "parietal": 0.6283092947186314,
+        "temporal": 0.5652023284691641,
+        "occipital": 0.37122421684856766,
+        "cingulate": -1.9578356360931337,
+        "insula": -0.7782696993672569
+      }
+    },
+    "adult/x-centred/grad/intrinsic+brain": {
+      "median": 2.2205214274440235,
+      "by_lobe": {
+        "frontal": 2.5945376833880696,
+        "parietal": 1.643902824070099,
+        "temporal": 2.753081008570723,
+        "occipital": 2.182710953362719,
+        "cingulate": 1.0239045669613687,
+        "insula": 1.625504454502492
+      }
+    },
+    "adult/x-centred/grad/projected": {
+      "median": 1.5271852719735897,
+      "by_lobe": {
+        "frontal": 2.1059579105186943,
+        "parietal": 1.3289538426973762,
+        "temporal": 1.7612466712278572,
+        "occipital": 1.478593692948911,
+        "cingulate": -1.5032382801704571,
+        "insula": -0.061960934293619374
+      }
+    },
+    "adult/x-centred/mag/intrinsic+brain": {
+      "median": 1.3749572162600185,
+      "by_lobe": {
+        "frontal": 1.9931995255198323,
+        "parietal": 1.2007620521413869,
+        "temporal": 1.3884471771717797,
+        "occipital": 0.843247308082765,
+        "cingulate": 0.285728653362741,
+        "insula": 0.6279585975608237
+      }
+    },
+    "adult/x-centred/mag/projected": {
+      "median": 1.1810857896672788,
+      "by_lobe": {
+        "frontal": 1.8426530563996542,
+        "parietal": 1.0151626633601314,
+        "temporal": 1.210266070284018,
+        "occipital": 0.9131175392813494,
+        "cingulate": -1.2419349924926235,
+        "insula": -0.243497799536489
+      }
+    },
+    "adult/top-18mm/combined/intrinsic+brain": {
+      "median": 0.8643751363629076,
+      "by_lobe": {
+        "frontal": 1.319088531454782,
+        "parietal": 0.676490346309664,
+        "temporal": 0.9681931251390177,
+        "occipital": 0.5915112788586474,
+        "cingulate": 0.09033753179791038,
+        "insula": 0.29182259613752837
+      }
+    },
+    "adult/top-18mm/combined/projected": {
+      "median": 0.5377733820093162,
+      "by_lobe": {
+        "frontal": 1.0672521108171535,
+        "parietal": 0.42176364411151246,
+        "temporal": 0.5796807621084358,
+        "occipital": 0.32126423511623975,
+        "cingulate": -2.001359367345845,
+        "insula": -0.8432063982204108
+      }
+    },
+    "adult/top-18mm/grad/intrinsic+brain": {
+      "median": 2.0735440456983447,
+      "by_lobe": {
+        "frontal": 2.3995040875973332,
+        "parietal": 1.414892906477834,
+        "temporal": 2.76326456521247,
+        "occipital": 2.094981184548917,
+        "cingulate": 0.9746529542012955,
+        "insula": 1.5779858495390604
+      }
+    },
+    "adult/top-18mm/grad/projected": {
+      "median": 1.3636333014394066,
+      "by_lobe": {
+        "frontal": 1.8604751040498324,
+        "parietal": 1.106518643360352,
+        "temporal": 1.752618883895631,
+        "occipital": 1.4121419793223764,
+        "cingulate": -1.5718060044534998,
+        "insula": -0.07570363409852203
+      }
+    },
+    "adult/top-18mm/mag/intrinsic+brain": {
+      "median": 1.2499548798933156,
+      "by_lobe": {
+        "frontal": 1.8296136504253304,
+        "parietal": 1.0865506242958065,
+        "temporal": 1.3399134654685385,
+        "occipital": 0.8175122463587772,
+        "cingulate": 0.22876617851443973,
+        "insula": 0.5520778404492185
+      }
+    },
+    "adult/top-18mm/mag/projected": {
+      "median": 1.0644128174876488,
+      "by_lobe": {
+        "frontal": 1.6767030026611571,
+        "parietal": 0.8733181351551018,
+        "temporal": 1.184315464371185,
+        "occipital": 0.860900429636387,
+        "cingulate": -1.3074507318777349,
+        "insula": -0.32516376997142243
+      }
+    },
     "adult/counterfactual/combined/intrinsic+brain": {
       "median": 1.2457377923731914,
       "by_lobe": {
@@ -51628,6 +52252,72 @@
         "occipital": 1.0328423040279455,
         "cingulate": -1.1162581319054383,
         "insula": -0.17930756771307738
+      }
+    },
+    "adult/counterfactual_x-centred/combined/intrinsic+brain": {
+      "median": 1.2544719764213876,
+      "by_lobe": {
+        "frontal": 1.8816522514310305,
+        "parietal": 1.1655935609455819,
+        "temporal": 1.1891615071820503,
+        "occipital": 0.7425571479289578,
+        "cingulate": 0.27713194392895246,
+        "insula": 0.5706810458601009
+      }
+    },
+    "adult/counterfactual_x-centred/combined/projected": {
+      "median": 0.9331783373568034,
+      "by_lobe": {
+        "frontal": 1.684120349632362,
+        "parietal": 0.9490364539891915,
+        "temporal": 0.6728475115270466,
+        "occipital": 0.4899539394886453,
+        "cingulate": -1.849482495036586,
+        "insula": -0.6768187618968069
+      }
+    },
+    "adult/counterfactual_x-centred/grad/intrinsic+brain": {
+      "median": 2.5073232799169896,
+      "by_lobe": {
+        "frontal": 3.051782423565589,
+        "parietal": 2.0134270467231428,
+        "temporal": 2.8344229882537855,
+        "occipital": 2.284939984620837,
+        "cingulate": 1.1654863458087408,
+        "insula": 1.6994836033225544
+      }
+    },
+    "adult/counterfactual_x-centred/grad/projected": {
+      "median": 1.8245975726629406,
+      "by_lobe": {
+        "frontal": 2.540293963776139,
+        "parietal": 1.6950202515961212,
+        "temporal": 1.8644087250590324,
+        "occipital": 1.5926624136465828,
+        "cingulate": -1.3439923713810935,
+        "insula": 0.025960783040525105
+      }
+    },
+    "adult/counterfactual_x-centred/mag/intrinsic+brain": {
+      "median": 1.6167729894014187,
+      "by_lobe": {
+        "frontal": 2.334571310781555,
+        "parietal": 1.4481723540567115,
+        "temporal": 1.5374989491458293,
+        "occipital": 0.9813733671865554,
+        "cingulate": 0.430420732552299,
+        "insula": 0.8075231752579369
+      }
+    },
+    "adult/counterfactual_x-centred/mag/projected": {
+      "median": 1.4100744163720873,
+      "by_lobe": {
+        "frontal": 2.209186054733135,
+        "parietal": 1.2955979753589697,
+        "temporal": 1.3735689161195501,
+        "occipital": 1.0574535963973837,
+        "cingulate": -1.1161065624863022,
+        "insula": -0.15130666360923017
       }
     },
     "school/centred/combined/intrinsic+brain": {
@@ -52356,6 +53046,138 @@
         "insula": 1.0462943581861346
       }
     },
+    "school/x-centred/combined/intrinsic+brain": {
+      "median": 1.4923716748112716,
+      "by_lobe": {
+        "frontal": 1.7264744251442647,
+        "parietal": 1.343757046111731,
+        "temporal": 1.8855965792163862,
+        "occipital": 1.4944283710932922,
+        "cingulate": 0.3767796237966134,
+        "insula": 0.7934723233678769
+      }
+    },
+    "school/x-centred/combined/projected": {
+      "median": 1.3502872827409513,
+      "by_lobe": {
+        "frontal": 1.6094410008618796,
+        "parietal": 1.1869065898069004,
+        "temporal": 1.824504926271823,
+        "occipital": 1.4118461810212932,
+        "cingulate": -0.46239414931776496,
+        "insula": 0.538481644073718
+      }
+    },
+    "school/x-centred/grad/intrinsic+brain": {
+      "median": 2.9819940366488273,
+      "by_lobe": {
+        "frontal": 3.075061627419692,
+        "parietal": 2.223872993976628,
+        "temporal": 4.161183913072876,
+        "occipital": 3.270093692855906,
+        "cingulate": 1.3008387489564555,
+        "insula": 2.3327641903863277
+      }
+    },
+    "school/x-centred/grad/projected": {
+      "median": 2.486005654211021,
+      "by_lobe": {
+        "frontal": 2.6725573641428477,
+        "parietal": 2.0146003274512263,
+        "temporal": 3.4742840681628318,
+        "occipital": 2.630640479713894,
+        "cingulate": -0.009034702626451358,
+        "insula": 1.4679980888926192
+      }
+    },
+    "school/x-centred/mag/intrinsic+brain": {
+      "median": 1.8032233323383537,
+      "by_lobe": {
+        "frontal": 2.1039828339069273,
+        "parietal": 1.7126126361607845,
+        "temporal": 2.162699039084813,
+        "occipital": 1.698528612533288,
+        "cingulate": 0.48216808478687057,
+        "insula": 0.9823400965073636
+      }
+    },
+    "school/x-centred/mag/projected": {
+      "median": 1.8619680312233928,
+      "by_lobe": {
+        "frontal": 2.10646049346441,
+        "parietal": 1.6204428544753764,
+        "temporal": 2.3991582283839263,
+        "occipital": 1.8879007743884366,
+        "cingulate": -0.14816627868072174,
+        "insula": 0.9093291586449086
+      }
+    },
+    "school/top-18mm/combined/intrinsic+brain": {
+      "median": 1.351513913063088,
+      "by_lobe": {
+        "frontal": 1.5235538624208296,
+        "parietal": 1.1540829196947253,
+        "temporal": 1.823311325942579,
+        "occipital": 1.4426129151354021,
+        "cingulate": 0.31825633414096965,
+        "insula": 0.718320582485199
+      }
+    },
+    "school/top-18mm/combined/projected": {
+      "median": 1.2125552932804393,
+      "by_lobe": {
+        "frontal": 1.410947659410586,
+        "parietal": 0.9969274767203842,
+        "temporal": 1.7736481057702378,
+        "occipital": 1.3483084334535804,
+        "cingulate": -0.5260390668396532,
+        "insula": 0.47727472763436335
+      }
+    },
+    "school/top-18mm/grad/intrinsic+brain": {
+      "median": 2.8139244046508214,
+      "by_lobe": {
+        "frontal": 2.8877895886941864,
+        "parietal": 2.017922087772866,
+        "temporal": 4.116077292652169,
+        "occipital": 3.1950571489291817,
+        "cingulate": 1.2311385167071707,
+        "insula": 2.304565070532651
+      }
+    },
+    "school/top-18mm/grad/projected": {
+      "median": 2.3287469865146937,
+      "by_lobe": {
+        "frontal": 2.442328728485558,
+        "parietal": 1.7891789053742326,
+        "temporal": 3.4023674763732585,
+        "occipital": 2.536170947593521,
+        "cingulate": -0.08622736587726468,
+        "insula": 1.418745697324764
+      }
+    },
+    "school/top-18mm/mag/intrinsic+brain": {
+      "median": 1.6990051866701843,
+      "by_lobe": {
+        "frontal": 1.9530315112591257,
+        "parietal": 1.5959999597987797,
+        "temporal": 2.0980747721403565,
+        "occipital": 1.6493617988271567,
+        "cingulate": 0.43279315447947114,
+        "insula": 0.9111091213976087
+      }
+    },
+    "school/top-18mm/mag/projected": {
+      "median": 1.739782308669685,
+      "by_lobe": {
+        "frontal": 1.9587651218210032,
+        "parietal": 1.5018965567729337,
+        "temporal": 2.3478215572298096,
+        "occipital": 1.8253493001710606,
+        "cingulate": -0.23477206626307345,
+        "insula": 0.8511206097673736
+      }
+    },
     "school/counterfactual/combined/intrinsic+brain": {
       "median": 0.9344117145382251,
       "by_lobe": {
@@ -52420,6 +53242,72 @@
         "occipital": 1.07331053083255,
         "cingulate": -0.10728241692933205,
         "insula": 0.6718428226329229
+      }
+    },
+    "school/counterfactual_x-centred/combined/intrinsic+brain": {
+      "median": 0.9394403175341793,
+      "by_lobe": {
+        "frontal": 1.3569085295303085,
+        "parietal": 0.9281085491263884,
+        "temporal": 0.8904595513235043,
+        "occipital": 0.6067493468842426,
+        "cingulate": 0.3035494452102377,
+        "insula": 0.4935181598349303
+      }
+    },
+    "school/counterfactual_x-centred/combined/projected": {
+      "median": 0.717526925873361,
+      "by_lobe": {
+        "frontal": 1.1700701051402511,
+        "parietal": 0.7784224465379457,
+        "temporal": 0.6720875351717457,
+        "occipital": 0.3666340127361673,
+        "cingulate": -0.6057471957836446,
+        "insula": 0.0471705304966213
+      }
+    },
+    "school/counterfactual_x-centred/grad/intrinsic+brain": {
+      "median": 2.0103372039746943,
+      "by_lobe": {
+        "frontal": 2.321711972703328,
+        "parietal": 1.6680922062915076,
+        "temporal": 2.3098338285055062,
+        "occipital": 1.8402641178989654,
+        "cingulate": 1.0351759892287387,
+        "insula": 1.4610746023000385
+      }
+    },
+    "school/counterfactual_x-centred/grad/projected": {
+      "median": 1.5216127451340888,
+      "by_lobe": {
+        "frontal": 1.921791740678844,
+        "parietal": 1.4312723261531424,
+        "temporal": 1.7287577641744976,
+        "occipital": 1.2828826283926609,
+        "cingulate": -0.23419989382117773,
+        "insula": 0.6999606524797632
+      }
+    },
+    "school/counterfactual_x-centred/mag/intrinsic+brain": {
+      "median": 1.3766683573978873,
+      "by_lobe": {
+        "frontal": 1.8718034435973343,
+        "parietal": 1.2753667965793982,
+        "temporal": 1.3839170756321737,
+        "occipital": 0.8904571996303396,
+        "cingulate": 0.48628052583619413,
+        "insula": 0.7600629754080057
+      }
+    },
+    "school/counterfactual_x-centred/mag/projected": {
+      "median": 1.3636263485758247,
+      "by_lobe": {
+        "frontal": 1.8035761503966334,
+        "parietal": 1.2085925146636594,
+        "temporal": 1.5071775602009498,
+        "occipital": 1.069357962742492,
+        "cingulate": -0.10779675327052264,
+        "insula": 0.6895855686846184
       }
     },
     "size2yr/centred/combined/intrinsic+brain": {
@@ -53148,6 +54036,138 @@
         "insula": 1.510427898112496
       }
     },
+    "size2yr/x-centred/combined/intrinsic+brain": {
+      "median": 2.1621721044469417,
+      "by_lobe": {
+        "frontal": 2.5945300608921014,
+        "parietal": 2.0374551463286434,
+        "temporal": 2.5275700669348766,
+        "occipital": 1.9273922654591182,
+        "cingulate": 0.5926575348613562,
+        "insula": 1.2296024339571325
+      }
+    },
+    "size2yr/x-centred/combined/projected": {
+      "median": 2.052784007685193,
+      "by_lobe": {
+        "frontal": 2.51131105551218,
+        "parietal": 1.914525582017744,
+        "temporal": 2.476075460531439,
+        "occipital": 1.8887188154078773,
+        "cingulate": -0.21399687021221306,
+        "insula": 0.914866987913827
+      }
+    },
+    "size2yr/x-centred/grad/intrinsic+brain": {
+      "median": 3.870320389023108,
+      "by_lobe": {
+        "frontal": 4.098785043333016,
+        "parietal": 3.111497436021833,
+        "temporal": 5.0572134624459455,
+        "occipital": 3.92321186449369,
+        "cingulate": 1.5617272802852369,
+        "insula": 2.8224646170690324
+      }
+    },
+    "size2yr/x-centred/grad/projected": {
+      "median": 3.4230712291421495,
+      "by_lobe": {
+        "frontal": 3.7956673254955526,
+        "parietal": 2.9481109663418,
+        "temporal": 4.338551845679388,
+        "occipital": 3.4216713457412213,
+        "cingulate": 0.3318034420693428,
+        "insula": 2.016351564602644
+      }
+    },
+    "size2yr/x-centred/mag/intrinsic+brain": {
+      "median": 2.430550196328435,
+      "by_lobe": {
+        "frontal": 2.894840528119442,
+        "parietal": 2.3021410924114334,
+        "temporal": 2.782618557447236,
+        "occipital": 2.0985610671586135,
+        "cingulate": 0.6934886098842268,
+        "insula": 1.3849350156796782
+      }
+    },
+    "size2yr/x-centred/mag/projected": {
+      "median": 2.501825562820044,
+      "by_lobe": {
+        "frontal": 2.9533298817256073,
+        "parietal": 2.2574742232521317,
+        "temporal": 2.980882203673117,
+        "occipital": 2.41547729512892,
+        "cingulate": 0.06984747863152518,
+        "insula": 1.2626177013835238
+      }
+    },
+    "size2yr/top-18mm/combined/intrinsic+brain": {
+      "median": 2.047223378029561,
+      "by_lobe": {
+        "frontal": 2.4388982076536165,
+        "parietal": 1.899221810436765,
+        "temporal": 2.4952884809066544,
+        "occipital": 1.8824037040004953,
+        "cingulate": 0.5512705914478475,
+        "insula": 1.2047821577163982
+      }
+    },
+    "size2yr/top-18mm/combined/projected": {
+      "median": 1.9424630253580397,
+      "by_lobe": {
+        "frontal": 2.3594468762142835,
+        "parietal": 1.7672935129219571,
+        "temporal": 2.4366405278439025,
+        "occipital": 1.8462650704129324,
+        "cingulate": -0.2746918225023409,
+        "insula": 0.8916011521357725
+      }
+    },
+    "size2yr/top-18mm/grad/intrinsic+brain": {
+      "median": 3.7269790211541682,
+      "by_lobe": {
+        "frontal": 3.9451447282498853,
+        "parietal": 2.9397683856605865,
+        "temporal": 5.002492592279784,
+        "occipital": 3.8439382591465336,
+        "cingulate": 1.5151753999221964,
+        "insula": 2.7919930684758287
+      }
+    },
+    "size2yr/top-18mm/grad/projected": {
+      "median": 3.2795646168238206,
+      "by_lobe": {
+        "frontal": 3.612041266055006,
+        "parietal": 2.7454626507914712,
+        "temporal": 4.296115107239643,
+        "occipital": 3.3460081259912866,
+        "cingulate": 0.25552553521812255,
+        "insula": 1.987397805760378
+      }
+    },
+    "size2yr/top-18mm/mag/intrinsic+brain": {
+      "median": 2.335560757698176,
+      "by_lobe": {
+        "frontal": 2.756464787849845,
+        "parietal": 2.1873874608002444,
+        "temporal": 2.740891282170468,
+        "occipital": 2.060371475770562,
+        "cingulate": 0.6388526320681471,
+        "insula": 1.3286151579377072
+      }
+    },
+    "size2yr/top-18mm/mag/projected": {
+      "median": 2.4026272669690436,
+      "by_lobe": {
+        "frontal": 2.8171629267833778,
+        "parietal": 2.1249323234330126,
+        "temporal": 2.9327874686129674,
+        "occipital": 2.3886877549542715,
+        "cingulate": 0.011889090773482979,
+        "insula": 1.2463173168615556
+      }
+    },
     "size2yr/counterfactual/combined/intrinsic+brain": {
       "median": 0.7505796911727564,
       "by_lobe": {
@@ -53212,6 +54232,72 @@
         "occipital": 0.8471856954604633,
         "cingulate": -0.17031921356071764,
         "insula": 0.6498473281599033
+      }
+    },
+    "size2yr/counterfactual_x-centred/combined/intrinsic+brain": {
+      "median": 0.754869150491237,
+      "by_lobe": {
+        "frontal": 1.1903316730135334,
+        "parietal": 0.6792404249302957,
+        "temporal": 0.743109015325979,
+        "occipital": 0.38699001441255354,
+        "cingulate": 0.2148785252790701,
+        "insula": 0.4246110487439957
+      }
+    },
+    "size2yr/counterfactual_x-centred/combined/projected": {
+      "median": 0.5149504915460212,
+      "by_lobe": {
+        "frontal": 1.0431076402648982,
+        "parietal": 0.5041084387713299,
+        "temporal": 0.442042289844255,
+        "occipital": 0.13513554281130574,
+        "cingulate": -0.7563392901195038,
+        "insula": -0.06890849453135212
+      }
+    },
+    "size2yr/counterfactual_x-centred/grad/intrinsic+brain": {
+      "median": 1.7235204643898427,
+      "by_lobe": {
+        "frontal": 2.080828718826671,
+        "parietal": 1.3670842144208453,
+        "temporal": 2.0591585520914464,
+        "occipital": 1.4998297730730645,
+        "cingulate": 0.9175425081702735,
+        "insula": 1.330466368369398
+      }
+    },
+    "size2yr/counterfactual_x-centred/grad/projected": {
+      "median": 1.2640886570744614,
+      "by_lobe": {
+        "frontal": 1.7388631347154178,
+        "parietal": 1.1283226813124478,
+        "temporal": 1.4288754510921748,
+        "occipital": 0.9842022037103847,
+        "cingulate": -0.37013816093435226,
+        "insula": 0.575381286038634
+      }
+    },
+    "size2yr/counterfactual_x-centred/mag/intrinsic+brain": {
+      "median": 1.2106201544009307,
+      "by_lobe": {
+        "frontal": 1.7394013018786043,
+        "parietal": 1.0577131974391811,
+        "temporal": 1.2317979539524002,
+        "occipital": 0.7040930700027455,
+        "cingulate": 0.4156712782330884,
+        "insula": 0.7199791925583356
+      }
+    },
+    "size2yr/counterfactual_x-centred/mag/projected": {
+      "median": 1.1980032390102555,
+      "by_lobe": {
+        "frontal": 1.6958629525240214,
+        "parietal": 0.9799162757787394,
+        "temporal": 1.3621552070454104,
+        "occipital": 0.8413016485831117,
+        "cingulate": -0.1607379194155573,
+        "insula": 0.6355984391353554
       }
     },
     "infant2yr/centred/combined/intrinsic+brain": {
@@ -53940,6 +55026,138 @@
         "insula": 1.0244062784595789
       }
     },
+    "infant2yr/x-centred/combined/intrinsic+brain": {
+      "median": 1.7649158742603244,
+      "by_lobe": {
+        "frontal": 1.9506871654194464,
+        "parietal": 1.301892887251673,
+        "temporal": 2.6385415044052403,
+        "occipital": 2.01635913142973,
+        "cingulate": 0.5677298501291277,
+        "insula": 1.2946187772327273
+      }
+    },
+    "infant2yr/x-centred/combined/projected": {
+      "median": 1.3895211202586304,
+      "by_lobe": {
+        "frontal": 1.704930880325837,
+        "parietal": 1.0319829910632918,
+        "temporal": 2.253688302353329,
+        "occipital": 1.6520998234036726,
+        "cingulate": -1.40298504466187,
+        "insula": 0.34046606459165396
+      }
+    },
+    "infant2yr/x-centred/grad/intrinsic+brain": {
+      "median": 3.2224075807299886,
+      "by_lobe": {
+        "frontal": 3.4790675361155703,
+        "parietal": 2.230684963867815,
+        "temporal": 4.829109311411668,
+        "occipital": 3.4401876775371147,
+        "cingulate": 1.4284587448544204,
+        "insula": 2.9236969366536676
+      }
+    },
+    "infant2yr/x-centred/grad/projected": {
+      "median": 2.6112616328369844,
+      "by_lobe": {
+        "frontal": 3.003732444790053,
+        "parietal": 1.9384132483021865,
+        "temporal": 4.013927545550315,
+        "occipital": 2.8332703751079262,
+        "cingulate": -0.9068414431780378,
+        "insula": 1.3969635320961018
+      }
+    },
+    "infant2yr/x-centred/mag/intrinsic+brain": {
+      "median": 2.1899538078136125,
+      "by_lobe": {
+        "frontal": 2.354798369364115,
+        "parietal": 1.8469447771891334,
+        "temporal": 2.9360800841912975,
+        "occipital": 2.292881096582375,
+        "cingulate": 0.6775656663033784,
+        "insula": 1.4661916998399638
+      }
+    },
+    "infant2yr/x-centred/mag/projected": {
+      "median": 1.9362356757460184,
+      "by_lobe": {
+        "frontal": 2.2541764078239632,
+        "parietal": 1.644686415376317,
+        "temporal": 2.8427412645196117,
+        "occipital": 2.1167405884389376,
+        "cingulate": -0.909785018780441,
+        "insula": 0.7308987888771281
+      }
+    },
+    "infant2yr/top-18mm/combined/intrinsic+brain": {
+      "median": 1.704428964221152,
+      "by_lobe": {
+        "frontal": 1.8333718652856974,
+        "parietal": 1.1677433694112014,
+        "temporal": 2.5654369908346775,
+        "occipital": 2.0210340634031896,
+        "cingulate": 0.566359494598004,
+        "insula": 1.3128909331319625
+      }
+    },
+    "infant2yr/top-18mm/combined/projected": {
+      "median": 1.319690713028958,
+      "by_lobe": {
+        "frontal": 1.6038129363931544,
+        "parietal": 0.8904422588369788,
+        "temporal": 2.2695828737249037,
+        "occipital": 1.6701595952594306,
+        "cingulate": -1.3909628930035989,
+        "insula": 0.2958299386765646
+      }
+    },
+    "infant2yr/top-18mm/grad/intrinsic+brain": {
+      "median": 3.1550430598457897,
+      "by_lobe": {
+        "frontal": 3.358761891689306,
+        "parietal": 2.153825696203281,
+        "temporal": 4.7326344757520475,
+        "occipital": 3.3717478264042327,
+        "cingulate": 1.4285857168461407,
+        "insula": 2.8310560828162714
+      }
+    },
+    "infant2yr/top-18mm/grad/projected": {
+      "median": 2.4974655412811666,
+      "by_lobe": {
+        "frontal": 2.8520047353134714,
+        "parietal": 1.8366520727810396,
+        "temporal": 3.8979280377653063,
+        "occipital": 2.804475372922817,
+        "cingulate": -0.9304221670816616,
+        "insula": 1.5491945599573458
+      }
+    },
+    "infant2yr/top-18mm/mag/intrinsic+brain": {
+      "median": 2.141948885347237,
+      "by_lobe": {
+        "frontal": 2.261777246028184,
+        "parietal": 1.784251307114988,
+        "temporal": 2.892529203090957,
+        "occipital": 2.3103518973033217,
+        "cingulate": 0.6798532017915215,
+        "insula": 1.4682726378057023
+      }
+    },
+    "infant2yr/top-18mm/mag/projected": {
+      "median": 1.9020396621636084,
+      "by_lobe": {
+        "frontal": 2.145098945696956,
+        "parietal": 1.5486622771822742,
+        "temporal": 2.8141565948342877,
+        "occipital": 2.132742971053285,
+        "cingulate": -0.8778680433229168,
+        "insula": 0.8201076362189113
+      }
+    },
     "infant2yr/counterfactual/combined/intrinsic+brain": {
       "median": 1.5553769236768806,
       "by_lobe": {
@@ -54004,6 +55222,72 @@
         "occipital": 1.338362826823145,
         "cingulate": -0.6626959398490413,
         "insula": 0.753977070246924
+      }
+    },
+    "infant2yr/counterfactual_x-centred/combined/intrinsic+brain": {
+      "median": 1.0062732483197698,
+      "by_lobe": {
+        "frontal": 1.5757518010132752,
+        "parietal": 0.7179285583993558,
+        "temporal": 1.1107676545415894,
+        "occipital": 0.49802136127242647,
+        "cingulate": 0.4860690236976615,
+        "insula": 0.9175901747986426
+      }
+    },
+    "infant2yr/counterfactual_x-centred/combined/projected": {
+      "median": 0.5361821894630362,
+      "by_lobe": {
+        "frontal": 1.2863894632865258,
+        "parietal": 0.4518639559485572,
+        "temporal": 0.632387304613443,
+        "occipital": -0.03710087093023767,
+        "cingulate": -1.716440787112581,
+        "insula": -0.1801297614329331
+      }
+    },
+    "infant2yr/counterfactual_x-centred/grad/intrinsic+brain": {
+      "median": 1.9985210597293652,
+      "by_lobe": {
+        "frontal": 2.6716642172636975,
+        "parietal": 1.4274692415233736,
+        "temporal": 2.406493162523943,
+        "occipital": 1.4275366924610657,
+        "cingulate": 1.1013002267192362,
+        "insula": 1.7863817831324378
+      }
+    },
+    "infant2yr/counterfactual_x-centred/grad/projected": {
+      "median": 1.3443237123997631,
+      "by_lobe": {
+        "frontal": 2.162064434914361,
+        "parietal": 1.144177391408753,
+        "temporal": 1.5939520898058617,
+        "occipital": 0.7552087002454091,
+        "cingulate": -1.2481291141946462,
+        "insula": 0.38919655430227384
+      }
+    },
+    "infant2yr/counterfactual_x-centred/mag/intrinsic+brain": {
+      "median": 1.4983214081611287,
+      "by_lobe": {
+        "frontal": 2.0826283509847094,
+        "parietal": 1.2228261077318545,
+        "temporal": 1.678761826224788,
+        "occipital": 0.9605437962959298,
+        "cingulate": 0.6372505564617976,
+        "insula": 1.2908568795878055
+      }
+    },
+    "infant2yr/counterfactual_x-centred/mag/projected": {
+      "median": 1.2181263324531844,
+      "by_lobe": {
+        "frontal": 1.980714485437358,
+        "parietal": 1.0261019482879628,
+        "temporal": 1.5127885761430218,
+        "occipital": 0.6159756323712235,
+        "cingulate": -0.8224029201428682,
+        "insula": 0.39654162194873765
       }
     }
   },
@@ -54095,12 +55379,273 @@
         "n": 6949
       }
     },
-    "school/counterfactual_vs_adult_centred/combined": {
+    "school/back_vs_adult_back/combined": {
+      "d_child": {
+        "median": 1.993680289126178,
+        "ci95": [
+          1.665912225032304,
+          2.493034428950919
+        ],
+        "share_positive": 0.9998534734007779,
+        "n": 6949
+      },
+      "d_adult": {
+        "median": 1.1079289223579134,
+        "ci95": [
+          0.8363547069996301,
+          1.404909467768649
+        ],
+        "share_positive": 0.9528229016227734,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.8929644498949836,
+        "ci95": [
+          0.7422626985600019,
+          1.0380036507853017
+        ],
+        "share_positive": 0.9658034420514552,
+        "n": 6949
+      }
+    },
+    "school/back_vs_adult_back/grad": {
+      "d_child": {
+        "median": 3.6656786578133556,
+        "ci95": [
+          3.2152589485598773,
+          4.159192886703054
+        ],
+        "share_positive": 1.0,
+        "n": 6949
+      },
+      "d_adult": {
+        "median": 2.3635535190308405,
+        "ci95": [
+          2.09834527812095,
+          2.5963697493749347
+        ],
+        "share_positive": 1.0,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.254899582737572,
+        "ci95": [
+          1.0431333613001315,
+          1.4478388614892423
+        ],
+        "share_positive": 0.977504063395732,
+        "n": 6949
+      }
+    },
+    "school/back_vs_adult_back/mag": {
+      "d_child": {
+        "median": 2.3047514512360916,
+        "ci95": [
+          1.9264720991559419,
+          2.7202759211529024
+        ],
+        "share_positive": 0.9998534734007779,
+        "n": 6949
+      },
+      "d_adult": {
+        "median": 1.4903646809010898,
+        "ci95": [
+          1.1758493399652947,
+          1.7427874112654993
+        ],
+        "share_positive": 0.985554524546443,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.8282085331946734,
+        "ci95": [
+          0.682787498289398,
+          0.9710642026283179
+        ],
+        "share_positive": 0.9466079309637426,
+        "n": 6949
+      }
+    },
+    "school/x-centred_vs_adult_x-centred/combined": {
+      "d_child": {
+        "median": 1.4923716748112716,
+        "ci95": [
+          1.2744064931559014,
+          1.6973309080864354
+        ],
+        "share_positive": 0.9783868289922387,
+        "n": 6949
+      },
+      "d_adult": {
+        "median": 1.001933429996571,
+        "ci95": [
+          0.7714958164532921,
+          1.2225399705001108
+        ],
+        "share_positive": 0.9538220901456103,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.46986336115296745,
+        "ci95": [
+          0.3718125968021094,
+          0.5798440886866507
+        ],
+        "share_positive": 0.8552077593247505,
+        "n": 6949
+      }
+    },
+    "school/x-centred_vs_adult_x-centred/grad": {
+      "d_child": {
+        "median": 2.9819940366488273,
+        "ci95": [
+          2.706796402177597,
+          3.2943041597462863
+        ],
+        "share_positive": 0.9998835328808617,
+        "n": 6949
+      },
+      "d_adult": {
+        "median": 2.2205214274440235,
+        "ci95": [
+          1.9667649331531514,
+          2.4164700698245616
+        ],
+        "share_positive": 1.0,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.6900601252632458,
+        "ci95": [
+          0.5463899788038403,
+          0.8239616732897044
+        ],
+        "share_positive": 0.9040420232352598,
+        "n": 6949
+      }
+    },
+    "school/x-centred_vs_adult_x-centred/mag": {
+      "d_child": {
+        "median": 1.8032233323383537,
+        "ci95": [
+          1.5315942213060354,
+          2.0222565537388935
+        ],
+        "share_positive": 0.9882098590410139,
+        "n": 6949
+      },
+      "d_adult": {
+        "median": 1.3749572162600185,
+        "ci95": [
+          1.1333438100257354,
+          1.5834236702201587
+        ],
+        "share_positive": 0.987139204784272,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.43344142632149074,
+        "ci95": [
+          0.3615950608654813,
+          0.5470588125989904
+        ],
+        "share_positive": 0.8380148084055848,
+        "n": 6949
+      }
+    },
+    "school/top-18mm_vs_adult_top-18mm/combined": {
+      "d_child": {
+        "median": 1.351513913063088,
+        "ci95": [
+          1.06288860930016,
+          1.5936606100051893
+        ],
+        "share_positive": 0.9708270097151676,
+        "n": 6949
+      },
+      "d_adult": {
+        "median": 0.8643751363629076,
+        "ci95": [
+          0.6823049171600342,
+          1.0844675271839384
+        ],
+        "share_positive": 0.9321596472012289,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.45528847913535836,
+        "ci95": [
+          0.36897822792630747,
+          0.5623576807562927
+        ],
+        "share_positive": 0.8534567113397498,
+        "n": 6949
+      }
+    },
+    "school/top-18mm_vs_adult_top-18mm/grad": {
+      "d_child": {
+        "median": 2.8139244046508214,
+        "ci95": [
+          2.535916763101387,
+          3.1763095790393123
+        ],
+        "share_positive": 0.9995291194389372,
+        "n": 6949
+      },
+      "d_adult": {
+        "median": 2.0735440456983447,
+        "ci95": [
+          1.9021277652981379,
+          2.242612502701649
+        ],
+        "share_positive": 1.0,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.667388329046493,
+        "ci95": [
+          0.5349028558684228,
+          0.8363268763121958
+        ],
+        "share_positive": 0.8992401163812772,
+        "n": 6949
+      }
+    },
+    "school/top-18mm_vs_adult_top-18mm/mag": {
+      "d_child": {
+        "median": 1.6990051866701843,
+        "ci95": [
+          1.3902103440933125,
+          1.9321047524174741
+        ],
+        "share_positive": 0.9836803357959183,
+        "n": 6949
+      },
+      "d_adult": {
+        "median": 1.2499548798933156,
+        "ci95": [
+          0.9988273112720673,
+          1.5465199302686514
+        ],
+        "share_positive": 0.9805564027263256,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.4380165908908029,
+        "ci95": [
+          0.35181032067765705,
+          0.5418896439974777
+        ],
+        "share_positive": 0.8369277111594172,
+        "n": 6949
+      }
+    },
+    "school/counterfactual_vs_adult_counterfactual/combined": {
       "d_child": {
         "median": 0.9344117145382251,
         "ci95": [
-          0.7964014507129734,
-          1.1070963220838692
+          0.7625195848415245,
+          1.084111753387477
         ],
         "share_positive": 0.9891114183046285,
         "n": 6949
@@ -54108,8 +55653,8 @@
       "d_adult": {
         "median": 1.2457377923731914,
         "ci95": [
-          1.0122945084664499,
-          1.4788463570320691
+          1.010761444289876,
+          1.4948917999872497
         ],
         "share_positive": 0.9892605536576561,
         "n": 7103
@@ -54117,19 +55662,19 @@
       "delta": {
         "median": -0.1711731324882646,
         "ci95": [
-          -0.21976011016885694,
-          -0.12410675732229201
+          -0.21181689427282235,
+          -0.12294674439007555
         ],
         "share_positive": 0.25335991753778453,
         "n": 6949
       }
     },
-    "school/counterfactual_vs_adult_centred/grad": {
+    "school/counterfactual_vs_adult_counterfactual/grad": {
       "d_child": {
         "median": 2.012629023285724,
         "ci95": [
-          1.850600823323875,
-          2.1800248181933872
+          1.823077392683598,
+          2.153801568750602
         ],
         "share_positive": 1.0,
         "n": 6949
@@ -54137,8 +55682,8 @@
       "d_adult": {
         "median": 2.513333876871982,
         "ci95": [
-          2.257320203289152,
-          2.700390515201444
+          2.251049052906958,
+          2.6973463611074755
         ],
         "share_positive": 1.0,
         "n": 7103
@@ -54146,19 +55691,19 @@
       "delta": {
         "median": -0.3176231914463059,
         "ci95": [
-          -0.37290941087034934,
-          -0.25550507683769696
+          -0.3668258357579321,
+          -0.2542210874528152
         ],
         "share_positive": 0.15162575458370994,
         "n": 6949
       }
     },
-    "school/counterfactual_vs_adult_centred/mag": {
+    "school/counterfactual_vs_adult_counterfactual/mag": {
       "d_child": {
         "median": 1.3751219810630055,
         "ci95": [
-          1.192826560004138,
-          1.5315009639915325
+          1.2154425618577644,
+          1.545421972755052
         ],
         "share_positive": 0.9988551063418071,
         "n": 6949
@@ -54166,8 +55711,8 @@
       "d_adult": {
         "median": 1.6162502580978009,
         "ci95": [
-          1.3580624973415023,
-          1.8612012604199624
+          1.3416183163491195,
+          1.8701922784263787
         ],
         "share_positive": 0.9986481970515116,
         "n": 7103
@@ -54175,10 +55720,97 @@
       "delta": {
         "median": -0.11985255574052628,
         "ci95": [
-          -0.16005180081245296,
-          -0.07716557182162444
+          -0.15736873101565518,
+          -0.08720292476814305
         ],
         "share_positive": 0.3212138729000823,
+        "n": 6949
+      }
+    },
+    "school/counterfactual_x-centred_vs_adult_counterfactual_x-centred/combined": {
+      "d_child": {
+        "median": 0.9394403175341793,
+        "ci95": [
+          0.7785891750707122,
+          1.113730226591367
+        ],
+        "share_positive": 0.9878788591688799,
+        "n": 6949
+      },
+      "d_adult": {
+        "median": 1.2544719764213876,
+        "ci95": [
+          1.007733146488224,
+          1.4725744040770665
+        ],
+        "share_positive": 0.9863213185580344,
+        "n": 7103
+      },
+      "delta": {
+        "median": -0.17342140668285433,
+        "ci95": [
+          -0.2170898524940628,
+          -0.1256558343062728
+        ],
+        "share_positive": 0.25414545693068913,
+        "n": 6949
+      }
+    },
+    "school/counterfactual_x-centred_vs_adult_counterfactual_x-centred/grad": {
+      "d_child": {
+        "median": 2.0103372039746943,
+        "ci95": [
+          1.8428182773479844,
+          2.1769269366222
+        ],
+        "share_positive": 0.9998835328808617,
+        "n": 6949
+      },
+      "d_adult": {
+        "median": 2.5073232799169896,
+        "ci95": [
+          2.2719876004181008,
+          2.7168516274402816
+        ],
+        "share_positive": 1.0,
+        "n": 7103
+      },
+      "delta": {
+        "median": -0.3181354620900372,
+        "ci95": [
+          -0.36733695871868816,
+          -0.263180511646625
+        ],
+        "share_positive": 0.1536912607525699,
+        "n": 6949
+      }
+    },
+    "school/counterfactual_x-centred_vs_adult_counterfactual_x-centred/mag": {
+      "d_child": {
+        "median": 1.3766683573978873,
+        "ci95": [
+          1.2049441194727204,
+          1.5837051941807214
+        ],
+        "share_positive": 0.998714301762926,
+        "n": 6949
+      },
+      "d_adult": {
+        "median": 1.6167729894014187,
+        "ci95": [
+          1.3152213213554147,
+          1.8856517848570231
+        ],
+        "share_positive": 0.9976702739569948,
+        "n": 7103
+      },
+      "delta": {
+        "median": -0.12068259701554912,
+        "ci95": [
+          -0.16109220038490352,
+          -0.07337431108548269
+        ],
+        "share_positive": 0.32061026017448424,
         "n": 6949
       }
     },
@@ -54186,8 +55818,8 @@
       "d_child": {
         "median": 3.0624185507331925,
         "ci95": [
-          2.67280536639507,
-          3.3846493342753363
+          2.6584779210555807,
+          3.4394625156599146
         ],
         "share_positive": 1.0,
         "n": 6855
@@ -54195,8 +55827,8 @@
       "d_adult": {
         "median": 1.2457377923731914,
         "ci95": [
-          0.9919045664005752,
-          1.4414654892014311
+          1.0178331296343153,
+          1.4492426291319482
         ],
         "share_positive": 0.9892605536576561,
         "n": 7103
@@ -54204,8 +55836,8 @@
       "delta": {
         "median": 1.7327264540620217,
         "ci95": [
-          1.568235604571785,
-          1.9006377663897551
+          1.5702139027400999,
+          1.8993414800967605
         ],
         "share_positive": 0.9977824017720162,
         "n": 6855
@@ -54215,8 +55847,8 @@
       "d_child": {
         "median": 4.948613259566471,
         "ci95": [
-          4.535490090785349,
-          5.301593712810441
+          4.478624681046793,
+          5.2738975478697
         ],
         "share_positive": 1.0,
         "n": 6855
@@ -54224,8 +55856,8 @@
       "d_adult": {
         "median": 2.513333876871982,
         "ci95": [
-          2.2424823746949873,
-          2.721448572771104
+          2.251178369047758,
+          2.7398002987036247
         ],
         "share_positive": 1.0,
         "n": 7103
@@ -54233,8 +55865,8 @@
       "delta": {
         "median": 2.3705197201615107,
         "ci95": [
-          2.1423437578786655,
-          2.589859498137209
+          2.180625170687433,
+          2.5957725393356106
         ],
         "share_positive": 0.9998888586624922,
         "n": 6855
@@ -54244,8 +55876,8 @@
       "d_child": {
         "median": 3.315540016276535,
         "ci95": [
-          2.872550013840166,
-          3.636831406570162
+          2.9335041649532188,
+          3.66467851365637
         ],
         "share_positive": 1.0,
         "n": 6855
@@ -54253,8 +55885,8 @@
       "d_adult": {
         "median": 1.6162502580978009,
         "ci95": [
-          1.3267358130694842,
-          1.8479624884037287
+          1.3955565437721642,
+          1.842357923955683
         ],
         "share_positive": 0.9986481970515116,
         "n": 7103
@@ -54262,19 +55894,280 @@
       "delta": {
         "median": 1.619667419998692,
         "ci95": [
-          1.471780079377426,
-          1.775272179363427
+          1.4315096998092314,
+          1.7711309907038149
         ],
         "share_positive": 0.9891837517393559,
         "n": 6855
       }
     },
-    "size2yr/counterfactual_vs_adult_centred/combined": {
+    "size2yr/back_vs_adult_back/combined": {
+      "d_child": {
+        "median": 2.364104446277007,
+        "ci95": [
+          1.990360317494229,
+          2.875362646093822
+        ],
+        "share_positive": 0.9979075892589974,
+        "n": 6855
+      },
+      "d_adult": {
+        "median": 1.1079289223579134,
+        "ci95": [
+          0.872922927734377,
+          1.3804569817710557
+        ],
+        "share_positive": 0.9528229016227734,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.3024240120167616,
+        "ci95": [
+          1.006582156681866,
+          1.5340254510122884
+        ],
+        "share_positive": 0.9804805627861827,
+        "n": 6855
+      }
+    },
+    "size2yr/back_vs_adult_back/grad": {
+      "d_child": {
+        "median": 4.18708183584306,
+        "ci95": [
+          3.631016226075001,
+          4.776617286591989
+        ],
+        "share_positive": 1.0,
+        "n": 6855
+      },
+      "d_adult": {
+        "median": 2.3635535190308405,
+        "ci95": [
+          2.0932893523499487,
+          2.642825749229621
+        ],
+        "share_positive": 1.0,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.8645032115734854,
+        "ci95": [
+          1.5861934800466462,
+          2.3206175221848446
+        ],
+        "share_positive": 0.97699070494735,
+        "n": 6855
+      }
+    },
+    "size2yr/back_vs_adult_back/mag": {
+      "d_child": {
+        "median": 2.66964672103911,
+        "ci95": [
+          2.247193727243085,
+          3.207129256284362
+        ],
+        "share_positive": 1.0,
+        "n": 6855
+      },
+      "d_adult": {
+        "median": 1.4903646809010898,
+        "ci95": [
+          1.1849654019256708,
+          1.7500384137779013
+        ],
+        "share_positive": 0.985554524546443,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.2301691876894503,
+        "ci95": [
+          1.0291104996874878,
+          1.427366873647849
+        ],
+        "share_positive": 0.9666305350903898,
+        "n": 6855
+      }
+    },
+    "size2yr/x-centred_vs_adult_x-centred/combined": {
+      "d_child": {
+        "median": 2.1621721044469417,
+        "ci95": [
+          1.855582495805113,
+          2.449311805852058
+        ],
+        "share_positive": 0.9885124183825681,
+        "n": 6855
+      },
+      "d_adult": {
+        "median": 1.001933429996571,
+        "ci95": [
+          0.7396307886891117,
+          1.2381118983140171
+        ],
+        "share_positive": 0.9538220901456103,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.1222024244237698,
+        "ci95": [
+          0.9773117073647625,
+          1.2430427493513312
+        ],
+        "share_positive": 0.9559421257609754,
+        "n": 6855
+      }
+    },
+    "size2yr/x-centred_vs_adult_x-centred/grad": {
+      "d_child": {
+        "median": 3.870320389023108,
+        "ci95": [
+          3.4269011842313493,
+          4.166565783276111
+        ],
+        "share_positive": 1.0,
+        "n": 6855
+      },
+      "d_adult": {
+        "median": 2.2205214274440235,
+        "ci95": [
+          1.9533124844509326,
+          2.4073918897688382
+        ],
+        "share_positive": 1.0,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.5354724430616904,
+        "ci95": [
+          1.364121613849106,
+          1.7019871742162365
+        ],
+        "share_positive": 0.9916233642177755,
+        "n": 6855
+      }
+    },
+    "size2yr/x-centred_vs_adult_x-centred/mag": {
+      "d_child": {
+        "median": 2.430550196328435,
+        "ci95": [
+          2.015945900488864,
+          2.697126715318925
+        ],
+        "share_positive": 0.9941919747966852,
+        "n": 6855
+      },
+      "d_adult": {
+        "median": 1.3749572162600185,
+        "ci95": [
+          1.1558655850096797,
+          1.6283256481542885
+        ],
+        "share_positive": 0.987139204784272,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.0296001416745924,
+        "ci95": [
+          0.8857532326205216,
+          1.1758201152806207
+        ],
+        "share_positive": 0.9396532540345086,
+        "n": 6855
+      }
+    },
+    "size2yr/top-18mm_vs_adult_top-18mm/combined": {
+      "d_child": {
+        "median": 2.047223378029561,
+        "ci95": [
+          1.7915438015846719,
+          2.369334565114731
+        ],
+        "share_positive": 0.9871731437465767,
+        "n": 6855
+      },
+      "d_adult": {
+        "median": 0.8643751363629076,
+        "ci95": [
+          0.6276669797372697,
+          1.0790672017507894
+        ],
+        "share_positive": 0.9321596472012289,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.1577100410418215,
+        "ci95": [
+          1.0244430090007295,
+          1.2786521958325843
+        ],
+        "share_positive": 0.9605365223627925,
+        "n": 6855
+      }
+    },
+    "size2yr/top-18mm_vs_adult_top-18mm/grad": {
+      "d_child": {
+        "median": 3.7269790211541682,
+        "ci95": [
+          3.3684637377413162,
+          4.003865811572911
+        ],
+        "share_positive": 1.0,
+        "n": 6855
+      },
+      "d_adult": {
+        "median": 2.0735440456983447,
+        "ci95": [
+          1.8492762054894374,
+          2.279008952744023
+        ],
+        "share_positive": 1.0,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.5493564544925915,
+        "ci95": [
+          1.3641079065018946,
+          1.7140058961381537
+        ],
+        "share_positive": 0.9925159651374502,
+        "n": 6855
+      }
+    },
+    "size2yr/top-18mm_vs_adult_top-18mm/mag": {
+      "d_child": {
+        "median": 2.335560757698176,
+        "ci95": [
+          1.9694958269526825,
+          2.593859610872489
+        ],
+        "share_positive": 0.9920975978671945,
+        "n": 6855
+      },
+      "d_adult": {
+        "median": 1.2499548798933156,
+        "ci95": [
+          1.0405011933591777,
+          1.5342681721728983
+        ],
+        "share_positive": 0.9805564027263256,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.0412332157064061,
+        "ci95": [
+          0.9344686749607918,
+          1.1783610058692795
+        ],
+        "share_positive": 0.9422060695454167,
+        "n": 6855
+      }
+    },
+    "size2yr/counterfactual_vs_adult_counterfactual/combined": {
       "d_child": {
         "median": 0.7505796911727564,
         "ci95": [
-          0.590901003076752,
-          0.9031759143037682
+          0.5943442861472374,
+          0.8939867527929429
         ],
         "share_positive": 0.9526831613205415,
         "n": 6855
@@ -54282,8 +56175,8 @@
       "d_adult": {
         "median": 1.2457377923731914,
         "ci95": [
-          1.0289783682192661,
-          1.4435042513474217
+          0.9853576794558478,
+          1.4568800764296148
         ],
         "share_positive": 0.9892605536576561,
         "n": 7103
@@ -54291,19 +56184,19 @@
       "delta": {
         "median": -0.2951904152117677,
         "ci95": [
-          -0.35674098631810125,
-          -0.24650257519340485
+          -0.3524545303445448,
+          -0.2353252401699995
         ],
         "share_positive": 0.1445440105131562,
         "n": 6855
       }
     },
-    "size2yr/counterfactual_vs_adult_centred/grad": {
+    "size2yr/counterfactual_vs_adult_counterfactual/grad": {
       "d_child": {
         "median": 1.7272009008320692,
         "ci95": [
-          1.5357330269925973,
-          1.8871286256597914
+          1.54360304627043,
+          1.888547746690595
         ],
         "share_positive": 0.9988646033829159,
         "n": 6855
@@ -54311,8 +56204,8 @@
       "d_adult": {
         "median": 2.513333876871982,
         "ci95": [
-          2.3004688098746047,
-          2.7144307184379906
+          2.2969742458392055,
+          2.748562832283424
         ],
         "share_positive": 1.0,
         "n": 7103
@@ -54320,19 +56213,19 @@
       "delta": {
         "median": -0.5188105366729729,
         "ci95": [
-          -0.591444712563846,
-          -0.45789758366277133
+          -0.6007992985354085,
+          -0.4419082563594304
         ],
         "share_positive": 0.06063060814677027,
         "n": 6855
       }
     },
-    "size2yr/counterfactual_vs_adult_centred/mag": {
+    "size2yr/counterfactual_vs_adult_counterfactual/mag": {
       "d_child": {
         "median": 1.2111013618442332,
         "ci95": [
-          0.9758680631565307,
-          1.3615824448657199
+          1.022886187721822,
+          1.3852085543059516
         ],
         "share_positive": 0.9947662148441161,
         "n": 6855
@@ -54340,8 +56233,8 @@
       "d_adult": {
         "median": 1.6162502580978009,
         "ci95": [
-          1.3478650579630367,
-          1.9010036049836758
+          1.3775423766003028,
+          1.8940955763949325
         ],
         "share_positive": 0.9986481970515116,
         "n": 7103
@@ -54349,10 +56242,97 @@
       "delta": {
         "median": -0.20891240687178528,
         "ci95": [
-          -0.25660940487196027,
-          -0.16389124758088297
+          -0.25684186620384664,
+          -0.16587077389951563
         ],
         "share_positive": 0.21672239189691217,
+        "n": 6855
+      }
+    },
+    "size2yr/counterfactual_x-centred_vs_adult_counterfactual_x-centred/combined": {
+      "d_child": {
+        "median": 0.754869150491237,
+        "ci95": [
+          0.567321025377302,
+          0.9167805166388673
+        ],
+        "share_positive": 0.9517955027619424,
+        "n": 6855
+      },
+      "d_adult": {
+        "median": 1.2544719764213876,
+        "ci95": [
+          0.9879580135121429,
+          1.4997929985413354
+        ],
+        "share_positive": 0.9863213185580344,
+        "n": 7103
+      },
+      "delta": {
+        "median": -0.2989424716101473,
+        "ci95": [
+          -0.3557512733417219,
+          -0.2470255961500654
+        ],
+        "share_positive": 0.14689625736589162,
+        "n": 6855
+      }
+    },
+    "size2yr/counterfactual_x-centred_vs_adult_counterfactual_x-centred/grad": {
+      "d_child": {
+        "median": 1.7235204643898427,
+        "ci95": [
+          1.5487046178570196,
+          1.8662862802833688
+        ],
+        "share_positive": 0.9990556425139485,
+        "n": 6855
+      },
+      "d_adult": {
+        "median": 2.5073232799169896,
+        "ci95": [
+          2.2837651544727855,
+          2.7248862150675435
+        ],
+        "share_positive": 1.0,
+        "n": 7103
+      },
+      "delta": {
+        "median": -0.5211518300410021,
+        "ci95": [
+          -0.5931296936941901,
+          -0.44883953059108916
+        ],
+        "share_positive": 0.065199910313221,
+        "n": 6855
+      }
+    },
+    "size2yr/counterfactual_x-centred_vs_adult_counterfactual_x-centred/mag": {
+      "d_child": {
+        "median": 1.2106201544009307,
+        "ci95": [
+          0.9863012950666631,
+          1.4243801723435507
+        ],
+        "share_positive": 0.9944317435967206,
+        "n": 6855
+      },
+      "d_adult": {
+        "median": 1.6167729894014187,
+        "ci95": [
+          1.3756991866973844,
+          1.859827371457787
+        ],
+        "share_positive": 0.9976702739569948,
+        "n": 7103
+      },
+      "delta": {
+        "median": -0.2132620177844904,
+        "ci95": [
+          -0.25988376723048195,
+          -0.1701570480598962
+        ],
+        "share_positive": 0.22073771378716514,
         "n": 6855
       }
     },
@@ -54360,8 +56340,8 @@
       "d_child": {
         "median": 3.0782787573603176,
         "ci95": [
-          2.7028730191618124,
-          3.4578787938627027
+          2.6579770596055527,
+          3.4998480706830235
         ],
         "share_positive": 0.999874983199616,
         "n": 7559
@@ -54369,8 +56349,8 @@
       "d_adult": {
         "median": 1.2457377923731914,
         "ci95": [
-          1.005679476152163,
-          1.4587096971510298
+          1.014057787760694,
+          1.4563703352670088
         ],
         "share_positive": 0.9892605536576561,
         "n": 7103
@@ -54378,8 +56358,8 @@
       "delta": {
         "median": 1.787394544384946,
         "ci95": [
-          1.459954864799398,
-          2.3045232613169286
+          1.4737192835070125,
+          2.180514688525487
         ],
         "share_positive": 0.9743097945346245,
         "n_parcels": 66,
@@ -54394,8 +56374,8 @@
       "d_child": {
         "median": 4.950820156750048,
         "ci95": [
-          4.3776238466476896,
-          5.465273194090598
+          4.3745817603766595,
+          5.460474228924804
         ],
         "share_positive": 1.0,
         "n": 7559
@@ -54403,8 +56383,8 @@
       "d_adult": {
         "median": 2.513333876871982,
         "ci95": [
-          2.2856803343741254,
-          2.721285552018079
+          2.297082099720553,
+          2.7263649677647006
         ],
         "share_positive": 1.0,
         "n": 7103
@@ -54412,8 +56392,8 @@
       "delta": {
         "median": 2.3571320516475454,
         "ci95": [
-          1.7694281682323507,
-          2.8503675640498
+          1.935200536317037,
+          2.9549644761847222
         ],
         "share_positive": 1.0,
         "n_parcels": 66,
@@ -54428,8 +56408,8 @@
       "d_child": {
         "median": 3.387311084507936,
         "ci95": [
-          2.946053803876633,
-          3.814101290917487
+          3.033621769661038,
+          3.819846085333575
         ],
         "share_positive": 1.0,
         "n": 7559
@@ -54437,8 +56417,8 @@
       "d_adult": {
         "median": 1.6162502580978009,
         "ci95": [
-          1.394873282172528,
-          1.857618017843413
+          1.3501873561798134,
+          1.8685450824746552
         ],
         "share_positive": 0.9986481970515116,
         "n": 7103
@@ -54447,7 +56427,7 @@
         "median": 1.695357455627012,
         "ci95": [
           1.3388724725855696,
-          2.2167850345932694
+          2.2117603779263897
         ],
         "share_positive": 0.9551941749283694,
         "n_parcels": 66,
@@ -54458,12 +56438,318 @@
         "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
       }
     },
-    "infant2yr/counterfactual_vs_adult_centred/combined": {
+    "infant2yr/back_vs_adult_back/combined": {
+      "d_child": {
+        "median": 2.506901695653678,
+        "ci95": [
+          2.0656508544809764,
+          2.960366972933928
+        ],
+        "share_positive": 0.9978848121715181,
+        "n": 7559
+      },
+      "d_adult": {
+        "median": 1.1079289223579134,
+        "ci95": [
+          0.824556567565522,
+          1.3304721625966505
+        ],
+        "share_positive": 0.9528229016227734,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.3864980591019425,
+        "ci95": [
+          1.1269079095912162,
+          1.6294396540279417
+        ],
+        "share_positive": 0.9743097945346245,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/back_vs_adult_back/grad": {
+      "d_child": {
+        "median": 4.291814847091683,
+        "ci95": [
+          3.670519300350618,
+          4.9738202944787595
+        ],
+        "share_positive": 1.0,
+        "n": 7559
+      },
+      "d_adult": {
+        "median": 2.3635535190308405,
+        "ci95": [
+          2.0286842356999015,
+          2.5958987405695932
+        ],
+        "share_positive": 1.0,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.874907779828562,
+        "ci95": [
+          1.460310743929992,
+          2.349184000600283
+        ],
+        "share_positive": 0.9913166382038727,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/back_vs_adult_back/mag": {
+      "d_child": {
+        "median": 2.925518312702942,
+        "ci95": [
+          2.4136567688375847,
+          3.455585221158195
+        ],
+        "share_positive": 0.9993376544163427,
+        "n": 7559
+      },
+      "d_adult": {
+        "median": 1.4903646809010898,
+        "ci95": [
+          1.205649678698559,
+          1.7538805366282497
+        ],
+        "share_positive": 0.985554524546443,
+        "n": 7103
+      },
+      "delta": {
+        "median": 1.3281072629445245,
+        "ci95": [
+          1.1519178404837827,
+          1.705003388802595
+        ],
+        "share_positive": 0.9551941749283694,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/x-centred_vs_adult_x-centred/combined": {
+      "d_child": {
+        "median": 1.7649158742603244,
+        "ci95": [
+          1.4608799487535404,
+          2.0960981334187667
+        ],
+        "share_positive": 0.976062713922939,
+        "n": 7559
+      },
+      "d_adult": {
+        "median": 1.001933429996571,
+        "ci95": [
+          0.7702215415357113,
+          1.2066128798608455
+        ],
+        "share_positive": 0.9538220901456103,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.6824319293605603,
+        "ci95": [
+          0.3599717105337481,
+          0.7912812209169697
+        ],
+        "share_positive": 0.9161297071800383,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/x-centred_vs_adult_x-centred/grad": {
+      "d_child": {
+        "median": 3.2224075807299886,
+        "ci95": [
+          2.748983827643711,
+          3.7237470827144237
+        ],
+        "share_positive": 0.9996271006846236,
+        "n": 7559
+      },
+      "d_adult": {
+        "median": 2.2205214274440235,
+        "ci95": [
+          1.9751032313363008,
+          2.4055755677482344
+        ],
+        "share_positive": 1.0,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.8990221549244706,
+        "ci95": [
+          0.5618223356165667,
+          1.2111952898135896
+        ],
+        "share_positive": 0.9230508331077316,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/x-centred_vs_adult_x-centred/mag": {
+      "d_child": {
+        "median": 2.1899538078136125,
+        "ci95": [
+          1.8321620527144562,
+          2.481541170075293
+        ],
+        "share_positive": 0.9821729284347362,
+        "n": 7559
+      },
+      "d_adult": {
+        "median": 1.3749572162600185,
+        "ci95": [
+          1.102467552901816,
+          1.5910255003164513
+        ],
+        "share_positive": 0.987139204784272,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.7542236743881472,
+        "ci95": [
+          0.5232087918237877,
+          0.9271717269408354
+        ],
+        "share_positive": 0.9023185883274415,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/top-18mm_vs_adult_top-18mm/combined": {
+      "d_child": {
+        "median": 1.704428964221152,
+        "ci95": [
+          1.3639461081983855,
+          1.9993987359745742
+        ],
+        "share_positive": 0.974838227129298,
+        "n": 7559
+      },
+      "d_adult": {
+        "median": 0.8643751363629076,
+        "ci95": [
+          0.6472452152827239,
+          1.0493010852731925
+        ],
+        "share_positive": 0.9321596472012289,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.7019490048614059,
+        "ci95": [
+          0.433491741856616,
+          1.143194748170277
+        ],
+        "share_positive": 0.9384840756909176,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/top-18mm_vs_adult_top-18mm/grad": {
+      "d_child": {
+        "median": 3.1550430598457897,
+        "ci95": [
+          2.673414321823373,
+          3.6228602210881085
+        ],
+        "share_positive": 0.9994927241161646,
+        "n": 7559
+      },
+      "d_adult": {
+        "median": 2.0735440456983447,
+        "ci95": [
+          1.8390177076290908,
+          2.2959637844562244
+        ],
+        "share_positive": 1.0,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.9889829538838675,
+        "ci95": [
+          0.6149326945673306,
+          1.3689518699218963
+        ],
+        "share_positive": 0.966658054302187,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/top-18mm_vs_adult_top-18mm/mag": {
+      "d_child": {
+        "median": 2.141948885347237,
+        "ci95": [
+          1.8042641142957596,
+          2.47858645584991
+        ],
+        "share_positive": 0.9824822802917711,
+        "n": 7559
+      },
+      "d_adult": {
+        "median": 1.2499548798933156,
+        "ci95": [
+          1.032273832901128,
+          1.506351624341471
+        ],
+        "share_positive": 0.9805564027263256,
+        "n": 7103
+      },
+      "delta": {
+        "median": 0.7414729910254736,
+        "ci95": [
+          0.5710804169523249,
+          0.9755772235557029
+        ],
+        "share_positive": 0.908978491700485,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/counterfactual_vs_adult_counterfactual/combined": {
       "d_child": {
         "median": 1.5553769236768806,
         "ci95": [
-          1.2860985857163159,
-          1.8222416138242328
+          1.2380345276330142,
+          1.856404857245403
         ],
         "share_positive": 0.9897678825700033,
         "n": 7559
@@ -54471,8 +56757,8 @@
       "d_adult": {
         "median": 1.2457377923731914,
         "ci95": [
-          1.0250796522375434,
-          1.4797527252166494
+          0.9902537630423665,
+          1.4591179418072084
         ],
         "share_positive": 0.9892605536576561,
         "n": 7103
@@ -54492,12 +56778,12 @@
         "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
       }
     },
-    "infant2yr/counterfactual_vs_adult_centred/grad": {
+    "infant2yr/counterfactual_vs_adult_counterfactual/grad": {
       "d_child": {
         "median": 2.780155116154001,
         "ci95": [
-          2.412020080707016,
-          3.0971744742594334
+          2.377202316852796,
+          3.1807963855545105
         ],
         "share_positive": 0.9997036437228269,
         "n": 7559
@@ -54505,8 +56791,8 @@
       "d_adult": {
         "median": 2.513333876871982,
         "ci95": [
-          2.2157964280558704,
-          2.7109128285986444
+          2.2347067602761155,
+          2.707547383568303
         ],
         "share_positive": 1.0,
         "n": 7103
@@ -54514,8 +56800,8 @@
       "delta": {
         "median": 0.2224171158616386,
         "ci95": [
-          -0.011429229271355812,
-          0.5029106270360734
+          0.03419519734273635,
+          0.5276771624080703
         ],
         "share_positive": 0.6448160543195487,
         "n_parcels": 66,
@@ -54526,12 +56812,12 @@
         "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
       }
     },
-    "infant2yr/counterfactual_vs_adult_centred/mag": {
+    "infant2yr/counterfactual_vs_adult_counterfactual/mag": {
       "d_child": {
         "median": 2.0480573578585317,
         "ci95": [
-          1.7698716823232885,
-          2.340297125793078
+          1.7214089759980085,
+          2.4055042006134544
         ],
         "share_positive": 0.9988454245423511,
         "n": 7559
@@ -54539,8 +56825,8 @@
       "d_adult": {
         "median": 1.6162502580978009,
         "ci95": [
-          1.3197068550639042,
-          1.8958609177943293
+          1.3297988133719123,
+          1.8629263980059871
         ],
         "share_positive": 0.9986481970515116,
         "n": 7103
@@ -54548,10 +56834,459 @@
       "delta": {
         "median": 0.38148857530466906,
         "ci95": [
-          0.2731631964921495,
-          0.6055092192992658
+          0.15407035088796395,
+          0.6064641680952004
         ],
         "share_positive": 0.768639150563391,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/counterfactual_x-centred_vs_adult_counterfactual_x-centred/combined": {
+      "d_child": {
+        "median": 1.0062732483197698,
+        "ci95": [
+          0.784471471676907,
+          1.2296457005990151
+        ],
+        "share_positive": 0.9589114953188647,
+        "n": 7559
+      },
+      "d_adult": {
+        "median": 1.2544719764213876,
+        "ci95": [
+          1.0254259166938324,
+          1.4577181681133031
+        ],
+        "share_positive": 0.9863213185580344,
+        "n": 7103
+      },
+      "delta": {
+        "median": -0.37420980266586923,
+        "ci95": [
+          -0.5350847821562734,
+          0.10835041010301799
+        ],
+        "share_positive": 0.4143918669266955,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/counterfactual_x-centred_vs_adult_counterfactual_x-centred/grad": {
+      "d_child": {
+        "median": 1.9985210597293652,
+        "ci95": [
+          1.7234316552193938,
+          2.2906532256329704
+        ],
+        "share_positive": 0.9974670281113183,
+        "n": 7559
+      },
+      "d_adult": {
+        "median": 2.5073232799169896,
+        "ci95": [
+          2.3189161698418226,
+          2.719270216540812
+        ],
+        "share_positive": 1.0,
+        "n": 7103
+      },
+      "delta": {
+        "median": -0.5035686971576028,
+        "ci95": [
+          -0.6694115877039084,
+          -0.3076431812452634
+        ],
+        "share_positive": 0.23836518780532093,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/counterfactual_x-centred_vs_adult_counterfactual_x-centred/mag": {
+      "d_child": {
+        "median": 1.4983214081611287,
+        "ci95": [
+          1.2227878438079407,
+          1.7206743278760794
+        ],
+        "share_positive": 0.9941928483475835,
+        "n": 7559
+      },
+      "d_adult": {
+        "median": 1.6167729894014187,
+        "ci95": [
+          1.3815140041752474,
+          1.8817231797455545
+        ],
+        "share_positive": 0.9976702739569948,
+        "n": 7103
+      },
+      "delta": {
+        "median": -0.1597502839200038,
+        "ci95": [
+          -0.3820171758219104,
+          0.15442824913169284
+        ],
+        "share_positive": 0.4364558288046848,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    }
+  },
+  "absolute_detectability_dB": {
+    "adult/opm_dense/opm/intrinsic+brain": -1.5973260380967784,
+    "adult/opm_matched/opm/intrinsic+brain": -2.8033653747583025,
+    "adult/squid:top/combined/intrinsic+brain": -2.6640285314659247,
+    "adult/squid:top/grad/intrinsic+brain": -3.6266840151783035,
+    "adult/squid:top/mag/intrinsic+brain": -2.998054437088559,
+    "adult/opm_dense/opm/projected": -2.1075178252826903,
+    "adult/opm_matched/opm/projected": -3.7655802325631367,
+    "adult/squid:top/combined/projected": -2.844479412565492,
+    "adult/squid:top/grad/projected": -3.671902023726992,
+    "adult/squid:top/mag/projected": -3.3303788092441042,
+    "school/opm_dense/opm/intrinsic+brain": -0.6553003133078922,
+    "school/opm_matched/opm/intrinsic+brain": -1.7405311372586327,
+    "school/squid:top/combined/intrinsic+brain": -2.1536022577313907,
+    "school/squid:top/grad/intrinsic+brain": -3.3440734692637406,
+    "school/squid:top/mag/intrinsic+brain": -2.4186517815789714,
+    "school/opm_dense/opm/projected": -1.0250038680989084,
+    "school/opm_matched/opm/projected": -2.346534192282358,
+    "school/squid:top/combined/projected": -2.3609198056274003,
+    "school/squid:top/grad/projected": -3.4182623034359887,
+    "school/squid:top/mag/projected": -2.770917124400796,
+    "size2yr/opm_dense/opm/intrinsic+brain": -0.1946423251747302,
+    "size2yr/opm_matched/opm/intrinsic+brain": -1.1809151447711594,
+    "size2yr/squid:top/combined/intrinsic+brain": -2.268880580756936,
+    "size2yr/squid:top/grad/intrinsic+brain": -3.661519750725409,
+    "size2yr/squid:top/mag/intrinsic+brain": -2.516882238101423,
+    "size2yr/opm_dense/opm/projected": -0.5539546344044372,
+    "size2yr/opm_matched/opm/projected": -1.7536198975565247,
+    "size2yr/squid:top/combined/projected": -2.539852258227473,
+    "size2yr/squid:top/grad/projected": -3.745333613474273,
+    "size2yr/squid:top/mag/projected": -2.8784146060773286,
+    "infant2yr/opm_dense/opm/intrinsic+brain": 0.9259370047389821,
+    "infant2yr/opm_matched/opm/intrinsic+brain": -0.40484452745767263,
+    "infant2yr/squid:top/combined/intrinsic+brain": -1.1911650651943981,
+    "infant2yr/squid:top/grad/intrinsic+brain": -2.7012433750461406,
+    "infant2yr/squid:top/mag/intrinsic+brain": -1.51915691655232,
+    "infant2yr/opm_dense/opm/projected": 0.3476100851988463,
+    "infant2yr/opm_matched/opm/projected": -1.3009623537134498,
+    "infant2yr/squid:top/combined/projected": -1.4800605102721642,
+    "infant2yr/squid:top/grad/projected": -2.7964839454236516,
+    "infant2yr/squid:top/mag/projected": -1.9744601066665042
+  },
+  "vertexwise_change_dB": {
+    "school/opm_dense/opm/intrinsic+brain": 1.1532969274010165,
+    "school/squid:top/combined/intrinsic+brain": 0.6529700647895214,
+    "school/squid:top/grad/intrinsic+brain": 0.4481820482766338,
+    "school/squid:top/mag/intrinsic+brain": 0.6927279748619426,
+    "school/opm_dense/opm/projected": 1.4535116939969608,
+    "school/squid:top/combined/projected": 0.6154682545576544,
+    "school/squid:top/grad/projected": 0.43545563474793525,
+    "school/squid:top/mag/projected": 0.7146117041062268,
+    "size2yr/opm_dense/opm/intrinsic+brain": 1.7416852549348982,
+    "size2yr/squid:top/combined/intrinsic+brain": 0.5389087275616686,
+    "size2yr/squid:top/grad/intrinsic+brain": 0.09774864717253022,
+    "size2yr/squid:top/mag/intrinsic+brain": 0.6444378289518955,
+    "size2yr/opm_dense/opm/projected": 2.0604416031165917,
+    "size2yr/squid:top/combined/projected": 0.47370347550971115,
+    "size2yr/squid:top/grad/projected": 0.059454601805632515,
+    "size2yr/squid:top/mag/projected": 0.6324668371705449
+  },
+  "channel_count_control": {
+    "school/combined": {
+      "n_sites": 171,
+      "d_adult_subsampled": {
+        "median": 0.6586595548316626,
+        "ci95": [
+          0.4772336353514661,
+          0.8472786836157378
+        ],
+        "share_positive": 0.8699828530442743,
+        "n": 7103
+      },
+      "d_child": {
+        "median": 1.4858744217111155,
+        "ci95": [
+          1.2486502330804807,
+          1.7343986033502188
+        ],
+        "share_positive": 0.9788011131903862,
+        "n": 6949
+      },
+      "delta": {
+        "median": 0.7158646153851337,
+        "ci95": [
+          0.5824240996301242,
+          0.8074789257559375
+        ],
+        "share_positive": 0.9250115025308491,
+        "n": 6949
+      }
+    },
+    "school/grad": {
+      "n_sites": 171,
+      "d_adult_subsampled": {
+        "median": 1.847444889807609,
+        "ci95": [
+          1.6556039411617423,
+          2.0007351610175594
+        ],
+        "share_positive": 0.9981293413443046,
+        "n": 7103
+      },
+      "d_child": {
+        "median": 2.973697394451396,
+        "ci95": [
+          2.665381457811289,
+          3.266605042806664
+        ],
+        "share_positive": 0.9998835328808617,
+        "n": 6949
+      },
+      "delta": {
+        "median": 0.9603299158148,
+        "ci95": [
+          0.8150168648672661,
+          1.1131443624247346
+        ],
+        "share_positive": 0.9577600711333323,
+        "n": 6949
+      }
+    },
+    "school/mag": {
+      "n_sites": 171,
+      "d_adult_subsampled": {
+        "median": 1.0296386964099702,
+        "ci95": [
+          0.8136710304630926,
+          1.201605894290755
+        ],
+        "share_positive": 0.9519361856563812,
+        "n": 7103
+      },
+      "d_child": {
+        "median": 1.796311298244636,
+        "ci95": [
+          1.5393177679718455,
+          2.065772954145405
+        ],
+        "share_positive": 0.9882884919001054,
+        "n": 6949
+      },
+      "delta": {
+        "median": 0.6759244523542409,
+        "ci95": [
+          0.5723347828445418,
+          0.8019109934610987
+        ],
+        "share_positive": 0.9072677962661786,
+        "n": 6949
+      }
+    },
+    "size2yr/combined": {
+      "n_sites": 155,
+      "d_adult_subsampled": {
+        "median": 0.5204465104840401,
+        "ci95": [
+          0.35338778661172565,
+          0.6653745852045242
+        ],
+        "share_positive": 0.800259009872288,
+        "n": 7103
+      },
+      "d_child": {
+        "median": 2.153818633097161,
+        "ci95": [
+          1.8566091219720862,
+          2.4163134105163095
+        ],
+        "share_positive": 0.9885124183825681,
+        "n": 6855
+      },
+      "delta": {
+        "median": 1.50124148635766,
+        "ci95": [
+          1.2997272921109153,
+          1.657950721548558
+        ],
+        "share_positive": 0.9875108454020403,
+        "n": 6855
+      }
+    },
+    "size2yr/grad": {
+      "n_sites": 155,
+      "d_adult_subsampled": {
+        "median": 1.681567010094955,
+        "ci95": [
+          1.4923061273786957,
+          1.859014645133343
+        ],
+        "share_positive": 0.9962740785585171,
+        "n": 7103
+      },
+      "d_child": {
+        "median": 3.856587611055355,
+        "ci95": [
+          3.41574909330727,
+          4.145929466087808
+        ],
+        "share_positive": 1.0,
+        "n": 6855
+      },
+      "delta": {
+        "median": 1.926950675674962,
+        "ci95": [
+          1.7412924452222451,
+          2.104526201843612
+        ],
+        "share_positive": 0.9972869532864126,
+        "n": 6855
+      }
+    },
+    "size2yr/mag": {
+      "n_sites": 155,
+      "d_adult_subsampled": {
+        "median": 0.890474265663021,
+        "ci95": [
+          0.6490833835626474,
+          1.0332419676833176
+        ],
+        "share_positive": 0.9033276589518322,
+        "n": 7103
+      },
+      "d_child": {
+        "median": 2.423508761613302,
+        "ci95": [
+          2.102647402320633,
+          2.7308161500169716
+        ],
+        "share_positive": 0.9941919747966852,
+        "n": 6855
+      },
+      "delta": {
+        "median": 1.3853336425306972,
+        "ci95": [
+          1.2384035816387904,
+          1.5450679137803438
+        ],
+        "share_positive": 0.9685877303700872,
+        "n": 6855
+      }
+    },
+    "infant2yr/combined": {
+      "n_sites": 151,
+      "d_adult_subsampled": {
+        "median": 0.48882341089195047,
+        "ci95": [
+          0.30795576998754887,
+          0.6555675166000171
+        ],
+        "share_positive": 0.7875473931076127,
+        "n": 7103
+      },
+      "d_child": {
+        "median": 1.846311288037853,
+        "ci95": [
+          1.551009062917086,
+          2.194721713709414
+        ],
+        "share_positive": 0.9795522873185092,
+        "n": 7559
+      },
+      "delta": {
+        "median": 1.35659035230917,
+        "ci95": [
+          0.9155826259359172,
+          1.6871734043592541
+        ],
+        "share_positive": 0.9743097945346245,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/grad": {
+      "n_sites": 151,
+      "d_adult_subsampled": {
+        "median": 1.6509057434735923,
+        "ci95": [
+          1.4478709430292696,
+          1.8689425366498627
+        ],
+        "share_positive": 0.9956134778994865,
+        "n": 7103
+      },
+      "d_child": {
+        "median": 3.3334517803351016,
+        "ci95": [
+          2.882705470326383,
+          3.78193992224684
+        ],
+        "share_positive": 1.0,
+        "n": 7559
+      },
+      "delta": {
+        "median": 1.675936153599918,
+        "ci95": [
+          1.2670723701385118,
+          2.143792241740317
+        ],
+        "share_positive": 1.0,
+        "n_parcels": 66,
+        "sparse_parcels": [
+          "lh.frontalpole",
+          "rh.frontalpole"
+        ],
+        "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+      }
+    },
+    "infant2yr/mag": {
+      "n_sites": 151,
+      "d_adult_subsampled": {
+        "median": 0.8572471855797081,
+        "ci95": [
+          0.6555020322711114,
+          1.0269348052100344
+        ],
+        "share_positive": 0.8970077906636806,
+        "n": 7103
+      },
+      "d_child": {
+        "median": 2.2329906467303755,
+        "ci95": [
+          1.8608629843066433,
+          2.589734342269326
+        ],
+        "share_positive": 0.9838928003500588,
+        "n": 7559
+      },
+      "delta": {
+        "median": 1.255548307509399,
+        "ci95": [
+          1.0825630531191766,
+          1.6470092263586102
+        ],
+        "share_positive": 0.960497133798468,
         "n_parcels": 66,
         "sparse_parcels": [
           "lh.frontalpole",
@@ -58685,24 +61420,24 @@
   },
   "amplitude_median_fT": {
     "adult": {
-      "squid:top": 64.35808700189227,
-      "opm_dense": 190.85733583779074,
-      "opm_matched": 178.71549061965197
+      "squid:top": 69.58135145396227,
+      "opm_dense": 210.50680516054854,
+      "opm_matched": 198.79769752151333
     },
     "school": {
-      "squid:top": 60.563361330423504,
-      "opm_dense": 220.01247998559847,
-      "opm_matched": 208.76183043583296
+      "squid:top": 65.95544618903659,
+      "opm_dense": 242.3043588350993,
+      "opm_matched": 230.46120986691676
     },
     "size2yr": {
-      "squid:top": 49.41448878525989,
-      "opm_dense": 235.20311515312642,
-      "opm_matched": 225.11238057632
+      "squid:top": 53.953340284351725,
+      "opm_dense": 261.61864298046567,
+      "opm_matched": 247.81968022580259
     },
     "infant2yr": {
-      "squid:top": 60.50181127648102,
-      "opm_dense": 248.91022803785748,
-      "opm_matched": 235.53386199637313
+      "squid:top": 65.29093298013322,
+      "opm_dense": 271.2747664190829,
+      "opm_matched": 256.78476959001273
     }
   },
   "noise_rms_median": {
@@ -58825,15 +61560,14 @@
   },
   "notes": [
     "D = 20 log10(d_OPM / d_SQUID) of a 10-nAm cortical-normal dipole (known-topography detectability with the oracle noise covariance; independent of the moment). Delta = D_child - D_adult. A positive Delta is an increase in relative OPM performance under these matching assumptions; it does not by itself mean that OPM beats SQUID in the child.",
-    "Scaled controls: the adult's vertices, so Delta is vertex-wise. The template: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per declared depth/orientation stratum from area-weighted medians.",
+    "Scaled controls: the adult's vertices, so Delta is vertex-wise. The absolute 4-mm usable-source rule drops 154 and 248 superficial adult targets in the scaled copies, so D_child and D_adult are medians over slightly different target sets while Delta uses the common vertices. The template: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per declared depth/orientation stratum from area-weighted medians.",
     "Intervals: bootstrap over parcels of one anatomy (or of each anatomy, for between-anatomy strata); they do not include between-subject variability. One template is not a population: template results are conditional simulations.",
-    "Every child array uses the adult's conventions: background moment variance per unit cortical area, room field, intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. The template's averaged white surface is smoother than an individual cortex (about half the adult's area), which lowers its total background power and its patch cancellation; the background sensitivity (x0.5, x2) bounds the first effect.",
-    "Placements are chosen from the scalp and helmet geometry only. The counterfactual helmet (scaled with the head) is a mechanistic control, not a pediatric SQUID system.",
+    "Every child array uses the adult's conventions: background moment variance per unit cortical area, room field, intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. With the background fixed per unit area, a smaller cortex lowers the total background power: both systems' detectability rises in the smaller heads and the OPM's rises more (absolute detectability table). The template's averaged white surface is smoother than an individual cortex (usable area 1,062 vs 1,878 cm^2 for the adult), which lowers its background power and its patch cancellation further; scaling the background variance x0.5 or x2 leaves D_child almost unchanged.",
+    "Placements are chosen from the scalp and helmet geometry only. Under the adult's measured pose a head with other fiducials need not be centred laterally: the template sits right of the helmet's midline; 'x-centred' shifts each head along device x to equal left/right median gaps before the top contact, and 'counterfactual_x-centred' scales the helmet about that laterally centred head. The counterfactual helmet (scaled with the head) is a mechanistic control, not a pediatric SQUID system.",
     "Targets on the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum and midbrain, not cortex) are left out of every summary; they would otherwise dominate the deepest strata."
   ],
-  "replotted_at_commit": "1b2cb02",
   "provenance": {
-    "commit": "0cea778",
+    "commit": "8632ec9",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

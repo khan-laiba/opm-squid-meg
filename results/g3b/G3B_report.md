@@ -18,19 +18,31 @@ Code commit: see `g3b_summary.json` (provenance). Configuration: `configs/g3b_pe
 | adult | centred | 0.0 | 23.2 | 29.8 | True |
 | adult | top | 5.5 | 20.4 | 28.4 | True |
 | adult | back | 5.5 | 20.4 | 28.8 | True |
+| adult | x-centred | 5.5 | 20.1 | 28.3 | True |
+| adult | top-18mm | 8.0 | 18.0 | 27.8 | True |
 | adult | counterfactual | 0.0 | 23.2 | 29.8 | True |
+| adult | counterfactual_x-centred | 0.0 | 22.5 | 29.6 | True |
 | school-age size (scaled adult) | centred | 0.0 | 32.3 | 41.3 | True |
 | school-age size (scaled adult) | top | 22.0 | 20.3 | 34.1 | True |
 | school-age size (scaled adult) | back | 16.0 | 20.5 | 38.6 | True |
+| school-age size (scaled adult) | x-centred | 22.0 | 20.2 | 34.4 | True |
+| school-age size (scaled adult) | top-18mm | 24.5 | 18.0 | 33.6 | True |
 | school-age size (scaled adult) | counterfactual | 0.0 | 20.8 | 26.7 | True |
+| school-age size (scaled adult) | counterfactual_x-centred | 0.0 | 20.9 | 26.6 | True |
 | 2-year size (scaled adult) | centred | 0.0 | 36.6 | 46.9 | True |
 | 2-year size (scaled adult) | top | 22.0 | 20.1 | 39.1 | True |
 | 2-year size (scaled adult) | back | 21.5 | 20.2 | 44.5 | True |
+| 2-year size (scaled adult) | x-centred | 22.0 | 20.0 | 39.4 | True |
+| 2-year size (scaled adult) | top-18mm | 24.0 | 18.2 | 38.5 | True |
 | 2-year size (scaled adult) | counterfactual | 0.0 | 19.6 | 25.2 | True |
+| 2-year size (scaled adult) | counterfactual_x-centred | 0.0 | 19.8 | 25.1 | True |
 | 2-year template | centred | 0.0 | 29.0 | 47.3 | True |
 | 2-year template | top | 28.0 | 20.2 | 38.5 | True |
 | 2-year template | back | 15.0 | 20.0 | 44.3 | True |
+| 2-year template | x-centred | 31.0 | 20.3 | 37.5 | True |
+| 2-year template | top-18mm | 30.5 | 18.1 | 37.8 | True |
 | 2-year template | counterfactual | 0.0 | 18.2 | 34.2 | True |
+| 2-year template | counterfactual_x-centred | 0.0 | 18.2 | 27.0 | True |
 
 Link to G2: at the adult's measured (= centred) position the dense/combined detectability ratio is 1.130x as an unweighted median over all targets (G2's headline), 1.143x without the medial wall and +1.25 dB area-weighted without it (the G3B convention).
 
@@ -78,13 +90,51 @@ Matched-site OPM (coverage control), intrinsic + brain:
 
 ## What drives Delta: placement and helmet fit (dense OPM vs Neuromag combined, intrinsic + brain)
 
-| child anatomy | Delta at top contact (child and adult) | Delta, centred (child) vs adult measured | Delta, counterfactual helmet (child) vs adult measured |
-|---|---|---|---|
-| school-age size (scaled adult) | +0.47 dB [+0.38, +0.58] | +1.15 dB [+1.03, +1.25] | -0.17 dB [-0.22, -0.12] |
-| 2-year size (scaled adult) | +1.13 dB [+0.99, +1.25] | +1.73 dB [+1.57, +1.90] | -0.30 dB [-0.36, -0.25] |
-| 2-year template | +0.73 dB [+0.44, +1.16] | +1.79 dB [+1.46, +2.30] | +0.28 dB [+0.06, +0.53] |
+Each child placement is compared with the adult at the same rule (the adult's counterfactual helmet has factor 1).
 
-With the helmet scaled with the head (the counterfactual), Delta shows what remains without the head-helmet mismatch: the OPM's fixed 7-mm standoff and 10-mm cell do not shrink with the head.
+| child anatomy | top (primary) | centred | x-centred | top-18mm | back | counterfactual | counterfactual, x-centred |
+|---|---|---|---|---|---|---|---|
+| school-age size (scaled adult) | +0.47 dB [+0.38, +0.58] | +1.15 dB [+1.03, +1.25] | +0.47 dB [+0.37, +0.58] | +0.46 dB [+0.37, +0.56] | +0.89 dB [+0.74, +1.04] | -0.17 dB [-0.21, -0.12] | -0.17 dB [-0.22, -0.13] |
+| 2-year size (scaled adult) | +1.13 dB [+0.99, +1.25] | +1.73 dB [+1.57, +1.90] | +1.12 dB [+0.98, +1.24] | +1.16 dB [+1.02, +1.28] | +1.30 dB [+1.01, +1.53] | -0.30 dB [-0.35, -0.24] | -0.30 dB [-0.36, -0.25] |
+| 2-year template | +0.73 dB [+0.44, +1.16] | +1.79 dB [+1.47, +2.18] | +0.68 dB [+0.36, +0.79] | +0.70 dB [+0.43, +1.14] | +1.39 dB [+1.13, +1.63] | +0.28 dB [+0.06, +0.53] | -0.37 dB [-0.54, +0.11] |
+
+Counterfactual Delta by comparator (helmet scaled with the head; the dependence on the comparator points to the SQUID side of the change):
+
+| child anatomy | comparator | counterfactual | counterfactual, x-centred |
+|---|---|---|---|
+| school-age size (scaled adult) | Neuromag combined | -0.17 dB [-0.21, -0.12] | -0.17 dB [-0.22, -0.13] |
+| school-age size (scaled adult) | Neuromag grad | -0.32 dB [-0.37, -0.25] | -0.32 dB [-0.37, -0.26] |
+| school-age size (scaled adult) | Neuromag mag | -0.12 dB [-0.16, -0.09] | -0.12 dB [-0.16, -0.07] |
+| 2-year size (scaled adult) | Neuromag combined | -0.30 dB [-0.35, -0.24] | -0.30 dB [-0.36, -0.25] |
+| 2-year size (scaled adult) | Neuromag grad | -0.52 dB [-0.60, -0.44] | -0.52 dB [-0.59, -0.45] |
+| 2-year size (scaled adult) | Neuromag mag | -0.21 dB [-0.26, -0.17] | -0.21 dB [-0.26, -0.17] |
+| 2-year template | Neuromag combined | +0.28 dB [+0.06, +0.53] | -0.37 dB [-0.54, +0.11] |
+| 2-year template | Neuromag grad | +0.22 dB [+0.03, +0.53] | -0.50 dB [-0.67, -0.31] |
+| 2-year template | Neuromag mag | +0.38 dB [+0.15, +0.61] | -0.16 dB [-0.38, +0.15] |
+
+## Absolute detectability (median 20 log10 d of a 10-nAm dipole, intrinsic + brain, primary placement)
+
+| anatomy | OPM dense | OPM matched | Neuromag combined | Neuromag grad | Neuromag mag |
+|---|---|---|---|---|---|
+| adult | -1.60 | -2.80 | -2.66 | -3.63 | -3.00 |
+| school-age size (scaled adult) | -0.66 | -1.74 | -2.15 | -3.34 | -2.42 |
+| 2-year size (scaled adult) | -0.19 | -1.18 | -2.27 | -3.66 | -2.52 |
+| 2-year template | +0.93 | -0.40 | -1.19 | -2.70 | -1.52 |
+
+Vertex-wise change from the adult (scaled controls; same vertex): both systems gain, the OPM more.
+
+| child anatomy | OPM dense | Neuromag combined | Neuromag grad | Neuromag mag |
+|---|---|---|---|---|
+| school-age size (scaled adult) | +1.15 | +0.65 | +0.45 | +0.69 |
+| 2-year size (scaled adult) | +1.74 | +0.54 | +0.10 | +0.64 |
+
+## Channel count: the adult's dense array subsampled to each child's site count
+
+| child anatomy | sites | D_child | D_adult, subsampled | Delta at equal channel count |
+|---|---|---|---|---|
+| school-age size (scaled adult) | 171 | +1.49 dB [+1.25, +1.73] | +0.66 dB [+0.48, +0.85] | +0.72 dB [+0.58, +0.81] |
+| 2-year size (scaled adult) | 155 | +2.15 dB [+1.86, +2.42] | +0.52 dB [+0.35, +0.67] | +1.50 dB [+1.30, +1.66] |
+| 2-year template | 151 | +1.85 dB [+1.55, +2.19] | +0.49 dB [+0.31, +0.66] | +1.36 dB [+0.92, +1.69] |
 
 ## Delta by depth stratum (dense OPM vs Neuromag combined, intrinsic + brain)
 
@@ -118,14 +168,51 @@ With the helmet scaled with the head (the counterfactual), Delta shows what rema
 | 2-year template | 50-60 | 229 / 321 | +1.20 | +0.08 | +1.12 [+0.31, +1.42] |
 | 2-year template | 60-90 | 83 / 26 | +2.23 | +0.00 | +2.23 [+1.84, +2.43] |
 
+Scaled controls, vertex-wise (homologous) Delta by the adult's depth:
+
+| child anatomy | adult depth [mm] | n | Delta [95 % CI] |
+|---|---|---|---|
+| school-age size (scaled adult) | 0-10 | 0 | sparse |
+| school-age size (scaled adult) | 10-15 | 175 | +0.73 [+0.24, +1.16] |
+| school-age size (scaled adult) | 15-20 | 1134 | +0.79 [+0.60, +1.04] |
+| school-age size (scaled adult) | 20-25 | 1564 | +0.70 [+0.57, +0.84] |
+| school-age size (scaled adult) | 25-30 | 1284 | +0.52 [+0.43, +0.62] |
+| school-age size (scaled adult) | 30-40 | 1533 | +0.31 [+0.24, +0.38] |
+| school-age size (scaled adult) | 40-50 | 912 | +0.22 [+0.13, +0.35] |
+| school-age size (scaled adult) | 50-60 | 321 | +0.35 [+0.15, +0.54] |
+| school-age size (scaled adult) | 60-90 | 26 | +0.91 [-0.58, +1.28] |
+| 2-year size (scaled adult) | 0-10 | 0 | sparse |
+| 2-year size (scaled adult) | 10-15 | 152 | +2.25 [+1.67, +2.53] |
+| 2-year size (scaled adult) | 15-20 | 1082 | +1.89 [+1.76, +2.03] |
+| 2-year size (scaled adult) | 20-25 | 1551 | +1.56 [+1.43, +1.68] |
+| 2-year size (scaled adult) | 25-30 | 1283 | +1.15 [+1.04, +1.26] |
+| 2-year size (scaled adult) | 30-40 | 1532 | +0.68 [+0.61, +0.78] |
+| 2-year size (scaled adult) | 40-50 | 909 | +0.45 [+0.35, +0.58] |
+| 2-year size (scaled adult) | 50-60 | 320 | +0.49 [+0.30, +0.70] |
+| 2-year size (scaled adult) | 60-90 | 26 | +1.10 [-0.26, +1.62] |
+
+## Delta by orientation stratum (0 deg = radial to the inner skull; dense OPM vs Neuromag combined)
+
+| child anatomy | orientation [deg] | n child / adult | D_child | D_adult | Delta [95 % CI] |
+|---|---|---|---|---|---|
+| school-age size (scaled adult) | 0-30 | 676 / 707 | +1.27 | +0.57 | +0.70 [+0.46, +0.98] |
+| school-age size (scaled adult) | 30-60 | 2297 / 2346 | +1.27 | +0.76 | +0.51 [+0.21, +0.80] |
+| school-age size (scaled adult) | 60-90.1 | 3976 / 4050 | +1.66 | +1.19 | +0.47 [+0.13, +0.83] |
+| 2-year size (scaled adult) | 0-30 | 665 / 707 | +1.80 | +0.57 | +1.23 [+0.93, +1.47] |
+| 2-year size (scaled adult) | 30-60 | 2269 / 2346 | +1.86 | +0.76 | +1.09 [+0.72, +1.49] |
+| 2-year size (scaled adult) | 60-90.1 | 3921 / 4050 | +2.43 | +1.19 | +1.24 [+0.80, +1.63] |
+| 2-year template | 0-30 | 1219 / 707 | +2.78 | +0.57 | +2.22 [+1.58, +2.82] |
+| 2-year template | 30-60 | 2293 / 2346 | +1.76 | +0.76 | +1.00 [+0.62, +1.37] |
+| 2-year template | 60-90.1 | 4047 / 4050 | +1.72 | +1.19 | +0.53 [+0.18, +0.90] |
+
 ## Placement, counterfactual helmet and sensitivity (median D, dense OPM vs Neuromag combined, intrinsic + brain)
 
-| anatomy | centred | top | back | x+5mm | x-5mm | y+5mm | y-5mm | pitch+10deg | pitch-10deg | roll+5deg | roll-5deg | counterfactual |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| adult | +1.25 | +0.99 | +1.11 | +1.12 | +1.26 | +1.23 | +0.97 | +0.96 | +1.41 | +1.25 | +1.15 | +1.25 |
-| school-age size (scaled adult) | +2.47 | +1.49 | +1.99 | +1.47 | +1.51 | +1.55 | +1.45 | +1.48 | +2.52 | +1.45 | +1.69 | +0.93 |
-| 2-year size (scaled adult) | +3.06 | +2.15 | +2.36 | +2.01 | +2.16 | +2.24 | +2.07 | +1.70 | +3.06 | +1.94 | +2.53 | +0.75 |
-| 2-year template | +3.08 | +1.85 | +2.51 | +2.07 | +1.75 | +1.84 | +1.85 | +1.78 | +2.01 | +1.79 | +2.05 | +1.56 |
+| anatomy | centred | top | back | x+5mm | x-5mm | y+5mm | y-5mm | pitch+10deg | pitch-10deg | roll+5deg | roll-5deg | x-centred | top-18mm | counterfactual | counterfactual_x-centred |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| adult | +1.25 | +0.99 | +1.11 | +1.12 | +1.26 | +1.23 | +0.97 | +0.96 | +1.41 | +1.25 | +1.15 | +1.00 | +0.86 | +1.25 | +1.25 |
+| school-age size (scaled adult) | +2.47 | +1.49 | +1.99 | +1.47 | +1.51 | +1.55 | +1.45 | +1.48 | +2.52 | +1.45 | +1.69 | +1.49 | +1.35 | +0.93 | +0.94 |
+| 2-year size (scaled adult) | +3.06 | +2.15 | +2.36 | +2.01 | +2.16 | +2.24 | +2.07 | +1.70 | +3.06 | +1.94 | +2.53 | +2.16 | +2.05 | +0.75 | +0.75 |
+| 2-year template | +3.08 | +1.85 | +2.51 | +2.07 | +1.75 | +1.84 | +1.85 | +1.78 | +2.01 | +1.79 | +2.05 | +1.76 | +1.70 | +1.56 | +1.01 |
 
 | anatomy | opm_asd_7fT | opm_asd_10fT | opm_asd_15fT | opm_asd_20fT | opm_asd_30fT | background_x0.5 | background_x2 | bem1 |
 |---|---|---|---|---|---|---|---|---|
@@ -134,7 +221,7 @@ With the helmet scaled with the head (the counterfactual), Delta shows what rema
 | 2-year size (scaled adult) | +3.16 | +2.73 | +2.15 | +1.69 | +0.99 | +2.17 | +2.09 | +2.12 |
 | 2-year template | +2.82 | +2.40 | +1.85 | +1.38 | +0.61 | +1.86 | +1.79 | +1.80 |
 
-Delta (child minus adult, same variant):
+Difference of these medians, child minus adult, with the same variant applied to both (a sensitivity of the medians, not the paired Delta estimator; the background variants scale the adult too):
 
 | child anatomy | opm_asd_7fT | opm_asd_10fT | opm_asd_15fT | opm_asd_20fT | opm_asd_30fT | background_x0.5 | background_x2 | bem1 |
 |---|---|---|---|---|---|---|---|---|
@@ -148,18 +235,22 @@ Delta (child minus adult, same variant):
 |---|---|---|---|---|---|---|---|
 | adult | centred | +1.85 | +1.13 | +1.17 | +0.74 | +0.27 | +0.58 |
 | adult | top | +1.49 | +0.84 | +1.02 | +0.63 | +0.15 | +0.37 |
+| adult | x-centred | +1.52 | +0.87 | +1.05 | +0.63 | +0.16 | +0.37 |
 | adult | back | +1.99 | +0.94 | +1.04 | +0.39 | +0.26 | +0.47 |
 | adult | counterfactual | +1.85 | +1.13 | +1.17 | +0.74 | +0.27 | +0.58 |
 | school-age size (scaled adult) | centred | +3.09 | +2.55 | +2.51 | +1.99 | +0.89 | +1.33 |
 | school-age size (scaled adult) | top | +1.72 | +1.33 | +1.88 | +1.50 | +0.37 | +0.80 |
+| school-age size (scaled adult) | x-centred | +1.73 | +1.34 | +1.89 | +1.49 | +0.38 | +0.79 |
 | school-age size (scaled adult) | back | +3.35 | +1.87 | +1.97 | +0.74 | +0.77 | +1.12 |
 | school-age size (scaled adult) | counterfactual | +1.35 | +0.92 | +0.90 | +0.61 | +0.31 | +0.50 |
 | 2-year size (scaled adult) | centred | +3.78 | +3.05 | +3.20 | +2.37 | +1.12 | +1.70 |
 | 2-year size (scaled adult) | top | +2.58 | +2.03 | +2.54 | +1.93 | +0.59 | +1.23 |
+| 2-year size (scaled adult) | x-centred | +2.59 | +2.04 | +2.53 | +1.93 | +0.59 | +1.23 |
 | 2-year size (scaled adult) | back | +4.04 | +2.12 | +2.38 | +0.77 | +0.92 | +1.39 |
 | 2-year size (scaled adult) | counterfactual | +1.19 | +0.68 | +0.73 | +0.39 | +0.21 | +0.43 |
 | 2-year template | centred | +3.71 | +3.02 | +3.29 | +2.75 | +1.10 | +1.97 |
 | 2-year template | top | +2.02 | +1.39 | +2.63 | +2.08 | +0.61 | +1.36 |
+| 2-year template | x-centred | +1.95 | +1.30 | +2.64 | +2.02 | +0.57 | +1.29 |
 | 2-year template | back | +3.89 | +2.20 | +2.77 | +1.25 | +1.07 | +1.75 |
 | 2-year template | counterfactual | +2.16 | +1.25 | +1.72 | +1.21 | +0.67 | +1.17 |
 
@@ -167,14 +258,14 @@ Delta (child minus adult, same variant):
 
 | anatomy | sensors | 0-10 | 10-15 | 15-20 | 20-25 | 25-30 | 30-40 | 40-50 | 50-60 | 60-90 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| adult | squid:top | - | 45 | 48 | 52 | 57 | 65 | 75 | 84 | 90 |
-| adult | opm_dense | - | 22 | 26 | 31 | 36 | 43 | 54 | 65 | 71 |
-| school-age size (scaled adult) | squid:top | - | 48 | 52 | 56 | 61 | 70 | 77 | 82 | - |
-| school-age size (scaled adult) | opm_dense | - | 22 | 26 | 31 | 36 | 44 | 53 | 63 | - |
-| 2-year size (scaled adult) | squid:top | 57 | 54 | 57 | 62 | 68 | 76 | 82 | 87 | - |
-| 2-year size (scaled adult) | opm_dense | 17 | 22 | 26 | 31 | 36 | 44 | 54 | 61 | - |
-| 2-year template | squid:top | 45 | 47 | 50 | 56 | 60 | 70 | 77 | 86 | 94 |
-| 2-year template | opm_dense | 19 | 21 | 26 | 30 | 35 | 43 | 52 | 62 | 70 |
+| adult | squid:top | - | 45 | 48 | 52 | 57 | 64 | 74 | 82 | 87 |
+| adult | opm_dense | - | 22 | 26 | 31 | 36 | 43 | 53 | 63 | 69 |
+| school-age size (scaled adult) | squid:top | - | 48 | 52 | 56 | 61 | 69 | 75 | 78 | - |
+| school-age size (scaled adult) | opm_dense | - | 22 | 26 | 31 | 35 | 43 | 52 | 61 | - |
+| 2-year size (scaled adult) | squid:top | 57 | 54 | 57 | 62 | 67 | 75 | 80 | 84 | - |
+| 2-year size (scaled adult) | opm_dense | 17 | 22 | 26 | 31 | 36 | 43 | 53 | 59 | - |
+| 2-year template | squid:top | 45 | 47 | 50 | 56 | 60 | 69 | 74 | 83 | 89 |
+| 2-year template | opm_dense | 19 | 21 | 26 | 30 | 35 | 42 | 52 | 61 | 70 |
 
 ## Noise composition (median per-channel RMS in the band; magnetometers and OPM in fT, gradiometers in fT/cm)
 
@@ -231,8 +322,8 @@ A source counts as usable when its detectability reaches 5 at the reference mome
 ## Notes
 
 - D = 20 log10(d_OPM / d_SQUID) of a 10-nAm cortical-normal dipole (known-topography detectability with the oracle noise covariance; independent of the moment). Delta = D_child - D_adult. A positive Delta is an increase in relative OPM performance under these matching assumptions; it does not by itself mean that OPM beats SQUID in the child.
-- Scaled controls: the adult's vertices, so Delta is vertex-wise. The template: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per declared depth/orientation stratum from area-weighted medians.
+- Scaled controls: the adult's vertices, so Delta is vertex-wise. The absolute 4-mm usable-source rule drops 154 and 248 superficial adult targets in the scaled copies, so D_child and D_adult are medians over slightly different target sets while Delta uses the common vertices. The template: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per declared depth/orientation stratum from area-weighted medians.
 - Intervals: bootstrap over parcels of one anatomy (or of each anatomy, for between-anatomy strata); they do not include between-subject variability. One template is not a population: template results are conditional simulations.
-- Every child array uses the adult's conventions: background moment variance per unit cortical area, room field, intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. The template's averaged white surface is smoother than an individual cortex (about half the adult's area), which lowers its total background power and its patch cancellation; the background sensitivity (x0.5, x2) bounds the first effect.
-- Placements are chosen from the scalp and helmet geometry only. The counterfactual helmet (scaled with the head) is a mechanistic control, not a pediatric SQUID system.
+- Every child array uses the adult's conventions: background moment variance per unit cortical area, room field, intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. With the background fixed per unit area, a smaller cortex lowers the total background power: both systems' detectability rises in the smaller heads and the OPM's rises more (absolute detectability table). The template's averaged white surface is smoother than an individual cortex (usable area 1,062 vs 1,878 cm^2 for the adult), which lowers its background power and its patch cancellation further; scaling the background variance x0.5 or x2 leaves D_child almost unchanged.
+- Placements are chosen from the scalp and helmet geometry only. Under the adult's measured pose a head with other fiducials need not be centred laterally: the template sits right of the helmet's midline; 'x-centred' shifts each head along device x to equal left/right median gaps before the top contact, and 'counterfactual_x-centred' scales the helmet about that laterally centred head. The counterfactual helmet (scaled with the head) is a mechanistic control, not a pediatric SQUID system.
 - Targets on the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum and midbrain, not cortex) are left out of every summary; they would otherwise dominate the deepest strata.
