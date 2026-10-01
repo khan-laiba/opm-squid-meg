@@ -39,3 +39,4 @@ b0_nT = 2.0
 gradient_nT_per_m = 5.0
 calibration = [1.0, 0.01]
 anatomy = "adult"
+seed = 2028                              # its own random stream (trajectory, field and calibration draws)

@@ -21,11 +21,14 @@ Not modelled: sensor dynamic range, gain changes with the operating field and cr
 projection beyond the declared calibration errors; head-motion statistics of real children;
 movement-compensation algorithms (the 'known geometry' rows are their ideal limit).
 Configuration: configs/g4_motion.toml. Outputs: results/g4/g4_motion_summary.json,
-G4_motion_report.md, Figure_G4_motion.png. Usage: g4_motion.py [--quick]
+g4_motion_timecourse_example.csv, G4_motion_report.md, Figure_G4_motion.png.
+Usage: g4_motion.py [--quick] [--replot]
 """
 from __future__ import annotations
 
 import argparse
+import csv
+import json
 import sys
 import time
 import tomllib
@@ -320,70 +323,111 @@ def timecourse(an, ref, com, cfg, rng) -> dict:
 
 
 # ----------------------------------------------------------------------------------------------
+FIG_SQUID = ("down 2 mm", "down 5 mm", "down 10 mm", "x+5 mm", "x+10 mm", "y-5 mm", "y-10 mm", "pitch +10 deg", "pitch -10 deg",
+             "roll +10 deg", "yaw +10 deg")
+FIG_OPM = ("slip x +1 deg", "slip x +3 deg", "slip y +1 deg", "slip y +3 deg", "slip z +1 deg", "slip z +3 deg")
+CORR_COLOR = {"none": "tab:red", "homogeneous": "tab:blue", "homogeneous+gradient": "tab:green"}
+EXAMPLE_COLUMNS = ("t_s", "raw_pT", "none_pT", "homogeneous_pT", "homogeneous+gradient_pT")
+
+
+def write_example(examples, path):
+    cols = [examples["t"], examples["raw"] * 1e12] + [examples["filtered"][c] * 1e12 for c in CORRECTIONS]
+    with open(path, "w", newline="") as fh:
+        wr = csv.writer(fh)
+        wr.writerow(EXAMPLE_COLUMNS)
+        for row in zip(*cols):
+            wr.writerow([f"{v:.6g}" for v in row])
+
+
+def read_example(path) -> dict:
+    with open(path) as fh:
+        rows = list(csv.DictReader(fh))
+    col = {k: np.array([float(r[k]) for r in rows]) for k in EXAMPLE_COLUMNS}
+    return dict(t=col["t_s"], raw=col["raw_pT"] * 1e-12, filtered={c: col[f"{c}_pT"] * 1e-12 for c in CORRECTIONS})
+
+
 def figure(summary, examples, path):
     import matplotlib
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    from matplotlib.lines import Line2D
 
     keys = summary["anatomies"]
-    fig = plt.figure(figsize=(16, 10))
-    # A: sustained displacements
-    ax = fig.add_subplot(2, 2, 1)
-    labels = []
-    for i, k in enumerate(keys):
-        a = summary["geometry"][k]
-        sq = [(n, r) for n, r in a["squid"].items() if r["feasible"]]
-        op = list(a["opm"].items())
-        rows = sq + op
-        y = np.arange(len(rows)) + i * (len(rows) + 1)
-        ax.scatter([r["mismatched"]["median_db"] for _, r in rows], y, marker="o", color=G3.COLORS[k], s=14,
-                   label=f"{G3.LABEL[k]}: template from the reference geometry")
-        ax.scatter([r["known"]["median_db"] for _, r in rows], y, marker="|", color=G3.COLORS[k], s=40,
-                   label=f"{G3.LABEL[k]}: geometry known")
-        labels += [(yy, ("SQUID " if n in a["squid"] else "OPM ") + n) for yy, (n, _) in zip(y, rows)]
-    ax.set_yticks([yy for yy, _ in labels])
-    ax.set_yticklabels([lab for _, lab in labels], fontsize=4.5)
-    ax.axvline(0, color="0.5", lw=0.8)
-    ax.set_xlim(-25, 3)
-    ax.set_xlabel("median change in detectability [dB] (cortical targets, area-weighted)")
-    ax.set_title("A. Sustained displacement: head in the fixed helmet (SQUID) vs cap slip (OPM)", fontsize=9)
-    ax.legend(fontsize=6, loc="lower left")
-    # B: in-band motion, adult and the youngest template, neck pivot
+    fig, axs = plt.subplots(2, 3, figsize=(18, 10.5))
+    # A: sustained displacement, one panel per anatomy (a subset of the cases; all in the report)
+    lo = min([0.0] + [min(r["known"]["median_db"], r["mismatched"]["median_db"]) for k in keys for s in ("squid", "opm")
+                      for n, r in summary["geometry"][k][s].items() if r["feasible"]])
+    for i, k in enumerate(keys[:3]):
+        ax = axs[0, i]
+        rows = [("Neuromag", n, summary["geometry"][k]["squid"].get(n)) for n in FIG_SQUID]
+        rows += [("OPM", n, summary["geometry"][k]["opm"].get(n)) for n in FIG_OPM]
+        rows = [(s, n, r) for s, n, r in rows if r is not None]
+        y = np.arange(len(rows))[::-1]
+        for yy, (s, n, r) in zip(y, rows):
+            col = "tab:orange" if s == "Neuromag" else "tab:blue"
+            if not r["feasible"]:
+                ax.text(0.0, yy, "  infeasible", va="center", fontsize=7, color="0.4")
+                continue
+            ax.plot([r["mismatched"]["median_db"], r["known"]["median_db"]], [yy, yy], color=col, lw=1, alpha=0.6)
+            ax.plot(r["mismatched"]["median_db"], yy, "o", color=col, ms=5)
+            ax.plot(r["known"]["median_db"], yy, "|", color=col, ms=10, mew=2)
+        ax.set_yticks(y)
+        ax.set_yticklabels([f"{s} {n}" for s, n, _ in rows], fontsize=7)
+        ax.axvline(0, color="0.5", lw=0.8)
+        ax.set_xlim(lo - 0.3, 0.3)
+        ax.set_xlabel("median change in detectability [dB]")
+        ax.set_title(f"A. Sustained displacement, {G3.LABEL[k]}", fontsize=10)
+        if i == 0:
+            ax.legend(handles=[Line2D([], [], marker="o", ls="", color="0.3", label="template of the reference geometry"),
+                               Line2D([], [], marker="|", ls="", mew=2, ms=10, color="0.3", label="geometry known"),
+                               Line2D([], [], color="tab:orange", label="head moved in the Neuromag helmet"),
+                               Line2D([], [], color="tab:blue", label="OPM cap slipped")], fontsize=7, loc="lower left")
+    # B: in-band rotation in a unit field, artefact outside the noise model
     th = np.array(summary["coupling"][keys[0]]["rotation_rms_deg"])
+    styles = dict(zip(keys, ("-", "--", ":")))
+    cal_show = summary["calibration_labels"]
     for j, field in enumerate(("uniform", "gradient")):
-        ax = fig.add_subplot(2, 2, 2 + j)
-        for k, ls in zip(keys, ("-", "--", ":")):
-            for corr, col in zip(CORRECTIONS, ("tab:red", "tab:blue", "tab:green")):
-                for cal, alpha in zip(summary["calibration_labels"], (1.0, 0.65, 0.35)):
+        ax = axs[1, j]
+        for k in keys:
+            for corr in CORRECTIONS:
+                for ci, cal in enumerate(cal_show):
+                    if (corr == "none") != (ci == 0):  # 'none': calibration does not matter; corrections: with errors only
+                        continue
                     c = summary["coupling"][k]["cases"].get(f"{corr}/{cal}/{field}/neck")
                     if c is None:
                         continue
-                    ax.plot(th, c["unmodelled"]["opm_change_db_median"], ls, color=col, alpha=alpha, lw=1.2,
-                            label=f"{G3.LABEL[k]}, {corr}, {cal}" if k in (keys[0], keys[-1]) else None)
+                    ax.plot(th, c["unmodelled"]["opm_change_db_median"], styles[k], color=CORR_COLOR[corr],
+                            alpha=1.0 if ci <= 1 else 0.5, lw=1.4)
         ax.set_xscale("log")
-        ax.set_ylim(-20, 1)
+        ax.set_ylim(-12, 0.5)
         ax.axhline(-1, color="0.6", lw=0.7)
         ax.axhline(-3, color="0.6", lw=0.7, ls="--")
-        unit = "1 nT uniform field" if field == "uniform" else "1 nT/m gradient (rotation about the neck pivot)"
-        ax.set_xlabel(f"in-band head rotation, RMS per axis [deg], in a {unit}")
-        ax.set_ylabel("median OPM detectability change [dB]\n(artefact not in the noise model)")
-        ax.set_title(f"B. Room-field coupling of the head-mounted OPM array ({field}); scales as rotation x field", fontsize=9)
+        unit = "1 nT uniform field" if field == "uniform" else "1 nT/m gradient"
+        ax.set_xlabel(f"in-band head rotation [deg RMS per axis] in a {unit}")
+        ax.set_ylabel("median OPM detectability change [dB]")
+        ax.set_title(f"B. In-band rotation, {field} field (artefact outside the noise model)", fontsize=10)
         if j == 0:
-            ax.legend(fontsize=5, ncol=2, loc="lower left")
-    # B': time course
-    ax = fig.add_subplot(2, 2, 4)
+            hs = [Line2D([], [], color=CORR_COLOR[c], label=c) for c in CORRECTIONS]
+            hs += [Line2D([], [], color="0.3", ls=styles[k], label=G3.LABEL[k]) for k in keys]
+            hs += [Line2D([], [], color="0.3", alpha=a, label=lab) for a, lab in
+                   ((1.0, "calibration 1 deg / 1 %"), (0.5, "calibration 3 deg / 3 %"))]
+            ax.legend(handles=hs, fontsize=7, loc="lower left")
+    # B': exact rigid motion
+    ax = axs[1, 2]
     ex = examples
-    ax.plot(ex["t"], (ex["raw"] - ex["raw"].mean()) * 1e12, color="0.6", lw=0.8, label="raw field change (pT, DC removed)")
-    for corr, col in zip(CORRECTIONS, ("tab:red", "tab:blue", "tab:green")):
-        ax.plot(ex["t"], ex["filtered"][corr] * 1e12, color=col, lw=0.8, label=f"in band, {corr} (pT)")
-    tc = summary["timecourse"]
+    ax.plot(ex["t"], (ex["raw"] - ex["raw"].mean()) * 1e12, color="0.65", lw=0.7, label="raw field change (DC removed)")
+    for corr in CORRECTIONS:
+        ax.plot(ex["t"], ex["filtered"][corr] * 1e12, color=CORR_COLOR[corr], lw=0.7, label=f"in band, {corr}")
+    tc = summary["timecourse"]["config"]
     ax.set_xlabel("time [s]")
-    ax.set_ylabel("pT")
-    ax.set_title(f"B'. Exact rigid motion, {tc['config']['anatomy']}: drift {tc['config']['drift_deg']:g} deg, in-band "
-                 f"{tc['config']['inband_rotation_rms_deg']:g} deg RMS, B0 {tc['config']['b0_nT']:g} nT, "
-                 f"G {tc['config']['gradient_nT_per_m']:g} nT/m, calibration {tc['config']['calibration']}", fontsize=8)
-    ax.legend(fontsize=6)
+    ax.set_ylabel("field at one sensor [pT]")
+    ax.set_title(f"B'. Exact rigid motion ({G3.LABEL[tc['anatomy']]}): drift {tc['drift_deg']:g} deg, in band "
+                 f"{tc['inband_rotation_rms_deg']:g} deg RMS,\n{tc['b0_nT']:g} nT, {tc['gradient_nT_per_m']:g} nT/m, calibration "
+                 f"{tc['calibration'][0]:g} deg / {tc['calibration'][1] * 100:g} %", fontsize=9)
+    ax.legend(fontsize=7, loc="lower right")
+    fig.suptitle("G4 extension: head motion and OPM slippage (bounded; detectability = known-topography matched filter, "
+                 "intrinsic + brain noise)", fontsize=11)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)
@@ -469,9 +513,19 @@ def report(s) -> str:
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--quick", action="store_true", help="adult only, two field draws (smoke test; writes to cache/)")
+    ap.add_argument("--replot", action="store_true", help="redo the report and figure from the summary and the example time course")
     args = ap.parse_args()
     t0 = time.time()
     mne.set_log_level("WARNING")
+    out_dir = ROOT / "cache" / "g4_motion_quick" if args.quick else OUT
+    if args.replot:
+        summary = json.loads((out_dir / "g4_motion_summary.json").read_text())
+        summary["replotted_at_commit"] = io.RUN_COMMIT
+        (out_dir / "G4_motion_report.md").write_text(report(summary))
+        figure(summary, read_example(out_dir / "g4_motion_timecourse_example.csv"), out_dir / "Figure_G4_motion.png")
+        io.write_json(summary, out_dir / "g4_motion_summary.json")
+        log(f"replotted in {time.time() - t0:.0f} s -> {out_dir}")
+        return
     cfg = tomllib.loads((ROOT / "configs" / "g4_motion.toml").read_text())
     if args.quick:
         cfg["anatomies"] = ["adult"]
@@ -490,7 +544,7 @@ def main():
         geometry[k] = part_a(anats[k], refs[k], com, cfg, cfg3)
         coupling[k] = part_b(anats[k], refs[k], com, cfg, rng)
     tk = cfg["timecourse"]["anatomy"] if cfg["timecourse"]["anatomy"] in keys else keys[0]
-    tc = timecourse(anats[tk], refs[tk], com, cfg, rng)
+    tc = timecourse(anats[tk], refs[tk], com, cfg, np.random.default_rng(cfg["timecourse"]["seed"]))  # its own stream
     examples = tc.pop("_example")
     tc["config"] = dict(cfg["timecourse"], anatomy=tk)
     summary = dict(
@@ -512,12 +566,9 @@ def main():
             "field changes from moving magnetic material.",
             "Field strengths, motion amplitudes, pivot and calibration errors are declared sweeps (A-MOT-*), not measurements of "
             "a particular room or device; results scale linearly with rotation x field."])
-    if args.quick:
-        out_dir = ROOT / "cache" / "g4_motion_quick"
-        out_dir.mkdir(parents=True, exist_ok=True)
-    else:
-        out_dir = OUT
+    out_dir.mkdir(parents=True, exist_ok=True)
     io.write_json(summary, out_dir / "g4_motion_summary.json")
+    write_example(examples, out_dir / "g4_motion_timecourse_example.csv")
     (out_dir / "G4_motion_report.md").write_text(report(summary))
     figure(summary, examples, out_dir / "Figure_G4_motion.png")
     log(f"done in {time.time() - t0:.0f} s -> {out_dir}")
