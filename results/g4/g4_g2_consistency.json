@@ -1,0 +1,35 @@
+{
+  "status": "NEW check: G4 detection vs G2 detectability at the G4 locations",
+  "inputs": {
+    "g2_targets": "results/g2/g2_targets.csv",
+    "g4_summary": "results/g4/g4_adult_summary.json",
+    "g4_simulated_at_commit": "81168f3"
+  },
+  "bands": {
+    "depth0": {
+      "n_locations": 18,
+      "g2_median_ratio_dense_over_combined": 1.4646889039304674,
+      "oracle_s50_ratio_combined_over_dense": 1.6170153043197242
+    },
+    "depth1": {
+      "n_locations": 18,
+      "g2_median_ratio_dense_over_combined": 1.15016579198311,
+      "oracle_s50_ratio_combined_over_dense": 1.3597423728128504
+    },
+    "depth2": {
+      "n_locations": 18,
+      "g2_median_ratio_dense_over_combined": 1.0661355931157566,
+      "oracle_s50_ratio_combined_over_dense": 1.1015031984440433
+    },
+    "depth3": {
+      "n_locations": 18,
+      "g2_median_ratio_dense_over_combined": 1.0347745155477113,
+      "oracle_s50_ratio_combined_over_dense": 0.9770844623575093
+    }
+  },
+  "provenance": {
+    "commit": "40e8c0e+dirty",
+    "mne_version": "1.13.2",
+    "numpy_version": "2.5.3"
+  }
+}

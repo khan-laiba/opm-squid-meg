@@ -95,9 +95,9 @@ class TestArrayComposition(unittest.TestCase):
                 self.assertTrue(np.all(opm.signed_distance(pos_mri, next(
                     s for s in self.subject.bem_surfaces if s["id"] == mne.io.constants.FIFF.FIFFV_BEM_SURF_ID_HEAD)) > 0.004 - 1e-6))
                 self.assertLess(d.max(), 0.012)  # nominal 7 mm + at most 5 mm clearance shift
-                # axis = BEM head-surface normal averaged within 15 mm (A-OPM-AXIS); against the nearest vertex's normal it
-                # stays within 7.1 deg (one midline occipital dense site at 7.05 deg; 95 % of sites within 3.5 deg)
-                self.assertLess(angle.max(), 7.5)
+                # axis = BEM head-surface normal averaged within 15 mm (A-OPM-AXIS); against the nearest vertex's normal the
+                # matched array stays within 5.5 deg and the dense one within 7.1 deg (one midline occipital site at 7.05 deg)
+                self.assertLess(angle.max(), 6.0 if name == "opm_matched" else 7.5)
                 self.assertGreater(ear.min(), 0.019)  # no sensor on the ear
                 self.assertGreater(pos_mri[:, 2].min(), zmin)  # nothing at the MRI field-of-view cut
         self.assertLessEqual(self.arrays["opm_dense"].meta["max_extra_shift_mm"], 5.0 + 1e-9)
@@ -137,7 +137,7 @@ class TestArrayComposition(unittest.TestCase):
         from opmsquid import fullres
 
         if not (fullres.directory() / "valid_index.npy").exists():
-            self.skipTest("no full-resolution cache")
+            self.skipTest("no full-resolution cache: run scripts/compute_fullres_forwards.py to check the stored lead fields")
         idx = np.load(fullres.directory() / "valid_index.npy")
         for job, (kind, bem_name) in fullres.JOBS.items():
             if fullres.stored_fingerprint(job) is None:

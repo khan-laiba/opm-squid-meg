@@ -148,7 +148,8 @@ def main():
              "calibration errors are not modelled.")
     L.append("- Head model: 3-layer BEM with the head surface refined to 20,480 triangles and every OPM cell integration point >= 1 mm "
              "outside it (v2). Near the head surface the BEM field is only approximately converged (about 1 % for the headline, "
-             "methods section 3); the 1-layer model gives a lower dense/combined ratio (convergence section).")
+             "estimated assuming the error falls with the square of the mesh size, which is not verified on this head; methods "
+             "section 3); the 1-layer model gives a slightly lower dense/combined ratio (convergence section).")
     L.append("- Scalp-gap variants move the primary OPM sites outward along their axes (same sites).")
     (OUT / "G2_report.md").write_text("\n".join(L) + "\n")
     print(f"wrote {OUT / 'G2_report.md'} ({len(L)} lines)")

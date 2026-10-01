@@ -17,12 +17,13 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G1B Hunold et al. 2016 depth-orientation spike SNR (MEG part) | ADAPT (+ NEW OPM column) | done, independently reviewed |
 | G1C Goldenholz et al. 2009 cortical SNR maps (MEG part) | ADAPT (+ NEW OPM extension) | done, independently reviewed |
 | G2 realistic adult OPM vs Neuromag | NEW | done, independently reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2` |
-| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B needs pediatric anatomy |
-| G4 epilepsy detection and localization | NEW | adult done; pediatric waits for G3 |
-| G5 software, reproduction, report | - | in progress (tests, `scripts/run_all.sh`, local report; clean-environment smoke test pending) |
+| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B follows this baseline (owner decision 2026-09-30: 2-year infant template and scaled-adult size controls) |
+| G4 epilepsy detection and localization | NEW | adult done; pediatric follows G3B |
+| G5 software, reproduction, report | - | in progress (tests, `scripts/run_all.sh`, local report; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3, with the 87 tests of the time) |
 
 Adult findings so far (`adult-baseline-v2`), conditional on one adult head (MNE sample subject),
-an assumed OPM noise of 15 fT/sqrt(Hz), OPM sensors with no gap to the scalp and Neuromag at its
+an assumed OPM noise of 15 fT/sqrt(Hz), OPM sensors with no helmet-to-scalp gap beyond the 7-mm
+standoff and Neuromag at its
 measured (not best) head position; details and caveats in `docs/methods.md` and
 `results/g2/G2_report.md`:
 - With modelled brain noise (calibrated on gradiometers; it predicts 0.73x the measured
@@ -37,8 +38,11 @@ measured (not best) head position; details and caveats in `docs/methods.md` and
   strength for 50 % detection (35 [28-50] vs 53 [44-66] nAm; the intervals overlap, the paired
   strength ratio is 1.51 [1.25-1.66]) and detects more events at 16 of the 18 locations, none
   favouring Neuromag (p < 0.001, uncorrected). Deeper, no location-level difference is established
-  (at 20-30 mm, p = 0.23 here but 0.03 in an earlier run whose noise draws differed: not robust);
-  the matched array helps only at 10-20 mm and detects the deepest spikes less often.
+  (at 20-30 mm, p = 0.23 here but 0.03 in an earlier run whose noise draws differed: not robust).
+  The matched array is ahead by location only at 10-20 mm (9/3, p = 0.04 uncorrected; 0.14 in the
+  earlier run: not robust) and behind at 45-70 mm (0/7, p = 0.016 uncorrected; the same direction in
+  the earlier run). v1's claim that the dense array was favoured in every depth band (14/0, 10/2,
+  12/2, 13/0) is superseded. The 72 locations are frontal-heavy (24 frontal, 2 occipital).
 - Bounded localization (24 locations, one event each): dipole errors are similar across arrays
   (about 4-5 mm, limited by a 2-mm/2-deg coregistration error); for extended 320-nAm sources the
   distributed (dSPM) estimate tends to be about 5 mm more accurate with either OPM array (p = 0.14

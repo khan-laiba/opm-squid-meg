@@ -191,5 +191,5 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 - Detectability is a known-topography matched-filter SNR, not an event detection rate or localization accuracy.
 - One adult anatomy and one measured head position; between-subject variability is not represented.
 - OPM intrinsic noise is a declared sweep, not a device specification; OPM movement artefacts, cross-talk and calibration errors are not modelled.
-- Head model: 3-layer BEM with the head surface refined to 20,480 triangles and every OPM cell integration point >= 1 mm outside it (v2). Near the head surface the BEM field is only approximately converged (about 1 % for the headline, methods section 3); the 1-layer model gives a lower dense/combined ratio (convergence section).
+- Head model: 3-layer BEM with the head surface refined to 20,480 triangles and every OPM cell integration point >= 1 mm outside it (v2). Near the head surface the BEM field is only approximately converged (about 1 % for the headline, estimated assuming the error falls with the square of the mesh size, which is not verified on this head; methods section 3); the 1-layer model gives a slightly lower dense/combined ratio (convergence section).
 - Scalp-gap variants move the primary OPM sites outward along their axes (same sites).
