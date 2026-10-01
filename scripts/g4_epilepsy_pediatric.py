@@ -108,6 +108,10 @@ def compare(labels) -> dict:
                     v = s["detectors"][d]["strength_for_50pct_nAm"].get(f"{mode}/depth{b}")
                     out[f"{lab}/{d}/{mode}/depth{b}/s50"] = v
             out[f"{lab}/{d}/heldout_false_per_min"] = s["detectors"][d]["heldout_false_per_min"]
+            roc = s["detectors"][d]["roc"]["superficial_10-30mm_40nAm"]  # held-out thresholds: a matched false-event rate
+            fp, se = np.array(roc["false_per_min"]), np.array(roc["sensitivity"])
+            k = int(np.searchsorted(fp, 1.0, side="right")) - 1
+            out[f"{lab}/{d}/sensitivity_superficial_40nAm_at_heldout_1_per_min"] = float(se[max(k, 0)])
         for a in ("opm_dense/opm", "opm_matched/opm"):
             for ref in ("squid/combined", "squid/grad", "squid/mag"):
                 for mode in ("oracle", "practical@1"):
@@ -129,8 +133,10 @@ def compare(labels) -> dict:
 def report(cmp: dict, labels) -> str:
     L = ["# G4 pediatric: IED detection and bounded localization in the fixed adult helmet (NEW)", "",
          "Same framework, configuration and seeds as the adult (configs/g4_epilepsy.toml); the child anatomy, arrays and "
-         "placement come from G3B (Neuromag at top contact, refitted OPM arrays). Thresholds are calibrated on each "
-         "anatomy's own null data. p-values are uncorrected; the location is the statistical unit.", "",
+         "placement come from G3B (Neuromag at top contact, refitted OPM arrays). The adult rows are the frozen adult study "
+         "(Neuromag at its measured head position; top contact would raise it by 5.5 mm). Thresholds are calibrated on each "
+         "anatomy's own null data. p-values are uncorrected (24 paired detection comparisons per OPM array and anatomy); the "
+         "location is the statistical unit.", "",
          "## Strength for 50 % detection [nAm] (focal; practical detector at 1 false event/min)", "",
          "| anatomy | detector | " + " | ".join(f"{a:g}-{b:g} mm" for a, b in G4.DEPTH_BANDS) + " |",
          "|---|---|" + "---|" * len(G4.DEPTH_BANDS)]
@@ -146,6 +152,16 @@ def report(cmp: dict, labels) -> str:
                     cells.append(("none" if v["value"] is None else f"{v['value']:.0f}")
                                  + (f" [{ci[0]:.0f}-{ci[1]:.0f}]" if ci and None not in ci else " [open]"))
             L.append(f"| {lab} | {d} | " + " | ".join(cells) + " |")
+    L += ["", "## Held-out false events per minute at the 1-per-minute thresholds, and sensitivity at a matched held-out rate", "",
+          "Sensitivity for 40-nAm spikes at 10-30 mm with each detector's threshold set on the held-out null to 1 false event per "
+          "minute (the frozen thresholds give 0.5-1.7 per minute, unequal between arrays).", "",
+          "| anatomy | detector | held-out rate at the frozen threshold | sensitivity at a matched 1 per minute |", "|---|---|---|---|"]
+    for lab in ("adult",) + tuple(labels):
+        for d in DETECTORS:
+            hr = cmp.get(f"{lab}/{d}/heldout_false_per_min", {}).get("1")
+            sv = cmp.get(f"{lab}/{d}/sensitivity_superficial_40nAm_at_heldout_1_per_min")
+            if hr is not None and sv is not None:
+                L.append(f"| {lab} | {d} | {hr:.2f} | {sv:.2f} |")
     L += ["", "## Paired OPM dense vs Neuromag combined (practical detector, 1 false event/min; locations favouring OPM / SQUID, "
           "sign-flip p, S50 ratio SQUID/OPM [95 % CI])", "",
           "| anatomy | " + " | ".join(f"{a:g}-{b:g} mm" for a, b in G4.DEPTH_BANDS) + " |", "|---|" + "---|" * len(G4.DEPTH_BANDS)]
