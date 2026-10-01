@@ -545,8 +545,9 @@ Neuromag combined, matched OPM, dense OPM)
 
 G3B results (`results/g3b/g3b_summary.json`, `G3B_report.md`; computed at cb1b8a9 with all six
 anatomies and redrawn at fd40dfe; the four anatomies of the independently reviewed pass at 8632ec9
-reproduce to 1e-9, apart from 188 bootstrap bounds of secondary comparisons, which moved because
-the added templates share the random-number stream (no headline interval changed). Dense OPM vs
+reproduce to 1e-9, apart from the bounds of 188 bootstrap intervals of secondary comparisons (368
+bounds, e.g. the counterfactual intervals below), which moved because the added templates share the
+random-number stream; the intervals of the primary D_child/D_adult/Delta comparisons did not change. Dense OPM vs
 Neuromag, intrinsic + brain noise, primary placement unless stated; dB of detectability;
 area-weighted medians without the medial wall, parcel-bootstrap 95 % intervals. "Template" alone
 means the 2-year template; the 18- and 12-month templates are named.)
@@ -584,8 +585,9 @@ means the 2-year template; the 18- and 12-month templates are named.)
   gradiometers +1.21 and +1.12, the magnetometers +0.67 and +1.01 dB; projected +0.91 and +1.17 dB;
   matched-site array +0.85 and +1.07 dB; 5- and 10-mm patches +1.07/+0.73 and +1.08/+0.94 dB;
   peak-channel SNR +1.36 and +1.62, mean-power SNR +0.77 and +0.92 dB. Across the three templates
-  Delta grows as the head gets smaller (24, 18, 12 months: +0.73, +0.85, +1.03 dB), with
-  overlapping intervals.
+  Delta is +0.73, +0.85 and +1.03 dB (24, 18, 12 months; overlapping intervals), but reweighted to
+  the adult's depth mix the pooled differences are +0.33, +0.54 and +0.32 dB (below): the ordering
+  follows the templates' depth mix (the 12-month cortex is the shallowest), not head size.
 * By depth (template vs adult, combined, native depth strata): Delta +0.12 to +0.35 dB down to 30 mm
   (intervals include 0), +0.33 [+0.17, +0.60] at 30-40 mm, +0.37 at 40-50 mm, +1.12 at 50-60 mm and
   +2.23 at 60-90 mm (83 template vs 26 adult targets, 79 of them isthmus cingulate). Within strata the
@@ -603,7 +605,8 @@ means the 2-year template; the 18- and 12-month templates are named.)
   +0.81 vs tangential +0.21, +0.19, +0.09 dB at 0-15, 15-25, 25-40 mm) but not deeper (+0.48 vs
   +0.70 dB at 40-90 mm). The 18- and 12-month templates repeat this (`template_depth_checks`):
   within strata Delta is +0.21 to +0.83 dB at 10-50 mm (intervals exclude 0 from 25 mm down in both,
-  and at 15-25 mm for the 18-month template) and +1.07 to +2.15 dB deeper; reweighted to the adult's
+  at 15-25 mm for the 18-month template and at 10-15 mm for the 12-month template, +0.83 [+0.12,
+  +1.55]) and +1.07 to +2.15 dB deeper; reweighted to the adult's
   depth mix their pooled difference falls from +0.91 to +0.54 and from +1.07 to +0.32 dB (36 and 46 %
   of their area at 10-20 mm; median depth 23.2 and 20.6 mm); at matched depth radial sources gain
   more than tangential ones down to 40 mm (18 months +1.06, +1.38, +1.07 vs +0.37, +0.38, +0.19 dB;
@@ -618,9 +621,10 @@ means the 2-year template; the 18- and 12-month templates are named.)
   centred (ear line where the adult's was) Delta is +1.15, +1.73 and +1.79 dB; at top contact +0.47,
   +1.13 and +0.73 dB; laterally centred, then top contact, +0.47, +1.12 and +0.68 dB; at true 18-mm
   contact +0.46, +1.16 and +0.70 dB; back contact +0.89, +1.30 and +1.39 dB. In the counterfactual
-  helmet scaled with the head it is -0.17 [-0.21, -0.12], -0.30 [-0.35, -0.24] and +0.28 [+0.06,
-  +0.53] dB, and about the laterally centred head -0.17, -0.30 and -0.37 [-0.54, +0.11] dB: the
-  template's positive residual came from its lateral offset. For the 18- and 12-month templates:
+  helmet scaled with the head it is -0.17 [-0.21, -0.13], -0.30 [-0.35, -0.25] and +0.28 [+0.05,
+  +0.65] dB, and about the laterally centred head -0.17, -0.30 and -0.37 [-0.51, +0.02] dB: the
+  template's positive residual came from its lateral offset (intervals of the six-anatomy pass; the
+  four-anatomy pass gave [-0.21, -0.12], [-0.35, -0.24], [+0.06, +0.53] and [-0.54, +0.11]). For the 18- and 12-month templates:
   centred +1.93 and +2.49, top +0.85 and +1.03, laterally centred then top +0.69 and +0.99, 18-mm
   contact +0.83 and +0.95, back +1.63 and +1.68 dB; counterfactual +0.20 [-0.05, +0.58] and +0.08
   [-0.23, +0.22] dB, about the laterally centred head -0.29 [-0.45, +0.01] and -0.12 [-0.41, +0.10]
@@ -746,10 +750,17 @@ mm. Order below: school-age size, 2-year size, 2-year template, 18 months, 12 mo
   12 months -6.1 mm (p < 0.001), adult -5.3 mm (p = 0.046). ECD, 80-nAm sources, 18 months: -3.5 mm
   (focal, p = 0.003) and -4.0 mm (patches, p = 0.01). Detected and localized within 10 mm (dSPM),
   320-nAm focal spikes, Neuromag vs dense: adult 0.21 vs 0.33; children 0.25 vs 0.29, 0.12 vs 0.17,
-  0.29 vs 0.54, 0.29 vs 0.58, 0.17 vs 0.62. None of these survives a correction over 16 comparisons
-  per anatomy, and in the adult the significance of such differences varied between runs (section
-  9); the consistent direction across the three templates (dSPM of strong focal events about 5 mm
-  better with the dense OPM) is the more robust observation.
+  0.29 vs 0.54, 0.29 vs 0.58, 0.17 vs 0.62. Within an anatomy and OPM array (16 localization
+  comparisons: dSPM and ECD errors and joint detection-and-localization success, for focal and patch
+  sources at 80 and 320 nAm; the comparison file holds the 8 error comparisons) five survive a
+  Bonferroni correction (p < 0.0031): dense dSPM of 320-nAm patches at 12 months (-6.1 mm, p =
+  0.00025), matched dSPM of 320-nAm focal events at 18 months (p = 0.00034), dense dSPM of 320-nAm
+  focal events at 18 months (-5.9 mm, p = 0.0019), matched dSPM of 320-nAm patches at 12 months (p =
+  0.0022) and dense ECD of 80-nAm focal events at 18 months (-3.5 mm, p = 0.0028); across the five
+  children and both arrays (160 comparisons, p < 0.00031) only the first. None survives in the
+  2-year template, the size controls or the adult, and in the adult the significance of such
+  differences varied between runs (section 9). The consistent direction across the three templates
+  (dSPM of strong focal events about 5 mm better with the dense OPM) is the more robust observation.
 * The pediatric epilepsy examples use the same framework as the adult; detection and
   reconstruction claims rest on separate results. Simulated IED-source recovery does not
   identify an epileptogenic zone or establish surgical benefit.

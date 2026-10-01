@@ -90,8 +90,9 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   2-year size control (30-70 mm) and the 18-month template (45-70 mm), uncorrected and not
   surviving a correction, so G3B's deeper gain is mostly not resolved at this sample size.
   Localization: dipole errors similar; dSPM of strong focal spikes about 5 mm better with the
-  dense OPM in all three templates (p = 0.035, 0.002 and 0.005, uncorrected; 16 comparisons per
-  anatomy).
+  dense OPM in all three templates (p = 0.035, 0.002 and 0.005, uncorrected; 16 comparisons per OPM
+  array and anatomy, so the 18- and 12-month values survive a Bonferroni correction within their
+  anatomy, and only the 12-month dense dSPM of strong patches, p = 0.00025, one across all children).
 
 Head motion and OPM slippage (G4, NEW, a bounded secondary extension; `docs/methods.md` section 12,
 `results/g4/G4_motion_report.md`), adult and the 24- and 12-month templates, declared conditions:

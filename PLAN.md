@@ -171,8 +171,8 @@ GATE G1: all three run reproducibly; each output states REPRO/ADAPT status and a
    event tables byte-identical (checked 2026-09-30, 21:04 and 21:38; G4-relevant code changed later
    only in `plotting.py`).
 7. [x] 18- and 12-month templates added (2026-10-01; G3B computed at cb1b8a9, summaries redrawn at
-   fd40dfe): the four anatomies of the reviewed pass reproduce to 1e-9 (188 secondary bootstrap
-   bounds moved with the shared random stream); Delta +0.85 [+0.49, +1.27] and +1.03 [+0.66, +1.44]
+   fd40dfe): the four anatomies of the reviewed pass reproduce to 1e-9 (the bounds of 188 secondary
+   bootstrap intervals moved with the shared random stream); Delta +0.85 [+0.49, +1.27] and +1.03 [+0.66, +1.44]
    dB; the depth checks of the earlier hand computation are now computed for every template
    (`template_depth_checks`).
 

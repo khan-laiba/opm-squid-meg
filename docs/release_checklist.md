@@ -1,5 +1,8 @@
 # Release checklist (prepared, not executed)
 
+Status on 2026-10-01: **release-ready: no** (the owner decisions of section 3 are open);
+**publicly deployed: no** (private repository, no Pages site).
+
 The repository stays private and no website is deployed. Making the repository public, enabling
 GitHub Pages or publishing the report needs the owner's explicit approval (GOAL.md, G5); release-ready
 and publicly deployed are separate statuses. This list records what has been prepared and what
@@ -35,7 +38,8 @@ separately after any change.
   (legacy scripts), and the realistic-head summary no longer records the local SUBJECTS_DIR.
 - Not committed: reference PDFs, MNE sample data and anatomy, the infant templates, fsaverage,
   caches (`.gitignore`; `git ls-files` lists only generated figures as PDFs).
-- No secrets: `git grep -I -i -E "api[_-]?key|secret|token|passw"` finds only the goal text.
+- No secrets: `git grep -I -i -E "api[_-]?key|secret|token|passw"` finds only the goal text and
+  this checklist.
 - The local report builds and link-checks (`scripts/build_site.py`, every link and download
   checked; `tests/test_site.py`).
 
@@ -43,8 +47,8 @@ separately after any change.
 
 1. **Licence.** The repository has no licence file; without one the code is not reusable by
    others. Choose a licence (and whether results and figures carry a different one).
-2. **Identifying metadata.** All commits carry the author name and institutional e-mail
-   address. Publishing the history as it is publishes these;
+2. **Identifying metadata.** All commits carry the author name and institutional e-mail address
+   (no tracked file spells it out). Publishing the history as it is publishes them;
    the alternatives (a fresh export, or a rewritten history, which needs a force-push) are the
    owner's call. No force-push or history rewrite has been done.
 3. **Infant-template derivatives.** Figures and tables derived from the O'Reilly et al. (2021)
@@ -52,10 +56,12 @@ separately after any change.
    2016, which has its own terms): every `results/g3b` figure and target table that shows a
    template (`Figure_G3B_maps_infant*.png`, `Figure_G3B_usefulness_infant*.png`,
    `Figure_G3B_geometry.png`, `Figure_G3B_depth.png`, `Figure_G3B_delta.png`,
-   `Figure_G3B_placements.png`, `g3b_targets_infant*.csv`), `results/g4/*infant*`,
-   `results/g4/G4_pediatric_report.md`, `results/g4/g4_pediatric_comparison.json`,
-   `results/g4/g4_motion_summary.json` and `Figure_G4_motion.png`. Confirm redistribution; both
-   papers are cited wherever these appear.
+   `Figure_G3B_placements.png`, `g3b_targets_infant*.csv`), the G3B summary and report
+   (`g3b_summary.json`, `G3B_report.md`), `results/g4/*infant*`, `results/g4/G4_pediatric_report.md`,
+   `results/g4/g4_pediatric_comparison.json`, the motion results (`g4_motion_summary.json`,
+   `G4_motion_report.md`, `g4_motion_timecourse_example.csv`, `Figure_G4_motion.png`), and the
+   report pages built from them (pediatric, epilepsy, G3B and motion reports, downloads). Confirm
+   redistribution; both papers are cited wherever these appear.
 4. **fsaverage derivatives** (`legacy/realistic_head_output/`): FreeSurfer's fsaverage; confirm
    the terms for derived figures and per-vertex tables.
 5. **Published figure raster.** `legacy/figure3_output/Figure3_published_extracted.png`,
