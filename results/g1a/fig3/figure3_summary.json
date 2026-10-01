@@ -24,13 +24,14 @@
     "OPM": 4.419097867503977,
     "SQUID": 2.4973393010437226
   },
-  "font": "Myriad Pro (/Applications/Adobe Acrobat DC/Adobe Acrobat.app/Contents/Resources/Resource/Font)",
+  "font": "open fonts (DejaVu Sans; STIXGeneral italic)",
+  "artwork_fonts": false,
   "mne_version": "1.13.2",
   "matplotlib_version": "3.11.2",
   "outputs": {
-    "png": "/Volumes/T9/OPM_SQUID Claude/results/g1a/fig3/Figure3_replicated.png",
-    "pdf": "/Volumes/T9/OPM_SQUID Claude/results/g1a/fig3/Figure3_replicated.pdf",
-    "svg": "/Volumes/T9/OPM_SQUID Claude/results/g1a/fig3/Figure3_replicated.svg"
+    "png": "Figure3_replicated.png",
+    "pdf": "Figure3_replicated.pdf",
+    "svg": "Figure3_replicated.svg"
   },
   "d_eq_paper_caption_mm": 28.0
 }

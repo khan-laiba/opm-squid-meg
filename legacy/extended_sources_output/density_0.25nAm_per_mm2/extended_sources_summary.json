@@ -1126,18 +1126,18 @@
     }
   ],
   "outputs": [
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure3_patch_rho_00mm.png",
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure3_patch_rho_00mm.pdf",
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure3_patch_rho_05mm.png",
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure3_patch_rho_05mm.pdf",
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure3_patch_rho_10mm.png",
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure3_patch_rho_10mm.pdf",
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure3_patch_rho_15mm.png",
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure3_patch_rho_15mm.pdf",
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure3_patch_rho_20mm.png",
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure3_patch_rho_20mm.pdf",
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure_extended_sources.png",
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure_extended_sources.pdf",
-    "extended_sources_output/density_0.25nAm_per_mm2/Figure_extended_sources.svg"
+    "Figure3_patch_rho_00mm.png",
+    "Figure3_patch_rho_00mm.pdf",
+    "Figure3_patch_rho_05mm.png",
+    "Figure3_patch_rho_05mm.pdf",
+    "Figure3_patch_rho_10mm.png",
+    "Figure3_patch_rho_10mm.pdf",
+    "Figure3_patch_rho_15mm.png",
+    "Figure3_patch_rho_15mm.pdf",
+    "Figure3_patch_rho_20mm.png",
+    "Figure3_patch_rho_20mm.pdf",
+    "Figure_extended_sources.png",
+    "Figure_extended_sources.pdf",
+    "Figure_extended_sources.svg"
   ]
 }

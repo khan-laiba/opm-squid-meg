@@ -1126,18 +1126,18 @@
     }
   ],
   "outputs": [
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure3_patch_rho_00mm.png",
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure3_patch_rho_00mm.pdf",
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure3_patch_rho_05mm.png",
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure3_patch_rho_05mm.pdf",
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure3_patch_rho_10mm.png",
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure3_patch_rho_10mm.pdf",
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure3_patch_rho_15mm.png",
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure3_patch_rho_15mm.pdf",
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure3_patch_rho_20mm.png",
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure3_patch_rho_20mm.pdf",
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure_extended_sources.png",
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure_extended_sources.pdf",
-    "/Volumes/T9/OPM_SQUID Claude/extended_sources_output/Figure_extended_sources.svg"
+    "Figure3_patch_rho_00mm.png",
+    "Figure3_patch_rho_00mm.pdf",
+    "Figure3_patch_rho_05mm.png",
+    "Figure3_patch_rho_05mm.pdf",
+    "Figure3_patch_rho_10mm.png",
+    "Figure3_patch_rho_10mm.pdf",
+    "Figure3_patch_rho_15mm.png",
+    "Figure3_patch_rho_15mm.pdf",
+    "Figure3_patch_rho_20mm.png",
+    "Figure3_patch_rho_20mm.pdf",
+    "Figure_extended_sources.png",
+    "Figure_extended_sources.pdf",
+    "Figure_extended_sources.svg"
   ]
 }

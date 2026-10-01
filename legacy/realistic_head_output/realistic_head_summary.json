@@ -1,6 +1,6 @@
 {
   "subject": "fsaverage",
-  "subjects_dir": "/Volumes/T9/OPM_SQUID/data/subjects",
+  "subjects_dir": "SUBJECTS_DIR (local; not recorded)",
   "mne_version": "1.13.2",
   "head_model": "single-compartment BEM (inner skull, 5120 triangles, 0.3 S/m)",
   "source_space": "ico-5 white-matter surface, 20484 sources, fixed cortical-normal orientation",
@@ -2207,20 +2207,20 @@
     }
   },
   "outputs": [
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/realistic_head_results.npz",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_fig3.png",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_fig3.pdf",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_fig3_patch_rho_05mm.png",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_fig3_patch_rho_05mm.pdf",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_fig3_patch_rho_10mm.png",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_fig3_patch_rho_10mm.pdf",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_fig3_patch_rho_15mm.png",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_fig3_patch_rho_15mm.pdf",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_fig3_patch_rho_20mm.png",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_fig3_patch_rho_20mm.pdf",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_maps.png",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_maps.pdf",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_summary.png",
-    "/Volumes/T9/OPM_SQUID Claude/realistic_head_output/Figure_realistic_summary.pdf"
+    "realistic_head_results.npz",
+    "Figure_realistic_fig3.png",
+    "Figure_realistic_fig3.pdf",
+    "Figure_realistic_fig3_patch_rho_05mm.png",
+    "Figure_realistic_fig3_patch_rho_05mm.pdf",
+    "Figure_realistic_fig3_patch_rho_10mm.png",
+    "Figure_realistic_fig3_patch_rho_10mm.pdf",
+    "Figure_realistic_fig3_patch_rho_15mm.png",
+    "Figure_realistic_fig3_patch_rho_15mm.pdf",
+    "Figure_realistic_fig3_patch_rho_20mm.png",
+    "Figure_realistic_fig3_patch_rho_20mm.pdf",
+    "Figure_realistic_maps.png",
+    "Figure_realistic_maps.pdf",
+    "Figure_realistic_summary.png",
+    "Figure_realistic_summary.pdf"
   ]
 }
