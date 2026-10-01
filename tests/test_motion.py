@@ -55,6 +55,58 @@ class TestMotion(unittest.TestCase):
             minus = motion.readings(self.s, self.b0, self.g, self.x_ref, motion.rotation(-v[:3]), -v[3:], self.pivot)
             np.testing.assert_allclose((plus - minus) / (2 * h), jac[:, k], rtol=1e-5, atol=1e-6 * np.abs(jac).max())
 
+    def test_jacobian_matches_finite_differences_with_pivot_and_errors(self):
+        act, gains = motion.with_calibration_errors(self.s, np.random.default_rng(9), 2.0, 0.02)
+        pivot = np.array([0.01, -0.02, -0.06])
+        jac = motion.jacobian(act, self.b0, self.g, self.x_ref, pivot, gains)
+        h = 1e-6
+        for k in range(6):
+            v = np.zeros(6)
+            v[k] = h
+            plus = motion.readings(act, self.b0, self.g, self.x_ref, motion.rotation(v[:3]), v[3:], pivot, gains)
+            minus = motion.readings(act, self.b0, self.g, self.x_ref, motion.rotation(-v[:3]), -v[3:], pivot, gains)
+            np.testing.assert_allclose((plus - minus) / (2 * h), jac[:, k], rtol=1e-5, atol=1e-6 * np.abs(jac).max())
+
+    def test_any_rigid_motion_is_removed_exactly_by_the_8_term_projection(self):
+        e = motion.external_basis(self.s, self.x_ref)
+        p8 = motion.projector(e)
+        pivot = np.array([0.0, -0.01, -0.06])
+        rest = motion.readings(self.s, self.b0, self.g, self.x_ref, np.eye(3), np.zeros(3), pivot)
+        for rv, tr in (([0.3, -0.5, 0.2], [0.01, -0.005, 0.02]), ([1.0, 0.0, 0.0], [0.0, 0.0, 0.0])):
+            d = motion.readings(self.s, self.b0, self.g, self.x_ref, motion.rotation(rv), tr, pivot) - rest
+            self.assertLess(np.linalg.norm(p8 @ d), 1e-9 * np.linalg.norm(d))
+        act, gains = motion.with_calibration_errors(self.s, np.random.default_rng(4), 1.0, 0.01)
+        rest = motion.readings(act, self.b0, self.g, self.x_ref, np.eye(3), np.zeros(3), pivot, gains)
+        d = motion.readings(act, self.b0, self.g, self.x_ref, motion.rotation([0.01, 0.0, 0.0]), np.zeros(3), pivot, gains) - rest
+        self.assertGreater(np.linalg.norm(p8 @ d), 1e-4 * np.linalg.norm(d))  # but not with calibration errors
+
+    def test_unmodelled_and_oracle_detectability(self):
+        from opmsquid import metrics
+
+        rng = np.random.default_rng(6)
+        n = 40
+        a = rng.standard_normal((n, 2 * n))
+        cs = a @ a.T / (2 * n) + 0.1 * np.eye(n)
+        u = rng.standard_normal((n, 3))
+        cu = u @ u.T
+        s = rng.standard_normal((n, 25))
+        thetas = [0.0, 0.1, 1.0, 10.0]
+        ws = metrics.whitener(cs)
+        static = np.linalg.norm(ws.apply(s), axis=0)
+        un = motion.unmodelled_detectability(ws, s, cs, cu, thetas)
+        orc = motion.oracle_detectability(s, cs, cu, thetas)
+        np.testing.assert_allclose(un[0], static, rtol=1e-10)
+        np.testing.assert_allclose(orc[0], static, rtol=1e-10)
+        self.assertTrue(np.all(un <= orc + 1e-9))
+        self.assertTrue(np.all(orc <= static[None] + 1e-9))
+        self.assertTrue(np.all(np.diff(un, axis=0) <= 1e-12))  # more artefact, less detectability
+
+    def test_crossing(self):
+        x = [0.01, 0.1, 1.0, 10.0]
+        self.assertAlmostEqual(motion.crossing(x, [0.0, -0.5, -1.5, -4.0], -1.0), 10 ** -0.5)
+        self.assertIsNone(motion.crossing(x, [0.0, -0.1, -0.2, -0.3], -1.0))
+        self.assertEqual(motion.crossing(x, [-2.0, -3.0, -4.0, -5.0], -1.0), 0.01)
+
     def test_basis_matches_environment(self):
         info = neuromag.load_info("T3")
         s = motion.sensors(info)

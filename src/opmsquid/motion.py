@@ -16,12 +16,14 @@ B. Room-field coupling. A sensor that moves rigidly with the head through a stat
    pivot ``c``, translation [m]). The head frame at rest is taken as the room frame; the field
    draws are isotropic, so the fixed rotation between the two does not matter.
 
-First order, perfectly calibrated sensors: rotation in B0 and translation in G change the
-reading by a uniform field in the head frame (removed by a homogeneous-field projection);
-rotation in G adds a symmetric, traceless gradient (removed by the 8-term projection of
-``environment.external_basis``). A uniform field stays uniform under any rotation, so the
-homogeneous part is removed exactly, not only to first order. Calibration errors (sensitive-axis
-tilt, gain) break these identities and leave residuals proportional to the field change.
+Perfectly calibrated sensors: for any rigid motion x -> R (x - c) + c + t the readings are those
+of the uniform field R^T B0 + R^T G (R (x_ref - c) + c + t - x_ref) plus the gradient R^T G R
+(symmetric and traceless) about x_ref in the head frame, i.e. of a field in the span of the 8-term
+model of ``environment.external_basis``: the 8-term projection removes the change exactly, for any
+rotation; in a uniform field (G = 0) the change is uniform and the homogeneous-field projection
+removes it exactly. Translation in G alone is uniform; rotation in G is not. Calibration errors
+(sensitive-axis tilt, gain) break these identities and leave residuals proportional to the field
+change.
 """
 from __future__ import annotations
 
@@ -152,3 +154,35 @@ def mismatched_detectability(white_ref: np.ndarray, white_actual: np.ndarray) ->
     num = np.sum(white_ref * white_actual, axis=0)
     den = np.linalg.norm(white_ref, axis=0)
     return np.divide(num, den, out=np.zeros_like(num), where=den > 0)
+
+
+def unmodelled_detectability(static_whitener, s: np.ndarray, c_static: np.ndarray, c_unit: np.ndarray, thetas) -> np.ndarray:
+    """(n_thetas, n_sources) output SNR of the matched filter of the static noise model,
+    h = C_s^+ s, applied to data whose noise is C_s + theta^2 C_u (an artefact the analyst does not
+    model): (h^T s) / sqrt(h^T C_s h + theta^2 h^T C_u h). Equals the static detectability at theta = 0."""
+    h = static_whitener.matrix.T @ static_whitener.apply(s)
+    num, a, b = np.sum(h * s, axis=0), np.sum(h * (c_static @ h), axis=0), np.sum(h * (c_unit @ h), axis=0)
+    return np.array([num / np.sqrt(a + th**2 * b) for th in np.atleast_1d(thetas)])
+
+
+def oracle_detectability(s: np.ndarray, c_static: np.ndarray, c_unit: np.ndarray, thetas) -> np.ndarray:
+    """(n_thetas, n_sources) known-topography detectability with the artefact part of the noise
+    covariance (the optimal filter nulls it): never below the un-modelled value, never above the
+    static one."""
+    from .metrics import whitener
+
+    return np.array([np.linalg.norm(whitener(c_static + th**2 * c_unit).apply(s), axis=0) for th in np.atleast_1d(thetas)])
+
+
+def crossing(x, y, level) -> float | None:
+    """First x (interpolated in log x) at which the curve y falls to ``level``; None if it never
+    does; x[0] if it is already there at the first grid point (read: at or below x[0])."""
+    x, y = np.asarray(x, float), np.asarray(y, float)
+    below = np.flatnonzero(y <= level)
+    if not len(below):
+        return None
+    i = below[0]
+    if i == 0:
+        return float(x[0])
+    f = (y[i - 1] - level) / (y[i - 1] - y[i])
+    return float(np.exp(np.log(x[i - 1]) + f * (np.log(x[i]) - np.log(x[i - 1]))))

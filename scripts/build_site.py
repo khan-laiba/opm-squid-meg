@@ -566,10 +566,13 @@ def page_motion(d, out):
                     c = m["coupling"][k]["cases"].get(f"{corr}/{cal}/{field}/neck")
                     if c is None:
                         continue
-                    be = c["unmodelled"]["breakeven_deg_x_unit"]
+                    be = c["unmodelled"]["thresholds_deg_unit_field"]
 
-                    def f(v):
-                        return "not reached" if v is None else f"{v:.3g}"
+                    def f(r):
+                        v, q = r["median_curve"], r.get("per_draw_p10_p90")
+                        if v is None:
+                            return "not reached"
+                        return f"{v:.3g}" + (f" [{q[0]:.3g}-{q[1]:.3g}]" if q else "")
 
                     brows.append([ANAT[k], corr, cal.replace("tilt", "").replace("deg_gain", " deg, ").replace("pct", " %"),
                                   "1 nT" if field == "uniform" else "1 nT/m", f(be["loss_1dB"]), f(be["D_0dB"]),
@@ -596,13 +599,16 @@ def page_motion(d, out):
                    "OPM no longer ahead at [deg RMS]", "Oracle loss at 5 deg [dB]"], brows,
                   "B. In-band rotation (per axis, RMS, about a pivot 60 mm below the head origin) in a unit field at which the "
                   "dense OPM array loses 1 dB, or falls to Neuromag's static detectability, with the artefact outside the noise "
-                  "model; divide by the field in nT (or nT/m) for another room. Last column: artefact inside the noise model."),
+                  "model (median curve over draws; 10th-90th percentiles of the per-draw thresholds); divide by the field in nT "
+                  "(or nT/m) for another room. Last column: artefact inside the noise model."),
          f"<p>B'. Exact rigid motion over {tc['config']['duration_s']:g} s ({ANAT[tc['config']['anatomy']]}; drift up to "
          f"{tc['config']['drift_deg']:g} deg, in-band jitter {tc['config']['inband_rotation_rms_deg']:g} deg RMS per axis, "
          f"{tc['config']['b0_nT']:g} nT and {tc['config']['gradient_nT_per_m']:g} nT/m): peak field change at a sensor "
          f"{tc['peak_field_change_pT']['median']:.0f} pT (median), in-band residual after the 8-term projection "
-         f"{tc['corrections']['homogeneous+gradient']['inband_rms_fT_median']:.0f} fT RMS; the linear model predicts the exact "
-         f"in-band artefact to within {max(abs(r['exact_over_linear_median'] - 1) for r in tc['corrections'].values()) * 100:.0f} %.</p>"]
+         f"{tc['corrections']['homogeneous+gradient']['inband_rms_fT_median']:.0f} fT RMS; per channel the exact in-band artefact "
+         "is within " + f"{max(max(abs(r['exact_over_linear_percentiles']['p5'] - 1), abs(r['exact_over_linear_percentiles']['p95'] - 1)) for r in tc['corrections'].values()) * 100:.1f}"
+         + " % of the linear prediction for 90 % of the channels (largest deviation "
+         + f"{max(r['exact_over_linear_max_abs_deviation'] for r in tc['corrections'].values()) * 100:.1f} %).</p>"]
     return "\n".join(h)
 
 

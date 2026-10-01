@@ -126,7 +126,11 @@ def slipped_opm(an, array, rot: np.ndarray) -> tuple:
                                               model_surface=skin, model_clearance=opm.MODEL_CLEARANCE,
                                               cell_clearance=opm.CELL_CLEARANCE, to_head=np.linalg.inv(hm)[:3, :3])
     mh = np.linalg.inv(hm)
-    arr = opm.OPMArray(pos_mri @ mh[:3, :3].T + mh[:3, 3], ax, pos, np.arange(len(pos)), opm.STANDOFF, 0.0, "slipped dense OPM")
+    from scipy.spatial import cKDTree
+
+    scalp = P.scalp_head_frame(an.subject)
+    final = pos_mri @ mh[:3, :3].T + mh[:3, 3]
+    arr = opm.OPMArray(final, ax, scalp[cKDTree(scalp).query(final)[1]], np.arange(len(pos)), opm.STANDOFF, 0.0, "slipped dense OPM")
     info = opm.make_info(arr)
     return g2.Array("opm_dense", info, array.kinds.copy(), array.coil_def, dict(array.meta, slipped=True)), extra
 
@@ -181,7 +185,11 @@ def part_a(an, ref, com, cfg, cfg3) -> dict:
 
 # ----------------------------------------------------------------------------------------------
 # B. in-band motion in a static residual field
-def part_b(an, ref, com, cfg, rng) -> dict:
+def part_b(an, ref, com, cfg) -> dict:
+    """Common random numbers: field draw i is the same for every correction, pivot, calibration level
+    and anatomy (seeded by (seed, field, i)); calibration draw i by (seed, level, i), shared by every
+    correction and pivot. Thresholds come from the median curve over draws; the 10th-90th
+    percentiles of the per-draw thresholds show the draw-to-draw spread."""
     cb = cfg["coupling"]
     cond = cfg["condition"]
     op = ref["opm"]
@@ -192,23 +200,37 @@ def part_b(an, ref, com, cfg, rng) -> dict:
     proj = {"none": np.eye(op.n), "homogeneous": motion.projector(basis[:, :3]), "homogeneous+gradient": motion.projector(basis)}
     s = gt * com.q
     m, w = an.cortical, an.weights
-    # Neuromag's static detectability at the same condition (no motion term: fixed sensors)
+    # Neuromag's static detectability at the same condition (no motion term: fixed sensors; no projection charged to it)
     gq, gqg = ref["G"]["squid"]
     _, cq = noise_cov(an, ref["squid"], gqg, com, cond)
     d_sq = np.linalg.norm(metrics.whitener(cq).apply(gq * com.q), axis=0)
-    thetas = np.radians(cb["rotation_rms_deg"])
-    out = dict(rotation_rms_deg=cb["rotation_rms_deg"], cases={}, coupling_fT={})
+    grid = cb["rotation_rms_deg"]
+    thetas = np.radians(grid)
+    out = dict(rotation_rms_deg=grid, n_draws=cb["n_draws"], cases={}, coupling_fT={})
     d_ib = np.linalg.norm(metrics.whitener(c_ib).apply(s), axis=0)
+    fields = {f: [motion.random_field(np.random.default_rng([cb["seed"], fi, i]), 1e-9 if f == "uniform" else 0.0,
+                                      1e-9 if f == "gradient" else 0.0) for i in range(cb["n_draws"])]
+              for fi, f in enumerate(("uniform", "gradient"))}
+    cals = {tuple(c): [motion.with_calibration_errors(s_nom, np.random.default_rng([cb["seed"], 100 + ci, i]), *c)
+                       for i in range(cb["n_draws"])] for ci, c in enumerate(cb["calibration"])}
 
     def med_db(num, den):
         return P.weighted_median(20 * np.log10(num[m] / den[m]), w[m])
+
+    def thresholds(curves_l, curves_d):
+        res = {}
+        for name, cv, level in [(f"loss_{x:g}dB", curves_l, -x) for x in cb["loss_db"]] + [("D_0dB", curves_d, 0.0)]:
+            per = [motion.crossing(grid, c, level) for c in cv]
+            reached = [v for v in per if v is not None]
+            res[name] = dict(median_curve=motion.crossing(grid, np.median(cv, axis=0), level),
+                             per_draw_p10_p90=[float(np.percentile(reached, 10)), float(np.percentile(reached, 90))] if reached else None,
+                             draws_reached=len(reached))
+        return res
 
     for corr, pm in proj.items():
         cs, ss = pm @ c_ib @ pm.T, pm @ s
         ws = metrics.whitener(cs)
         d_static = np.linalg.norm(ws.apply(ss), axis=0)
-        h = ws.matrix.T @ ws.apply(ss)  # matched filter of the static noise model (the analyst's, without the motion term)
-        num, a = np.sum(h * ss, axis=0), np.sum(h * (cs @ h), axis=0)
         out[f"static/{corr}"] = dict(opm_change_db=med_db(d_static, d_ib), D_db=med_db(d_static, d_sq))
         for pivot_name, pivot in (("neck", cb["pivot_head_m"]), ("origin", cb["pivot_sensitivity_m"])):
             for ax_err, gain_err in cb["calibration"]:
@@ -218,50 +240,27 @@ def part_b(an, ref, com, cfg, rng) -> dict:
                         continue  # the pivot does not matter for a uniform field; one sensitivity row per correction
                     curves = {"unmodelled": ([], []), "oracle": ([], [])}
                     rms = []
-                    for _ in range(cb["n_draws"]):
-                        b0, grad = motion.random_field(rng, 1e-9 if field == "uniform" else 0.0, 1e-9 if field == "gradient" else 0.0)
-                        act, gains = motion.with_calibration_errors(s_nom, rng, ax_err, gain_err)
+                    for i in range(cb["n_draws"]):
+                        b0, grad = fields[field][i]
+                        act, gains = cals[(ax_err, gain_err)][i]
                         jac = motion.jacobian(act, b0, grad, com.env.r0, np.asarray(pivot, float), gains)[:, :3]
                         cu = pm @ jac @ jac.T @ pm.T  # per rad^2 of per-axis in-band rotation
                         rms.append(np.median(np.sqrt(np.maximum(np.diag(cu), 0))) * np.radians(1.0) * 1e15)  # fT per deg per unit field
-                        b = np.sum(h * (cu @ h), axis=0)
-                        for metric in curves:
-                            lrow, drow = [], []
-                            for th in thetas:
-                                if metric == "unmodelled":  # the static filter applied to data that contain the artefact
-                                    d = num / np.sqrt(a + th**2 * b)
-                                else:  # the artefact is part of the (known) noise covariance: the optimal filter nulls it
-                                    d = np.linalg.norm(metrics.whitener(cs + th**2 * cu).apply(ss), axis=0)
-                                lrow.append(med_db(d, d_static))
-                                drow.append(med_db(d, d_sq))
-                            curves[metric][0].append(lrow)
-                            curves[metric][1].append(drow)
+                        for metric, ds in (("unmodelled", motion.unmodelled_detectability(ws, ss, cs, cu, thetas)),
+                                           ("oracle", motion.oracle_detectability(ss, cs, cu, thetas))):
+                            curves[metric][0].append([med_db(d, d_static) for d in ds])
+                            curves[metric][1].append([med_db(d, d_sq) for d in ds])
                     key = f"{corr}/{cal}/{field}/{pivot_name}"
                     out["cases"][key] = {}
                     for metric, (loss, dd) in curves.items():
                         loss, dd = np.array(loss), np.array(dd)
-                        med_l, med_d = np.median(loss, axis=0), np.median(dd, axis=0)
                         out["cases"][key][metric] = dict(
-                            opm_change_db_median=med_l, opm_change_db_range=[loss.min(axis=0), loss.max(axis=0)],
-                            D_db_median=med_d, D_db_range=[dd.min(axis=0), dd.max(axis=0)],
-                            breakeven_deg_x_unit={f"loss_{x:g}dB": crossing(cb["rotation_rms_deg"], med_l, -x) for x in cb["loss_db"]}
-                            | {"D_0dB": crossing(cb["rotation_rms_deg"], med_d, 0.0)})
+                            opm_change_db_median=np.median(loss, axis=0), opm_change_db_range=[loss.min(axis=0), loss.max(axis=0)],
+                            D_db_median=np.median(dd, axis=0), D_db_range=[dd.min(axis=0), dd.max(axis=0)],
+                            thresholds_deg_unit_field=thresholds(loss, dd))
                     out["coupling_fT"][key] = dict(median=float(np.median(rms)), range=[float(np.min(rms)), float(np.max(rms))])
         log(f"{an.key}: part B {corr} done")
     return out
-
-
-def crossing(x, y, level) -> float | None:
-    """First x (log-interpolated) where the decreasing curve y falls to ``level``; None if it never does."""
-    x, y = np.asarray(x, float), np.asarray(y, float)
-    below = np.flatnonzero(y <= level)
-    if not len(below):
-        return None
-    i = below[0]
-    if i == 0:
-        return float(x[0])
-    f = (y[i - 1] - level) / (y[i - 1] - y[i])
-    return float(np.exp(np.log(x[i - 1]) + f * (np.log(x[i]) - np.log(x[i - 1]))))
 
 
 # ----------------------------------------------------------------------------------------------
@@ -315,9 +314,12 @@ def timecourse(an, ref, com, cfg, rng) -> dict:
     for corr, pm in proj.items():
         exact = np.sqrt(np.mean((pm @ yf)[:, trim] ** 2, axis=1))
         lin = np.sqrt(np.maximum(np.diag(pm @ jac @ sigma @ jac.T @ pm.T), 0))
+        ratio = exact / np.maximum(lin, 1e-30)
         out["corrections"][corr] = dict(inband_rms_fT_median=float(np.median(exact) * 1e15),
                                         linear_prediction_fT_median=float(np.median(lin) * 1e15),
-                                        exact_over_linear_median=float(np.median(exact / np.maximum(lin, 1e-30))))
+                                        exact_over_linear_median=float(np.median(ratio)),
+                                        exact_over_linear_percentiles={f"p{q:g}": float(np.percentile(ratio, q)) for q in (1, 5, 50, 95, 99)},
+                                        exact_over_linear_max_abs_deviation=float(np.max(np.abs(ratio - 1.0))))
         out["_example"]["filtered"][corr] = (pm @ yf)[example, t_show]
     return out
 
@@ -367,7 +369,7 @@ def figure(summary, examples, path):
         for yy, (s, n, r) in zip(y, rows):
             col = "tab:orange" if s == "Neuromag" else "tab:blue"
             if not r["feasible"]:
-                ax.text(0.0, yy, "  infeasible", va="center", fontsize=7, color="0.4")
+                ax.text(0.25, yy, "infeasible (no room in the helmet)", va="center", ha="right", fontsize=7, color="0.4")
                 continue
             ax.plot([r["mismatched"]["median_db"], r["known"]["median_db"]], [yy, yy], color=col, lw=1, alpha=0.6)
             ax.plot(r["mismatched"]["median_db"], yy, "o", color=col, ms=5)
@@ -408,10 +410,11 @@ def figure(summary, examples, path):
         ax.set_ylabel("median OPM detectability change [dB]")
         ax.set_title(f"B. In-band rotation, {field} field (artefact outside the noise model)", fontsize=10)
         if j == 0:
-            hs = [Line2D([], [], color=CORR_COLOR[c], label=c) for c in CORRECTIONS]
+            hs = [Line2D([], [], color=CORR_COLOR[c], label=c + (" (calibration irrelevant: perfect shown)" if c == "none" else ""))
+                  for c in CORRECTIONS]
             hs += [Line2D([], [], color="0.3", ls=styles[k], label=G3.LABEL[k]) for k in keys]
             hs += [Line2D([], [], color="0.3", alpha=a, label=lab) for a, lab in
-                   ((1.0, "calibration 1 deg / 1 %"), (0.5, "calibration 3 deg / 3 %"))]
+                   ((1.0, "projections: calibration 1 deg / 1 %"), (0.5, "projections: calibration 3 deg / 3 %"))]
             ax.legend(handles=hs, fontsize=7, loc="lower left")
     # B': exact rigid motion
     ax = axs[1, 2]
@@ -477,22 +480,32 @@ def report(s) -> str:
         for corr in CORRECTIONS:
             st = s["coupling"][k][f"static/{corr}"]
             L.append(f"| {G3.LABEL[k]} | {corr} | {st['opm_change_db']:+.2f} | {st['D_db']:+.2f} |")
-    L += ["", "In-band artefact per channel (median over channels, then over draws) for 1 deg RMS rotation per axis in the unit "
-          "field, after each correction [fT]. Then the in-band rotation (deg RMS per axis, in the unit field) at which the median "
-          "OPM detectability falls by 1 or 3 dB, or D falls to 0 dB, when the artefact is not part of the analyst's noise model "
-          "(matched filter of the static covariance applied to data that contain it; '-': not reached up to "
-          f"{max(cb['rotation_rms_deg']):g} deg). Last column: the loss at {max(cb['rotation_rms_deg']):g} deg when the artefact is "
-          "part of the known noise covariance (the optimal filter nulls its at most 3 spatial patterns: the bound for data-driven "
-          "nulling or regression on measured head motion).", "",
+    grid = cb["rotation_rms_deg"]
+
+    def th(r):
+        v = r["median_curve"]
+        txt = "-" if v is None else (f"<= {grid[0]:g}" if v == grid[0] else f"{v:.3g}")
+        q = r.get("per_draw_p10_p90")
+        return txt + (f" [{q[0]:.3g}-{q[1]:.3g}]" if q and v is not None else "")
+
+    L += ["", f"In-band artefact per channel (median over channels, then over {s['coupling'][s['anatomies'][0]].get('n_draws', '?')} "
+          "draws) for 1 deg RMS rotation per axis in the unit field, after each correction [fT]. Then the in-band rotation (deg "
+          "RMS per axis, in the unit field) at which the median OPM detectability falls by 1 or 3 dB, or D falls to 0 dB, when "
+          "the artefact is not part of the analyst's noise model (matched filter of the static covariance applied to data that "
+          f"contain it), from the median curve over draws, with the 10th-90th percentiles of the per-draw thresholds ('-': not "
+          f"reached up to {max(grid):g} deg). The draws are common random numbers: the same fields and calibration errors in "
+          f"every correction, pivot and anatomy. Last column: the loss at {max(grid):g} deg when the artefact is part of the "
+          "known noise covariance (the optimal filter nulls its at most 3 spatial patterns: the bound for data-driven nulling or "
+          "regression on measured head motion).", "",
           "| anatomy | field | pivot | correction | calibration (tilt, gain) | artefact [fT per deg] | 1 dB | 3 dB | D = 0 | "
-          f"oracle loss at {max(cb['rotation_rms_deg']):g} deg [dB] |", "|---|---|---|---|---|---|---|---|---|---|"]
+          f"oracle loss at {max(grid):g} deg [dB] |", "|---|---|---|---|---|---|---|---|---|---|"]
     for k in s["anatomies"]:
         for key, c in s["coupling"][k]["cases"].items():
             corr, cal, field, pivot = key.split("/")
-            be = c["unmodelled"]["breakeven_deg_x_unit"]
+            be = c["unmodelled"]["thresholds_deg_unit_field"]
             cf = s["coupling"][k]["coupling_fT"][key]
-            L.append(f"| {G3.LABEL[k]} | {field} | {pivot} | {corr} | {cal} | {cf['median']:.3g} | {fmt(be['loss_1dB'], '.3g')} | "
-                     f"{fmt(be['loss_3dB'], '.3g')} | {fmt(be['D_0dB'], '.3g')} | {c['oracle']['opm_change_db_median'][-1]:+.2f} |")
+            L.append(f"| {G3.LABEL[k]} | {field} | {pivot} | {corr} | {cal} | {cf['median']:.3g} | {th(be['loss_1dB'])} | "
+                     f"{th(be['loss_3dB'])} | {th(be['D_0dB'])} | {c['oracle']['opm_change_db_median'][-1]:+.2f} |")
     tc = s["timecourse"]
     L += ["", f"## B'. Exact rigid motion over {tc['config']['duration_s']:g} s ({G3.LABEL[tc['config']['anatomy']]})", "",
           f"Slow drift up to {tc['config']['drift_deg']:g} deg per axis plus in-band jitter of "
@@ -502,9 +515,12 @@ def report(s) -> str:
           f"Peak field change at a sensor (drift included): median {tc['peak_field_change_pT']['median']:.0f} pT, maximum "
           f"{tc['peak_field_change_pT']['max']:.0f} pT; this offset moves the sensors' operating point (dynamic range, gain), "
           "which is not modelled beyond the calibration errors.", "",
-          "| correction | in-band RMS, exact [fT] | linear prediction [fT] | exact / linear |", "|---|---|---|---|"]
+          "| correction | in-band RMS, exact [fT] | linear prediction [fT] | exact / linear, per channel: median [5th-95th percentile] | largest deviation |",
+          "|---|---|---|---|---|"]
     for corr, r in tc["corrections"].items():
-        L.append(f"| {corr} | {r['inband_rms_fT_median']:.1f} | {r['linear_prediction_fT_median']:.1f} | {r['exact_over_linear_median']:.2f} |")
+        q = r["exact_over_linear_percentiles"]
+        L.append(f"| {corr} | {r['inband_rms_fT_median']:.1f} | {r['linear_prediction_fT_median']:.1f} | {q['p50']:.4f} "
+                 f"[{q['p5']:.4f}-{q['p95']:.4f}] | {100 * r['exact_over_linear_max_abs_deviation']:.1f} % |")
     L += ["", "## Notes", ""] + [f"- {n}" for n in s["notes"]]
     return "\n".join(L) + "\n"
 
@@ -536,13 +552,12 @@ def main():
         cfg["timecourse"]["duration_s"] = 20.0
     keys = cfg["anatomies"]
     anats, com, cfg3 = setup(keys)
-    rng = np.random.default_rng(cfg["coupling"]["seed"])
     refs, geometry, coupling = {}, {}, {}
     for k in keys:
         refs[k] = reference(anats[k], com, cfg3)
         log(f"{k}: reference arrays ready (Neuromag at {cfg3['placement']['primary']}, OPM dense {refs[k]['opm'].n} sites)")
         geometry[k] = part_a(anats[k], refs[k], com, cfg, cfg3)
-        coupling[k] = part_b(anats[k], refs[k], com, cfg, rng)
+        coupling[k] = part_b(anats[k], refs[k], com, cfg)
     tk = cfg["timecourse"]["anatomy"] if cfg["timecourse"]["anatomy"] in keys else keys[0]
     tc = timecourse(anats[tk], refs[tk], com, cfg, np.random.default_rng(cfg["timecourse"]["seed"]))  # its own stream
     examples = tc.pop("_example")
@@ -555,10 +570,16 @@ def main():
             "A head-mounted array moving rigidly with the head keeps its sensor-to-head geometry, so sustained head displacement "
             "changes only the SQUID geometry; the OPM's geometry changes only if the cap slips. The 'known' rows are the ideal "
             "limit of movement compensation (continuous head-position tracking for the SQUID, a measured slip for the OPM).",
-            "In a perfectly calibrated array, rotation in a uniform field changes every reading by a uniform field in the head "
-            "frame and is removed exactly by the homogeneous-field projection; translation in a gradient is uniform too; rotation "
-            "in a gradient adds a symmetric traceless gradient, removed to first order by the 8-term projection "
-            "(tests/test_motion.py). Calibration errors leave residuals proportional to the field change.",
+            "In a perfectly calibrated array any rigid motion changes the readings by a uniform field plus a symmetric traceless "
+            "gradient in the head frame, which the 8-term projection removes exactly; in a uniform field the change is uniform and "
+            "the homogeneous projection removes it exactly; translation in a gradient is uniform, rotation in a gradient is not "
+            "(tests/test_motion.py, finite rotations included). Calibration errors leave residuals proportional to the field change.",
+            "D compares the OPM after its correction with Neuromag without any projection or SSS (none is charged to it), which is "
+            "conservative for the OPM. The gradient is defined about x_ref = r0 of G2 (0, 0, 40 mm, head frame), which sets the "
+            "uniform part of a translated gradient.",
+            "A slipped rigid cap must lift where the head is in its way: sensors that would enter the scalp are moved out along "
+            "their axes without the 5-mm limit of A-OPM-CLEAR (a flexible cap or sliding holders), so the slip rows include "
+            "the lifts (count and largest lift per row in the table).",
             "The static room field is treated as in G2 for both systems (removed exactly by the projection in the projected "
             "condition); the same calibration errors would also leave part of it, for both systems, which is not modelled here.",
             "Not modelled: sensor dynamic range, gain change with the operating field and cross-axis projection beyond the "
