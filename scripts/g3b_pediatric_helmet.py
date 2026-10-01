@@ -473,6 +473,8 @@ def main():
         with open(STATE, "wb") as fh:
             pickle.dump(state, fh)
     summary = summarise(anats, state, cfg)
+    if args.replot:  # the computation's commit stays in provenance; record the one that redrew summaries and figures
+        summary["replotted_at_commit"] = io.RUN_COMMIT
     figures(anats, state, summary, cfg)
     write_targets_csv(anats, state, cfg)
     write_report(anats, summary, cfg)
