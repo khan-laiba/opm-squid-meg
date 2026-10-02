@@ -402,7 +402,7 @@ def _segments_hit_triangles(a, b, tri) -> np.ndarray:
         qv = np.cross(s, e1)
         v = inv * np.einsum("...j,...j->...", d, qv)
         t = inv * np.einsum("...j,...j->...", e2, qv)
-    return (np.abs(det) > 1e-30) & (u >= 0) & (v >= 0) & (u + v <= 1) & (t >= 0) & (t <= 1)
+        return (np.abs(det) > 1e-30) & (u >= 0) & (v >= 0) & (u + v <= 1) & (t >= 0) & (t <= 1)
 
 
 def depth_to_surface(points: np.ndarray, surface: Surface) -> np.ndarray:

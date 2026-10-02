@@ -146,10 +146,10 @@ def main():
     L.append("- One adult anatomy and one measured head position; between-subject variability is not represented.")
     L.append("- OPM intrinsic noise is a declared sweep, not a device specification; OPM movement artefacts, cross-talk and "
              "calibration errors are not modelled.")
-    L.append("- Head model: 3-layer BEM with the head surface refined to 20,480 triangles and every OPM cell integration point >= 1 mm "
-             "outside it (v2). Near the head surface the BEM field is only approximately converged (about 1 % for the headline, "
-             "estimated assuming the error falls with the square of the mesh size, which is not verified on this head; methods "
-             "section 3); the 1-layer model gives a slightly lower dense/combined ratio (convergence section).")
+    L.append("- Head model: 3-layer BEM with the head surface refined to 20,480 triangles and the whole OPM cell >= 1 mm outside it "
+             "at the sampled points (v3; exact cube-to-mesh distance >= 1.001 mm). Refining the head surface changes the headline by "
+             "-0.1 %; if the error falls with the square of the mesh size (not verified on this head), the refined surface is within "
+             "~0.03 % (methods section 3). The 1-layer model gives nearly the same dense/combined ratio (convergence section).")
     L.append("- Scalp-gap variants move the primary OPM sites outward along their axes (same sites).")
     (OUT / "G2_report.md").write_text("\n".join(L) + "\n")
     print(f"wrote {OUT / 'G2_report.md'} ({len(L)} lines)")
