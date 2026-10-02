@@ -144,9 +144,10 @@ def main():
     L.append("## Link to the analytical benchmark (G1A)\n")
     L.append(f"- The sphere model with the real standoffs (OPM {b['sensor_distance_mm']['opm_matched']['median']:.1f} mm, Neuromag "
              f"{b['sensor_distance_mm']['squid']['median']:.1f} mm median; peak-field ratio, eta = 3) gives an equal-SNR depth of "
-             f"{b['sphere_d_eq_mm']:.1f} mm (Jas: 27.7 mm); the matched OPM array on this head {b['opm_matched_d_eq_mm']:.1f} mm; the OPM is "
-             f"ahead at every depth for eta <= {b['opm_matched_eta_opm_ahead_at_all_depths']:g} and behind at every depth for eta >= "
-             f"{b['opm_matched_eta_squid_ahead_at_all_depths']:g}. The realistic comparison above replaces eta by explicit noise and the "
+             f"{b['sphere_d_eq_mm']['realistic_standoffs']['3']:.1f} mm (Jas's 0 / 18 mm standoffs: {b['sphere_d_eq_mm']['jas_xi0_18']['3']:.1f} mm); "
+             f"the matched OPM array on this head, by its peak-field ratio, {b['opm_matched_d_eq_mm']['3']:.1f} mm; it is ahead at every "
+             f"depth for eta <= {max(b['opm_matched_eta_opm_ahead_at_all_depths']):g} and behind at every depth for eta >= "
+             f"{min(b['opm_matched_eta_squid_ahead_at_all_depths']):g}. The realistic comparison above replaces eta by explicit noise and the "
              "peak field by the known-topography detectability of all channels (methods section 8).\n")
     L.append("## Convergence\n")
     c = d["convergence"]
