@@ -32,7 +32,7 @@ RES = ROOT / "results"
 NAV = [("index.html", "Overview"), ("benchmarks.html", "Adult benchmarks (G1)"), ("adult.html", "Realistic adult (G2)"),
        ("pediatric.html", "Pediatric (G3)"), ("epilepsy.html", "Epilepsy (G4)"), ("methods.html", "Methods and limitations"),
        ("register.html", "Parameters and provenance"), ("reproduce.html", "Reproduce and download")]
-FROZEN_TAG = "adult-baseline-v2"
+FROZEN_TAG = "adult-baseline-v3"
 MARKER = ".opmsquid_site_build"  # marks an output directory as the builder's own (safe to replace)
 LABEL = {"squid": "Neuromag", "opm_matched": "OPM matched", "opm204": "OPM 204 (channel budget)",
          "opm_dense": "OPM dense", "combined": "combined", "grad": "gradiometers", "mag": "magnetometers"}

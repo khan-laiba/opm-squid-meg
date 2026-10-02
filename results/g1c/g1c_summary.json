@@ -560,209 +560,209 @@
       "median_db": -20.768925175001073
     },
     "focal/opm@7": {
-      "median_db": -20.91709167248816
+      "median_db": -20.90466818812063
     },
     "patch10/opm@7": {
-      "median_db": -25.974184753722447
+      "median_db": -25.941793694391787
     },
     "patch16/opm@7": {
-      "median_db": -20.77501742691833
+      "median_db": -20.753514489156764
     },
     "focal/opm@10": {
-      "median_db": -21.01344158424157
+      "median_db": -20.999764824746183
     },
     "patch10/opm@10": {
-      "median_db": -26.066919304455762
+      "median_db": -26.025969807236113
     },
     "patch16/opm@10": {
-      "median_db": -20.871273145309544
+      "median_db": -20.863822142747214
     },
     "focal/opm@15": {
-      "median_db": -21.217734474908436
+      "median_db": -21.20657675006275
     },
     "patch10/opm@15": {
-      "median_db": -26.265051977413805
+      "median_db": -26.230992369785465
     },
     "patch16/opm@15": {
-      "median_db": -21.099064850996005
+      "median_db": -21.07759363630915
     },
     "brain_only/focal/opm": {
-      "median_db": -20.817872470367863
+      "median_db": -20.80348233357155
     },
     "brain_only/patch10/opm": {
-      "median_db": -25.872515800852682
+      "median_db": -25.849416307071614
     },
     "brain_only/patch16/opm": {
-      "median_db": -20.671321969329387
+      "median_db": -20.64399225011375
     },
     "focal/opm@20": {
-      "median_db": -21.464568374703397
+      "median_db": -21.456709587549504
     },
     "patch10/opm@20": {
-      "median_db": -26.497722135800373
+      "median_db": -26.46020535270941
     },
     "patch16/opm@20": {
-      "median_db": -21.360216526613236
+      "median_db": -21.32718148687132
     },
     "focal/opm@30": {
-      "median_db": -22.044658556574753
+      "median_db": -22.052807315331158
     },
     "patch10/opm@30": {
-      "median_db": -27.05178905326237
+      "median_db": -27.02671601385424
     },
     "patch16/opm@30": {
-      "median_db": -21.932381188127486
+      "median_db": -21.90269968206429
     },
     "focal/opm@7_minus_mag": {
-      "median_db": 0.1869893908736202,
-      "share_opm_better": 0.5669047326583255
+      "median_db": 0.1718134849565125,
+      "share_opm_better": 0.5675259269657992
     },
     "focal/opm@7_minus_grad": {
-      "median_db": 2.3841186906578073,
-      "share_opm_better": 0.9923842279818205
+      "median_db": 2.4003282870165563,
+      "share_opm_better": 0.9939670451155527
     },
     "focal/opm@10_minus_mag": {
-      "median_db": 0.08589808868796212,
-      "share_opm_better": 0.5320511695649885
+      "median_db": 0.07312975871447236,
+      "share_opm_better": 0.5289171214487515
     },
     "focal/opm@10_minus_grad": {
-      "median_db": 2.3022856188184058,
-      "share_opm_better": 0.9909488128871498
+      "median_db": 2.3170218239059004,
+      "share_opm_better": 0.9925772544615439
     },
     "focal/opm@15_minus_mag": {
-      "median_db": -0.13186704752772727,
-      "share_opm_better": 0.44693000157930757
+      "median_db": -0.13956350431081788,
+      "share_opm_better": 0.4445961359608332
     },
     "focal/opm@15_minus_grad": {
-      "median_db": 2.1200549333942433,
-      "share_opm_better": 0.9870988120097566
+      "median_db": 2.130349491675492,
+      "share_opm_better": 0.9888255216101918
     },
     "focal/opm@20_minus_mag": {
-      "median_db": -0.3864640275593487,
-      "share_opm_better": 0.3484022671837437
+      "median_db": -0.38993859564492084,
+      "share_opm_better": 0.3483320757365715
     },
     "focal/opm@20_minus_grad": {
-      "median_db": 1.8889584383438773,
-      "share_opm_better": 0.9800305332795199
+      "median_db": 1.8920585070864888,
+      "share_opm_better": 0.9818309438994859
     },
     "focal/opm@30_minus_mag": {
-      "median_db": -0.9637945472072467,
-      "share_opm_better": 0.19397055468791127
+      "median_db": -0.9705107739778995,
+      "share_opm_better": 0.19273869479003983
     },
     "focal/opm@30_minus_grad": {
-      "median_db": 1.313527490636762,
-      "share_opm_better": 0.9485917840911084
+      "median_db": 1.294568916715079,
+      "share_opm_better": 0.948398757611385
     },
     "patch10/opm@7_minus_mag": {
-      "median_db": 0.09253059722010448,
-      "share_opm_better": 0.5295653308967497
+      "median_db": 0.09698974746370936,
+      "share_opm_better": 0.5354392376974285
     },
     "patch10/opm@7_minus_grad": {
-      "median_db": 2.3613696442375414,
-      "share_opm_better": 0.992298655527999
+      "median_db": 2.377562018155963,
+      "share_opm_better": 0.9938650306748467
     },
     "patch10/opm@10_minus_mag": {
-      "median_db": 0.004081483927361518,
-      "share_opm_better": 0.5021537658269155
+      "median_db": 0.007411588698079896,
+      "share_opm_better": 0.5022842970891529
     },
     "patch10/opm@10_minus_grad": {
-      "median_db": 2.277470648122147,
-      "share_opm_better": 0.9903406865944394
+      "median_db": 2.293065953863735,
+      "share_opm_better": 0.9929513118391855
     },
     "patch10/opm@15_minus_mag": {
-      "median_db": -0.2016245229912137,
-      "share_opm_better": 0.42357394596005743
+      "median_db": -0.19378704893332355,
+      "share_opm_better": 0.42461819605795587
     },
     "patch10/opm@15_minus_grad": {
-      "median_db": 2.086007714707968,
-      "share_opm_better": 0.9869468737762694
+      "median_db": 2.1012973247160787,
+      "share_opm_better": 0.989296436496541
     },
     "patch10/opm@20_minus_mag": {
-      "median_db": -0.4441068898074576,
-      "share_opm_better": 0.3370317190967237
+      "median_db": -0.43497461373177515,
+      "share_opm_better": 0.33885915676804595
     },
     "patch10/opm@20_minus_grad": {
-      "median_db": 1.8536567101158852,
-      "share_opm_better": 0.9809424357133534
+      "median_db": 1.8626188175921712,
+      "share_opm_better": 0.9821172170734891
     },
     "patch10/opm@30_minus_mag": {
-      "median_db": -1.0121632130647384,
-      "share_opm_better": 0.20480355045033286
+      "median_db": -1.0083137578504697,
+      "share_opm_better": 0.20245398773006135
     },
     "patch10/opm@30_minus_grad": {
-      "median_db": 1.290613342868216,
-      "share_opm_better": 0.9517034329721968
+      "median_db": 1.2817390040785739,
+      "share_opm_better": 0.952617151807858
     },
     "patch16/opm@7_minus_mag": {
-      "median_db": 0.11388248781741339,
-      "share_opm_better": 0.5413131444981073
+      "median_db": 0.1366404451153258,
+      "share_opm_better": 0.5525388330505155
     },
     "patch16/opm@7_minus_grad": {
-      "median_db": 2.3558841021034027,
-      "share_opm_better": 0.9921681242657616
+      "median_db": 2.36896454836322,
+      "share_opm_better": 0.9933429056258974
     },
     "patch16/opm@10_minus_mag": {
-      "median_db": 0.024099578145818867,
-      "share_opm_better": 0.50920245398773
+      "median_db": 0.046512142067943074,
+      "share_opm_better": 0.5197754862289519
     },
     "patch16/opm@10_minus_grad": {
-      "median_db": 2.27127467856279,
-      "share_opm_better": 0.9909933429056259
+      "median_db": 2.283371118861023,
+      "share_opm_better": 0.9926902493147108
     },
     "patch16/opm@15_minus_mag": {
-      "median_db": -0.17410575557023833,
-      "share_opm_better": 0.4323195405299569
+      "median_db": -0.15223023358022658,
+      "share_opm_better": 0.43688813470826265
     },
     "patch16/opm@15_minus_grad": {
-      "median_db": 2.082670600827239,
-      "share_opm_better": 0.9885132489231171
+      "median_db": 2.101395948652943,
+      "share_opm_better": 0.9898185615454902
     },
     "patch16/opm@20_minus_mag": {
-      "median_db": -0.4120938079411687,
-      "share_opm_better": 0.3496932515337423
+      "median_db": -0.3915892588444372,
+      "share_opm_better": 0.35295653308967495
     },
     "patch16/opm@20_minus_grad": {
-      "median_db": 1.8467232856165445,
-      "share_opm_better": 0.9852499673671844
+      "median_db": 1.860802685405595,
+      "share_opm_better": 0.9861636862028456
     },
     "patch16/opm@30_minus_mag": {
-      "median_db": -0.9816948696947172,
-      "share_opm_better": 0.2122438323978593
+      "median_db": -0.9574851244736493,
+      "share_opm_better": 0.2079363007440282
     },
     "patch16/opm@30_minus_grad": {
-      "median_db": 1.2885768260748307,
-      "share_opm_better": 0.9592742461819606
+      "median_db": 1.2893210496948875,
+      "share_opm_better": 0.9579689335595876
     },
     "brain_only/focal/opm_minus_mag": {
-      "median_db": 0.08652810087019702,
-      "share_opm_better": 0.5300612420376577
+      "median_db": 0.07246560123495271,
+      "share_opm_better": 0.5278642497411691
     },
     "brain_only/focal/opm_minus_grad": {
-      "median_db": -0.030938229823689767,
-      "share_opm_better": 0.4828504746696615
+      "median_db": -0.024564756017138478,
+      "share_opm_better": 0.48625826942987
     },
     "brain_only/patch10/opm_minus_mag": {
-      "median_db": -0.014715632129490785,
-      "share_opm_better": 0.495105077666101
+      "median_db": -0.012436947439148582,
+      "share_opm_better": 0.49523560892833834
     },
     "brain_only/patch10/opm_minus_grad": {
-      "median_db": -0.0744907984057086,
-      "share_opm_better": 0.46077535569768957
+      "median_db": -0.06244062596118738,
+      "share_opm_better": 0.46808510638297873
     },
     "brain_only/patch16/opm_minus_mag": {
-      "median_db": 0.0049003883482541255,
-      "share_opm_better": 0.5017621720402037
+      "median_db": 0.025617109129768778,
+      "share_opm_better": 0.5101161728233912
     },
     "brain_only/patch16/opm_minus_grad": {
-      "median_db": -0.09154145493831933,
-      "share_opm_better": 0.4565983553060958
+      "median_db": -0.06493201204835941,
+      "share_opm_better": 0.46899882521863984
     }
   },
   "extension_note": "brain-noise sources calibrated on recorded minus empty-room variance (same SSP and band); intrinsic noise added explicitly; 'brain_only/' rows omit it",
-  "runtime_s": 270.54322504997253,
+  "runtime_s": 248.3048141002655,
   "note": "Magnetometer, gradiometer and pooled Eq. 1 values are kept separate; the paper reports only MEG (pooling unstated) vs EEG. D = SNR_MEG - SNR_EEG is out of scope (no EEG).",
   "provenance": {
-    "commit": "81168f3",
+    "commit": "19a8fd2",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

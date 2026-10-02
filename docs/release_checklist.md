@@ -47,10 +47,13 @@ separately after any change.
 
 1. **Licence.** The repository has no licence file; without one the code is not reusable by
    others. Choose a licence (and whether results and figures carry a different one).
-2. **Identifying metadata.** All commits carry the author name and institutional e-mail address
-   (no tracked file spells it out). Publishing the history as it is publishes them;
-   the alternatives (a fresh export, or a rewritten history, which needs a force-push) are the
-   owner's call. No force-push or history rewrite has been done.
+2. **Identifying metadata and history.** All commits carry the author name and institutional e-mail
+   address, and the history (not the current tree) also holds two older text blobs with an e-mail
+   address and the earlier PDFs that embed the licensed artwork fonts (e.g. `git show
+   81168f3:legacy/figure3_output/Figure3_replicated.pdf | pdffonts -`). Publishing the history as it
+   is publishes all of these, so a public release needs a fresh export or a rewritten history
+   (which needs a force-push); the choice is the owner's. No force-push or history rewrite has been
+   done. This is a release blocker, not a defect of the private results.
 3. **Infant-template derivatives.** Figures and tables derived from the O'Reilly et al. (2021)
    templates (LGPL-2.1 repository; built from the Neurodevelopmental MRI Database, Richards et al.
    2016, which has its own terms): every `results/g3b` figure and target table that shows a

@@ -1,6 +1,6 @@
 # G2 report: realistic adult OPM vs Neuromag comparison (NEW)
 
-Generated from `results/g2/g2_summary.json` (code commit 81168f3; band supplement `g2_band_sensitivity.json` at 81168f3; MNE 1.13.2). Methods: `docs/methods.md` section 8; assumptions in `docs/provenance_register.md`. This is a proposed study; no author of the reproduced papers has reviewed it.
+Generated from `results/g2/g2_summary.json` (code commit 19a8fd2; band supplement `g2_band_sensitivity.json` at 19a8fd2; MNE 1.13.2). Methods: `docs/methods.md` section 8; assumptions in `docs/provenance_register.md`. This is a proposed study; no author of the reproduced papers has reviewed it.
 
 ## Common setup
 
@@ -71,117 +71,117 @@ Detectability vs depth, projected:
 
 ## OPM matched sites
 
-- Geometry: 97 channels, 97 sites, 1 (scalp normal); scalp-to-sensor distance median 7.0 mm (5-95 %: 6.4-7.8 mm); role: matched-site coverage control.
-- Retained rank: intrinsic 97, intrinsic+brain 97, intrinsic+brain+env 97, projected 89.
-- Noise composition (median RMS): intrinsic 88.8 fT, brain 526.1 fT, room 116.3 fT.
+- Geometry: 95 channels, 95 sites, 1 (scalp normal); scalp-to-sensor distance median 7.7 mm (5-95 %: 6.9-9.0 mm); role: matched-site coverage control.
+- Retained rank: intrinsic 95, intrinsic+brain 95, intrinsic+brain+env 95, projected 87.
+- Noise composition (median RMS): intrinsic 88.8 fT, brain 508.6 fT, room 116.3 fT.
 
 Detectability vs depth, intrinsic+brain:
 
 | depth [mm] | 10-15 | 15-20 | 20-25 | 25-30 | 30-35 | 35-40 | 40-45 | 45-50 | 50-55 | 55-60 | 60-65 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| median detectability (10 nAm) | 1.72 | 1.56 | 1.10 | 0.71 | 0.47 | 0.32 | 0.25 | 0.20 | 0.15 | 0.14 | 0.11 |
+| median detectability (10 nAm) | 1.70 | 1.54 | 1.09 | 0.70 | 0.46 | 0.32 | 0.25 | 0.20 | 0.15 | 0.14 | 0.11 |
 
 Detectability vs depth, projected:
 
 | depth [mm] | 10-15 | 15-20 | 20-25 | 25-30 | 30-35 | 35-40 | 40-45 | 45-50 | 50-55 | 55-60 | 60-65 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| median detectability (10 nAm) | 1.69 | 1.53 | 1.04 | 0.64 | 0.39 | 0.25 | 0.17 | 0.12 | 0.08 | 0.07 | 0.06 |
+| median detectability (10 nAm) | 1.67 | 1.50 | 1.03 | 0.64 | 0.39 | 0.24 | 0.16 | 0.11 | 0.08 | 0.06 | 0.05 |
 
 OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortical parcels):
 
 | condition | vs combined | vs gradiometers | vs magnetometers |
 |---|---|---|---|
-| intrinsic | 0.53x [0.51-0.55], OPM higher for 0 % of targets, 0 % of parcels | 2.28x [2.21-2.35], OPM higher for 100 % of targets, 100 % of parcels | 0.55x [0.52-0.57], OPM higher for 0 % of targets, 0 % of parcels |
-| intrinsic+brain | 1.00x [0.98-1.02], OPM higher for 52 % of targets, 43 % of parcels | 1.12x [1.10-1.14], OPM higher for 90 % of targets, 89 % of parcels | 1.03x [1.00-1.06], OPM higher for 64 % of targets, 54 % of parcels |
-| intrinsic+brain+env | 1.00x [0.97-1.02], OPM higher for 50 % of targets, 41 % of parcels | 1.09x [1.06-1.12], OPM higher for 80 % of targets, 74 % of parcels | 1.05x [1.04-1.07], OPM higher for 78 % of targets, 74 % of parcels |
-| projected | 0.90x [0.81-0.95], OPM higher for 31 % of targets, 20 % of parcels | 0.97x [0.88-1.03], OPM higher for 46 % of targets, 37 % of parcels | 0.95x [0.87-1.00], OPM higher for 41 % of targets, 33 % of parcels |
+| intrinsic | 0.51x [0.49-0.53], OPM higher for 0 % of targets, 0 % of parcels | 2.21x [2.15-2.27], OPM higher for 100 % of targets, 100 % of parcels | 0.53x [0.51-0.55], OPM higher for 0 % of targets, 0 % of parcels |
+| intrinsic+brain | 1.00x [0.97-1.02], OPM higher for 49 % of targets, 39 % of parcels | 1.10x [1.08-1.12], OPM higher for 88 % of targets, 90 % of parcels | 1.02x [1.00-1.05], OPM higher for 60 % of targets, 50 % of parcels |
+| intrinsic+brain+env | 0.99x [0.96-1.01], OPM higher for 46 % of targets, 34 % of parcels | 1.08x [1.04-1.11], OPM higher for 75 % of targets, 73 % of parcels | 1.04x [1.02-1.06], OPM higher for 72 % of targets, 67 % of parcels |
+| projected | 0.89x [0.80-0.93], OPM higher for 29 % of targets, 17 % of parcels | 0.96x [0.87-1.02], OPM higher for 44 % of targets, 34 % of parcels | 0.93x [0.85-0.98], OPM higher for 39 % of targets, 27 % of parcels |
 
 - Estimated (plug-in) covariance, detectability relative to oracle: intrinsic+brain: 0.95 (10 s), 0.99 (60 s), projected: 0.95 (10 s), 0.99 (60 s).
-- Patches vs Neuromag combined (intrinsic+brain): 5 mm 1.01x, 10 mm 1.01x, 20 mm 1.01x.
-- Joint OPM noise x scalp gap (vs combined, intrinsic+brain; the same sites moved outward): gap0mm, asd15fT 1.00x; gap0mm, asd20fT 0.98x; gap0mm, asd30fT 0.93x; gap3mm, asd15fT 0.98x; gap3mm, asd20fT 0.95x; gap3mm, asd30fT 0.88x; gap6mm, asd15fT 0.96x; gap6mm, asd20fT 0.91x; gap6mm, asd30fT 0.83x.
-- Intrinsic noise only, break-even OPM noise (ratio = 1): vs combined 7.9 fT/sqrt(Hz), vs grad 34.2 fT/sqrt(Hz), vs mag 8.2 fT/sqrt(Hz).
-- Sensitivity, one factor at a time (vs combined, intrinsic+brain): opm asd 7fT 1.07x; opm asd 10fT 1.04x; opm asd 15fT 1.00x; opm asd 20fT 0.98x; opm asd 30fT 0.93x; background corr 5mm 1.01x; background corr 10mm 1.02x; background mag calibrated 1.00x; head x+5mm 1.00x; head x-5mm 1.01x; head y+5mm 1.01x; head y-5mm 1.00x; head z+5mm 0.99x; head z-5mm 1.02x; head pitch+5deg 1.00x; head pitch-5deg 1.01x; head well fitted 0.98x; gap 3mm 0.98x; gap 6mm 0.96x.
-- By lobe (vs combined, intrinsic+brain): frontal 1.04x, parietal 1.04x, temporal 0.96x, occipital 1.01x, cingulate 0.98x, insula 0.93x.
-- Without the 558 medial-wall targets (7.3 %; FreeSurfer 'unknown', not cortex), vs combined: intrinsic+brain 1.01x, projected 0.92x.
-- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.00x, 1-10Hz 1.00x, 8-30Hz 1.01x, 30-80Hz 0.99x.
+- Patches vs Neuromag combined (intrinsic+brain): 5 mm 1.00x, 10 mm 1.00x, 20 mm 1.00x.
+- Joint OPM noise x scalp gap (vs combined, intrinsic+brain; the same sites moved outward): gap0mm, asd15fT 1.00x; gap0mm, asd20fT 0.97x; gap0mm, asd30fT 0.92x; gap3mm, asd15fT 0.98x; gap3mm, asd20fT 0.94x; gap3mm, asd30fT 0.87x; gap6mm, asd15fT 0.95x; gap6mm, asd20fT 0.90x; gap6mm, asd30fT 0.82x.
+- Intrinsic noise only, break-even OPM noise (ratio = 1): vs combined 7.7 fT/sqrt(Hz), vs grad 33.1 fT/sqrt(Hz), vs mag 7.9 fT/sqrt(Hz).
+- Sensitivity, one factor at a time (vs combined, intrinsic+brain): opm asd 7fT 1.05x; opm asd 10fT 1.03x; opm asd 15fT 1.00x; opm asd 20fT 0.97x; opm asd 30fT 0.92x; background corr 5mm 1.00x; background corr 10mm 1.01x; background mag calibrated 0.99x; head x+5mm 0.99x; head x-5mm 1.00x; head y+5mm 1.00x; head y-5mm 0.99x; head z+5mm 0.98x; head z-5mm 1.01x; head pitch+5deg 0.99x; head pitch-5deg 1.00x; head well fitted 0.98x; gap 3mm 0.98x; gap 6mm 0.95x.
+- By lobe (vs combined, intrinsic+brain): frontal 1.03x, parietal 1.03x, temporal 0.94x, occipital 1.00x, cingulate 0.97x, insula 0.91x.
+- Without the 558 medial-wall targets (7.3 %; FreeSurfer 'unknown', not cortex), vs combined: intrinsic+brain 1.00x, projected 0.91x.
+- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.00x, 1-10Hz 0.99x, 8-30Hz 1.00x, 30-80Hz 0.98x.
 
 ## OPM channel-budget control (204)
 
-- Geometry: 204 channels, 204 sites, 1 (scalp normal); scalp-to-sensor distance median 6.9 mm (5-95 %: 6.4-7.5 mm); role: channel-budget control vs 204 gradiometers.
+- Geometry: 204 channels, 204 sites, 1 (scalp normal); scalp-to-sensor distance median 7.8 mm (5-95 %: 6.8-9.0 mm); role: channel-budget control vs 204 gradiometers.
 - Retained rank: intrinsic 204, intrinsic+brain 204, intrinsic+brain+env 204, projected 196.
-- Noise composition (median RMS): intrinsic 88.8 fT, brain 500.1 fT, room 114.6 fT.
+- Noise composition (median RMS): intrinsic 88.8 fT, brain 491.8 fT, room 115.0 fT.
 
 Detectability vs depth, intrinsic+brain:
 
 | depth [mm] | 10-15 | 15-20 | 20-25 | 25-30 | 30-35 | 35-40 | 40-45 | 45-50 | 50-55 | 55-60 | 60-65 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| median detectability (10 nAm) | 2.41 | 1.92 | 1.28 | 0.78 | 0.51 | 0.36 | 0.28 | 0.23 | 0.17 | 0.15 | 0.13 |
+| median detectability (10 nAm) | 2.38 | 1.89 | 1.27 | 0.78 | 0.50 | 0.35 | 0.27 | 0.23 | 0.17 | 0.15 | 0.12 |
 
 Detectability vs depth, projected:
 
 | depth [mm] | 10-15 | 15-20 | 20-25 | 25-30 | 30-35 | 35-40 | 40-45 | 45-50 | 50-55 | 55-60 | 60-65 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| median detectability (10 nAm) | 2.37 | 1.90 | 1.24 | 0.74 | 0.46 | 0.30 | 0.22 | 0.16 | 0.12 | 0.10 | 0.08 |
+| median detectability (10 nAm) | 2.35 | 1.86 | 1.22 | 0.73 | 0.45 | 0.29 | 0.21 | 0.16 | 0.11 | 0.09 | 0.08 |
 
 OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortical parcels):
 
 | condition | vs combined | vs gradiometers | vs magnetometers |
 |---|---|---|---|
-| intrinsic | 0.75x [0.72-0.78], OPM higher for 4 % of targets, 1 % of parcels | 3.23x [3.13-3.32], OPM higher for 100 % of targets, 100 % of parcels | 0.77x [0.75-0.80], OPM higher for 6 % of targets, 3 % of parcels |
-| intrinsic+brain | 1.12x [1.10-1.16], OPM higher for 97 % of targets, 100 % of parcels | 1.31x [1.28-1.34], OPM higher for 100 % of targets, 100 % of parcels | 1.17x [1.14-1.21], OPM higher for 100 % of targets, 100 % of parcels |
-| intrinsic+brain+env | 1.13x [1.10-1.16], OPM higher for 92 % of targets, 97 % of parcels | 1.28x [1.24-1.31], OPM higher for 99 % of targets, 100 % of parcels | 1.21x [1.18-1.24], OPM higher for 100 % of targets, 100 % of parcels |
-| projected | 1.07x [1.01-1.11], OPM higher for 61 % of targets, 54 % of parcels | 1.18x [1.11-1.23], OPM higher for 73 % of targets, 70 % of parcels | 1.13x [1.07-1.18], OPM higher for 71 % of targets, 69 % of parcels |
+| intrinsic | 0.74x [0.71-0.76], OPM higher for 3 % of targets, 0 % of parcels | 3.16x [3.08-3.25], OPM higher for 100 % of targets, 100 % of parcels | 0.76x [0.73-0.79], OPM higher for 4 % of targets, 1 % of parcels |
+| intrinsic+brain | 1.11x [1.08-1.14], OPM higher for 90 % of targets, 94 % of parcels | 1.28x [1.25-1.31], OPM higher for 100 % of targets, 100 % of parcels | 1.16x [1.11-1.19], OPM higher for 95 % of targets, 99 % of parcels |
+| intrinsic+brain+env | 1.11x [1.08-1.15], OPM higher for 85 % of targets, 90 % of parcels | 1.26x [1.21-1.29], OPM higher for 98 % of targets, 100 % of parcels | 1.19x [1.15-1.22], OPM higher for 99 % of targets, 100 % of parcels |
+| projected | 1.05x [0.98-1.10], OPM higher for 57 % of targets, 51 % of parcels | 1.15x [1.07-1.21], OPM higher for 69 % of targets, 66 % of parcels | 1.10x [1.04-1.16], OPM higher for 66 % of targets, 61 % of parcels |
 
 - Estimated (plug-in) covariance, detectability relative to oracle: intrinsic+brain: 0.91 (10 s), 0.98 (60 s), projected: 0.91 (10 s), 0.98 (60 s).
-- Patches vs Neuromag combined (intrinsic+brain): 5 mm 1.13x, 10 mm 1.14x, 20 mm 1.12x.
-- Intrinsic noise only, break-even OPM noise (ratio = 1): vs combined 11.3 fT/sqrt(Hz), vs grad 48.4 fT/sqrt(Hz), vs mag 11.6 fT/sqrt(Hz).
-- Sensitivity, one factor at a time (vs combined, intrinsic+brain): opm asd 7fT 1.27x; opm asd 10fT 1.20x; opm asd 15fT 1.12x; opm asd 20fT 1.07x; opm asd 30fT 1.00x; background corr 5mm 1.14x; background corr 10mm 1.15x; background mag calibrated 1.13x; head x+5mm 1.11x; head x-5mm 1.13x; head y+5mm 1.14x; head y-5mm 1.11x; head z+5mm 1.09x; head z-5mm 1.16x; head pitch+5deg 1.11x; head pitch-5deg 1.13x; head well fitted 1.09x; gap 3mm 1.08x; gap 6mm 1.03x.
-- By lobe (vs combined, intrinsic+brain): frontal 1.22x, parietal 1.14x, temporal 1.13x, occipital 1.08x, cingulate 1.03x, insula 1.06x.
-- Without the 558 medial-wall targets (7.3 %; FreeSurfer 'unknown', not cortex), vs combined: intrinsic+brain 1.14x, projected 1.09x.
-- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.12x, 1-10Hz 1.13x, 8-30Hz 1.12x, 30-80Hz 1.10x.
+- Patches vs Neuromag combined (intrinsic+brain): 5 mm 1.11x, 10 mm 1.12x, 20 mm 1.11x.
+- Intrinsic noise only, break-even OPM noise (ratio = 1): vs combined 11.0 fT/sqrt(Hz), vs grad 47.4 fT/sqrt(Hz), vs mag 11.4 fT/sqrt(Hz).
+- Sensitivity, one factor at a time (vs combined, intrinsic+brain): opm asd 7fT 1.24x; opm asd 10fT 1.18x; opm asd 15fT 1.11x; opm asd 20fT 1.06x; opm asd 30fT 1.00x; background corr 5mm 1.12x; background corr 10mm 1.14x; background mag calibrated 1.11x; head x+5mm 1.10x; head x-5mm 1.11x; head y+5mm 1.12x; head y-5mm 1.10x; head z+5mm 1.08x; head z-5mm 1.14x; head pitch+5deg 1.09x; head pitch-5deg 1.12x; head well fitted 1.08x; gap 3mm 1.07x; gap 6mm 1.02x.
+- By lobe (vs combined, intrinsic+brain): frontal 1.21x, parietal 1.13x, temporal 1.10x, occipital 1.07x, cingulate 1.01x, insula 1.04x.
+- Without the 558 medial-wall targets (7.3 %; FreeSurfer 'unknown', not cortex), vs combined: intrinsic+brain 1.12x, projected 1.07x.
+- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.11x, 1-10Hz 1.11x, 8-30Hz 1.11x, 30-80Hz 1.09x.
 
 ## OPM dense array (full system)
 
-- Geometry: 212 channels, 212 sites, 1 (scalp normal); scalp-to-sensor distance median 6.9 mm (5-95 %: 6.4-7.5 mm); role: densest feasible single-axis array (full system).
-- Retained rank: intrinsic 212, intrinsic+brain 212, intrinsic+brain+env 212, projected 204.
-- Noise composition (median RMS): intrinsic 88.8 fT, brain 498.4 fT, room 114.6 fT.
+- Geometry: 205 channels, 205 sites, 1 (scalp normal); scalp-to-sensor distance median 7.8 mm (5-95 %: 6.8-9.0 mm); role: densest feasible single-axis array (full system).
+- Retained rank: intrinsic 205, intrinsic+brain 205, intrinsic+brain+env 205, projected 197.
+- Noise composition (median RMS): intrinsic 88.8 fT, brain 490.9 fT, room 114.7 fT.
 
 Detectability vs depth, intrinsic+brain:
 
 | depth [mm] | 10-15 | 15-20 | 20-25 | 25-30 | 30-35 | 35-40 | 40-45 | 45-50 | 50-55 | 55-60 | 60-65 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| median detectability (10 nAm) | 2.43 | 1.94 | 1.29 | 0.79 | 0.51 | 0.36 | 0.28 | 0.23 | 0.18 | 0.15 | 0.13 |
+| median detectability (10 nAm) | 2.38 | 1.89 | 1.27 | 0.78 | 0.50 | 0.35 | 0.27 | 0.23 | 0.17 | 0.15 | 0.12 |
 
 Detectability vs depth, projected:
 
 | depth [mm] | 10-15 | 15-20 | 20-25 | 25-30 | 30-35 | 35-40 | 40-45 | 45-50 | 50-55 | 55-60 | 60-65 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| median detectability (10 nAm) | 2.40 | 1.91 | 1.25 | 0.75 | 0.46 | 0.30 | 0.22 | 0.16 | 0.12 | 0.10 | 0.08 |
+| median detectability (10 nAm) | 2.35 | 1.86 | 1.22 | 0.73 | 0.45 | 0.29 | 0.21 | 0.16 | 0.11 | 0.09 | 0.08 |
 
 OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortical parcels):
 
 | condition | vs combined | vs gradiometers | vs magnetometers |
 |---|---|---|---|
-| intrinsic | 0.76x [0.74-0.79], OPM higher for 5 % of targets, 1 % of parcels | 3.29x [3.20-3.38], OPM higher for 100 % of targets, 100 % of parcels | 0.79x [0.76-0.82], OPM higher for 8 % of targets, 3 % of parcels |
-| intrinsic+brain | 1.13x [1.10-1.16], OPM higher for 98 % of targets, 100 % of parcels | 1.32x [1.28-1.35], OPM higher for 100 % of targets, 100 % of parcels | 1.18x [1.14-1.21], OPM higher for 100 % of targets, 100 % of parcels |
-| intrinsic+brain+env | 1.14x [1.11-1.17], OPM higher for 92 % of targets, 97 % of parcels | 1.28x [1.24-1.32], OPM higher for 99 % of targets, 100 % of parcels | 1.22x [1.19-1.25], OPM higher for 100 % of targets, 100 % of parcels |
-| projected | 1.07x [1.01-1.13], OPM higher for 62 % of targets, 56 % of parcels | 1.18x [1.11-1.24], OPM higher for 74 % of targets, 71 % of parcels | 1.14x [1.08-1.19], OPM higher for 72 % of targets, 69 % of parcels |
+| intrinsic | 0.74x [0.71-0.76], OPM higher for 3 % of targets, 0 % of parcels | 3.17x [3.09-3.25], OPM higher for 100 % of targets, 100 % of parcels | 0.76x [0.73-0.79], OPM higher for 4 % of targets, 1 % of parcels |
+| intrinsic+brain | 1.11x [1.08-1.14], OPM higher for 90 % of targets, 94 % of parcels | 1.28x [1.25-1.32], OPM higher for 100 % of targets, 100 % of parcels | 1.16x [1.11-1.19], OPM higher for 95 % of targets, 99 % of parcels |
+| intrinsic+brain+env | 1.11x [1.08-1.15], OPM higher for 85 % of targets, 90 % of parcels | 1.26x [1.21-1.29], OPM higher for 98 % of targets, 100 % of parcels | 1.19x [1.16-1.22], OPM higher for 99 % of targets, 100 % of parcels |
+| projected | 1.05x [0.99-1.10], OPM higher for 57 % of targets, 51 % of parcels | 1.15x [1.07-1.21], OPM higher for 69 % of targets, 66 % of parcels | 1.10x [1.04-1.16], OPM higher for 66 % of targets, 61 % of parcels |
 
 - Estimated (plug-in) covariance, detectability relative to oracle: intrinsic+brain: 0.91 (10 s), 0.98 (60 s), projected: 0.91 (10 s), 0.98 (60 s).
-- Patches vs Neuromag combined (intrinsic+brain): 5 mm 1.14x, 10 mm 1.14x, 20 mm 1.13x.
-- Joint OPM noise x scalp gap (vs combined, intrinsic+brain; the same sites moved outward): gap0mm, asd15fT 1.13x; gap0mm, asd20fT 1.08x; gap0mm, asd30fT 1.01x; gap3mm, asd15fT 1.08x; gap3mm, asd20fT 1.03x; gap3mm, asd30fT 0.97x; gap6mm, asd15fT 1.04x; gap6mm, asd20fT 0.99x; gap6mm, asd30fT 0.93x.
-- Intrinsic noise only, break-even OPM noise (ratio = 1): vs combined 11.5 fT/sqrt(Hz), vs grad 49.4 fT/sqrt(Hz), vs mag 11.8 fT/sqrt(Hz).
-- Sensitivity, one factor at a time (vs combined, intrinsic+brain): opm asd 7fT 1.28x; opm asd 10fT 1.21x; opm asd 15fT 1.13x; opm asd 20fT 1.08x; opm asd 30fT 1.01x; background corr 5mm 1.14x; background corr 10mm 1.16x; background mag calibrated 1.13x; head x+5mm 1.12x; head x-5mm 1.13x; head y+5mm 1.14x; head y-5mm 1.11x; head z+5mm 1.10x; head z-5mm 1.16x; head pitch+5deg 1.12x; head pitch-5deg 1.14x; head well fitted 1.09x; gap 3mm 1.08x; gap 6mm 1.04x.
-- By lobe (vs combined, intrinsic+brain): frontal 1.23x, parietal 1.14x, temporal 1.14x, occipital 1.09x, cingulate 1.03x, insula 1.07x.
-- Without the 558 medial-wall targets (7.3 %; FreeSurfer 'unknown', not cortex), vs combined: intrinsic+brain 1.14x, projected 1.09x.
-- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.13x, 1-10Hz 1.13x, 8-30Hz 1.13x, 30-80Hz 1.11x.
+- Patches vs Neuromag combined (intrinsic+brain): 5 mm 1.12x, 10 mm 1.12x, 20 mm 1.11x.
+- Joint OPM noise x scalp gap (vs combined, intrinsic+brain; the same sites moved outward): gap0mm, asd15fT 1.11x; gap0mm, asd20fT 1.06x; gap0mm, asd30fT 1.00x; gap3mm, asd15fT 1.07x; gap3mm, asd20fT 1.02x; gap3mm, asd30fT 0.96x; gap6mm, asd15fT 1.02x; gap6mm, asd20fT 0.98x; gap6mm, asd30fT 0.91x.
+- Intrinsic noise only, break-even OPM noise (ratio = 1): vs combined 11.1 fT/sqrt(Hz), vs grad 47.5 fT/sqrt(Hz), vs mag 11.4 fT/sqrt(Hz).
+- Sensitivity, one factor at a time (vs combined, intrinsic+brain): opm asd 7fT 1.24x; opm asd 10fT 1.18x; opm asd 15fT 1.11x; opm asd 20fT 1.06x; opm asd 30fT 1.00x; background corr 5mm 1.12x; background corr 10mm 1.14x; background mag calibrated 1.11x; head x+5mm 1.10x; head x-5mm 1.11x; head y+5mm 1.12x; head y-5mm 1.10x; head z+5mm 1.08x; head z-5mm 1.14x; head pitch+5deg 1.09x; head pitch-5deg 1.12x; head well fitted 1.08x; gap 3mm 1.07x; gap 6mm 1.02x.
+- By lobe (vs combined, intrinsic+brain): frontal 1.21x, parietal 1.13x, temporal 1.10x, occipital 1.07x, cingulate 1.01x, insula 1.04x.
+- Without the 558 medial-wall targets (7.3 %; FreeSurfer 'unknown', not cortex), vs combined: intrinsic+brain 1.12x, projected 1.07x.
+- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.11x, 1-10Hz 1.11x, 8-30Hz 1.11x, 30-80Hz 1.09x.
 
 ## Convergence
 
 - Background grid vs every usable vertex: median log2 ratios change by <= 0.007.
-- 3-layer head surface 20,480 triangles (primary, A-BEM-SKIN) vs the v1 5,120: dense/combined 1.129x vs 1.147x, matched/combined 1.004x vs 1.008x (intrinsic+brain, convergence subset).
-- BEM 5,120 vs 20,480 triangles (1 layer): <= 0.0023; 3 vs 1 layer: <= 0.028 (dense/combined 1.13x with 3 layers, 1.13x with 1 layer).
-- Oct-6 vs random full-resolution targets: <= 0.036; Neuromag 4-point vs accurate integration: 0.6 % in the gains.
+- 3-layer head surface 20,480 triangles (primary, A-BEM-SKIN) vs the v1 5,120: dense/combined 1.109x vs 1.110x, matched/combined 0.996x vs 0.996x (intrinsic+brain, convergence subset).
+- BEM 5,120 vs 20,480 triangles (1 layer): <= 0.0017; 3 vs 1 layer: <= 0.027 (dense/combined 1.11x with 3 layers, 1.11x with 1 layer).
+- Oct-6 vs random full-resolution targets: <= 0.038; Neuromag 4-point vs accurate integration: 0.6 % in the gains.
 
 ## Limitations
 
