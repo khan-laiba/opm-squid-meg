@@ -11,8 +11,8 @@ correlation area of rho:
   (positive definite), A_c = 2 pi lambda^2 (planar value). As lambda -> 0 the correlation tends to
   the identity, but each moment variance then scales with a_i^2 / (2 pi lambda^2) rather than a_i:
   the constant is absorbed by the calibration, the area weighting is not, so the limit is not the
-  independent model; with the near-uniform areas of the 7-mm grid the difference is small (G2: 1.14-
-  1.16x at 5 and 10 mm vs 1.13x independent). Opposite walls of a sulcus closer than lambda are
+  independent model; with the near-uniform areas of the 7-mm grid the difference is small (G2, v3
+  arrays: 1.12-1.14x at 5 and 10 mm vs 1.11x independent). Opposite walls of a sulcus closer than lambda are
   correlated (documented).
 
 The source scale s is not a known constant; ``calibrate`` fixes it so that the background

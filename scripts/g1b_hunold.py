@@ -74,17 +74,18 @@ def descriptors(subject, cortex, valid_idx):
     return depth, orient
 
 
-def simulate_background(gains, n_bg_sources, bg_cols, n_times, fs, rng, pad_s, chunk=2000):
+def simulate_background(gains, n_bg_sources, bg_cols, n_times, fs, rng, pad_s, chunk=2000, peak=10e-9,
+                        bands=hunold.EEG_BANDS_HZ, weights=hunold.BAND_WEIGHTS):
     traces = {k: np.zeros((g.shape[0], n_times)) for k, g in gains.items()}
     for start in range(0, n_bg_sources, chunk):
         cols = bg_cols[start:start + chunk]
-        q = hunold.background_timecourses(len(cols), n_times, fs, rng, pad_s=pad_s)
+        q = hunold.background_timecourses(len(cols), n_times, fs, rng, peak=peak, bands=bands, weights=weights, pad_s=pad_s)
         for k, g in gains.items():
             traces[k] += g[:, cols].astype(np.float64) @ q
     return traces
 
 
-def fig6_realizations(gains, names, usable_pos, n_bg, n_t, fs, pad_s, n_real, seed):
+def fig6_realizations(gains, names, usable_pos, n_bg, n_t, fs, pad_s, n_real, seed, bg=None):
     """Rendered baseline SD [px] at the Fig. 6 channels for independent background realizations
     (a new node subset and new time courses each, from their own random streams, so the primary
     realization and the sources are unchanged). Returns {kind: (n_real, n_channels)}."""
@@ -94,7 +95,7 @@ def fig6_realizations(gains, names, usable_pos, n_bg, n_t, fs, pad_s, n_real, se
     for r in range(n_real):
         rng = np.random.default_rng([seed, 1, r])
         cols = np.sort(rng.choice(usable_pos, n_bg, replace=False))
-        tr = simulate_background(sub, n_bg, cols, n_t, fs, rng, pad_s)
+        tr = simulate_background(sub, n_bg, cols, n_t, fs, rng, pad_s, **(bg or {}))
         for k in rows:
             ppu = hunold.FIG6_SCALE_BAR_PX[k] / hunold.FIG6_SCALE_BAR[k]
             out[k][r] = [hunold.rendered_centroid_sd(tr[k][i, 300:-300], fs, ppu) for i in range(len(rows[k]))]
@@ -147,7 +148,7 @@ def fig6_calibration(bg, names, fs):
     return out
 
 
-def fig6_spike_comparison(gains, cortex, depth, orient, region, w_unit):
+def fig6_spike_comparison(gains, cortex, depth, orient, region, w_unit, dip_am=600e-9):
     """Noise-free spike peak-to-peak on the best (largest-amplitude) channel for 600-nAm dipoles
     resembling the Table 1 tangential examples (depth +/- 1.5 mm, orientation +/- 5 deg, left
     posterior frontal cortex: DK precentral, caudal middle frontal, pars opercularis), against the
@@ -160,7 +161,7 @@ def fig6_spike_comparison(gains, cortex, depth, orient, region, w_unit):
         cols = np.flatnonzero(m[cortex.valid])  # positions in the valid-vertex gain columns
         row = dict(n_sources=int(len(cols)))
         for k, unit, lab in (("mag", 1e12, "pT"), ("grad", 1e12, "pT/m")):
-            amp = np.abs(gains[k][:, cols]).max(axis=0) * 600e-9 * p2p_unit * unit
+            amp = np.abs(gains[k][:, cols]).max(axis=0) * dip_am * p2p_unit * unit
             cen, line = hunold.FIG6_SPIKE_P2P_PX[k][(src, "tangential")]
             to_si = hunold.FIG6_SCALE_BAR[k] / hunold.FIG6_SCALE_BAR_PX[k] * unit
             row[k] = dict(unit=lab, ours_median=float(np.median(amp)) if len(amp) else None,
@@ -319,13 +320,16 @@ def main():
     n_bg = int(round(cfg["background"]["fraction_of_nodes"] * len(usable_idx)))
     bg_cols = np.sort(rng.choice(usable_pos, n_bg, replace=False))
     t0 = time.time()
-    bg_spec = simulate_background(gains, n_bg, bg_cols, n_t, fs, rng, cfg["background"]["pad_s"])
+    dip_am = cfg["sources"]["dipole_peak_nAm"] * 1e-9  # the configuration is the source of truth (review, 2026-10-02)
+    bg_kw = dict(peak=cfg["background"]["peak_nAm"] * 1e-9, bands=tuple(tuple(b) for b in cfg["background"]["bands_hz"]),
+                 weights=tuple(cfg["background"]["band_weights"]))
+    bg_spec = simulate_background(gains, n_bg, bg_cols, n_t, fs, rng, cfg["background"]["pad_s"], **bg_kw)
     print(f"background: {n_bg} dipoles ({cortex.area[valid_idx][bg_cols].mean() * 1e6 * 10:.2f} mm2 per dipole incl. the "
           f"other 90 %) in {time.time() - t0:.0f} s")
     calib = fig6_calibration(bg_spec, names, fs)
     t0 = time.time()
     real = fig6_realizations(gains, names, usable_pos, n_bg, n_t, fs, cfg["background"]["pad_s"],
-                             cfg["background"]["calibration_realizations"], cfg["sources"]["seed"])
+                             cfg["background"]["calibration_realizations"], cfg["sources"]["seed"], bg=bg_kw)
     calib = fig6_expected(calib, real)
     print(f"Fig. 6 calibration ({calib['mag']['realizations']['n']} realizations, {time.time() - t0:.0f} s): paper/ours baseline SD "
           f"mag {calib['scale']:.3f} (single draws 5-95 %: {calib['alternatives']['mag_single_draw_p5']:.3f}-"
@@ -337,7 +341,7 @@ def main():
     # sources: stratified to the paper's per-bin counts
     dip, achieved = hunold.sample_by_bins(depth, orient, usable_idx, hunold.PAPER_DIPOLE_COUNTS, rng)
     w_unit = hunold.spike_waveform(fs, peak=1.0)
-    topo = {"dipole": {k: g[:, col_of[dip]].astype(np.float64) * 600e-9 for k, g in gains.items()}}
+    topo = {"dipole": {k: g[:, col_of[dip]].astype(np.float64) * dip_am for k, g in gains.items()}}
     # patches: grown from every sampled dipole; fixed density giving a median total of 622 nAm
     patches, keep = [], []
     for s in dip:
@@ -394,7 +398,7 @@ def main():
             for fam in ("dipole", "patch") for num in ("p2p", "peak") for k in ("mag", "grad")})
     regions = np.concatenate([plotting.read_freesurfer_annot(paths.SUBJECTS_DIR / "sample" / "label" / f"{h}.aparc.annot")
                               for h in ("lh", "rh")])
-    spike_cmp = fig6_spike_comparison(gains, cortex, depth, orient, regions, w_unit)
+    spike_cmp = fig6_spike_comparison(gains, cortex, depth, orient, regions, w_unit, dip_am)
 
     # extension: intrinsic sensor noise, common 0.5-70 Hz filter on spike, background and noise
     filt = noise.AnalysisFilter(fs=fs, l_freq=0.5, h_freq=70.0, order=4)

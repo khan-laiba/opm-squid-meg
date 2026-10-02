@@ -4,11 +4,11 @@ Arrays (sample subject, measured head position in the Neuromag helmet):
   squid        Neuromag T3, 102 magnetometers + 204 planar gradiometers (comparators: 'mag',
                'grad', 'combined')
   opm_matched  matched-site OPM array (coverage control; the Neuromag sites that fit the OPM
-               placement rules, 97 of 102 on the sample head)
+               placement rules, 95 of 102 on the sample head with the v3 clearance rule)
   opm204       204 sites spread evenly over the dense array (channel-budget control vs the 204
                gradiometers)
   opm_dense    a dense single-axis OPM array under the 17-mm packing rule, greedy farthest-point
-               construction ("full system"; 212 sites on the sample head). Not proven maximal;
+               construction ("full system"; 205 sites on the sample head with the v3 clearance rule). Not proven maximal;
                306 single-axis channels appear infeasible on this head (A-OPM-PACK).
 OPM sensitive axes follow the smooth BEM head-surface normal (A-OPM-AXIS). Sites avoid the ears,
 the ear pinna and the edge of the MRI field of view (A-OPM-COVER); a package may sit at most 5 mm

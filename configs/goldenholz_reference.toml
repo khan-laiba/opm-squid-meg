@@ -5,13 +5,13 @@
 [anatomy]
 subject = "sample"                       # [A] MNE sample subject replaces the paper's four subjects
 signal_sources = "every white-surface vertex, cortical normal"   # [P] p. 1078
-exclude_outside_inner_skull = true       # [C]
+exclude_outside_inner_skull = true       # [C]; sources also exclude vertices within 4 mm of the inner skull (A-BEM-DIST), which also truncates patches near the skull
 
 [head_model]
 # printed as brain / skull / scalp = 0.3 / 0.06 / 0.3 S/m (p. 1078); 0.006 is the probable intended
 # MNE default (MNE-C manual v2.5 prints 0.06 next to a "1/50" ratio). Both are run and labelled.
 variants = { as_printed = [0.3, 0.06, 0.3], probable_default = [0.3, 0.006, 0.3] }   # scalp, skull, brain order in code
-bem_triangles_per_surface = 5120         # [P] p. 1078
+bem_triangles_per_surface = 5120         # [P] p. 1078; the head surface is subdivided once to 20,480 triangles in this study (A-BEM-SKIN) [C]
 
 [sensors]
 system = "Neuromag Vectorview geometry of the MNE sample recording, T3 coils, MNE accurate integration"  # [P] Vectorview; rest [C]

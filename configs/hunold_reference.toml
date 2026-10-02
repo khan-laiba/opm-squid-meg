@@ -5,11 +5,11 @@
 [anatomy]
 subject = "sample"                      # [C] MNE sample subject replaces subjects AH and MF (ADAPT)
 source_surface = "white, all vertices"  # [P] p. 1148
-exclude_outside_inner_skull = true      # [C] 279 of 312,273 vertices (0.09 %)
+exclude_outside_inner_skull = true      # [C] 279 of 312,273 vertices (0.09 %); sources also exclude vertices within 4 mm of the inner skull (A-BEM-DIST)
 
 [head_model]
 conductivity_scalp_skull_brain = [0.33, 0.0042, 0.33]   # [P] p. 1151 lists brain/skull/scalp = 0.33/0.0042/0.33; symmetric, so the order is immaterial
-bem_triangles_per_surface = 5120                         # [P] p. 1148; MNE linear collocation instead of Galerkin [C]
+bem_triangles_per_surface = 5120                         # [P] p. 1148; MNE linear collocation instead of Galerkin [C]; the head surface is subdivided once to 20,480 triangles in this study (A-BEM-SKIN) [C]
 
 [sensors]
 system = "Neuromag Vectorview geometry of the MNE sample recording"  # [P] Vectorview p. 1151; placement [NS] -> measured dev_head_t [C]
@@ -50,5 +50,5 @@ channel = "largest noise-free spike amplitude, per sensor type"   # [P] p. 1151
 baseline_s = 1.0                        # [P] p. 1151
 onset_s = 3.0                           # [C] onset [NS]
 background_amplitude = "mean(+|hilbert|) - mean(-|hilbert|) = 2 mean|hilbert|; analytic signal of the whole trace, cropped"  # [P] + [C] edge handling
-numerators = ["p2p", "peak", "noisy_peak"]   # [C] numerator [NS]; p2p primary (Fig. 6 digitisation, Appendix E); all reported
+numerators = ["p2p", "peak", "noisy_peak", "noisy_p2p"]   # [C] numerator [NS]; p2p primary (Fig. 6 digitisation, Appendix E); all reported
 threshold = 2.5                         # [P] empirical visual threshold, not a detector threshold

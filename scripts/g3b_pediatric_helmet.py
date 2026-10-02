@@ -675,7 +675,7 @@ def summarise(anats, state, cfg) -> dict:
         adult_centred_unweighted_all_targets=float(np.median(ratio_g2)),
         adult_centred_unweighted_cortical=float(np.median(ratio_g2[a.cortical])),
         adult_centred_area_weighted_cortical_dB=P.weighted_median(20 * np.log10(ratio_g2[a.cortical]), a.weights[a.cortical]),
-        note="G2's headline (1.13x) is the unweighted median over all targets at the measured (= centred) position; G3B "
+        note="G2's headline (1.11x, v3 arrays) is the unweighted median over all targets at the measured (= centred) position; G3B "
              "summaries are area-weighted and leave out the medial wall, and its primary placement is top contact")
     out["medial_wall_targets"] = {k: int(np.sum(~an.cortical)) for k, an in anats.items()}
     out["notes"] = [

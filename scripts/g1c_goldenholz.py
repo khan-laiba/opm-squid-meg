@@ -130,6 +130,11 @@ def main():
     members = {r: goldenholz.geodesic_patches(cortex.adjacency, centroids, r * 1e-3, cortex.usable)
                for r in cfg["sources"]["patch_radii_mm"]}
     area = {r: np.array([cortex.area[m].sum() for m in members[r]]) for r in members}
+    # review (2026-10-02): the usable rule (A-BEM-DIST) also removes patch members within 4 mm of the inner skull;
+    # the same patches over every valid vertex measure that truncation
+    members_all = {r: goldenholz.geodesic_patches(cortex.adjacency, centroids, r * 1e-3, cortex.valid) for r in members}
+    area_all = {r: np.array([cortex.area[m].sum() for m in members_all[r]]) for r in members}
+    loss = {r: 1.0 - area[r] / area_all[r] for r in members}
     print(f"patches built in {time.time() - t0:.0f} s; median members " +
           ", ".join(f"{r:g} mm: {np.median([len(m) for m in members[r]]):.0f}" for r in members))
 
@@ -139,7 +144,11 @@ def main():
                    channels=dict({cs: int(m.sum()) for cs, m in sets.items()}, excluded=[n for n, ok in zip(info.ch_names, good) if not ok]),
                    recorded_noise=dict(n_samples=int(n_rec), ssp_rank=int(n_proj), empty_room_over_recorded_variance=er_share),
                    patch_area_cm2={f"{r:g}": dict(median=float(np.median(area[r]) * 1e4), flat_disc=float(np.pi * r**2 / 100))
-                                   for r in area})
+                                   for r in area},
+                   patch_truncation={f"{r:g}": dict(median_area_cm2_all_valid=float(np.median(area_all[r]) * 1e4),
+                                                    median_area_cm2_usable=float(np.median(area[r]) * 1e4),
+                                                    share_losing_over_5pct=float(np.mean(loss[r] > 0.05)),
+                                                    share_losing_over_20pct=float(np.mean(loss[r] > 0.20))) for r in members})
     results = {}
     weights = density * cortex.area
     focal_am = cfg["sources"]["focal_nAm"] * 1e-9
@@ -162,6 +171,27 @@ def main():
         if bem_label == "probable_default":
             g_sq, p_sq, aat_sq = g, topo_p, aat
             summary["lead_field_diagnostics"] = artefact_diagnostics(g, kinds, cortex, valid_idx, use, noise_cols)
+            # the truncation's effect on the patch SNR (pooled channels, modelled noise)
+            mp = sets["pooled"]
+            for r in members:
+                snr_all = goldenholz.eq1_snr_db(goldenholz.patch_topographies(g, members_all[r], col_of, weights)[mp], model_var[mp])
+                diff = res[f"patch{r:g}/model/pooled"] - snr_all
+                summary["patch_truncation"][f"{r:g}"].update(snr_change_db=dict(
+                    median=float(np.median(diff)), p5=float(np.percentile(diff, 5)), p95=float(np.percentile(diff, 95)),
+                    share_abs_over_1db=float(np.mean(np.abs(diff) > 1.0))))
+            # the medial wall (aparc 'unknown'), kept here as in the paper's whole-cortex maps; G2 and G4 exclude it
+            names = np.concatenate([plotting.read_freesurfer_annot(subject.labels / f"{h}.aparc.annot") for h in ("lh", "rh")])
+            wall = names == "unknown"
+            keep = use & ~wall[valid_idx]
+            f_all = res["focal/model/pooled"]
+            summary["without_medial_wall"] = dict(
+                share_of_usable_vertices=float(np.mean(wall[valid_idx][use])), centroids_on_wall=int(wall[centroids].sum()),
+                noise_sources_on_wall=int(wall[valid_idx[noise_cols]].sum()),
+                focal_model_pooled=dict(median_db=float(np.median(f_all[keep])),
+                                        p5_p95_db=[float(x) for x in np.percentile(f_all[keep], [5, 95])],
+                                        share_in_paper_range=float(np.mean((f_all[keep] >= PAPER_RANGE_DB[0]) & (f_all[keep] <= PAPER_RANGE_DB[1])))),
+                with_wall_focal_model_pooled=dict(median_db=float(np.median(f_all[use])),
+                                                  share_in_paper_range=float(np.mean((f_all[use] >= PAPER_RANGE_DB[0]) & (f_all[use] <= PAPER_RANGE_DB[1])))))
         else:
             del g
 
@@ -181,7 +211,7 @@ def main():
         for prefix, intrinsic in variants:
             var = s_s2_brain * aa[m] + intrinsic
             lab = label if not prefix else label.split("@")[0]
-            ext[f"{prefix}focal/{lab}"] = goldenholz.eq1_snr_db(gg[m], var, scale=10e-9)
+            ext[f"{prefix}focal/{lab}"] = goldenholz.eq1_snr_db(gg[m], var, scale=focal_am)
             for r in members:
                 ext[f"{prefix}patch{r:g}/{lab}"] = goldenholz.eq1_snr_db(pp[r][m], var)
 
