@@ -30,6 +30,20 @@ def _hash_update(h, *items):
             h.update(repr(it).encode())
 
 
+def standard_coil_file() -> Path:
+    """MNE's standard coil definitions (integration points of every built-in coil type)."""
+    return Path(mne.__file__).parent / "data" / "coil_def.dat"
+
+
+def coil_definitions_digest(coil_def: Path | None = None) -> str:
+    """Hash of the coil definitions a forward computation uses: MNE's standard file and the extra
+    definitions passed as ``coil_def`` (``mne.use_coil_def``)."""
+    h = hashlib.sha1(standard_coil_file().read_bytes())
+    if coil_def:
+        h.update(Path(coil_def).read_bytes())
+    return h.hexdigest()
+
+
 def cache_key(info: mne.Info, trans, bem_surfaces: list, sources: tuple, coil_def: Path | None, kind: str) -> str:
     h = hashlib.sha1()
     _hash_update(h, kind, mne.__version__)
@@ -40,7 +54,7 @@ def cache_key(info: mne.Info, trans, bem_surfaces: list, sources: tuple, coil_de
     for s in bem_surfaces:
         _hash_update(h, int(s["id"]), float(s["sigma"]), s["rr"], s["tris"])
     _hash_update(h, *sources)
-    _hash_update(h, Path(coil_def).read_text() if coil_def else "no-extra-coils")
+    _hash_update(h, coil_definitions_digest(coil_def))
     return h.hexdigest()[:16]
 
 

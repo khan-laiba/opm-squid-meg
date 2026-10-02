@@ -162,6 +162,23 @@ class TestArrayComposition(unittest.TestCase):
         self.assertNotEqual(fp, fullres.fingerprint(g2.with_scalp_gap(a, 1e-4).info, self.subject, bem, idx, self.cortex))
         self.assertNotEqual(fp, fullres.fingerprint(a.info, self.subject, self.subject.bem_model(g2.BEM_CONDUCTIVITY, head_refine=0), idx, self.cortex))
         self.assertEqual(len(bem[0]["tris"]), 20480)  # A-BEM-SKIN: refined head surface by default
+        # a changed standard coil definition (one integration point of a built-in coil moved) changes it too
+        import tempfile
+        from pathlib import Path
+        from unittest import mock
+
+        from opmsquid import forward
+
+        lines = forward.standard_coil_file().read_text().splitlines(keepends=True)
+        k = next(i for i, ln in enumerate(lines) if ln.strip() and not ln.startswith("#") and len(ln.split()) == 7)
+        parts = lines[k].split()
+        parts[1] = repr(float(parts[1]) + 1e-4)
+        lines[k] = "  ".join(parts) + "\n"
+        with tempfile.TemporaryDirectory() as tmp:
+            changed = Path(tmp) / "coil_def.dat"
+            changed.write_text("".join(lines))
+            with mock.patch.object(forward, "standard_coil_file", return_value=changed):
+                self.assertNotEqual(fp, fullres.fingerprint(a.info, self.subject, bem, idx, self.cortex))
 
     def test_scalp_gap_variant_keeps_the_sites(self):
         a = self.arrays["opm_dense"]

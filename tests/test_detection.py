@@ -92,6 +92,53 @@ class TestDetection(unittest.TestCase):
         self.assertEqual(detection.event_height(*det.events(stat), 118, 3), 6.0)
 
 
+class TestCensoredS50(unittest.TestCase):
+    strengths = np.array([10.0, 20.0, 40.0, 80.0, 160.0, 320.0])
+
+    def test_s50_bounds(self):
+        s = self.strengths
+        self.assertEqual(detection.s50_bounds([0.1, 0.2, 0.4, 0.6, 0.9, 1.0], s), (detection.s50_from([0.1, 0.2, 0.4, 0.6, 0.9, 1.0], s),) * 2)
+        self.assertEqual(detection.s50_bounds([0.6, 0.8, 1, 1, 1, 1], s), (0.0, 10.0))  # already at 50 % at the weakest strength
+        self.assertEqual(detection.s50_bounds([0, 0, 0.1, 0.2, 0.3, 0.4], s), (320.0, np.inf))  # never reached
+
+    def test_ratio_bounds_and_labels(self):
+        exact_o, exact_s = (40.0, 40.0), (60.0, 60.0)
+        never, weakest = (320.0, np.inf), (0.0, 10.0)
+        self.assertEqual(detection.ratio_bounds(exact_o, exact_s), (1.5, 1.5))
+        self.assertEqual(detection.ratio_bounds(exact_o, never), (8.0, np.inf))  # Neuromag beyond the range: ratio > 320 / 40
+        self.assertEqual(detection.ratio_bounds(never, exact_s), (0.0, 60.0 / 320.0))  # the OPM beyond: ratio < 60 / 320, not 0
+        self.assertEqual(detection.ratio_bounds(never, never), (0.0, np.inf))
+        self.assertEqual(detection.ratio_bounds(weakest, exact_s), (6.0, np.inf))  # the OPM at 50 % already at 10 nAm
+        self.assertIsNone(detection.censoring_label(exact_o, exact_s))
+        self.assertEqual(detection.censoring_label(never, never), "neither reaches 50 %")
+        self.assertEqual(detection.censoring_label(exact_o, never), "Neuromag does not reach 50 %")
+        self.assertEqual(detection.censoring_label(weakest, exact_s), "the OPM reaches 50 % at the weakest strength")
+
+    def test_censored_interval_keeps_every_resample(self):
+        r = np.linspace(1.0, 2.0, 1000)
+        np.testing.assert_allclose(detection.censored_interval(r, r),
+                                   np.percentile(r, [2.5, 97.5], method="inverted_cdf"))  # no censoring: plain percentiles
+        # resamples where neither system reaches 50 % are unrestricted and widen both ends (the review's example)
+        lo = np.r_[np.zeros(900), np.full(100, 2.0)]
+        hi = np.r_[np.full(900, np.inf), np.full(100, 2.0)]
+        self.assertEqual(detection.censored_interval(lo, hi), [None, None])
+        # a fully censored sample of OPM-not-reached resamples is bounded above, not at 0
+        self.assertEqual(detection.censored_interval(np.zeros(1000), np.full(1000, 0.2)), [None, 0.2])
+        # a few censored resamples (< 2.5 %) leave the ends finite
+        lo = np.r_[np.zeros(20), r[20:]]
+        hi = np.r_[np.full(20, np.inf), r[20:]]
+        a, b = detection.censored_interval(lo, hi)
+        self.assertIsNotNone(a)
+        self.assertIsNotNone(b)
+
+    def test_format(self):
+        self.assertEqual(detection.format_s50_ratio(dict(value=1.5, ci95=[1.2, None])), "1.50 [1.20-open]")
+        self.assertEqual(detection.format_s50_ratio(dict(value=None, value_bounds=[1.13, None], value_censored="Neuromag does not reach 50 %",
+                                                         ci95=[1.05, None])), "> 1.13 (Neuromag does not reach 50 %) [1.05-open]")
+        self.assertEqual(detection.format_s50_ratio(dict(value=None, value_bounds=[None, None], value_censored="neither reaches 50 %",
+                                                         ci95=None)), "neither reaches 50 %")
+
+
 class TestSignFlip(unittest.TestCase):
     def test_exact_values(self):
         # 5 locations all favouring one side: only the all-same-sign patterns reach |sum| = 5

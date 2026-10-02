@@ -164,12 +164,81 @@ def sign_flip_p(x, n_mc=20000, seed=0):
     return float(np.mean(np.abs(signs @ x) >= abs(x.sum()) - 1e-9))
 
 
+def s50_from(p, strengths):
+    """Strength for 50 % detection by log interpolation (None if never reached; the weakest
+    strength if already reached there)."""
+    p = np.asarray(p, float)
+    above = np.flatnonzero(p >= 0.5)
+    if len(above) == 0:
+        return None
+    if above[0] == 0:
+        return float(strengths[0])
+    k = above[0]
+    ls = np.log(strengths)
+    return float(np.exp(np.interp(0.5, [p[k - 1], p[k]], [ls[k - 1], ls[k]])))
+
+
+def s50_bounds(p, strengths) -> tuple[float, float]:
+    """Bounds on the strength for 50 % detection of a detection curve over ``strengths``: (s, s)
+    when the curve crosses 50 % between two tested strengths (``s50_from``), (0, weakest) when it is
+    already at or above 50 % at the weakest strength, (strongest, inf) when it never reaches 50 %."""
+    p = np.asarray(p, float)
+    above = np.flatnonzero(p >= 0.5)
+    if len(above) == 0:
+        return float(strengths[-1]), float("inf")
+    if above[0] == 0:
+        return 0.0, float(strengths[0])
+    s = s50_from(p, strengths)
+    return s, s
+
+
+def ratio_bounds(b_opm: tuple, b_squid: tuple) -> tuple[float, float]:
+    """Bounds on the S50 ratio Neuromag / OPM from the two systems' S50 bounds (``s50_bounds``):
+    equal for two crossings, one-sided when one S50 lies outside the tested strengths, (0, inf) when
+    nothing is known."""
+    (lo_o, hi_o), (lo_s, hi_s) = b_opm, b_squid
+    lo = 0.0 if not np.isfinite(hi_o) else lo_s / hi_o
+    hi = float("inf") if lo_o == 0.0 else hi_s / lo_o
+    return float(lo), float(hi)
+
+
+def censored_interval(lo, hi, q=(2.5, 97.5)) -> list:
+    """Percentile interval of a quantity known in each resample only within [lo, hi], every resample
+    kept: the lower end is the lower percentile of the lower bounds, the upper end the upper
+    percentile of the upper bounds (order statistics), so censoring can only widen it; an end at 0
+    or infinity is open (None)."""
+    a = float(np.percentile(np.asarray(lo, float), q[0], method="inverted_cdf"))
+    b = float(np.percentile(np.asarray(hi, float), q[1], method="inverted_cdf"))
+    return [None if a <= 0.0 else a, None if not np.isfinite(b) else b]
+
+
+def censoring_label(b_opm: tuple, b_squid: tuple) -> str | None:
+    """Words for an S50 ratio whose point estimate is censored (None if both S50 are crossings)."""
+    def state(b):
+        return None if b[0] == b[1] else ("below" if b[0] == 0.0 else "above")
+
+    so, ss = state(b_opm), state(b_squid)
+    if so is None and ss is None:
+        return None
+    if so == ss == "above":
+        return "neither reaches 50 %"
+    parts = [f"{name} {'does not reach 50 %' if st == 'above' else 'reaches 50 % at the weakest strength'}"
+             for name, st in (("Neuromag", ss), ("the OPM", so)) if st is not None]
+    return "; ".join(parts)
+
+
 def format_s50_ratio(sr: dict) -> str:
-    """'1.51 [1.25-1.66]' for a paired S50 ratio (Neuromag / OPM); an open interval end (a censored
-    resample: one system does not reach 50 % within the tested strengths) is written 'open', and an
-    undefined point estimate names the system that does not reach 50 %."""
+    """'1.51 [1.25-1.66]' for a paired S50 ratio (Neuromag / OPM); an open interval end (censoring:
+    the interval keeps every resample and a censored one is only bounded) is written 'open', and a
+    censored point estimate is written as its bound with the reason."""
     v = sr.get("value")
-    txt = f"{v:.2f}" if v is not None else (sr.get("value_censored") or "n/a")
+    if v is not None:
+        txt = f"{v:.2f}"
+    else:
+        lo, hi = sr.get("value_bounds") or (None, None)
+        bound = f"> {lo:.2f}" if lo is not None and hi is None else (f"< {hi:.2f}" if hi is not None and lo is None else "")
+        reason = sr.get("value_censored") or "n/a"
+        txt = f"{bound} ({reason})" if bound else reason
     ci = sr.get("ci95")
     if ci:
         lo, hi = ("open" if x is None else f"{x:.2f}" for x in ci)

@@ -46,12 +46,12 @@ def array_info(kind: str, subject) -> mne.Info:
 
 def fingerprint(info: mne.Info, subject, bem: list, valid_idx: np.ndarray, cortex) -> str:
     """Hash of every input of the matrix: the channels (names, coil types, positions, orientations,
-    device-to-head), the coil definitions in use, the head-to-MRI transform, the BEM (conductivities
-    and surface geometry), the source vertices with their positions and normals, and the MNE
-    version."""
+    device-to-head), the coil definitions in use (MNE's standard file and the OPM coil), the
+    head-to-MRI transform, the BEM (conductivities and surface geometry), the source vertices with
+    their positions and normals, and the MNE version."""
     h = hashlib.sha256()
     h.update(mne.__version__.encode())
-    h.update(opm.coil_def_file().read_bytes())
+    h.update(forward.coil_definitions_digest(opm.coil_def_file()).encode())
     h.update("\n".join(info.ch_names).encode())
     for ch in info["chs"]:
         h.update(np.int64(ch["coil_type"]).tobytes())

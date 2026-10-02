@@ -267,54 +267,6 @@ def simulate(ctx: Context, cfg: dict, rng: np.random.Generator) -> dict:
                            for k, (v, li) in enumerate(zip(tgt, loc))])
 
 
-def s50_from(p, strengths):
-    """Strength for 50 % detection by log interpolation (None if never reached; the weakest
-    strength if already reached there)."""
-    p = np.asarray(p, float)
-    above = np.flatnonzero(p >= 0.5)
-    if len(above) == 0:
-        return None
-    if above[0] == 0:
-        return float(strengths[0])
-    k = above[0]
-    ls = np.log(strengths)
-    return float(np.exp(np.interp(0.5, [p[k - 1], p[k]], [ls[k - 1], ls[k]])))
-
-
-def s50_ratio_censored(s_opm, s_squid) -> float:
-    """S50 ratio Neuromag / OPM of one resample with censoring kept: +inf when only Neuromag does
-    not reach 50 % within the tested strengths (the OPM is better by more than the range shows), 0
-    when only the OPM does not, NaN when neither does."""
-    if s_opm is None and s_squid is None:
-        return float("nan")
-    if s_squid is None:
-        return float("inf")
-    if s_opm is None:
-        return 0.0
-    return float(s_squid / s_opm)
-
-
-def censored_label(s_opm, s_squid) -> str | None:
-    if s_opm is None and s_squid is None:
-        return "neither reaches 50 %"
-    if s_squid is None:
-        return "Neuromag does not reach 50 %"
-    if s_opm is None:
-        return "the OPM does not reach 50 %"
-    return None
-
-
-def censored_interval(ratios: np.ndarray) -> list | None:
-    """2.5th and 97.5th percentiles over the resamples where at least one system reaches 50 %,
-    censored values included (0 and +inf sort to the ends); an end that falls on a censored value is
-    open (None). None if no resample is defined."""
-    r = ratios[~np.isnan(ratios)]
-    if not len(r):
-        return None
-    lo, hi = np.percentile(r, [2.5, 97.5], method="inverted_cdf")
-    return [None if lo == 0.0 else float(lo), None if not np.isfinite(hi) else float(hi)]
-
-
 def summarise(state):
     cfg, events, strata, rec = state["cfg"], state["events"], state["strata"], state["rec"]
     label = state.get("label", "adult")
@@ -371,15 +323,17 @@ def summarise(state):
                 if len(locs) == 0:
                     continue
                 sub = table[locs]
-                boot = np.array([(lambda v: np.inf if v is None else v)(s50_from(sub[rng.integers(0, len(locs), len(locs))].mean(axis=0), strengths))
-                                 for _ in range(1000)])
-                # resamples that never reach 50 % sort above every tested strength; a limit among them is
-                # reported as None (above the tested range) instead of interpolating between infinities
+                bnd = np.array([detection.s50_bounds(sub[rng.integers(0, len(locs), len(locs))].mean(axis=0), strengths)
+                                for _ in range(1000)])
+                boot = np.where(np.isfinite(bnd[:, 1]), np.maximum(bnd[:, 0], strengths[0]), np.inf)
+                # resamples that never reach 50 % sort above every tested strength, those already at 50 % at
+                # the weakest strength below it; a limit that falls among them is open (None)
                 q = np.percentile(np.where(np.isfinite(boot), boot, 1e9), [2.5, 97.5])
+                at_weakest = float(np.mean(bnd[:, 0] == 0.0))
                 out["strength_for_50pct_nAm"][f"{mode}/depth{db}"] = dict(
-                    value=s50_from(sub.mean(axis=0), strengths),
-                    ci95=[float(x) if x <= strengths[-1] else None for x in q],
-                    share_resamples_not_reached=float(np.mean(~np.isfinite(boot))))
+                    value=detection.s50_from(sub.mean(axis=0), strengths),
+                    ci95=[None if at_weakest >= 0.025 else float(q[0]), float(q[1]) if q[1] <= strengths[-1] else None],
+                    share_resamples_not_reached=float(np.mean(~np.isfinite(boot))), share_resamples_at_weakest=at_weakest)
         # sensitivity vs false events per minute: thresholds at every held-out event height
         h = np.sort(held[key])[::-1]
         ths = h[:min(len(h), int(10 * minutes) + 1)]
@@ -413,19 +367,26 @@ def summarise(state):
                     bs = [np.median(np.concatenate([per[j] for j in rng.integers(0, len(per), len(per))])) for _ in range(1000)]
                     # S50 ratio (Neuromag / OPM; > 1: the OPM array needs less strength), paired over the same
                     # location resamples; None when a resample does not reach 50 % within the tested range
+                    # an S50 outside the tested strengths is only bounded, so each resample gives a ratio interval
+                    # and every resample is kept (detection.censored_interval)
                     ta, tb = tables[(a, mode)][locs], tables[(b, mode)][locs]
-                    ratios = []
+                    pairs = []
                     for _ in range(1000):
                         r_ = rng.integers(0, len(locs), len(locs))
-                        sa, sb = s50_from(ta[r_].mean(axis=0), strengths), s50_from(tb[r_].mean(axis=0), strengths)
-                        ratios.append(s50_ratio_censored(sa, sb))
-                    ratios = np.array(ratios)
-                    sa0, sb0 = s50_from(ta.mean(axis=0), strengths), s50_from(tb.mean(axis=0), strengths)
-                    s50_ratio = dict(value=None if sa0 is None or sb0 is None else float(sb0 / sa0),
-                                     value_censored=censored_label(sa0, sb0), ci95=censored_interval(ratios),
-                                     share_resamples_undefined=float(np.mean(np.isnan(ratios))),
-                                     share_resamples_opm_not_reached=float(np.mean(ratios == 0.0)),
-                                     share_resamples_squid_not_reached=float(np.mean(np.isposinf(ratios))))
+                        pairs.append((detection.s50_bounds(ta[r_].mean(axis=0), strengths), detection.s50_bounds(tb[r_].mean(axis=0), strengths)))
+                    rb = np.array([detection.ratio_bounds(bo, bs_) for bo, bs_ in pairs])
+                    above_o = np.array([not np.isfinite(bo[1]) for bo, _ in pairs])
+                    above_s = np.array([not np.isfinite(bs_[1]) for _, bs_ in pairs])
+                    weakest = np.array([bo[0] == 0.0 or bs_[0] == 0.0 for bo, bs_ in pairs])
+                    b0 = (detection.s50_bounds(ta.mean(axis=0), strengths), detection.s50_bounds(tb.mean(axis=0), strengths))
+                    v_lo, v_hi = detection.ratio_bounds(*b0)
+                    s50_ratio = dict(value=v_lo if v_lo == v_hi else None, value_censored=detection.censoring_label(*b0),
+                                     value_bounds=None if v_lo == v_hi else [v_lo if v_lo > 0 else None, v_hi if np.isfinite(v_hi) else None],
+                                     ci95=detection.censored_interval(rb[:, 0], rb[:, 1]),
+                                     share_resamples_neither_reached=float(np.mean(above_o & above_s)),
+                                     share_resamples_opm_not_reached=float(np.mean(above_o & ~above_s)),
+                                     share_resamples_squid_not_reached=float(np.mean(above_s & ~above_o)),
+                                     share_resamples_reached_at_weakest=float(np.mean(weakest)))
                     res[f"depth{band_i}"] = dict(n=int(sel.sum()), n_locations=int(len(locs)), detected_only_opm=only_a,
                                                  detected_only_squid=only_b, locations_favouring_opm=int(np.sum(d_loc > 0)),
                                                  locations_favouring_squid=int(np.sum(d_loc < 0)), location_sign_flip_p=detection.sign_flip_p(d_loc),
