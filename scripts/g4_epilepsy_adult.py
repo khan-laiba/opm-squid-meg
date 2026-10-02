@@ -332,7 +332,8 @@ def summarise(state):
                 at_weakest = float(np.mean(bnd[:, 0] == 0.0))
                 out["strength_for_50pct_nAm"][f"{mode}/depth{db}"] = dict(
                     value=detection.s50_from(sub.mean(axis=0), strengths),
-                    ci95=[None if at_weakest >= 0.025 else float(q[0]), float(q[1]) if q[1] <= strengths[-1] else None],
+                    ci95=[None if at_weakest >= 0.025 or q[0] > strengths[-1] else float(q[0]),
+                          float(q[1]) if q[1] <= strengths[-1] else None],
                     share_resamples_not_reached=float(np.mean(~np.isfinite(boot))), share_resamples_at_weakest=at_weakest)
         # sensitivity vs false events per minute: thresholds at every held-out event height
         h = np.sort(held[key])[::-1]
