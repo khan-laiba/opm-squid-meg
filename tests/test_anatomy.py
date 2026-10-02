@@ -88,3 +88,56 @@ class TestMeshDistance(unittest.TestCase):
         pts = np.array([[-1.0, 0.2, 0.2], [0.1, 0.1, 0.1], [2.0, 0.0, 0.0], [1.0, 1.0, 1.0]])
         expected = [1.0, -0.1, 1.0, np.sqrt(3) * (1 - 1 / 3)]  # face x=0 (outside), inside, beyond vertex 1, above face 123
         np.testing.assert_allclose(md.signed(pts), expected, atol=1e-12)
+
+
+class TestCubeMeshDistance(unittest.TestCase):
+    @staticmethod
+    def _plane(h=0.2, n=40):
+        x = np.linspace(-h, h, n)
+        gx, gy = np.meshgrid(x, x)
+        rr = np.column_stack([gx.ravel(), gy.ravel(), np.zeros(gx.size)])
+        tris = [(i * n + j, i * n + j + 1, (i + 1) * n + j + 1) for i in range(n - 1) for j in range(n - 1)]
+        tris += [(i * n + j, (i + 1) * n + j + 1, (i + 1) * n + j) for i in range(n - 1) for j in range(n - 1)]
+        return dict(rr=rr, tris=np.array(tris))
+
+    def test_known_distances_to_a_plane(self):
+        cm = anatomy.CubeMeshDistance(self._plane())
+        half, h = 0.005, 0.02
+        c, s = np.cos(np.pi / 4), np.sin(np.pi / 4)
+        rot_x = np.array([[1, 0, 0], [0, c, -s], [0, s, c]])
+        self.assertAlmostEqual(cm.distance([0.001, 0.002, h], np.eye(3), half, 0.05), h - half, places=12)  # face down
+        self.assertAlmostEqual(cm.distance([0.001, 0.002, h], rot_x.T, half, 0.05), h - half * np.sqrt(2), places=12)  # edge down
+        a = np.arctan(np.sqrt(2))  # body diagonal (1, 1, 1) turned onto the z axis
+        u = np.array([1.0, -1.0, 0.0]) / np.sqrt(2)
+        k = np.array([[0, -u[2], u[1]], [u[2], 0, -u[0]], [-u[1], u[0], 0]])
+        rot = np.eye(3) + np.sin(a) * k + (1 - np.cos(a)) * k @ k
+        self.assertAlmostEqual(cm.distance([0.0, 0.0, h], rot.T, half, 0.05), h - half * np.sqrt(3), places=12)  # corner down
+        self.assertEqual(cm.distance([0.0, 0.0, 0.003], np.eye(3), half, 0.05), 0.0)  # cuts the plane
+
+    def test_exact_distance_bounds_the_sampled_one(self):
+        from mne.surface import _get_ico_surface
+
+        ico = _get_ico_surface(4)
+        surf = dict(rr=ico["rr"] * 0.08, tris=ico["tris"])
+        cm, md = anatomy.CubeMeshDistance(surf), anatomy.MeshDistance(surf)
+        rng = np.random.default_rng(0)
+        half = 0.005
+        u = np.linspace(-1, 1, 41) * half
+        ga, gb = np.meshgrid(u, u)
+        faces = []
+        for ax in range(3):
+            for sgn in (-1, 1):
+                q = np.zeros((ga.size, 3))
+                q[:, ax] = sgn * half
+                q[:, [i for i in range(3) if i != ax]] = np.column_stack([ga.ravel(), gb.ravel()])
+                faces.append(q)
+        faces = np.concatenate(faces)
+        for _ in range(10):
+            n = rng.normal(size=3)
+            n /= np.linalg.norm(n)
+            frame = np.linalg.qr(rng.normal(size=(3, 3)))[0].T
+            centre = n * (0.08 + rng.uniform(0.001, 0.005) + half * np.abs(frame @ n).sum())
+            sampled = md.unsigned(centre + faces @ frame).min()
+            exact = cm.distance(centre, frame, half, sampled)
+            self.assertLessEqual(exact, sampled + 1e-12)
+            self.assertGreater(exact, sampled - 0.25 * 2 * half / 40)  # within the sampling resolution

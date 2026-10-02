@@ -135,6 +135,9 @@ class TestArrayComposition(unittest.TestCase):
             with self.subTest(name=name):
                 self.assertGreaterEqual(md.signed(mne.transforms.apply_trans(t, pts)).min(), opm.CELL_CLEARANCE - 1e-9)
                 self.assertGreaterEqual(md.signed(mne.transforms.apply_trans(t, cells)).min(), opm.CELL_CLEARANCE - 1e-9)
+                # the rule samples the cell (it guarantees >= 0.29 mm in general); the exact cube-to-mesh distance
+                # of these final arrays is >= 1 mm as well (1.001 mm matched, 1.005 mm dense)
+                self.assertGreaterEqual(opm.exact_cell_clearance(self.arrays[name].info, skin, t).min(), opm.CELL_CLEARANCE)
 
     def test_stored_lead_fields_match_the_arrays(self):
         # every cached full-resolution matrix must have been computed for the arrays built here

@@ -17,7 +17,7 @@ from pathlib import Path
 import mne
 import numpy as np
 
-from . import forward, g2, neuromag, opm, paths
+from . import forward, g2, io, neuromag, opm, paths  # io: the code commit is fixed at import
 
 BEMS = {"hunold": (0.33, 0.0042, 0.33), "bem006": (0.3, 0.006, 0.3), "bem06": (0.3, 0.06, 0.3)}
 JOBS = {
@@ -97,8 +97,6 @@ def compute(job: str, subject, cortex, force: bool = False, log=print) -> Path:
                                          label=job)
     np.save(target, gain)
     (out_dir / f"{job}.channels.txt").write_text("\n".join(info.ch_names))
-    from . import io  # local import: io imports nothing from here
-
     _meta_path(job).write_text(json.dumps(dict(job=job, fingerprint=fp, conductivity=BEMS[bem_name], shape=list(gain.shape),
                                                head_surface_triangles=int(len(bem[0]["tris"])), computed_at_commit=io.RUN_COMMIT),
                                           indent=1))

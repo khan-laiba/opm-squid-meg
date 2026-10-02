@@ -316,6 +316,95 @@ class MeshDistance:
         return np.where(self.inside(points), -d, d)
 
 
+def segment_segment_distance(p1, q1, p2, q2) -> np.ndarray:
+    """Distances between segments p1-q1 and p2-q2 (arrays (..., 3) that broadcast); Ericson,
+    Real-Time Collision Detection, 5.1.9."""
+    d1, d2, r = q1 - p1, q2 - p2, p1 - p2
+
+    def dot(x, y):
+        return np.einsum("...j,...j->...", x, y)
+
+    a, e, f, c, b = dot(d1, d1), dot(d2, d2), dot(d2, r), dot(d1, r), dot(d1, d2)
+    denom = a * e - b * b
+    with np.errstate(divide="ignore", invalid="ignore"):
+        s = np.where(denom > 1e-30, np.clip((b * f - c * e) / denom, 0.0, 1.0), 0.0)
+        t = (b * s + f) / e
+        s = np.where(t < 0.0, np.clip(-c / a, 0.0, 1.0), np.where(t > 1.0, np.clip((b - c) / a, 0.0, 1.0), s))
+        t = np.clip(t, 0.0, 1.0)
+    return np.linalg.norm(p1 + s[..., None] * d1 - (p2 + t[..., None] * d2), axis=-1)
+
+
+CUBE_CORNERS = np.array([[i, j, k] for i in (-1, 1) for j in (-1, 1) for k in (-1, 1)], float)
+CUBE_EDGES = np.array([(a, b) for a in range(8) for b in range(a + 1, 8) if np.sum(CUBE_CORNERS[a] != CUBE_CORNERS[b]) == 1])
+
+
+class CubeMeshDistance:
+    """Exact distance between a cube and a triangle mesh. Two convex sets that do not intersect
+    have their closest points at a vertex of one and a face of the other or on an edge of each, so
+    the distance is the minimum over cube corners to triangles, triangle vertices to the cube and
+    cube edges to triangle edges; an intersection (a triangle edge through the cube or a cube edge
+    through a triangle) gives 0. Candidate triangles are all those whose centroid lies within
+    ``bound`` + the cube's circumradius + the largest triangle circumradius of the cube centre,
+    ``bound`` being an upper bound on the distance (e.g. that of a point of the cube): any closer
+    triangle lies within that radius, so the search is certified."""
+
+    def __init__(self, surf: dict):
+        self.rr = np.asarray(surf["rr"], float)
+        self.tris = np.asarray(surf["tris"], int)
+        tri = self.rr[self.tris]
+        self.centroid = tri.mean(axis=1)
+        self.r_tri = float(np.max(np.linalg.norm(tri - self.centroid[:, None, :], axis=2)))
+        self.tree = cKDTree(self.centroid)
+
+    def distance(self, centre, frame, half: float, bound: float) -> float:
+        """``frame``: rows are the cube's unit axes; ``half``: half its edge [m]."""
+        centre, frame = np.asarray(centre, float), np.asarray(frame, float)
+        cand = self.tree.query_ball_point(centre, bound + half * np.sqrt(3) + self.r_tri)
+        if not cand:
+            return float("inf")
+        tri = self.rr[self.tris[np.asarray(cand)]]  # (m, 3, 3)
+        corners = centre + half * CUBE_CORNERS @ frame
+        t0, t1 = tri.reshape(-1, 3), tri[:, [1, 2, 0]].reshape(-1, 3)  # triangle edges
+        if _segments_hit_box((t0 - centre) @ frame.T, (t1 - centre) @ frame.T, half).any() or \
+                _segments_hit_triangles(corners[CUBE_EDGES[:, 0]], corners[CUBE_EDGES[:, 1]], tri).any():
+            return 0.0
+        cp = closest_point_on_triangles(corners[:, None, :], tri[None, :, 0], tri[None, :, 1], tri[None, :, 2])
+        d_corner = np.linalg.norm(cp - corners[:, None, :], axis=-1).min()
+        q = (tri.reshape(-1, 3) - centre) @ frame.T
+        d_vertex = np.linalg.norm(np.maximum(np.abs(q) - half, 0.0), axis=1).min()
+        d_edge = segment_segment_distance(corners[CUBE_EDGES[:, 0]][:, None], corners[CUBE_EDGES[:, 1]][:, None],
+                                          t0[None], t1[None]).min()
+        return float(min(d_corner, d_vertex, d_edge))
+
+
+def _segments_hit_box(p, q, half) -> np.ndarray:
+    """Whether segments p-q (cube frame, (n, 3)) meet the box [-half, half]^3 (slab method)."""
+    d = q - p
+    with np.errstate(divide="ignore", invalid="ignore"):
+        t1, t2 = (-half - p) / d, (half - p) / d
+    lo, hi = np.minimum(t1, t2), np.maximum(t1, t2)
+    flat = d == 0  # parallel to a slab: inside it or never
+    lo = np.where(flat, np.where(np.abs(p) <= half, -np.inf, np.inf), lo)
+    hi = np.where(flat, np.where(np.abs(p) <= half, np.inf, -np.inf), hi)
+    return np.maximum(lo.max(axis=1), 0.0) <= np.minimum(hi.min(axis=1), 1.0)
+
+
+def _segments_hit_triangles(a, b, tri) -> np.ndarray:
+    """Whether any of the segments a-b ((k, 3)) crosses any triangle ((m, 3, 3)); Moller-Trumbore."""
+    d = (b - a)[:, None, :]
+    e1, e2 = tri[None, :, 1] - tri[None, :, 0], tri[None, :, 2] - tri[None, :, 0]
+    h = np.cross(d, e2)
+    det = np.einsum("...j,...j->...", e1, h)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        inv = 1.0 / det
+        s = a[:, None, :] - tri[None, :, 0]
+        u = inv * np.einsum("...j,...j->...", s, h)
+        qv = np.cross(s, e1)
+        v = inv * np.einsum("...j,...j->...", d, qv)
+        t = inv * np.einsum("...j,...j->...", e2, qv)
+    return (np.abs(det) > 1e-30) & (u >= 0) & (v >= 0) & (u + v <= 1) & (t >= 0) & (t <= 1)
+
+
 def depth_to_surface(points: np.ndarray, surface: Surface) -> np.ndarray:
     """Distance [m] from each point to the nearest vertex of a (dense) surface."""
     return cKDTree(surface.rr).query(points)[0]

@@ -183,6 +183,24 @@ def cell_volume_points(pos: np.ndarray, n: np.ndarray, cell_size: float = CELL_S
     return pos + g[:, :1] * ex + g[:, 1:2] * ey + g[:, 2:] * n
 
 
+def exact_cell_clearance(info: mne.Info, surf: dict, head_mri: np.ndarray) -> np.ndarray:
+    """Exact distance [m] from each OPM cell (the whole cube, oriented as the forward model builds
+    it in the head frame) to the closed surface ``surf`` (MRI frame; ``head_mri``: head-to-MRI
+    transform), 0 where they intersect (``anatomy.CubeMeshDistance``; the clearance rule only
+    samples the cell)."""
+    from .anatomy import CubeMeshDistance, MeshDistance
+
+    cube, points = CubeMeshDistance(surf), MeshDistance(surf)
+    rot, shift = np.asarray(head_mri)[:3, :3], np.asarray(head_mri)[:3, 3]
+    out = []
+    for ch in info["chs"]:
+        pos, n = ch["loc"][:3], ch["loc"][9:12]
+        ex, ey = cell_frame(n)
+        bound = points.unsigned(cell_volume_points(pos, n) @ rot.T + shift).min()  # a point's distance bounds the cube's
+        out.append(cube.distance(pos @ rot.T + shift, np.array([ex, ey, n]) @ rot.T, CELL_SIZE / 2, bound))
+    return np.array(out)
+
+
 def make_info(array: OPMArray, sfreq: float = 1000.0) -> mne.Info:
     """MNE info for a single-axis OPM array; device frame = head frame (head-mounted array)."""
     names = [f"OPM{i:03d}" for i in range(len(array.pos))]
