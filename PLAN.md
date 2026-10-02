@@ -20,7 +20,7 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | G2 realistic adult OPM-Neuromag comparison | done; internally reviewed; `adult-baseline-v1` (1.21x) corrected in `adult-baseline-v2` (near-surface BEM error) and `adult-baseline-v3` (whole-cell OPM clearance; see below) | `scripts/g2_adult_comparison.py` -> `results/g2/` (`G2_report.md`); with modelled brain noise the dense 205-site OPM array is 1.11x [1.08-1.14] Neuromag combined (1.00-1.24x for OPM noise 30-7 fT/sqrt(Hz), 0.91-1.11x jointly with a 0-6 mm scalp gap; 3- and 1-layer BEM agree) and 1.05x [0.99-1.10] after the 8-term external-field projection (the second headline condition; a tie within its interval), the matched 95-site array 1.00x (a tie; 0.89x after the projection); 1.4-1.6x for sources within 20 mm of the scalp, 0.98-1.04x below 35 mm; without brain noise Neuromag wins (dense 0.74x); every OPM-dependent adult result rerun at 19a8fd2 (the exact-sphere BEM check, which involves no array, at 81168f3) |
 | G3 pediatric extension | G3A done (REPRO size benchmark); G3B done after the adult freeze (24-, 18- and 12-month infant templates, adult scaled to school-age and 2-year head size; fixed Neuromag helmet at source-blind placements vs refitted OPM; counterfactual helmet) | `scripts/g3a_jas_size_benchmark.py` -> `results/g3a/`; `scripts/g3b_pediatric_helmet.py` -> `results/g3b/` (`G3B_report.md`; computed at 19a8fd2): dense OPM vs Neuromag combined at top contact, D_adult +0.85 dB, Delta +0.59 (school-age size), +1.25 (2-year size), +0.88 (2-year template), +0.99 (18 months), +1.23 dB (12 months); with a helmet scaled with the head about the laterally centred head -0.08, -0.21, -0.20, -0.12, +0.01 dB (the gain is mainly the fixed helmet's fit); robust to OPM noise 7-30 fT/sqrt(Hz), background x0.5/x2, 1-layer BEM |
 | G4 epilepsy detection and localization | adult and pediatric (three templates, both size controls) done, rerun at 19a8fd2 with the v3 arrays and emitted-event scoring; motion and slippage bounded extension done (19a8fd2) | `scripts/g4_epilepsy_adult.py`, `scripts/g4_localization.py` -> `results/g4/`; 50 % detection at 1 false event/min: dense OPM 37 vs Neuromag combined 48 nAm at 10-20 mm (paired ratio 1.29 [1.03-1.51]; 8/2 locations, p = 0.04; oracle 14/2, p = 0.001; v2 16/0, ratio 1.51), 268 vs 263 nAm at 45-70 mm; no location-level advantage established deeper than 20 mm (the 20-30 mm result varied between runs); matched: not ahead in any band (8/4 at 10-20 mm, p = 0.52; 0.04 and 0.14 in earlier runs) and behind at 45-70 mm (1/9, p = 0.016 uncorrected; the same direction in every run); localization: ECD similar (~4-5 mm); the dSPM gain for 320-nAm patches of earlier runs (~5 mm) did not reproduce (0 mm, p = 0.81 / 0.50): not robust; pediatric (`scripts/g4_epilepsy_pediatric.py`, `G4_pediatric_report.md`): 10-20 mm strength ratio Neuromag/OPM 1.33-1.61 (adult 1.29), deeper differences only for the 2-year size control and the 12- and 18-month templates (uncorrected; none survives a correction); localization comparisons with p < 0.05 favour an OPM array 29 to 1 (of 192); motion (`scripts/g4_motion.py`, `G4_motion_report.md`): uncompensated head displacement costs Neuromag 1.4-1.7 dB at 10 mm, a 3-deg OPM cap slip 0.1-0.5 dB; un-modelled in-band rotation costs the OPM 1 dB at ~0.02 deg RMS in a 1-nT field (no correction) or ~0.4 deg (field projection, 1 deg/1 % calibration), thresholds inversely proportional to the field |
-| G5 repository, tests, report | private repository `khan-laiba/opm-squid-meg` (no Pages, verified 2026-10-01); 127 unittest tests pass with the v3 results (a clean clone of 57a025e passed its 123); `scripts/run_all.sh`; local report (`scripts/build_site.py` -> `site/_build/`, link-checked, not deployed); clean-environment smoke test passed (2026-09-30, at a commit before 81168f3, 87 tests then); release prepared, not executed | `docs/release_checklist.md`: figures in open fonts, no local paths in output summaries; owner decisions left: licence, git author metadata, template/fsaverage-derived figures, the CC-BY raster, two documents naming local folders, visibility and Pages |
+| G5 repository, tests, report | private repository `khan-laiba/opm-squid-meg` (no Pages, verified 2026-10-01); 133 unittest tests pass with the v3 results (a clean clone of 0d6b992 passed 126 of its 127, one skip without the local cache); `scripts/run_all.sh`; local report (`scripts/build_site.py` -> `site/_build/`, link-checked, not deployed); clean-environment smoke test passed (2026-09-30, at a commit before 81168f3, 87 tests then); release prepared, not executed | `docs/release_checklist.md`: figures in open fonts, no local paths in output summaries; owner decisions left: licence, git author metadata, template/fsaverage-derived figures, the CC-BY raster, two documents naming local folders, visibility and Pages |
 
 ## Decisions log
 
@@ -42,6 +42,7 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | 2026-10-01 | G4 motion extension (bounded, secondary): sustained displacement in the fixed helmet vs OPM cap slip (geometry known vs mismatched template), in-band room-field coupling of the head-mounted array (no correction, homogeneous or 8-term projection; calibration errors; artefact outside and inside the noise model), exact rigid motion over a recording; per unit field. | NEW (A-MOT-*) |
 | 2026-10-01 | Release preparation, staying private: figures in open fonts by default (licensed artwork fonts only on request, for the pixel verification), output summaries without local absolute paths, `docs/release_checklist.md`; no visibility or Pages change. Provenance now also watches `legacy/*.py` (G1A imports the Fig. 3 replica). | owner ("prepare, stay private") |
 | 2026-10-01 | Final end-to-end reviews of every finding by two other models (owner request): Fable 5.1 (approve with notes; addressed in 90c18ae and 55a116d) and GPT 6 Astra via Codex (reject pending revision: whole-cell OPM clearance, detection scoring, patch support, censored intervals, report-builder deletion, CSD phase, ROC count, fingerprints). All findings fixed (section "Final reviews" below) and every OPM-dependent result recomputed at one clean commit (`adult-baseline-v3`). | owner |
+| 2026-10-01 | Re-check of the revision (0d6b992): Codex (reject pending focused corrections: censored S50-ratio intervals, the clearance guarantee, MNE's standard coil definitions in the fingerprints) and an independent verifier agent (approve with fixes: ten text corrections). All fixed; the G4 summaries re-summarised from the stored simulations (d667a9d), the lead fields recomputed. | owner |
 
 ## Inputs and availability
 
@@ -187,8 +188,8 @@ GATE G1: all three run reproducibly; each output states REPRO/ADAPT status and a
    separately; GOF descriptive only (whitened GOF depends on the channel count).
 4. [x] Pediatric runs (`scripts/g4_epilepsy_pediatric.py`): the adult detection and localization studies
    unchanged on the three templates and both size controls (Neuromag at top contact, refitted OPM
-   arrays); comparison in `results/g4/G4_pediatric_report.md` (regenerated at fd40dfe; every pediatric
-   run recomputed at 19a8fd2 with the v3 arrays).
+   arrays); comparison in `results/g4/G4_pediatric_report.md` (regenerated from the v3 runs, simulated
+   at 19a8fd2 and re-summarised at d667a9d; earlier at fd40dfe).
 5. [x] Motion and slippage, a bounded secondary extension (`scripts/g4_motion.py`,
    `src/opmsquid/motion.py`, `results/g4/G4_motion_report.md`; methods section 12).
 
@@ -238,6 +239,11 @@ Codex (GPT 6 Astra) findings, each verified before fixing, and what changed:
    1-Lipschitz distance the whole surface stays >= 0.29 mm off the head surface; a 41 x 41 check of
    the final arrays gives >= 1.002 mm). Arrays: matched 95 of 102 sites (was 97), dense 205 (was
    212), the 204-site control a subset of the 205; 76 matched and 164 dense sites moved outward.
+   Re-check: the 1-mm sampling guarantees 0.29 mm in general, not 1 mm, and the nearest-triangle
+   search was not certified. An exact cube-to-mesh distance (certified candidate triangles and an
+   intersection test; `opm.exact_cell_clearance`, tested) puts every final adult cell at least
+   1.001 mm out and every cell of the six G3B anatomies at least 0.96 mm out (7 of 1,502 cells at
+   0.96-1.00 mm); the rule and the arrays are unchanged and the documentation states this.
 2. [x] M2 practical detection scored an injected event by the statistic's maximum in the truth
    window, while false events were the detector's emitted events (local maxima >= refractory
    apart). Injected events are now scored with the emitted events (`detection.event_height`), in
@@ -246,7 +252,13 @@ Codex (GPT 6 Astra) findings, each verified before fixing, and what changed:
    the patch's members: now the members on the inverse grid.
 4. [x] M4 censored resamples (a system not reaching 50 % detection, a motion draw not reaching
    the loss level within the tested range) were dropped from the intervals: now kept as censored
-   values, with open interval ends where they fall.
+   values, with open interval ends where they fall. Re-check: the S50-ratio intervals still dropped
+   resamples where neither system reached 50 %, and the 0 / inf sentinels claimed more than is
+   known. An S50 outside the tested strengths is now a bound (at or below the weakest, beyond the
+   strongest), each resample's ratio an interval, and the 95 % interval takes the outer percentiles
+   of the bounds over every resample (`detection.censored_interval`, tested); 32 of the 288 paired
+   ratio intervals change, all in bands with censored resamples (mostly 45-70 mm), re-summarised
+   from the stored simulations at d667a9d.
 5. [x] M5 the report builder deleted any existing output directory: now only one it made (marker
    file) or an empty one.
 6. [x] m1 Neuromag "magnetometers"/"gradiometers" after the external projection are subsets of the
@@ -256,7 +268,11 @@ Codex (GPT 6 Astra) findings, each verified before fixing, and what changed:
 8. [x] m3 the held-out ROC false-event axis was off by one event: the count above each threshold.
 9. [x] m4 G1C patch-area scaling: 8.3 dB for the simulated patches (was 8.5).
 10. [x] m5 lead-field fingerprints also cover the coil definitions, the source positions and
-    normals and the MNE version.
+    normals and the MNE version. Re-check: MNE's standard coil definitions file is now hashed too,
+    in the forward-cache key and the fingerprint (tested by moving one integration point). The seven
+    lead fields were recomputed without the forward cache: bit-identical to those of 19a8fd2. Their
+    sidecars first recorded the commit at the time of writing (a local import); the lead-field
+    module now fixes it at import, and the sidecars record bf686e6.
 11. [x] m6 report downloads: the nested Fig. 3 files and the motion CSV carry their generating commit.
 12. [x] B1 (a public-release blocker, not a defect of the results): the history holds identifying
     metadata and earlier PDFs with licensed fonts; a public release needs a fresh export or a
@@ -274,17 +290,19 @@ G3A and the exact-sphere BEM check do not involve the arrays and are kept):
 - G2: dense OPM 1.11x [1.08-1.14] Neuromag combined (v2 1.13x [1.10-1.16]); after the 8-term
   projection 1.05x [0.99-1.10], a tie within its interval (v2 1.07x [1.01-1.13]); matched 1.00x.
   Refining the BEM head surface now changes the headline by -0.1 % (v2 -1.6 %), and the cell and a
-  point sensor differ by at most 0.5 % (v2 2.8 %): the v3 cells are clear of the region where the
-  BEM field is not converged.
+  point sensor differ by at most 0.5 % (v2 2.8 %): the v3 cells sit farther out; the convergence of the
+  refined surface itself remains an assumption.
 - G3B: D_adult +0.85 dB (v2 +0.99); every Delta 0.12-0.20 dB larger (+0.59 to +1.25 dB); the
   counterfactual helmet about the laterally centred head -0.21 to +0.01 dB (v2 -0.37 to -0.12).
 - G4 adult: dense vs Neuromag at 10-20 mm 8/2 locations, p = 0.04, ratio 1.29 [1.03-1.51] (v2 16/0,
   1.51, with the old scoring and other noise draws; oracle 14/2, p = 0.001); the adult dSPM gain of
   earlier runs did not reproduce (0 mm). Pediatric: superficial ratios 1.33-1.61 (v2 1.33-1.64);
   four localization comparisons survive a correction within anatomy and array (v2 seven, mostly
-  others); of 192 localization comparisons 30 have p < 0.05, 29 favouring an OPM array.
-- Motion: thresholds within a few per cent of v2; with the artefact modelled the loss stays below
-  0.17 dB (v2 0.15 dB).
+  others); of 192 localization comparisons 30 have p < 0.05, 29 favouring an OPM array (half of the
+  30 for weak, mostly undetected 80-nAm sources).
+- Motion: the 1- and 3-dB loss thresholds within a few per cent of v2; the adult's D = 0 thresholds up
+  to 32 % lower (its static D after the projections +0.32 to +0.65 dB, v2 +0.51 to +0.80); with the
+  artefact modelled the loss stays below 0.17 dB (v2 0.15 dB).
 
 ## Open questions and risks
 

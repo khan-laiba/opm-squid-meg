@@ -20,7 +20,7 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G2 realistic adult OPM vs Neuromag | NEW | done, internally reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2` and `adult-baseline-v3` |
 | G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`, recomputed with the v3 arrays from the code of `adult-baseline-v3`; the 2-year-template pass internally reviewed (approve with notes; fixes re-verified); the 18- and 12-month templates added on 2026-10-01 |
 | G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates and both size controls); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts internally reviewed |
-| G5 software, reproduction, report | - | 127 unit tests pass at 19a8fd2 with the v3 results (a clean clone of 57a025e passed its 123, the full-resolution lead-field check skipping without the local cache); `scripts/run_all.sh`; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
+| G5 software, reproduction, report | - | 133 unit tests pass with the v3 results (a clean clone of 0d6b992 passed 126 of its 127, the full-resolution lead-field check skipping without the local cache); `scripts/run_all.sh`; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
 
 "Internally reviewed" means separate review passes by reviewer agents, with fixes re-verified
 (on 2026-10-01 also complete reviews by two other models), not external peer review.
@@ -65,12 +65,12 @@ measured (not best) head position; details and caveats in `docs/methods.md` and
 - Bounded localization (24 locations, one event each): dipole errors are similar across arrays
   (about 4-5 mm, limited by a 2-mm/2-deg coregistration error). For extended 320-nAm sources the
   distributed (dSPM) estimate shows no difference in this run (median 0 mm with either OPM array,
-  p = 0.81 and 0.50); two earlier runs had it about 5 mm more accurate with the OPM arrays
+  p = 0.81 and 0.50); two earlier runs had it about 4-5 mm more accurate with the OPM arrays
   (p = 0.003-0.14): not robust. Differences not detected are not excluded.
 - `adult-baseline-v1` reported 1.21x; that value was inflated by OPM cells reaching into the
   coarse BEM head surface, a numerical error corrected in v2 (see PLAN.md). v2 (1.13x) kept the
   cells' integration points outside the head surface but not their corners; v3 (final reviews)
-  keeps the whole cell outside, which moves most sensors about 1 mm outward and leaves 205 dense
+  keeps the whole cell outside (at least 1.00 mm, exact cube-to-mesh distance), which moves most sensors about 1 mm outward and leaves 205 dense
   and 95 matched sites (1.11x).
 
 Pediatric findings (G3B, NEW), conditional on one adult head, three average infant templates of
@@ -118,12 +118,14 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   superficial result is unchanged (ratios 1.33-1.59) and of the deeper ones only the 2-year size
   control's 45-70 mm and the 12-month template's 30-45 mm remain (p = 0.035 and 0.018,
   uncorrected). Localization: dipole errors similar; dSPM of strong focal spikes about 5 mm better
-  with the dense OPM in the 2-year and 18-month templates (p = 0.035 and 0.003), not in the 12-month
+  with the dense OPM in the 2-year and 18-month templates (p = 0.035 and 0.0033, uncorrected), not in the 12-month
   template (0 mm, p = 0.38). Four pediatric localization comparisons survive a Bonferroni correction
   within their anatomy and array (16 each) and one across all children (the 12-month matched
   array's dSPM of weak, mostly undetected 80-nAm patches); which ones survive varies between runs,
   the direction does not: of the 192 localization comparisons in the six anatomies, 30 have
-  p < 0.05 (uncorrected), 29 of them favouring an OPM array.
+  p < 0.05 (uncorrected; about 10 would be expected by chance if they were independent, which they
+  are not), 29 of them favouring an OPM array; half of the 30 concern weak, mostly undetected
+  80-nAm sources.
 
 Scope: G3B is a geometry and helmet-fit experiment on average templates and scaled copies of one
 adult, and the G4 examples are bounded recovery of simulated sources. Neither shows a diagnostic

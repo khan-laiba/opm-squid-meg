@@ -3849,7 +3849,8 @@
             19.999999999999996,
             31.093908715120467
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth1": {
           "value": 45.3725008878185,
@@ -3857,7 +3858,8 @@
             35.00353189739596,
             57.249905887206005
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth2": {
           "value": 67.6748924484373,
@@ -3865,7 +3867,8 @@
             58.09176062589906,
             88.78099309743634
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth3": {
           "value": 187.10892249562986,
@@ -3873,7 +3876,8 @@
             151.35102024178843,
             213.281214291378
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth0": {
           "value": 47.56828460010884,
@@ -3881,7 +3885,8 @@
             37.123016295200756,
             62.93788347267295
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth1": {
           "value": 85.45933526515212,
@@ -3889,7 +3894,8 @@
             67.6648129677338,
             110.37072962763231
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth2": {
           "value": 136.34886342857192,
@@ -3897,7 +3903,8 @@
             110.16075609554154,
             193.972170690167
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth3": {
           "value": 263.3208765046344,
@@ -3905,7 +3912,8 @@
             230.2293728017312,
             null
           ],
-          "share_resamples_not_reached": 0.028
+          "share_resamples_not_reached": 0.028,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth0": {
           "value": 53.052009828706815,
@@ -3913,7 +3921,8 @@
             40.0,
             66.3809478978845
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth1": {
           "value": 93.64959317695295,
@@ -3921,7 +3930,8 @@
             71.78836300012424,
             118.89859031737831
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth2": {
           "value": 140.72578734326018,
@@ -3929,7 +3939,8 @@
             116.18352125179804,
             209.51030841863007
           ],
-          "share_resamples_not_reached": 0.001
+          "share_resamples_not_reached": 0.001,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth3": {
           "value": 302.7384469521905,
@@ -3937,7 +3948,8 @@
             245.4791610467366,
             null
           ],
-          "share_resamples_not_reached": 0.379
+          "share_resamples_not_reached": 0.379,
+          "share_resamples_at_weakest": 0.0
         }
       },
       "roc": {
@@ -7660,7 +7672,8 @@
             22.737932910509212,
             32.084534207306774
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth1": {
           "value": 52.78031643091577,
@@ -7668,7 +7681,8 @@
             37.92310057356686,
             82.16144405670174
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth2": {
           "value": 79.99999999999997,
@@ -7676,7 +7690,8 @@
             65.23904150436891,
             109.28322054035165
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth3": {
           "value": 195.6661896907949,
@@ -7684,7 +7699,8 @@
             159.99999999999994,
             223.9102216938638
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth0": {
           "value": 56.568542494923776,
@@ -7692,7 +7708,8 @@
             45.94182575281714,
             70.99562701849112
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth1": {
           "value": 100.79368399158979,
@@ -7700,7 +7717,8 @@
             74.64263932294456,
             133.3272119300491
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth2": {
           "value": 143.20401134847558,
@@ -7708,7 +7726,8 @@
             116.99004406793337,
             211.15462939252782
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth3": {
           "value": null,
@@ -7716,7 +7735,8 @@
             269.08685288118846,
             null
           ],
-          "share_resamples_not_reached": 0.64
+          "share_resamples_not_reached": 0.64,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth0": {
           "value": 57.24863834884449,
@@ -7724,7 +7744,8 @@
             46.938418400185064,
             72.46606476157899
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth1": {
           "value": 102.93319184075447,
@@ -7732,7 +7753,8 @@
             76.26570647573071,
             133.0061598238691
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth2": {
           "value": 151.36922347609539,
@@ -7740,7 +7762,8 @@
             124.33575665266565,
             226.27416997969516
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth3": {
           "value": null,
@@ -7748,7 +7771,8 @@
             273.11347127465604,
             null
           ],
-          "share_resamples_not_reached": 0.676
+          "share_resamples_not_reached": 0.676,
+          "share_resamples_at_weakest": 0.0
         }
       },
       "roc": {
@@ -11471,7 +11495,8 @@
             21.810154653305155,
             32.2143696826606
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth1": {
           "value": 45.6456123997605,
@@ -11479,7 +11504,8 @@
             35.2615951157402,
             56.568542494923776
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth2": {
           "value": 70.01637196738426,
@@ -11487,7 +11513,8 @@
             58.497991721318186,
             95.13656920021769
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth3": {
           "value": 187.10892249562986,
@@ -11495,7 +11522,8 @@
             155.03170504269244,
             213.97899943667318
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth0": {
           "value": 51.707385902757615,
@@ -11503,7 +11531,8 @@
             40.0,
             65.62682848061101
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth1": {
           "value": 85.74187700290342,
@@ -11511,7 +11540,8 @@
             66.07653023917217,
             113.13708498984757
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth2": {
           "value": 136.34886342857192,
@@ -11519,7 +11549,8 @@
             110.54322353987506,
             188.74860248799965
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth3": {
           "value": 274.9790876995963,
@@ -11527,7 +11558,8 @@
             240.0506145149005,
             null
           ],
-          "share_resamples_not_reached": 0.079
+          "share_resamples_not_reached": 0.079,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth0": {
           "value": 55.93963993693011,
@@ -11535,7 +11567,8 @@
             47.562056303845765,
             68.17443171428596
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth1": {
           "value": 91.29122479952102,
@@ -11543,7 +11576,8 @@
             69.06136205572207,
             120.297152133793
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth2": {
           "value": 141.37239851960555,
@@ -11551,7 +11585,8 @@
             116.99598344263639,
             201.58736798317977
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth3": {
           "value": null,
@@ -11559,7 +11594,8 @@
             265.32125603612377,
             null
           ],
-          "share_resamples_not_reached": 0.607
+          "share_resamples_not_reached": 0.607,
+          "share_resamples_at_weakest": 0.0
         }
       },
       "roc": {
@@ -15282,7 +15318,8 @@
             17.308949350243275,
             29.595400847875478
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth1": {
           "value": 43.0276234488073,
@@ -15290,7 +15327,8 @@
             32.31583879032602,
             56.58444182012372
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth2": {
           "value": 68.17443171428596,
@@ -15298,7 +15336,8 @@
             57.16576895493633,
             100.79368399158979
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth3": {
           "value": 202.8168010797537,
@@ -15306,7 +15345,8 @@
             184.5033729222752,
             215.92111584447156
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth0": {
           "value": 44.16358054695249,
@@ -15314,7 +15354,8 @@
             33.42067196120871,
             60.6286626604159
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth1": {
           "value": 86.79711309149094,
@@ -15322,7 +15363,8 @@
             64.02216340647725,
             122.9199918458588
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth2": {
           "value": 145.5695159195466,
@@ -15330,7 +15372,8 @@
             111.87465116286043,
             209.51030841863007
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth3": {
           "value": 319.99999999999994,
@@ -15338,7 +15381,8 @@
             263.9553901872968,
             null
           ],
-          "share_resamples_not_reached": 0.473
+          "share_resamples_not_reached": 0.473,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth0": {
           "value": 48.56779537580187,
@@ -15346,7 +15390,8 @@
             36.09276514942332,
             62.64628230789097
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth1": {
           "value": 93.32232316608933,
@@ -15354,7 +15399,8 @@
             67.61703931539525,
             137.17053855514317
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth2": {
           "value": 146.72064691274733,
@@ -15362,7 +15408,8 @@
             117.93246793325703,
             201.58736798317958
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth3": {
           "value": null,
@@ -15370,7 +15417,8 @@
             269.0868528811887,
             null
           ],
-          "share_resamples_not_reached": 0.549
+          "share_resamples_not_reached": 0.549,
+          "share_resamples_at_weakest": 0.0
         }
       },
       "roc": {
@@ -19093,7 +19141,8 @@
             13.50328871864684,
             21.94013186088211
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth1": {
           "value": 38.63745315699382,
@@ -19101,7 +19150,8 @@
             29.96614153753363,
             51.87746255174537
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth2": {
           "value": 63.97105848932671,
@@ -19109,7 +19159,8 @@
             55.68333734927788,
             83.34063707638674
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "oracle/depth3": {
           "value": 164.49821226497062,
@@ -19117,7 +19168,8 @@
             125.72275729680449,
             198.4080623716574
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth0": {
           "value": 36.807506024995014,
@@ -19125,7 +19177,8 @@
             29.809198306197047,
             54.81403938880492
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth1": {
           "value": 79.99999999999997,
@@ -19133,7 +19186,8 @@
             61.37242293038465,
             108.87370052711013
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth2": {
           "value": 135.47924997800428,
@@ -19141,7 +19195,8 @@
             109.62807877760984,
             184.85643149956368
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@1/depth3": {
           "value": 267.586881440908,
@@ -19149,7 +19204,8 @@
             230.67308549726897,
             null
           ],
-          "share_resamples_not_reached": 0.05
+          "share_resamples_not_reached": 0.05,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth0": {
           "value": 38.81251010999192,
@@ -19157,7 +19213,8 @@
             31.02090673167113,
             55.42697355922778
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth1": {
           "value": 82.82119390731013,
@@ -19165,7 +19222,8 @@
             62.55406899941859,
             109.1526962112059
           ],
-          "share_resamples_not_reached": 0.0
+          "share_resamples_not_reached": 0.0,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth2": {
           "value": 142.5437949024542,
@@ -19173,7 +19231,8 @@
             113.13708498984757,
             207.5157753539303
           ],
-          "share_resamples_not_reached": 0.001
+          "share_resamples_not_reached": 0.001,
+          "share_resamples_at_weakest": 0.0
         },
         "practical@0.2/depth3": {
           "value": 310.8902211691538,
@@ -19181,7 +19240,8 @@
             249.14071249166298,
             null
           ],
-          "share_resamples_not_reached": 0.41
+          "share_resamples_not_reached": 0.41,
+          "share_resamples_at_weakest": 0.0
         }
       },
       "roc": {
@@ -20025,13 +20085,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.088642032138543,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.8506671609508555,
             1.3852779142688882
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20052,13 +20114,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.0544970242616594,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.9545551335737875,
             1.1771466939089172
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20079,13 +20143,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 0.9926726302913358,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.8408964152537141,
             1.0745284668212869
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20106,13 +20172,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 0.9225513936690727,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.7647616264355213,
             1.0211983826087758
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       }
@@ -20135,13 +20203,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.0770930257689737,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.8408964152537146,
             1.3449347968734002
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20162,13 +20232,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 0.984587300444789,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.8466611704321951,
             1.1224620483093735
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20189,13 +20261,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 0.93665808096751,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.8345847329690519,
             1.01032175266791
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20216,13 +20290,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 0.8228777390769826,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             null,
-            0.9330329915368073
+            null
           ],
-          "share_resamples_undefined": 0.035,
+          "share_resamples_neither_reached": 0.035,
           "share_resamples_opm_not_reached": 0.482,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       }
@@ -20245,13 +20321,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.1692546981237726,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.9537460080704273,
             1.4691126810418123
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20272,13 +20350,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.22666120506776,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.0392592260318434,
             1.6406707120152755
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20299,13 +20379,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.1734604600046261,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.0200016094211992,
             1.3631615252909517
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20326,13 +20408,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 0.9647434958499964,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.8211260871697956,
             1.0641810287012055
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       }
@@ -20355,13 +20439,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.2808866897642721,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.0168199004688003,
             1.6346461015216829
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20382,13 +20468,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.1612561800914434,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.9865878876145004,
             1.3075850267471252
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20409,13 +20497,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 0.9837500004301835,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.8809566030346722,
             1.0988274927193153
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.001
+          "share_resamples_squid_not_reached": 0.001,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20436,13 +20526,18 @@
         "s50_ratio_squid_over_opm": {
           "value": null,
           "value_censored": "Neuromag does not reach 50 %",
-          "ci95": [
-            0.9225826074179069,
+          "value_bounds": [
+            1.0000000000000002,
             null
           ],
-          "share_resamples_undefined": 0.483,
+          "ci95": [
+            null,
+            null
+          ],
+          "share_resamples_neither_reached": 0.483,
           "share_resamples_opm_not_reached": 0.011,
-          "share_resamples_squid_not_reached": 0.127
+          "share_resamples_squid_not_reached": 0.127,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       }
@@ -20465,13 +20560,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.1509276959959778,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.0151825179503484,
             1.3789799996681658
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20492,13 +20589,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.0608443771956866,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.9385761638388406,
             1.2270874729777552
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20519,13 +20618,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.027018050708772,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.965936328924845,
             1.0863267648229253
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20546,13 +20647,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 0.9225513936690727,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.7797187004322478,
             1.0316587135210356
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       }
@@ -20575,13 +20678,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.1708150757338376,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.9751096507301535,
             1.431215958721113
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20602,13 +20707,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 0.9878424978550241,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.8705505632961242,
             1.1081461358550189
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20629,13 +20736,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 0.93665808096751,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.8309555077456389,
             1.0069356651134471
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20656,13 +20765,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 0.8593096490612385,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             null,
-            0.9808082441750111
+            null
           ],
-          "share_resamples_undefined": 0.076,
+          "share_resamples_neither_reached": 0.076,
           "share_resamples_opm_not_reached": 0.398,
-          "share_resamples_squid_not_reached": 0.001
+          "share_resamples_squid_not_reached": 0.001,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       }
@@ -20685,13 +20796,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.541513822687598,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.3008793625492538,
             1.7260807994544762
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20712,13 +20825,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.1743139669030063,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.0483945929654463,
             1.3022012070932318
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20739,13 +20854,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.0578985879955163,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.9946822879673372,
             1.1483491900809777
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20766,13 +20883,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.1374526198147268,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.0,
             1.331759279421916
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       }
@@ -20795,13 +20914,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.2923528306374918,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.030868027142239,
             1.5141647289534472
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20822,13 +20943,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.068241690814402,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.9529251362404404,
             1.1716741708364589
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20849,13 +20972,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.006418794396255,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.9348826201319231,
             1.0788720743300844
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20876,13 +21001,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 0.9840574959680314,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
-            0.9284249141675257,
-            1.0
+            null,
+            null
           ],
-          "share_resamples_undefined": 0.036,
+          "share_resamples_neither_reached": 0.036,
           "share_resamples_opm_not_reached": 0.018,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       }
@@ -20905,13 +21032,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.6556611137450825,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.3328123593734384,
             1.868056980426489
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20932,13 +21061,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.3660402567543954,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.1583901275426933,
             1.7642409617499193
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20959,13 +21090,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.2505655196145866,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.0800597388923063,
             1.5181062088605977
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -20986,13 +21119,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.1894730465253902,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.0489642553230343,
             1.3956646966452542
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       }
@@ -21015,13 +21150,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.5368751812880113,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.19852604577397,
             1.843379281881731
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -21042,13 +21179,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.2599210498948727,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.104595778209527,
             1.406068291622349
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -21069,13 +21208,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.0570180405613807,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.9416960173873471,
             1.226302057476005
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.001
+          "share_resamples_squid_not_reached": 0.001,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -21096,13 +21237,18 @@
         "s50_ratio_squid_over_opm": {
           "value": null,
           "value_censored": "Neuromag does not reach 50 %",
-          "ci95": [
-            1.1032906209994346,
+          "value_bounds": [
+            1.195873274044141,
             null
           ],
-          "share_resamples_undefined": 0.048,
+          "ci95": [
+            null,
+            null
+          ],
+          "share_resamples_neither_reached": 0.048,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.547
+          "share_resamples_squid_not_reached": 0.547,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       }
@@ -21125,13 +21271,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.6297101341995626,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.3770094511942699,
             1.868942549875958
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -21152,13 +21300,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.1813825361182773,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.0621271768626908,
             1.306647113931445
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -21179,13 +21329,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.0945007573865013,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.005575489631587,
             1.3250208280176068
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -21206,13 +21358,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.1374526198147268,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.9849697074111172,
             1.3432895431956502
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       }
@@ -21235,13 +21389,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.4048054727653778,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             1.11853946675528,
             1.6104903319492543
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -21262,13 +21418,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.0717734625362931,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.9672247567687974,
             1.174967067497948
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -21289,13 +21447,15 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.006418794396255,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
             0.9410745711598709,
             1.0730227560519738
           ],
-          "share_resamples_undefined": 0.0,
+          "share_resamples_neither_reached": 0.0,
           "share_resamples_opm_not_reached": 0.0,
-          "share_resamples_squid_not_reached": 0.0
+          "share_resamples_squid_not_reached": 0.0,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       },
@@ -21316,20 +21476,22 @@
         "s50_ratio_squid_over_opm": {
           "value": 1.027625443440585,
           "value_censored": null,
+          "value_bounds": null,
           "ci95": [
-            0.9606407846111564,
+            null,
             null
           ],
-          "share_resamples_undefined": 0.043,
+          "share_resamples_neither_reached": 0.043,
           "share_resamples_opm_not_reached": 0.008,
-          "share_resamples_squid_not_reached": 0.036
+          "share_resamples_squid_not_reached": 0.036,
+          "share_resamples_reached_at_weakest": 0.0
         },
         "p_values": "uncorrected"
       }
     }
   },
   "provenance": {
-    "commit": "19a8fd2",
+    "commit": "d667a9d",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

@@ -50,13 +50,18 @@ a declared helmet-to-scalp gap (A-OPM-GAP), sensitive axis along the normal of t
 head surface averaged within 15 mm (A-OPM-AXIS; within 6.6 deg of the local normal at every site, 95 % of sites within
 3.6 deg; the largest deviation is at a lower occipital site of the dense array).
 Clearance (A-OPM-CLEAR): every sensing centre is at least 6 mm (standoff - 1 mm) from the MRI
-scalp and 4 mm from the BEM head surface, and the whole 10-mm cell is at least 1 mm outside the
-BEM head surface: its 27 integration points and its surface, each face sampled at 11 x 11 points
-(1-mm spacing, corners and edges included; `opm.cell_volume_points`; exact point-to-triangle
-distance, the cell oriented as the forward model builds it in the head frame). Every point of the
-cell surface lies within 0.71 mm of a sample and the distance is 1-Lipschitz, so 1 mm at the samples
-keeps the whole cell surface at least 0.29 mm off the head surface and, with the centre outside
-it, the whole cell outside it (for the final arrays a 41 x 41 sampling gives at least 1.002 mm).
+scalp and 4 mm from the BEM head surface, and the 10-mm cell is kept at least 1 mm outside the BEM
+head surface at sample points: its 27 integration points and its surface, each face sampled at
+11 x 11 points (1-mm spacing, corners and edges included; `opm.cell_volume_points`;
+point-to-triangle distance over the triangles around the 10 nearest mesh vertices, the cell
+oriented as the forward model builds it in the head frame). Every point of the cell surface lies
+within 0.71 mm of a sample and the distance is 1-Lipschitz, so the rule itself guarantees only
+0.29 mm for the whole cell (with its centre outside and the head surface one closed surface far
+larger than a cell, the cell is then outside it), not 1 mm. The exact cube-to-mesh distance of the
+final cells (`opm.exact_cell_clearance`: the closest vertex-face and edge-edge pairs over every
+triangle that could be closer, with an intersection test) is at least 1.001 mm (matched) and
+1.005 mm (dense) in the adult; over the six G3B anatomies every cell is at least 0.96 mm out, and
+7 of their 1,502 cells (scaled controls, 18-month template) lie 0.96-1.00 mm out.
 Sites are moved outward along their axis in 0.5-mm steps by at most 5 mm, otherwise they are
 infeasible and dropped. v2 checked only the
 integration points, which reach +-3.87 mm of the +-5-mm faces: the final review (2026-10-01) found
@@ -103,7 +108,7 @@ headline by -2.4 % (`results/g2/*_v1_arrays.*`: historic v1-array diagnoses reco
 >= 1 mm outside) the same comparison gave a median 0.66-0.74 % at 3-4 mm (95th percentile
 7.5-9.8 %), 1.3-1.6 % at 2-2.5 mm and 4-5 % below 1.5 mm, and the dense-array headline changed by
 -1.6 % (1.147x coarse, 1.129x refined). On the v3 arrays (the whole cell >= 1 mm outside; no
-integration point closer than 2.2 mm) it gives a median 0.61-0.62 % at 3-4 mm (95th percentile
+integration point closer than 2.17 mm) it gives a median 0.61-0.62 % at 3-4 mm (95th percentile
 6.0-6.7 %) and 0.7-0.8 % at 2-2.5 mm; the dense-array headline changes by -0.1 % (1.110x coarse,
 1.109x refined on the 1,000-target subset; matched 0.996x vs 0.996x), while
 Neuromag gains change by 0.08 % (`scripts/study_opm_near_mesh.py`,
@@ -390,8 +395,13 @@ Detection design (`scripts/g4_epilepsy_adult.py`)
   so the location is the unit. Paired comparisons count, per location, the events detected by only
   one system and test the per-location differences with an exact sign-flip test
   (`detection.sign_flip_p`); the event-level McNemar test is kept for reference only. S50
-  intervals come from a bootstrap over locations; the Wilson bands in the figure are event-level
-  and descriptive.
+  intervals come from a bootstrap over locations (1,000 resamples). An S50 outside the tested
+  strengths (10-320 nAm) is only bounded (at or below the weakest, beyond the strongest), so every
+  resample is kept: the paired ratio of a resample becomes an interval (one-sided, or unrestricted
+  when neither system reaches 50 %), and the 95 % interval takes the 2.5th percentile of the lower
+  and the 97.5th of the upper bounds, an end at 0 or infinity being open (`detection.censored_interval`;
+  the first v3 summaries dropped resamples in which neither system reached 50 %, a review finding).
+  The Wilson bands in the figure are event-level and descriptive.
 
 Detection results (v3 arrays, run at 19a8fd2; focal, three morphologies pooled; strength for 50 %
 detection, S50, with a bootstrap over locations; practical detector at 1 false event per minute; the
@@ -403,7 +413,9 @@ detection, S50, with a bootstrap over locations; practical detector at 1 false e
   vs 23 nAm at 10-20 mm): searching over time and sources costs roughly a factor 2. The intervals
   of separate systems overlap even where the paired comparison is clear; the paired S50 ratio (same
   location resamples for both systems) is the comparison: Neuromag / dense 1.29 [1.03-1.51] at
-  10-20 mm, 1.07 [0.95-1.17], 1.01 [0.93-1.08] and 0.98 [0.93-1.00] in the deeper bands.
+  10-20 mm, 1.07 [0.95-1.17] and 1.01 [0.93-1.08] in the next two bands, and 0.98 at 45-70 mm, whose
+  interval is open at both ends (in 5 % of its resamples one system or neither reaches 50 % within
+  the tested strengths).
 * Paired, by location (locations with more events detected only by OPM / only by Neuromag
   combined; exact sign-flip p): dense OPM 8/2, 5/1, 4/0 and 0/2 across the four depth bands
   (p = 0.037, 0.19, 0.12, 0.50); matched OPM 8/4, 4/6, 1/3 and 1/9 (p = 0.52, 0.81, 0.62, 0.016:
@@ -434,7 +446,8 @@ detection, S50, with a bootstrap over locations; practical detector at 1 false e
   factor-2 strength grid, so it need not equal the median ratio.
 * Detection agrees with G2: the full OPM system detects superficial spikes at lower strength
   (about a quarter lower at 10-20 mm) and the advantage fades with depth: by location it is
-  established at 10-20 mm for the practical detector and at 10-30 mm for the oracle. A matched-site
+  nominally significant at 10-20 mm for the practical detector (p = 0.04 uncorrected, 0.012 at
+  matched held-out rates; ratio 1.29 [1.03-1.51]) and at 10-30 mm for the oracle. A matched-site
   OPM array is not ahead by location in any band (10-20 mm: 8/4, p = 0.52; p = 0.04 in v2 and 0.14
   in the earlier run: not robust) and behind at 45-70 mm (1/9, p = 0.016 uncorrected; the same
   direction in every run).
@@ -586,7 +599,8 @@ Neuromag combined, matched OPM, dense OPM)
 G3B results (`results/g3b/g3b_summary.json`, `G3B_report.md`; computed at 19a8fd2 with all six
 anatomies and the v3 arrays, A-OPM-CLEAR. Against the v2 pass (cb1b8a9) the adult's D fell from
 +0.99 to +0.85 dB with the v3 adult array, while the children's D moved by at most 0.06 dB, so every
-Delta rose by 0.12-0.20 dB; the conclusions below did not change). Dense OPM vs
+Delta rose by 0.12-0.20 dB; the main conclusions did not change, and several within-stratum intervals
+now exclude 0, below). Dense OPM vs
 Neuromag, intrinsic + brain noise, primary placement unless stated; dB of detectability;
 area-weighted medians without the medial wall, parcel-bootstrap 95 % intervals. "Template" alone
 means the 2-year template; the 18- and 12-month templates are named.)
@@ -627,8 +641,9 @@ means the 2-year template; the 18- and 12-month templates are named.)
   matched-site array +0.91 and +1.14 dB; 5- and 10-mm patches +1.18/+0.89 and +1.18/+1.11 dB;
   peak-channel SNR +1.55 and +1.69, mean-power SNR +0.67 and +0.86 dB. Across the three templates
   Delta is +0.88, +0.99 and +1.23 dB (24, 18, 12 months; overlapping intervals), but reweighted to
-  the adult's depth mix the pooled differences are +0.48, +0.68 and +0.44 dB (below): the ordering
-  follows the templates' depth mix (the 12-month cortex is the shallowest), not head size.
+  the adult's depth mix the pooled differences are +0.48, +0.68 and +0.44 dB (below): the
+  12-month template's top rank reflects its shallow cortex (the raw ordering also follows head
+  circumference, 495, 491 and 469 mm, so depth mix and size are not separated here).
 * By depth (template vs adult, combined, native depth strata): Delta +0.26 to +0.67 dB down to 30 mm
   (intervals exclude 0), +0.43 [+0.28, +0.70] at 30-40 mm, +0.49 at 40-50 mm, +1.30 at 50-60 mm and
   +2.55 at 60-90 mm (83 template vs 26 adult targets, 79 of them isthmus cingulate). Within strata the
@@ -776,25 +791,26 @@ months.
   11/1 (1.40 [1.16-1.60]), 16/0 (1.61 [1.33-1.85]), 14/2 (1.44 [1.20-1.65]), 16/0 (1.33
   [1.16-1.62]) and 14/1 (1.46 [1.21-1.84]); p <= 0.04 in each. Deeper, a location-level
   difference appears only for the 2-year size control (20-30 mm 9/2, p = 0.045, 1.19 [0.98-1.46];
-  30-45 mm 9/2, p = 0.045, 1.13 [0.99-1.35]; 45-70 mm 9/1, p = 0.02, 1.12 [1.05-open]), the 12-month
+  30-45 mm 9/2, p = 0.045, 1.13 [0.99-1.35]; 45-70 mm 9/1, p = 0.02, 1.12 [1.00-open]), the 12-month
   template at 30-45 mm (8/1, p = 0.031, 1.10 [1.03-1.23]) and the 18-month template at 45-70 mm
-  (7/1, p = 0.047; Neuromag's S50 not reached, ratio interval 1.05-open); none survives a correction
+  (7/1, p = 0.047; Neuromag's S50 is not reached: ratio > 1.13, interval open at both ends); none survives a correction
   over 24 comparisons (smallest p 0.020, threshold 0.0021), and elsewhere p >= 0.12 (ratios
   0.96-1.12). With the oracle every anatomy favours the OPM at 10-20 mm (12/1 to 17/0), five of the
-  six at 20-30 mm and two in a deeper band (e.g. 18 months 9/2, 10/3, 12/2; 12 months 9/1, 8/2,
-  4/5). The matched-site array favours the OPM at 10-20 mm with the practical detector in the 2-year
+  six at 20-30 mm and two in a deeper band (the 2-year template at 45-70 mm, 11/0, p = 0.001; the
+  18-month template at 30-45 and 45-70 mm, 10/3 and 12/2, p = 0.04 and 0.004; the 12-month template
+  9/1, 8/2 and 4/5 deeper than 20 mm). The matched-site array favours the OPM at 10-20 mm with the practical detector in the 2-year
   size control (12/0, p = 0.0005) and the 18-month template (12/0, p = 0.0005), not established in
   the 12-month template (11/4, p = 0.051), the school-age control (6/5) or the 2-year template
   (10/5, p = 0.15); like the adult (1/9), the school-age control has a matched-site deficit in its
   deepest band (0/7, p = 0.016).
 * So the detectability gains of G3B (Delta +0.59 to +1.25 dB) are not resolved by the practical
-  detector with 18 locations per band beyond the superficial band, whose advantage is about the same
-  in the adult and every smaller head (strength ratio 1.3-1.6); they appear in the oracle's 20-30 mm
-  band and partly deeper.
+  detector with 18 locations per band beyond the superficial band, whose advantage is present in the
+  adult and every smaller head and weakest in the adult (strength ratio 1.29 against 1.33-1.61); they
+  appear in the oracle's 20-30 mm band and partly deeper.
 * Localization (24 locations; Neuromag, matched, dense): ECD errors of detected events are similar
   in every anatomy (320-nAm focal: 4.1-7.9 mm). dSPM, all events, 320-nAm focal: the dense array is
   paired-closer than Neuromag in the 2-year and 18-month templates (-4.7 and -5.3 mm; p = 0.035 and
-  0.003) and the 2-year size control (-1.5 mm, p = 0.01), not in the 12-month template (0.0 mm,
+  0.0033, uncorrected; neither survives the correction below) and the 2-year size control (-1.5 mm, p = 0.01), not in the 12-month template (0.0 mm,
   p = 0.38), the school-age control (0.0 mm, p = 0.25) or the adult (-0.3 mm); 320-nAm patches:
   2-year template -1.2 mm (p = 0.007), 12 months -2.0 mm (p = 0.0061), adult 0.0 mm (p = 0.50).
   ECD, 80-nAm sources, 18 months: -3.0 mm (focal, p = 0.003) and -4.4 mm (patches, p = 0.01).
@@ -812,7 +828,8 @@ months.
   which comparisons survive varies between runs (v2 had seven survivors, mostly others). The
   direction is the more robust observation: over all six anatomies 30 of the 192 localization
   comparisons have p < 0.05 (uncorrected; about 10 would be expected by chance if they were
-  independent, which they are not), 29 of them in favour of an OPM array.
+  independent, which they are not), 29 of them in favour of an OPM array; half of the 30 concern
+  weak 80-nAm sources, mostly undetected, and 16 are dSPM errors over all events.
 * The pediatric epilepsy examples use the same framework as the adult; detection and
   reconstruction claims rest on separate results. Simulated IED-source recovery does not
   identify an epileptogenic zone or establish surgical benefit.
