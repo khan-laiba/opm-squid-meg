@@ -56,7 +56,7 @@ head surface at sample points: its 27 integration points and its surface, each f
 point-to-triangle distance over the triangles around the 10 nearest mesh vertices, the cell
 oriented as the forward model builds it in the head frame). Every point of the cell surface lies
 within 0.71 mm of a sample and the distance is 1-Lipschitz, so the rule itself guarantees only
-0.29 mm for the whole cell (with its centre outside and the head surface one closed surface far
+0.29 mm for the whole cell (given exact distances at the samples) (with its centre outside and the head surface one closed surface far
 larger than a cell, the cell is then outside it), not 1 mm. The exact cube-to-mesh distance of the
 final cells (`opm.exact_cell_clearance`: the closest vertex-face and edge-edge pairs over every
 triangle that could be closer, with an intersection test) is at least 1.001 mm (matched) and
@@ -403,7 +403,7 @@ Detection design (`scripts/g4_epilepsy_adult.py`)
   the first v3 summaries dropped resamples in which neither system reached 50 %, a review finding).
   The Wilson bands in the figure are event-level and descriptive.
 
-Detection results (v3 arrays, run at 19a8fd2; focal, three morphologies pooled; strength for 50 %
+Detection results (v3 arrays, simulated at 19a8fd2 and summarised at d667a9d; focal, three morphologies pooled; strength for 50 %
 detection, S50, with a bootstrap over locations; practical detector at 1 false event per minute; the
 72 locations never lie on the medial wall; p-values uncorrected)
 * S50, Neuromag combined vs dense OPM vs matched OPM: 48 vs 37 vs 44 nAm at 10-20 mm, 85 vs 80 vs
@@ -757,7 +757,8 @@ means the 2-year template; the 18- and 12-month templates are named.)
   adult mixes head size, anatomy and the fixed-helmet fit, which G3B separates for detectability.
 
 Pediatric G4 results (`results/g4/G4_pediatric_report.md`, `g4_pediatric_comparison.json`; every
-anatomy simulated, and the comparison computed, at 19a8fd2 with the v3 arrays; 18 locations per depth
+anatomy simulated at 19a8fd2 with the v3 arrays, the summaries and the comparison re-summarised at
+d667a9d; 18 locations per depth
 band in every anatomy; p-values uncorrected, over 24 paired detection comparisons (3 comparators x 2
 detectors x 4 bands) and 16 localization comparisons per OPM array and anatomy). The children's
 Neuromag is at the primary G3B placement (top contact), the adult's at its measured position (the G4
