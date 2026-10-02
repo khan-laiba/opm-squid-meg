@@ -16,11 +16,11 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | G0 audit, provenance, plan | done; private repository `khan-laiba/opm-squid-meg`, tag `g0` | this file; `docs/audit.md`; `docs/literature/`; `docs/provenance_register.md` |
 | G1A Jas analytical benchmark | done; internally reviewed (approve with notes; notes addressed) | `scripts/g1a_jas_benchmark.py` -> `results/g1a/`; Eq. 1 vs Sarvas 2-D maximum 4.7e-15, vs MNE sphere 5.4e-8; d_eq(eta 3) = 27.665 mm |
 | G1B Hunold depth-orientation spikes | done; internally reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule and a realization-averaged Fig. 6 calibration | `scripts/g1b_hunold.py` -> `results/g1b/`; calibrated background (scalar 0.47; one realization alone 0.44-0.52), p2p: bin means 0.78-0.91x the paper (0.68-1.01x over the calibration range), noisy p2p 0.97-1.04x, r 0.91-0.97, 2.5-classification agreement 80-93 %, GM-MM sign agreement 100 % |
-| G1C Goldenholz cortical SNR maps | done; internally reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.76 nAm at 4,000 sources (paper 1.6-1.9); focal median -22.1 dB, 56 % inside the paper's -29/-19 dB range; deep medial cortex darkest |
+| G1C Goldenholz cortical SNR maps | done; internally reviewed (approve with notes; notes addressed); rerun with the 4-mm source rule | `scripts/g1c_goldenholz.py` -> `results/g1c/`; s_s 1.76 nAm at 4,000 sources (paper 1.6-1.9); focal median -22.1 dB, 56 % inside the paper's -29/-19 dB range (skull 0.006 S/m, the probable intended value; 0.06 S/m as printed run and labelled); deep medial cortex darkest |
 | G2 realistic adult OPM-Neuromag comparison | done; internally reviewed; `adult-baseline-v1` (1.21x) corrected in `adult-baseline-v2` (near-surface BEM error) and `adult-baseline-v3` (whole-cell OPM clearance; see below) | `scripts/g2_adult_comparison.py` -> `results/g2/` (`G2_report.md`); with modelled brain noise the dense 205-site OPM array is 1.11x [1.08-1.14] Neuromag combined (1.00-1.24x for OPM noise 30-7 fT/sqrt(Hz), 0.91-1.11x jointly with a 0-6 mm scalp gap; 3- and 1-layer BEM agree) and 1.05x [0.99-1.10] after the 8-term external-field projection (the second headline condition; a tie within its interval), the matched 95-site array 1.00x (a tie; 0.89x after the projection); 1.4-1.6x for sources within 20 mm of the scalp, 0.98-1.04x below 35 mm; without brain noise Neuromag wins (dense 0.74x); every OPM-dependent adult result rerun at 19a8fd2 (the exact-sphere BEM check, which involves no array, at 81168f3) |
-| G3 pediatric extension | G3A done (REPRO size benchmark); G3B done after the adult freeze (24-, 18- and 12-month infant templates, adult scaled to school-age and 2-year head size; fixed Neuromag helmet at source-blind placements vs refitted OPM; counterfactual helmet) | `scripts/g3a_jas_size_benchmark.py` -> `results/g3a/`; `scripts/g3b_pediatric_helmet.py` -> `results/g3b/` (`G3B_report.md`; computed at 19a8fd2): dense OPM vs Neuromag combined at top contact, D_adult +0.85 dB, Delta +0.59 (school-age size), +1.25 (2-year size), +0.88 (2-year template), +0.99 (18 months), +1.23 dB (12 months); with a helmet scaled with the head about the laterally centred head -0.08, -0.21, -0.20, -0.12, +0.01 dB (the gain is mainly the fixed helmet's fit); robust to OPM noise 7-30 fT/sqrt(Hz), background x0.5/x2, 1-layer BEM |
+| G3 pediatric extension | G3A done (REPRO size benchmark); G3B done after the adult freeze (goal review 2026-10-02: partially met, see `docs/goal_review.md`: the adult-only OPM standoff of the clearance rule bounded by `results/g3b/G3B_standoff_report.md`; no native school-aged anatomy) (24-, 18- and 12-month infant templates, adult scaled to school-age and 2-year head size; fixed Neuromag helmet at source-blind placements vs refitted OPM; counterfactual helmet) | `scripts/g3a_jas_size_benchmark.py` -> `results/g3a/`; `scripts/g3b_pediatric_helmet.py` -> `results/g3b/` (`G3B_report.md`; computed at 19a8fd2): dense OPM vs Neuromag combined at top contact, D_adult +0.85 dB, Delta +0.59 (school-age size), +1.25 (2-year size), +0.88 (2-year template), +0.99 (18 months), +1.23 dB (12 months); with a helmet scaled with the head about the laterally centred head -0.08, -0.21, -0.20, -0.12, +0.01 dB (the gain is mainly the fixed helmet's fit); robust to OPM noise 7-30 fT/sqrt(Hz), background x0.5/x2, 1-layer BEM |
 | G4 epilepsy detection and localization | adult and pediatric (three templates, both size controls) done, rerun at 19a8fd2 with the v3 arrays and emitted-event scoring; motion and slippage bounded extension done (19a8fd2) | `scripts/g4_epilepsy_adult.py`, `scripts/g4_localization.py` -> `results/g4/`; 50 % detection at 1 false event/min: dense OPM 37 vs Neuromag combined 48 nAm at 10-20 mm (paired ratio 1.29 [1.03-1.51]; 8/2 locations, p = 0.04; oracle 14/2, p = 0.001; v2 16/0, ratio 1.51), 268 vs 263 nAm at 45-70 mm; no location-level advantage established deeper than 20 mm (the 20-30 mm result varied between runs); matched: not ahead in any band (8/4 at 10-20 mm, p = 0.52; 0.04 and 0.14 in earlier runs) and behind at 45-70 mm (1/9, p = 0.016 uncorrected; the same direction in every run); localization: ECD similar (~4-5 mm); the dSPM gain for 320-nAm patches of earlier runs (~5 mm) did not reproduce (0 mm, p = 0.81 / 0.50): not robust; pediatric (`scripts/g4_epilepsy_pediatric.py`, `G4_pediatric_report.md`): 10-20 mm strength ratio Neuromag/OPM 1.33-1.61 (adult 1.29), deeper differences only for the 2-year size control and the 12- and 18-month templates (uncorrected; none survives a correction); localization comparisons with p < 0.05 favour an OPM array 29 to 1 (of 192; uncorrected, about 10 expected by chance, half for weak 80-nAm sources); motion (`scripts/g4_motion.py`, `G4_motion_report.md`): uncompensated head displacement costs Neuromag 1.4-1.7 dB at 10 mm, a 3-deg OPM cap slip 0.1-0.5 dB; un-modelled in-band rotation costs the OPM 1 dB at ~0.02 deg RMS in a 1-nT field (no correction) or ~0.4 deg (field projection, 1 deg/1 % calibration), thresholds inversely proportional to the field |
-| G5 repository, tests, report | private repository `khan-laiba/opm-squid-meg` (no Pages, verified 2026-10-01); 133 unittest tests pass with the v3 results (a clean clone of 6a30cc1 passed 132 of its 133, one skip without the local cache); `scripts/run_all.sh`; local report (`scripts/build_site.py` -> `site/_build/`, link-checked, not deployed); clean-environment smoke test passed (2026-09-30, at a commit before 81168f3, 87 tests then); release prepared, not executed | `docs/release_checklist.md`: figures in open fonts, no local paths in output summaries; owner decisions left: licence, git author metadata, template/fsaverage-derived figures, the CC-BY raster, two documents naming local folders, visibility and Pages |
+| G5 repository, tests, report | private repository `khan-laiba/opm-squid-meg` (no Pages, verified 2026-10-01); 133 unittest tests pass with the v3 results (a clean clone of 9771f68 passed 132 of its 133, one skip without the local cache); `scripts/run_all.sh`; local report (`scripts/build_site.py` -> `site/_build/`, link-checked, not deployed); clean-environment smoke test passed (2026-09-30, at a commit before 81168f3, 87 tests then); release prepared, not executed | `docs/release_checklist.md`: figures in open fonts, no local paths in output summaries; owner decisions left: licence, git author metadata, template/fsaverage-derived figures, the CC-BY raster, two documents naming local folders, visibility and Pages |
 
 ## Decisions log
 
@@ -42,6 +42,7 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | 2026-10-01 | G4 motion extension (bounded, secondary): sustained displacement in the fixed helmet vs OPM cap slip (geometry known vs mismatched template), in-band room-field coupling of the head-mounted array (no correction, homogeneous or 8-term projection; calibration errors; artefact outside and inside the noise model), exact rigid motion over a recording; per unit field. | NEW (A-MOT-*) |
 | 2026-10-01 | Release preparation, staying private: figures in open fonts by default (licensed artwork fonts only on request, for the pixel verification), output summaries without local absolute paths, `docs/release_checklist.md`; no visibility or Pages change. Provenance now also watches `legacy/*.py` (G1A imports the Fig. 3 replica). | owner ("prepare, stay private") |
 | 2026-10-01 | Final end-to-end reviews of every finding by two other models (owner request): Fable 5.1 (approve with notes; addressed in 90c18ae and 55a116d) and GPT 6 Astra via Codex (reject pending revision: whole-cell OPM clearance, detection scoring, patch support, censored intervals, report-builder deletion, CSD phase, ROC count, fingerprints). All findings fixed (section "Final reviews" below) and every OPM-dependent result recomputed at one clean commit (`adult-baseline-v3`). | owner |
+| 2026-10-02 | End-to-end goal review of G0-G5 (`docs/goal_review.md`; three independent reviewer agents, a clean-clone test run): G0, G1, G4 and G5 met for the private deliverable, G2 met with reservations, G3 partially met (the clearance rule left the adult's OPM sensors about 0.8 mm farther from the scalp than the children's: equalised in a sensitivity (`scripts/study_g3b_standoff.py`), the fixed-helmet Delta stays +0.47 to +1.12 dB and the counterfactual Delta is -0.34 to -0.06 dB, the same reading; no school-aged anatomy, owner-blocked). Fixed in the review: failed fits counted, the two G1C side-effects measured, configurations as the source of truth, the metric dependence and the deep reversal after the projection in the reports, documentation versions, the smoke command, disclosures. | owner |
 | 2026-10-01 | Re-check of the revision (0d6b992): Codex (reject pending focused corrections: censored S50-ratio intervals, the clearance guarantee, MNE's standard coil definitions in the fingerprints) and an independent verifier agent (approve with fixes: ten text corrections). All fixed; the G4 summaries re-summarised from the stored simulations (d667a9d), the lead fields recomputed. | owner |
 
 ## Inputs and availability
@@ -94,7 +95,9 @@ Done (`scripts/g1b_hunold.py`, methods section 6, `configs/hunold_reference.toml
    stratified to the paper's per-bin counts; 20-mm^2 patches (2928 grow).
 2. [x] Background: 10 % of vertices, band-limited, stationary (edge-transient defect fixed),
    +/-10 nAm per dipole; one realization shared by sources and arrays.
-3. [x] SNR as printed; p2p primary (Fig. 6 digitisation), peak and noisy peak as variants.
+3. [x] SNR as defined by the paper with the numerator inferred from Fig. 6 (the paper prints "spike
+   peak" without saying noise-free or noisy, peak or peak-to-peak; U-HU-numerator): p2p primary,
+   peak, noisy peak and noisy p2p as variants.
 4. [x] Absolute level: the paper's Fig. 6 baselines are 0.47x (MM) / 0.42x (GM) our expected
    baselines (20 realizations); both levels reported (U-HU-bglevel). Calibrated, p2p: strong
    bins 0.87-0.92x the paper, weak bins 0.73-0.90x; noisy p2p 0.97-1.04x (the paper lies between
@@ -192,6 +195,11 @@ GATE G1: all three run reproducibly; each output states REPRO/ADAPT status and a
    at 19a8fd2 and re-summarised at d667a9d; earlier at fd40dfe).
 5. [x] Motion and slippage, a bounded secondary extension (`scripts/g4_motion.py`,
    `src/opmsquid/motion.py`, `results/g4/G4_motion_report.md`; methods section 12).
+6. [x] End-to-end goal review (2026-10-02, `docs/goal_review.md`): failed fits counted under declared
+   criteria (`scripts/study_g4_fit_failures.py`), the detector's and localization's oracle-like
+   conveniences and the dSPM implementation's deviation from MNE disclosed, coverage limits stated,
+   the pediatric report's held-out range computed from the data, pediatric ROC figures and the
+   operating-point notes on the report site.
 
 ## G5 — software, reproduction, report
 
@@ -308,10 +316,24 @@ G3A and the exact-sphere BEM check do not involve the arrays and are kept):
 
 1. School-aged native anatomy: not available (owner decision 2026-09-30: the 2-year infant template and
    scaled-adult size controls; 2026-10-01: the 18- and 12-month templates added); a claim about anatomical
-   variability needs individual children, not averages of one database.
+   variability needs individual children, not averages of one database. The goal asks for a school-aged
+   model first: obtaining one (e.g. a FreeSurfer-processed pediatric MRI with a BEM) needs an approved
+   download.
+6. The adult's BEM head surface lies about 1 mm outside its MRI scalp, the templates' inside theirs, so the
+   whole-cell clearance rule moved the adult's OPM sensors outward and not the children's (goal review
+   2026-10-02; sensitivity in `results/g3b/G3B_standoff_report.md`). A geometry-consistent rerun (the
+   adult's outer conductor surface rebuilt from its MRI scalp) would remove the asymmetry; not done.
+7. Open from the goal review (not done): a G1C variant without the medial wall and with untruncated
+   patches; a rerun of the bounded localization with `mne.minimum_norm`; a measured-spectrum SQUID noise
+   scenario; 20-mm and fixed-density patches in G3B; a yaw placement variant and a citation for the
+   top-contact positioning; status lines in the result CSVs; a minimum-count rule for the G1B patch
+   bins; a CI workflow.
 2. The TRIUX specification image was not found; values from GOAL.md are used and flagged.
 3. OPM device noise: no single verified device specification; a declared 7-30 fT/sqrt(Hz)
    sweep is used instead.
-4. Clean-environment smoke test: done (passed, 2026-09-30).
+4. Clean-environment smoke test: done on 2026-09-30 with a fresh venv at a commit before 81168f3 (87
+   tests then); since then verification used fresh clones with the development venv (133 tests at
+   9771f68, 132 pass, 1 skip). No routine CI workflow exists (owner decision: minutes on a private
+   repository); `README.md` gives a smoke command.
 5. MEG 2443 is bad in the sample recording (baseline RMS 23x the gradiometer median): exclude it from
    every measured-noise computation (G2 brain-noise calibration, empty-room fit).

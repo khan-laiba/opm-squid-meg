@@ -1,0 +1,1658 @@
+{
+  "status": "NEW (G3B sensitivity: the children's OPM arrays moved outward by the adult's median excess standoff; stored Neuromag results; same bootstrap as G3B)",
+  "shift_mm": {
+    "opm_dense": 0.7847496406758161,
+    "opm_matched": 0.7611037711777664
+  },
+  "adult_height_mm": {
+    "opm_dense": 7.784749640675813,
+    "opm_matched": 7.764067228358488
+  },
+  "child_height_mm": {
+    "school": {
+      "opm_dense": 6.999999922260581,
+      "opm_matched": 7.00166671736467
+    },
+    "size2yr": {
+      "opm_dense": 6.999999605052409,
+      "opm_matched": 6.996387954659792
+    },
+    "infant2yr": {
+      "opm_dense": 6.999999999999999,
+      "opm_matched": 7.002963457180722
+    },
+    "infant18mo": {
+      "opm_dense": 6.999999999999997,
+      "opm_matched": 7.005108544328882
+    },
+    "infant12mo": {
+      "opm_dense": 6.999999999999999,
+      "opm_matched": 7.003917271582393
+    }
+  },
+  "comparators": [
+    "squid:top",
+    "squid:counterfactual",
+    "squid:counterfactual_x-centred"
+  ],
+  "n_boot": 500,
+  "anatomies": {
+    "school": {
+      "opm_dense/squid:top": {
+        "delta_original": {
+          "median": 0.5948685835927436,
+          "ci95": [
+            0.5003776759502953,
+            0.713623542420174
+          ],
+          "share_positive": 0.8968912879382093,
+          "n": 6949
+        },
+        "delta_shifted": {
+          "median": 0.4748569712550835,
+          "ci95": [
+            0.3803486762599009,
+            0.5758299933823477
+          ],
+          "share_positive": 0.8726149669254112,
+          "n": 6949
+        },
+        "d_child_original": {
+          "median": 1.4510195359943492,
+          "ci95": [
+            1.201450125476459,
+            1.7095391306106433
+          ],
+          "share_positive": 0.9766465477002083,
+          "n": 6949
+        },
+        "d_child_shifted": {
+          "median": 1.3303619343973785,
+          "ci95": [
+            1.1054423601987264,
+            1.5541532530735136
+          ],
+          "share_positive": 0.9733052232119791,
+          "n": 6949
+        },
+        "d_adult": {
+          "median": 0.8453393375037453,
+          "ci95": [
+            0.6090102135952576,
+            1.0580357734425279
+          ],
+          "share_positive": 0.8977634853580072,
+          "n": 7103
+        }
+      },
+      "opm_dense/squid:counterfactual": {
+        "delta_original": {
+          "median": -0.0762952885758506,
+          "ci95": [
+            -0.11267795844348821,
+            -0.03406089225586896
+          ],
+          "share_positive": 0.3855024654414178,
+          "n": 6949
+        },
+        "delta_shifted": {
+          "median": -0.1846801696725866,
+          "ci95": [
+            -0.24068674922344352,
+            -0.13037193139483905
+          ],
+          "share_positive": 0.25966165209413966,
+          "n": 6949
+        },
+        "d_child_original": {
+          "median": 0.8977418765716961,
+          "ci95": [
+            0.7346470548760486,
+            1.054520887717286
+          ],
+          "share_positive": 0.9846323641268008,
+          "n": 6949
+        },
+        "d_child_shifted": {
+          "median": 0.7698043867793402,
+          "ci95": [
+            0.6081336848353684,
+            0.9359936045614716
+          ],
+          "share_positive": 0.9777093308214629,
+          "n": 6949
+        },
+        "d_adult": {
+          "median": 1.0940007576638926,
+          "ci95": [
+            0.8589201671350367,
+            1.3000774645712248
+          ],
+          "share_positive": 0.9400639524069133,
+          "n": 7103
+        }
+      },
+      "opm_dense/squid:counterfactual_x-centred": {
+        "delta_original": {
+          "median": -0.0783158282663563,
+          "ci95": [
+            -0.12176522596397332,
+            -0.03693710433441062
+          ],
+          "share_positive": 0.383075008910582,
+          "n": 6949
+        },
+        "delta_shifted": {
+          "median": -0.1877055539643891,
+          "ci95": [
+            -0.23984382675368213,
+            -0.13083615046630404
+          ],
+          "share_positive": 0.2593244635575547,
+          "n": 6949
+        },
+        "d_child_original": {
+          "median": 0.9091010264429942,
+          "ci95": [
+            0.7250629161715525,
+            1.0646178924407534
+          ],
+          "share_positive": 0.9835279402376303,
+          "n": 6949
+        },
+        "d_child_shifted": {
+          "median": 0.7754619768304089,
+          "ci95": [
+            0.6042714601998875,
+            0.9291392393111724
+          ],
+          "share_positive": 0.9750312911928578,
+          "n": 6949
+        },
+        "d_adult": {
+          "median": 1.112892134852092,
+          "ci95": [
+            0.8670746465920711,
+            1.3329296574984293
+          ],
+          "share_positive": 0.9353700742356265,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:top": {
+        "delta_original": {
+          "median": 0.529502832637615,
+          "ci95": [
+            0.3937716688918586,
+            0.7072697348864153
+          ],
+          "share_positive": 0.8132412646340326,
+          "n": 6949
+        },
+        "delta_shifted": {
+          "median": 0.4764308349912834,
+          "ci95": [
+            0.3399621075602131,
+            0.6140272486734398
+          ],
+          "share_positive": 0.7896710775578526,
+          "n": 6949
+        },
+        "d_child_original": {
+          "median": 0.37349687960648514,
+          "ci95": [
+            0.20953073761321558,
+            0.5648718265430899
+          ],
+          "share_positive": 0.6939615024056837,
+          "n": 6949
+        },
+        "d_child_shifted": {
+          "median": 0.31198352358632736,
+          "ci95": [
+            0.14758685107444958,
+            0.49296053879812257
+          ],
+          "share_positive": 0.6689434168542521,
+          "n": 6949
+        },
+        "d_adult": {
+          "median": -0.1328147935225411,
+          "ci95": [
+            -0.24203679164796338,
+            -0.032487728620643905
+          ],
+          "share_positive": 0.4089076125622471,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:counterfactual": {
+        "delta_original": {
+          "median": -0.044231714854506554,
+          "ci95": [
+            -0.11046816397535297,
+            0.015761560922359624
+          ],
+          "share_positive": 0.45707864632072653,
+          "n": 6949
+        },
+        "delta_shifted": {
+          "median": -0.10371470780779843,
+          "ci95": [
+            -0.17037059515497555,
+            -0.035496978898685284
+          ],
+          "share_positive": 0.40150986317962833,
+          "n": 6949
+        },
+        "d_child_original": {
+          "median": -0.05203027856761658,
+          "ci95": [
+            -0.12281840367424811,
+            0.028443851438537015
+          ],
+          "share_positive": 0.4542628188582323,
+          "n": 6949
+        },
+        "d_child_shifted": {
+          "median": -0.1070689902173993,
+          "ci95": [
+            -0.17320469804770564,
+            -0.03618902742270404
+          ],
+          "share_positive": 0.406418058539666,
+          "n": 6949
+        },
+        "d_adult": {
+          "median": 0.03003147939744048,
+          "ci95": [
+            -0.09460250536487802,
+            0.18322799049904057
+          ],
+          "share_positive": 0.5206546978540632,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:counterfactual_x-centred": {
+        "delta_original": {
+          "median": -0.04334543184242856,
+          "ci95": [
+            -0.11930212695339064,
+            0.017247561367781036
+          ],
+          "share_positive": 0.4544623084191733,
+          "n": 6949
+        },
+        "delta_shifted": {
+          "median": -0.10048999455785307,
+          "ci95": [
+            -0.19028567422489273,
+            -0.03398638814831469
+          ],
+          "share_positive": 0.39829102364502667,
+          "n": 6949
+        },
+        "d_child_original": {
+          "median": -0.04624716336019105,
+          "ci95": [
+            -0.11183059492065973,
+            0.031197902608746293
+          ],
+          "share_positive": 0.4618043471136648,
+          "n": 6949
+        },
+        "d_child_shifted": {
+          "median": -0.09799200114948176,
+          "ci95": [
+            -0.16188575840622277,
+            -0.024877194744595047
+          ],
+          "share_positive": 0.41245818508516807,
+          "n": 6949
+        },
+        "d_adult": {
+          "median": 0.04522105851630366,
+          "ci95": [
+            -0.09131269628733343,
+            0.17011833354054698
+          ],
+          "share_positive": 0.5304765507221862,
+          "n": 7103
+        }
+      }
+    },
+    "size2yr": {
+      "opm_dense/squid:top": {
+        "delta_original": {
+          "median": 1.249474101883807,
+          "ci95": [
+            1.104127078600228,
+            1.3683811109755628
+          ],
+          "share_positive": 0.9632903661663708,
+          "n": 6855
+        },
+        "delta_shifted": {
+          "median": 1.11992482609366,
+          "ci95": [
+            0.9874029152219326,
+            1.235443458123059
+          ],
+          "share_positive": 0.9590246972825971,
+          "n": 6855
+        },
+        "d_child_original": {
+          "median": 2.087710771203222,
+          "ci95": [
+            1.7879022363298513,
+            2.3927719357472794
+          ],
+          "share_positive": 0.9877134704087744,
+          "n": 6855
+        },
+        "d_child_shifted": {
+          "median": 1.9569730193802006,
+          "ci95": [
+            1.6879659759640904,
+            2.252589269042134
+          ],
+          "share_positive": 0.9876077455276485,
+          "n": 6855
+        },
+        "d_adult": {
+          "median": 0.8453393375037453,
+          "ci95": [
+            0.6364811900600233,
+            1.0447094891519888
+          ],
+          "share_positive": 0.8977634853580072,
+          "n": 7103
+        }
+      },
+      "opm_dense/squid:counterfactual": {
+        "delta_original": {
+          "median": -0.20308441903993657,
+          "ci95": [
+            -0.2653671611049794,
+            -0.15828667547521777
+          ],
+          "share_positive": 0.23912915292729972,
+          "n": 6855
+        },
+        "delta_shifted": {
+          "median": -0.33220666893476025,
+          "ci95": [
+            -0.3978224216289772,
+            -0.25884033633560993
+          ],
+          "share_positive": 0.14756833682002551,
+          "n": 6855
+        },
+        "d_child_original": {
+          "median": 0.6845688572425479,
+          "ci95": [
+            0.512333754860097,
+            0.8302413647209841
+          ],
+          "share_positive": 0.9366645410759179,
+          "n": 6855
+        },
+        "d_child_shifted": {
+          "median": 0.5565687428186324,
+          "ci95": [
+            0.4125692505047922,
+            0.7266235006889367
+          ],
+          "share_positive": 0.9027457475955895,
+          "n": 6855
+        },
+        "d_adult": {
+          "median": 1.0940007576638926,
+          "ci95": [
+            0.8670374840561065,
+            1.3116950965952174
+          ],
+          "share_positive": 0.9400639524069133,
+          "n": 7103
+        }
+      },
+      "opm_dense/squid:counterfactual_x-centred": {
+        "delta_original": {
+          "median": -0.20860161579131287,
+          "ci95": [
+            -0.2648598035921686,
+            -0.1579591913508466
+          ],
+          "share_positive": 0.23950002588868172,
+          "n": 6855
+        },
+        "delta_shifted": {
+          "median": -0.3364851101792943,
+          "ci95": [
+            -0.40760829204460736,
+            -0.26831153503430677
+          ],
+          "share_positive": 0.15062109957993355,
+          "n": 6855
+        },
+        "d_child_original": {
+          "median": 0.6897882967290478,
+          "ci95": [
+            0.5331766978708805,
+            0.8467671981771459
+          ],
+          "share_positive": 0.9353610388514284,
+          "n": 6855
+        },
+        "d_child_shifted": {
+          "median": 0.5645682374127773,
+          "ci95": [
+            0.40862762304417516,
+            0.7305412099345869
+          ],
+          "share_positive": 0.9027466998169049,
+          "n": 6855
+        },
+        "d_adult": {
+          "median": 1.112892134852092,
+          "ci95": [
+            0.8929389852483172,
+            1.3509680905716261
+          ],
+          "share_positive": 0.9353700742356265,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:top": {
+        "delta_original": {
+          "median": 1.2998311422617825,
+          "ci95": [
+            1.1414861935629652,
+            1.4530540217900634
+          ],
+          "share_positive": 0.976807895080055,
+          "n": 6855
+        },
+        "delta_shifted": {
+          "median": 1.2185781055018212,
+          "ci95": [
+            1.08472820677886,
+            1.3645518058385393
+          ],
+          "share_positive": 0.9751187624737909,
+          "n": 6855
+        },
+        "d_child_original": {
+          "median": 1.1096359625079752,
+          "ci95": [
+            0.866163838074976,
+            1.327287660430686
+          ],
+          "share_positive": 0.884046291859672,
+          "n": 6855
+        },
+        "d_child_shifted": {
+          "median": 1.036266722951127,
+          "ci95": [
+            0.7971384602621374,
+            1.26168680464643
+          ],
+          "share_positive": 0.8772560649787845,
+          "n": 6855
+        },
+        "d_adult": {
+          "median": -0.1328147935225411,
+          "ci95": [
+            -0.24483901916130882,
+            -0.02804413329275895
+          ],
+          "share_positive": 0.4089076125622471,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:counterfactual": {
+        "delta_original": {
+          "median": -0.0789680753816342,
+          "ci95": [
+            -0.14507552254999703,
+            -0.025116563797478668
+          ],
+          "share_positive": 0.4093601524516504,
+          "n": 6855
+        },
+        "delta_shifted": {
+          "median": -0.14974783360517663,
+          "ci95": [
+            -0.22427457347571156,
+            -0.08140577805362892
+          ],
+          "share_positive": 0.34807379250194664,
+          "n": 6855
+        },
+        "d_child_original": {
+          "median": -0.08537255679308037,
+          "ci95": [
+            -0.14713422303942086,
+            -0.01318176961286869
+          ],
+          "share_positive": 0.4275009705634959,
+          "n": 6855
+        },
+        "d_child_shifted": {
+          "median": -0.13997513514195115,
+          "ci95": [
+            -0.2216261366967875,
+            -0.07571996883681319
+          ],
+          "share_positive": 0.3792390597500302,
+          "n": 6855
+        },
+        "d_adult": {
+          "median": 0.03003147939744048,
+          "ci95": [
+            -0.09285542899103724,
+            0.1704473968700383
+          ],
+          "share_positive": 0.5206546978540632,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:counterfactual_x-centred": {
+        "delta_original": {
+          "median": -0.08032025431747797,
+          "ci95": [
+            -0.14513849306295706,
+            -0.023437670066425956
+          ],
+          "share_positive": 0.409714559857951,
+          "n": 6855
+        },
+        "delta_shifted": {
+          "median": -0.15194989716933288,
+          "ci95": [
+            -0.2184932187849246,
+            -0.08150267761088219
+          ],
+          "share_positive": 0.34612004099020677,
+          "n": 6855
+        },
+        "d_child_original": {
+          "median": -0.0767658739222371,
+          "ci95": [
+            -0.14215902174363185,
+            -0.005284925365809558
+          ],
+          "share_positive": 0.4321496464098514,
+          "n": 6855
+        },
+        "d_child_shifted": {
+          "median": -0.13518095502743221,
+          "ci95": [
+            -0.20634634543343283,
+            -0.0689421908323227
+          ],
+          "share_positive": 0.38275268587801436,
+          "n": 6855
+        },
+        "d_adult": {
+          "median": 0.04522105851630366,
+          "ci95": [
+            -0.07916599598671493,
+            0.17383410873041305
+          ],
+          "share_positive": 0.5304765507221862,
+          "n": 7103
+        }
+      }
+    },
+    "infant2yr": {
+      "opm_dense/squid:top": {
+        "delta_original": {
+          "median": 0.8848533745097455,
+          "ci95": [
+            0.5366174807745077,
+            1.3309377496978148
+          ],
+          "share_positive": 0.960497133798468,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": 0.7735182398980895,
+          "ci95": [
+            0.4388023431772049,
+            1.153535749443451
+          ],
+          "share_positive": 0.960497133798468,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 1.8438259883630126,
+          "ci95": [
+            1.5485044122489322,
+            2.162282104981253
+          ],
+          "share_positive": 0.9795522873185092,
+          "n": 7559
+        },
+        "d_child_shifted": {
+          "median": 1.706587524888634,
+          "ci95": [
+            1.3949313972170305,
+            2.0379085306348417
+          ],
+          "share_positive": 0.9783022444983891,
+          "n": 7559
+        },
+        "d_adult": {
+          "median": 0.8453393375037453,
+          "ci95": [
+            0.6275577293609526,
+            1.0698070442897507
+          ],
+          "share_positive": 0.8977634853580072,
+          "n": 7103
+        }
+      },
+      "opm_dense/squid:counterfactual": {
+        "delta_original": {
+          "median": 0.431007631604432,
+          "ci95": [
+            0.19153722722443978,
+            0.823257055751438
+          ],
+          "share_positive": 0.7642426868978672,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": 0.34128806075502194,
+          "ci95": [
+            0.024143297530104135,
+            0.6499578200002567
+          ],
+          "share_positive": 0.6747375755429059,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 1.5531047037479528,
+          "ci95": [
+            1.2838567241008538,
+            1.861788641712739
+          ],
+          "share_positive": 0.9897678825700033,
+          "n": 7559
+        },
+        "d_child_shifted": {
+          "median": 1.4228342611241198,
+          "ci95": [
+            1.1603249046187447,
+            1.7203986322247053
+          ],
+          "share_positive": 0.9869677171076249,
+          "n": 7559
+        },
+        "d_adult": {
+          "median": 1.0940007576638926,
+          "ci95": [
+            0.8546438909035349,
+            1.3184239121381935
+          ],
+          "share_positive": 0.9400639524069133,
+          "n": 7103
+        }
+      },
+      "opm_dense/squid:counterfactual_x-centred": {
+        "delta_original": {
+          "median": -0.20103491176023613,
+          "ci95": [
+            -0.3411773982159678,
+            0.16922542019094933
+          ],
+          "share_positive": 0.4614342673837963,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": -0.3354050350885598,
+          "ci95": [
+            -0.46623393203219665,
+            0.017064273974400246
+          ],
+          "share_positive": 0.4286441327862086,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 1.0042683730802056,
+          "ci95": [
+            0.8078438814315848,
+            1.2208518317975474
+          ],
+          "share_positive": 0.9587872564338492,
+          "n": 7559
+        },
+        "d_child_shifted": {
+          "median": 0.8824855324048149,
+          "ci95": [
+            0.6772015333995498,
+            1.0674944471002143
+          ],
+          "share_positive": 0.9427023825179459,
+          "n": 7559
+        },
+        "d_adult": {
+          "median": 1.112892134852092,
+          "ci95": [
+            0.8822768728838173,
+            1.3407538041966713
+          ],
+          "share_positive": 0.9353700742356265,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:top": {
+        "delta_original": {
+          "median": 0.9300254323190068,
+          "ci95": [
+            0.6072663088500279,
+            1.2053699510233238
+          ],
+          "share_positive": 0.893992933189729,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": 0.8632670319298018,
+          "ci95": [
+            0.5257876092502809,
+            1.137603381666257
+          ],
+          "share_positive": 0.8958411897991837,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 0.5439568293547979,
+          "ci95": [
+            0.30803480932516664,
+            0.8247860292168736
+          ],
+          "share_positive": 0.714957271768777,
+          "n": 7559
+        },
+        "d_child_shifted": {
+          "median": 0.47711212597610364,
+          "ci95": [
+            0.252418112091252,
+            0.782731466885481
+          ],
+          "share_positive": 0.6978588380471362,
+          "n": 7559
+        },
+        "d_adult": {
+          "median": -0.1328147935225411,
+          "ci95": [
+            -0.24256578735042986,
+            -0.03636719687281883
+          ],
+          "share_positive": 0.4089076125622471,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:counterfactual": {
+        "delta_original": {
+          "median": 0.6778809374781425,
+          "ci95": [
+            0.2298886208148555,
+            0.8645094700374245
+          ],
+          "share_positive": 0.7741836831189969,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": 0.6186249142630957,
+          "ci95": [
+            0.15630866324856327,
+            0.822979290394193
+          ],
+          "share_positive": 0.7741836831189969,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 0.36291336326163465,
+          "ci95": [
+            0.1822499892408478,
+            0.6191643067719401
+          ],
+          "share_positive": 0.6629170463153561,
+          "n": 7559
+        },
+        "d_child_shifted": {
+          "median": 0.3020278833306283,
+          "ci95": [
+            0.0927655815209505,
+            0.5758572682165569
+          ],
+          "share_positive": 0.6386137625184845,
+          "n": 7559
+        },
+        "d_adult": {
+          "median": 0.03003147939744048,
+          "ci95": [
+            -0.08664723610078054,
+            0.16763450691981235
+          ],
+          "share_positive": 0.5206546978540632,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:counterfactual_x-centred": {
+        "delta_original": {
+          "median": 0.0485595348906077,
+          "ci95": [
+            -0.13863664407090504,
+            0.31362751070508704
+          ],
+          "share_positive": 0.5457197731830046,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": -0.018264463368074413,
+          "ci95": [
+            -0.17482341559539483,
+            0.20975123241612564
+          ],
+          "share_positive": 0.493383257153061,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": -0.046140057454158175,
+          "ci95": [
+            -0.17845627036714193,
+            0.07564434820603448
+          ],
+          "share_positive": 0.4705660967956838,
+          "n": 7559
+        },
+        "d_child_shifted": {
+          "median": -0.11024490505089307,
+          "ci95": [
+            -0.2232004234656458,
+            0.011132503291839598
+          ],
+          "share_positive": 0.42964351234927184,
+          "n": 7559
+        },
+        "d_adult": {
+          "median": 0.04522105851630366,
+          "ci95": [
+            -0.07558608523676628,
+            0.18230567665973316
+          ],
+          "share_positive": 0.5304765507221862,
+          "n": 7103
+        }
+      }
+    },
+    "infant18mo": {
+      "opm_dense/squid:top": {
+        "delta_original": {
+          "median": 0.9878316885688387,
+          "ci95": [
+            0.5824054420634077,
+            1.238893394807405
+          ],
+          "share_positive": 0.960497133798468,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": 0.8077280716220727,
+          "ci95": [
+            0.47195072681073924,
+            1.164228120363306
+          ],
+          "share_positive": 0.960497133798468,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 1.8945793235020112,
+          "ci95": [
+            1.6344413986412263,
+            2.1918804593365175
+          ],
+          "share_positive": 0.9887929700597552,
+          "n": 7363
+        },
+        "d_child_shifted": {
+          "median": 1.7468133971857371,
+          "ci95": [
+            1.4507248414858278,
+            2.065261709230942
+          ],
+          "share_positive": 0.9878217428946635,
+          "n": 7363
+        },
+        "d_adult": {
+          "median": 0.8453393375037453,
+          "ci95": [
+            0.58956273419126,
+            1.0367560269707636
+          ],
+          "share_positive": 0.8977634853580072,
+          "n": 7103
+        }
+      },
+      "opm_dense/squid:counterfactual": {
+        "delta_original": {
+          "median": 0.29652444502401987,
+          "ci95": [
+            0.10393342904644243,
+            0.7046200459386354
+          ],
+          "share_positive": 0.7547717506164486,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": 0.2298047153022571,
+          "ci95": [
+            -0.030760858625011878,
+            0.5938779980051945
+          ],
+          "share_positive": 0.6294949661682615,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 1.467065267707829,
+          "ci95": [
+            1.1853127476246894,
+            1.7565829668884587
+          ],
+          "share_positive": 0.9858460103422483,
+          "n": 7363
+        },
+        "d_child_shifted": {
+          "median": 1.3176205469022504,
+          "ci95": [
+            1.0559129494601447,
+            1.588481591261695
+          ],
+          "share_positive": 0.9799221585037096,
+          "n": 7363
+        },
+        "d_adult": {
+          "median": 1.0940007576638926,
+          "ci95": [
+            0.8505899569223727,
+            1.3406740727257955
+          ],
+          "share_positive": 0.9400639524069133,
+          "n": 7103
+        }
+      },
+      "opm_dense/squid:counterfactual_x-centred": {
+        "delta_original": {
+          "median": -0.11508752292509761,
+          "ci95": [
+            -0.299961179840291,
+            0.18041855978312732
+          ],
+          "share_positive": 0.45929403543775676,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": -0.24079532040322071,
+          "ci95": [
+            -0.4388206009986968,
+            -0.004693602045704182
+          ],
+          "share_positive": 0.35819364720856284,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 1.0241841148343231,
+          "ci95": [
+            0.8181591529379202,
+            1.2580079790197252
+          ],
+          "share_positive": 0.9615211636100925,
+          "n": 7363
+        },
+        "d_child_shifted": {
+          "median": 0.8863782110812759,
+          "ci95": [
+            0.6938621218301484,
+            1.0822726817933623
+          ],
+          "share_positive": 0.9422559181783517,
+          "n": 7363
+        },
+        "d_adult": {
+          "median": 1.112892134852092,
+          "ci95": [
+            0.8867842085040927,
+            1.3622797013612156
+          ],
+          "share_positive": 0.9353700742356265,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:top": {
+        "delta_original": {
+          "median": 0.9121058260273129,
+          "ci95": [
+            0.5143616070862778,
+            1.1916970918352023
+          ],
+          "share_positive": 0.9798351985019044,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": 0.790042969126483,
+          "ci95": [
+            0.43859132412614715,
+            1.111192105027155
+          ],
+          "share_positive": 0.947305998632276,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 0.5585792745805465,
+          "ci95": [
+            0.3372026692176549,
+            0.8092183313671117
+          ],
+          "share_positive": 0.7306203354999595,
+          "n": 7363
+        },
+        "d_child_shifted": {
+          "median": 0.4886259680410432,
+          "ci95": [
+            0.2794571286059386,
+            0.7322299302787247
+          ],
+          "share_positive": 0.7099249221095252,
+          "n": 7363
+        },
+        "d_adult": {
+          "median": -0.1328147935225411,
+          "ci95": [
+            -0.23654893198455393,
+            -0.021039243168344244
+          ],
+          "share_positive": 0.4089076125622471,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:counterfactual": {
+        "delta_original": {
+          "median": 0.4703766790466062,
+          "ci95": [
+            0.020715350171034437,
+            0.6428366897488053
+          ],
+          "share_positive": 0.6566442967663938,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": 0.45903456959290473,
+          "ci95": [
+            -0.035658790721438544,
+            0.5134083895849204
+          ],
+          "share_positive": 0.6101920843607419,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 0.19540711526420754,
+          "ci95": [
+            0.02615029724162462,
+            0.40403091316321854
+          ],
+          "share_positive": 0.6011414308610588,
+          "n": 7363
+        },
+        "d_child_shifted": {
+          "median": 0.1348799065423015,
+          "ci95": [
+            -0.008693696035366653,
+            0.34747795146610994
+          ],
+          "share_positive": 0.5730074595989274,
+          "n": 7363
+        },
+        "d_adult": {
+          "median": 0.03003147939744048,
+          "ci95": [
+            -0.09387779838181405,
+            0.16666780497130607
+          ],
+          "share_positive": 0.5206546978540632,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:counterfactual_x-centred": {
+        "delta_original": {
+          "median": -0.015564870567961853,
+          "ci95": [
+            -0.22934035531323393,
+            0.22858704404803687
+          ],
+          "share_positive": 0.47924781694036733,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": -0.08822708837227122,
+          "ci95": [
+            -0.28597558067761,
+            0.24362042754009838
+          ],
+          "share_positive": 0.46169388976224307,
+          "n_parcels": 66,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": -0.13404656733269826,
+          "ci95": [
+            -0.2588960541272175,
+            0.03474724320833468
+          ],
+          "share_positive": 0.4206368288512009,
+          "n": 7363
+        },
+        "d_child_shifted": {
+          "median": -0.19321514223467004,
+          "ci95": [
+            -0.303512037975327,
+            -0.0333634651566165
+          ],
+          "share_positive": 0.3835105906853508,
+          "n": 7363
+        },
+        "d_adult": {
+          "median": 0.04522105851630366,
+          "ci95": [
+            -0.0796244827945056,
+            0.1680502493643196
+          ],
+          "share_positive": 0.5304765507221862,
+          "n": 7103
+        }
+      }
+    },
+    "infant12mo": {
+      "opm_dense/squid:top": {
+        "delta_original": {
+          "median": 1.2318456832289615,
+          "ci95": [
+            0.7936614868714622,
+            1.6121049418463973
+          ],
+          "share_positive": 0.9742033857469872,
+          "n_parcels": 65,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole",
+            "rh.parahippocampal"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": 1.0722132537436575,
+          "ci95": [
+            0.5644571665849155,
+            1.4214811788535995
+          ],
+          "share_positive": 0.9603917246166238,
+          "n_parcels": 65,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole",
+            "rh.parahippocampal"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 2.0428158576374673,
+          "ci95": [
+            1.6177752342327398,
+            2.4288762458838
+          ],
+          "share_positive": 0.9873150426883092,
+          "n": 7592
+        },
+        "d_child_shifted": {
+          "median": 1.882646095211371,
+          "ci95": [
+            1.4986263198987428,
+            2.2882288088314136
+          ],
+          "share_positive": 0.9859800665140896,
+          "n": 7592
+        },
+        "d_adult": {
+          "median": 0.8453393375037453,
+          "ci95": [
+            0.6038751210554619,
+            1.0437627740365354
+          ],
+          "share_positive": 0.8977634853580072,
+          "n": 7103
+        }
+      },
+      "opm_dense/squid:counterfactual": {
+        "delta_original": {
+          "median": 0.24428740499126578,
+          "ci95": [
+            -0.13288210940287537,
+            0.3683465687953551
+          ],
+          "share_positive": 0.6283158895059204,
+          "n_parcels": 65,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole",
+            "rh.parahippocampal"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": 0.10427050826864437,
+          "ci95": [
+            -0.20527159634126857,
+            0.24368543120778274
+          ],
+          "share_positive": 0.5371321020252793,
+          "n_parcels": 65,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole",
+            "rh.parahippocampal"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 1.1606163938048049,
+          "ci95": [
+            0.8571895223575078,
+            1.4334929365288758
+          ],
+          "share_positive": 0.9780100817649167,
+          "n": 7592
+        },
+        "d_child_shifted": {
+          "median": 1.006604556767798,
+          "ci95": [
+            0.7123034675571572,
+            1.3318608141238522
+          ],
+          "share_positive": 0.9653086066395645,
+          "n": 7592
+        },
+        "d_adult": {
+          "median": 1.0940007576638926,
+          "ci95": [
+            0.8893800121196255,
+            1.294251726956844
+          ],
+          "share_positive": 0.9400639524069133,
+          "n": 7103
+        }
+      },
+      "opm_dense/squid:counterfactual_x-centred": {
+        "delta_original": {
+          "median": 0.010109666367445397,
+          "ci95": [
+            -0.2624148762767682,
+            0.2536161607880816
+          ],
+          "share_positive": 0.5104355013907107,
+          "n_parcels": 65,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole",
+            "rh.parahippocampal"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": -0.061266575695890585,
+          "ci95": [
+            -0.37244768234854275,
+            0.07092238755246116
+          ],
+          "share_positive": 0.42500680661087514,
+          "n_parcels": 65,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole",
+            "rh.parahippocampal"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 0.9894035050725237,
+          "ci95": [
+            0.7413157693230802,
+            1.3251910722392242
+          ],
+          "share_positive": 0.9673712234160871,
+          "n": 7592
+        },
+        "d_child_shifted": {
+          "median": 0.8450879442031739,
+          "ci95": [
+            0.6248130061338587,
+            1.1395289853739665
+          ],
+          "share_positive": 0.9481631685785352,
+          "n": 7592
+        },
+        "d_adult": {
+          "median": 1.112892134852092,
+          "ci95": [
+            0.8724492656133921,
+            1.3503357206975193
+          ],
+          "share_positive": 0.9353700742356265,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:top": {
+        "delta_original": {
+          "median": 1.136444391068183,
+          "ci95": [
+            0.6298288360395896,
+            1.550390854458967
+          ],
+          "share_positive": 0.9266815651017707,
+          "n_parcels": 65,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole",
+            "rh.parahippocampal"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": 1.1101648859669153,
+          "ci95": [
+            0.5624371894164573,
+            1.47165332424012
+          ],
+          "share_positive": 0.9266815651017707,
+          "n_parcels": 65,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole",
+            "rh.parahippocampal"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 0.7184275917201356,
+          "ci95": [
+            0.4654560098932767,
+            1.1175086762906008
+          ],
+          "share_positive": 0.7604380255610778,
+          "n": 7592
+        },
+        "d_child_shifted": {
+          "median": 0.6515480650406545,
+          "ci95": [
+            0.39613073779976526,
+            0.9725609862764427
+          ],
+          "share_positive": 0.7434442542578977,
+          "n": 7592
+        },
+        "d_adult": {
+          "median": -0.1328147935225411,
+          "ci95": [
+            -0.2392266022827762,
+            -0.030208260665468133
+          ],
+          "share_positive": 0.4089076125622471,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:counterfactual": {
+        "delta_original": {
+          "median": 0.14193082759926362,
+          "ci95": [
+            -0.07772199490915221,
+            0.4716455843336464
+          ],
+          "share_positive": 0.5483469968969117,
+          "n_parcels": 65,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole",
+            "rh.parahippocampal"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": 0.06350603291977458,
+          "ci95": [
+            -0.13311253361188838,
+            0.3497935896510963
+          ],
+          "share_positive": 0.5409899551497771,
+          "n_parcels": 65,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole",
+            "rh.parahippocampal"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": 0.01739180397141902,
+          "ci95": [
+            -0.12387252990709444,
+            0.22234758687119083
+          ],
+          "share_positive": 0.5102707510058546,
+          "n": 7592
+        },
+        "d_child_shifted": {
+          "median": -0.041072553812057024,
+          "ci95": [
+            -0.1679645295301058,
+            0.10862180738746838
+          ],
+          "share_positive": 0.47195559093854145,
+          "n": 7592
+        },
+        "d_adult": {
+          "median": 0.03003147939744048,
+          "ci95": [
+            -0.1063158698114034,
+            0.18048863395819834
+          ],
+          "share_positive": 0.5206546978540632,
+          "n": 7103
+        }
+      },
+      "opm_matched/squid:counterfactual_x-centred": {
+        "delta_original": {
+          "median": -0.027859657502337404,
+          "ci95": [
+            -0.18486821141254076,
+            0.29891570423308444
+          ],
+          "share_positive": 0.48658074927364436,
+          "n_parcels": 65,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole",
+            "rh.parahippocampal"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "delta_shifted": {
+          "median": -0.06412026097202028,
+          "ci95": [
+            -0.21612516558852599,
+            0.23330248637181022
+          ],
+          "share_positive": 0.478490720313254,
+          "n_parcels": 65,
+          "sparse_parcels": [
+            "lh.frontalpole",
+            "rh.frontalpole",
+            "rh.parahippocampal"
+          ],
+          "method": "area-weighted median over parcels of (D_child - D_adult), parcel bootstrap"
+        },
+        "d_child_original": {
+          "median": -0.09047425119878777,
+          "ci95": [
+            -0.19224654067876287,
+            0.047053523670807174
+          ],
+          "share_positive": 0.4433735226730659,
+          "n": 7592
+        },
+        "d_child_shifted": {
+          "median": -0.14281957633456688,
+          "ci95": [
+            -0.2398798416996498,
+            -0.014110491104491212
+          ],
+          "share_positive": 0.39947515502243097,
+          "n": 7592
+        },
+        "d_adult": {
+          "median": 0.04522105851630366,
+          "ci95": [
+            -0.08867397889674179,
+            0.1644565102892336
+          ],
+          "share_positive": 0.5304765507221862,
+          "n": 7103
+        }
+      }
+    }
+  },
+  "provenance": {
+    "commit": "34877f5",
+    "mne_version": "1.13.2",
+    "numpy_version": "2.5.3"
+  }
+}

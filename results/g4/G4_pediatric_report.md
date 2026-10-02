@@ -6,40 +6,40 @@ Same framework, configuration and seeds as the adult (configs/g4_epilepsy.toml);
 
 | anatomy | detector | 10-20 mm | 20-30 mm | 30-45 mm | 45-70 mm |
 |---|---|---|---|---|---|
-| adult | squid/combined | 48 [37-63] | 85 [68-110] | 136 [110-194] | 263 [open] |
-| adult | squid/grad | 57 [46-71] | 101 [75-133] | 143 [117-211] | none [open] |
-| adult | squid/mag | 52 [40-66] | 86 [66-113] | 136 [111-189] | 275 [open] |
-| adult | opm_matched/opm | 44 [33-61] | 87 [64-123] | 146 [112-210] | 320 [open] |
-| adult | opm_dense/opm | 37 [30-55] | 80 [61-109] | 135 [110-185] | 268 [open] |
-| school | squid/combined | 50 [39-67] | 92 [69-113] | 167 [129-244] | 271 [open] |
-| school | squid/grad | 58 [50-71] | 94 [72-116] | 202 [144-300] | none [open] |
-| school | squid/mag | 54 [44-72] | 92 [70-108] | 179 [131-247] | 271 [open] |
-| school | opm_matched/opm | 44 [33-71] | 89 [69-106] | 185 [136-258] | 311 [open] |
-| school | opm_dense/opm | 36 [30-50] | 86 [69-104] | 151 [121-231] | 284 [open] |
-| size2yr | squid/combined | 59 [49-77] | 106 [78-135] | 200 [153-250] | 273 [open] |
-| size2yr | squid/grad | 65 [53-89] | 110 [87-135] | 217 [172-287] | none [open] |
-| size2yr | squid/mag | 59 [48-78] | 107 [80-134] | 204 [152-269] | 273 [open] |
-| size2yr | opm_matched/opm | 38 [31-62] | 96 [71-116] | 187 [144-239] | 279 [open] |
-| size2yr | opm_dense/opm | 37 [29-51] | 89 [65-120] | 177 [134-232] | 243 [open] |
+| adult | squid/combined | 48 [37-63] | 85 [68-110] | 136 [110-194] | 263 [230-open] |
+| adult | squid/grad | 57 [46-71] | 101 [75-133] | 143 [117-211] | none [269-open] |
+| adult | squid/mag | 52 [40-66] | 86 [66-113] | 136 [111-189] | 275 [240-open] |
+| adult | opm_matched/opm | 44 [33-61] | 87 [64-123] | 146 [112-210] | 320 [264-open] |
+| adult | opm_dense/opm | 37 [30-55] | 80 [61-109] | 135 [110-185] | 268 [231-open] |
+| school | squid/combined | 50 [39-67] | 92 [69-113] | 167 [129-244] | 271 [219-open] |
+| school | squid/grad | 58 [50-71] | 94 [72-116] | 202 [144-300] | none [258-open] |
+| school | squid/mag | 54 [44-72] | 92 [70-108] | 179 [131-247] | 271 [218-open] |
+| school | opm_matched/opm | 44 [33-71] | 89 [69-106] | 185 [136-258] | 311 [246-open] |
+| school | opm_dense/opm | 36 [30-50] | 86 [69-104] | 151 [121-231] | 284 [218-open] |
+| size2yr | squid/combined | 59 [49-77] | 106 [78-135] | 200 [153-250] | 273 [224-open] |
+| size2yr | squid/grad | 65 [53-89] | 110 [87-135] | 217 [172-287] | none [272-open] |
+| size2yr | squid/mag | 59 [48-78] | 107 [80-134] | 204 [152-269] | 273 [224-open] |
+| size2yr | opm_matched/opm | 38 [31-62] | 96 [71-116] | 187 [144-239] | 279 [240-open] |
+| size2yr | opm_dense/opm | 37 [29-51] | 89 [65-120] | 177 [134-232] | 243 [196-open] |
 | infant2yr | squid/combined | 43 [34-53] | 71 [61-95] | 143 [118-187] | 240 [202-292] |
-| infant2yr | squid/grad | 51 [44-57] | 80 [64-107] | 160 [129-218] | 279 [open] |
+| infant2yr | squid/grad | 51 [44-57] | 80 [64-107] | 160 [129-218] | 279 [241-open] |
 | infant2yr | squid/mag | 46 [37-53] | 78 [63-103] | 139 [116-187] | 240 [203-289] |
 | infant2yr | opm_matched/opm | 35 [30-45] | 70 [58-92] | 150 [117-202] | 238 [205-295] |
 | infant2yr | opm_dense/opm | 30 [27-35] | 66 [58-88] | 138 [110-182] | 229 [196-279] |
-| infant18mo | squid/combined | 36 [31-56] | 62 [53-76] | 124 [107-155] | none [open] |
-| infant18mo | squid/grad | 47 [34-67] | 83 [61-118] | 144 [122-189] | none [open] |
-| infant18mo | squid/mag | 36 [31-53] | 64 [54-95] | 126 [111-160] | none [open] |
-| infant18mo | opm_matched/opm | 33 [26-48] | 60 [42-95] | 122 [106-151] | none [open] |
-| infant18mo | opm_dense/opm | 27 [21-40] | 58 [43-88] | 118 [99-152] | 282 [open] |
+| infant18mo | squid/combined | 36 [31-56] | 62 [53-76] | 124 [107-155] | none [250-open] |
+| infant18mo | squid/grad | 47 [34-67] | 83 [61-118] | 144 [122-189] | none [288-open] |
+| infant18mo | squid/mag | 36 [31-53] | 64 [54-95] | 126 [111-160] | none [254-open] |
+| infant18mo | opm_matched/opm | 33 [26-48] | 60 [42-95] | 122 [106-151] | none [251-open] |
+| infant18mo | opm_dense/opm | 27 [21-40] | 58 [43-88] | 118 [99-152] | 282 [214-open] |
 | infant12mo | squid/combined | 43 [34-57] | 71 [57-98] | 131 [114-172] | 254 [220-320] |
-| infant12mo | squid/grad | 52 [44-62] | 74 [62-102] | 133 [119-175] | none [open] |
-| infant12mo | squid/mag | 41 [33-56] | 71 [60-98] | 132 [115-166] | 256 [open] |
-| infant12mo | opm_matched/opm | 33 [30-44] | 63 [53-85] | 130 [109-170] | 256 [open] |
+| infant12mo | squid/grad | 52 [44-62] | 74 [62-102] | 133 [119-175] | none [256-open] |
+| infant12mo | squid/mag | 41 [33-56] | 71 [60-98] | 132 [115-166] | 256 [219-open] |
+| infant12mo | opm_matched/opm | 33 [30-44] | 63 [53-85] | 130 [109-170] | 256 [221-open] |
 | infant12mo | opm_dense/opm | 29 [21-41] | 63 [50-93] | 119 [98-156] | 248 [215-320] |
 
 ## Held-out false events per minute at the 1-per-minute thresholds, and sensitivity at a matched held-out rate
 
-Sensitivity for 40-nAm spikes at 10-30 mm with each detector's threshold set on the held-out null to 1 false event per minute (the frozen thresholds give 0.5-1.7 per minute, unequal between arrays).
+Sensitivity for 40-nAm spikes at 10-30 mm with each detector's threshold set on the held-out null to 1 false event per minute (the frozen thresholds give 0.40-1.55 per minute over the anatomies and detectors, unequal between arrays).
 
 | anatomy | detector | held-out rate at the frozen threshold | sensitivity at a matched 1 per minute |
 |---|---|---|---|

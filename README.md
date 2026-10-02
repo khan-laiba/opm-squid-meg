@@ -20,14 +20,15 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G2 realistic adult OPM vs Neuromag | NEW | done, internally reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2` and `adult-baseline-v3` |
 | G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`, recomputed with the v3 arrays from the code of `adult-baseline-v3`; the 2-year-template pass internally reviewed (approve with notes; fixes re-verified); the 18- and 12-month templates added on 2026-10-01 |
 | G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates and both size controls); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts internally reviewed |
-| G5 software, reproduction, report | - | 133 unit tests pass with the v3 results (a clean clone of 6a30cc1 passed 132 of its 133, the full-resolution lead-field check skipping without the local cache); `scripts/run_all.sh`; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
+| G5 software, reproduction, report | - | 133 unit tests pass with the v3 results (a clean clone of 9771f68 passed 132 of its 133, the full-resolution lead-field check skipping without the local cache); `scripts/run_all.sh`; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
 
 "Internally reviewed" means separate review passes by reviewer agents, with fixes re-verified
 (on 2026-10-01 also complete reviews by two other models), not external peer review.
 
 Adult findings so far (`adult-baseline-v3`), conditional on one adult head (MNE sample subject),
-an assumed OPM noise of 15 fT/sqrt(Hz), OPM sensors with no helmet-to-scalp gap beyond the 7-mm
-standoff and Neuromag at its
+an assumed OPM noise of 15 fT/sqrt(Hz), OPM sensors at the 7-mm standoff with no extra
+helmet-to-scalp gap (the clearance rule moves most of the adult's sensors out by about 1 mm, median
+sensing-centre height 7.8 mm) and Neuromag at its
 measured (not best) head position; details and caveats in `docs/methods.md` and
 `results/g2/G2_report.md`:
 - With modelled brain noise (calibrated on gradiometers; it predicts 0.73x the measured
@@ -43,7 +44,11 @@ measured (not best) head position; details and caveats in `docs/methods.md` and
   set by signal outside the brain-noise subspace.
 - The advantage disappears with worse assumptions: 1.00x at an OPM noise of 30 fT/sqrt(Hz),
   0.96x with 30 fT/sqrt(Hz) and a 3-mm scalp gap, 0.91x with a 6-mm gap. Without brain noise,
-  Neuromag wins (0.74x). The 3- and 1-layer head models agree (1.11x on both). Not modelled:
+  Neuromag wins (0.74x). The 3- and 1-layer head models agree (1.11x on both). The advantage also
+  depends on the metric and the depth: by the best single channel (peak-channel SNR) Neuromag is
+  ahead (dense 0.88x, higher for 80 % of targets; mean-power SNR 1.06x), and after the external-field
+  projection the dense array is behind Neuromag for sources deeper than 30 mm (0.98x at 30-35 mm
+  falling to 0.69x at 60-65 mm; the matched array from 25 mm, down to 0.53x). Not modelled:
   non-cortical physiological fields (cardiac, ocular), which the OPMs would see as magnetometers;
   the 1/f rise of real OPM noise at low frequencies (white noise assumed); and the measured brain
   noise's spatial pattern, which the cortical background matches only in its median gradiometer
@@ -63,7 +68,9 @@ measured (not best) head position; details and caveats in `docs/methods.md` and
   v1's claim that the dense array was favoured in every depth band (14/0, 10/2, 12/2, 13/0) is
   superseded. The 72 locations are frontal-heavy (24 frontal, 2 occipital).
 - Bounded localization (24 locations, one event each): dipole errors are similar across arrays
-  (about 4-5 mm, limited by a 2-mm/2-deg coregistration error). For extended 320-nAm sources the
+  (about 4-5 mm, limited by a 2-mm/2-deg coregistration error; no dipole fit failed, and dipoles more
+  than 30 mm off are almost all undetected weak events, `results/g4/G4_fit_failures_report.md`). For
+  extended 320-nAm sources the
   distributed (dSPM) estimate shows no difference in this run (median 0 mm with either OPM array,
   p = 0.81 and 0.50); two earlier runs had it about 4-5 mm more accurate with the OPM arrays
   (p = 0.003-0.14): not robust. Differences not detected are not excluded.
@@ -83,7 +90,13 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   to +1.45 dB (school-age-size control), +2.09 dB (2-year-size control), +1.84 dB (2-year
   template), +1.89 dB (18-month template) and +2.04 dB (12-month template): Delta = D_child -
   D_adult = +0.59 [+0.50, +0.71], +1.25 [+1.11, +1.37], +0.88 [+0.55, +1.32], +0.99 [+0.58, +1.33]
-  and +1.23 [+0.73, +1.61] dB. Against the gradiometers or magnetometers alone, after the
+  and +1.23 [+0.73, +1.61] dB (for the scaled controls the vertex-wise difference; for the templates
+  the adult-area-weighted median over parcels of the parcel difference, which is not the difference of
+  the two medians, e.g. +0.88 vs +0.99 dB for the 2-year template). The adult's OPM sensors sit about
+  0.8 mm farther from the scalp than the children's (the clearance rule, above); with the children's
+  arrays moved out by the same amount, Delta is +0.47, +1.12, +0.77, +0.81 and +1.07 dB and the
+  counterfactual helmet below gives -0.19, -0.34, -0.34, -0.24 and -0.06 dB, the same reading
+  (`results/g3b/G3B_standoff_report.md`). Against the gradiometers or magnetometers alone, after the
   external-field projection (of all 306 channels jointly), for the matched-site OPM array and for
   extended sources the sign is the same.
 - The gain comes from the fixed helmet's fit: left at the adult's ear-line position Delta is
@@ -173,6 +186,13 @@ python3.12 -m venv .venv
 .venv/bin/python -c "import mne; mne.datasets.sample.data_path(path='data/external')"  # ~1.6 GB download
 .venv/bin/python -c "import mne; [mne.datasets.fetch_infant_template(a, subjects_dir='data/external/infant_subjects') for a in ('2yr', '18mo', '12mo')]"  # ~1.15 GB (G3B, pediatric G4)
 bash scripts/run_all.sh     # tests, then every milestone in order (~8 h on a 10-core laptop: adult ~2 h, five pediatric G4 runs ~1 h each)
+```
+
+Smoke run (about 15 min: the unit tests, which skip the full-resolution lead-field check without
+the local cache, then the analytical G1A benchmark, which needs no data):
+
+```bash
+.venv/bin/python -m unittest discover -s tests -t . && .venv/bin/python scripts/g1a_jas_benchmark.py
 ```
 
 Each driver writes `results/<milestone>/` and records the code commit it ran in its JSON.

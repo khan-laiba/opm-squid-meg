@@ -5,6 +5,7 @@ Generated from `results/g2/g2_summary.json` (code commit 19a8fd2; band supplemen
 ## Common setup
 
 - Anatomy: MNE sample subject, measured head position; 7661 target dipoles (10 nAm, cortical normal, usable oct-6 vertices); background grid of 1755 area-weighted sources.
+- Neuromag geometry: the sample recording's Vectorview sensor positions and transforms with MRN T3 coil types (3024 magnetometers, 3014 planar gradiometers), a representative Neuromag system, not one installation; TRIUX typical noise values from the goal text (the specification image was not available).
 - Band 1-40 Hz (ENBW 35.1 Hz). Intrinsic noise: SQUID magnetometers 20.7 fT, gradiometers 21.3 fT/cm; OPM at 15 fT/sqrt(Hz) 89 fT (RMS in band).
 - Brain noise calibrated on good gradiometers to 37.1 fT/cm (task baseline minus empty room); predicted magnetometer level 192 fT vs 262 fT measured.
 - Room field: explains 94 % (magnetometers) and 1.6 % (gradiometers) of the empty-room variance; model vs measured empty room 115 vs 115 fT, 21.4 vs 20.2 fT/cm.
@@ -97,6 +98,8 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 | projected | 0.89x [0.80-0.93], OPM higher for 29 % of targets, 17 % of parcels | 0.96x [0.87-1.02], OPM higher for 44 % of targets, 34 % of parcels | 0.93x [0.85-0.98], OPM higher for 39 % of targets, 27 % of parcels |
 
 - Estimated (plug-in) covariance, detectability relative to oracle: intrinsic+brain: 0.95 (10 s), 0.99 (60 s), projected: 0.95 (10 s), 0.99 (60 s).
+- Metric dependence (vs combined, intrinsic+brain): detectability 1.00x; peak-channel SNR (best single channel) 0.83x [0.82-0.85], the OPM array higher for 11 % of targets (Neuromag ahead); mean-power SNR 1.06x.
+- After the external-field projection, by depth (vs combined): 10 mm 1.17x, 15 mm 1.09x, 20 mm 1.01x, 25 mm 0.94x, 30 mm 0.87x, 35 mm 0.77x, 40 mm 0.67x, 45 mm 0.60x, 50 mm 0.56x, 55 mm 0.55x, 60 mm 0.53x; the OPM array is behind Neuromag from 25 mm down.
 - Patches vs Neuromag combined (intrinsic+brain): 5 mm 1.00x, 10 mm 1.00x, 20 mm 1.00x.
 - Joint OPM noise x scalp gap (vs combined, intrinsic+brain; the same sites moved outward): gap0mm, asd15fT 1.00x; gap0mm, asd20fT 0.97x; gap0mm, asd30fT 0.92x; gap3mm, asd15fT 0.98x; gap3mm, asd20fT 0.94x; gap3mm, asd30fT 0.87x; gap6mm, asd15fT 0.95x; gap6mm, asd20fT 0.90x; gap6mm, asd30fT 0.82x.
 - Intrinsic noise only, break-even OPM noise (ratio = 1): vs combined 7.7 fT/sqrt(Hz), vs grad 33.1 fT/sqrt(Hz), vs mag 7.9 fT/sqrt(Hz).
@@ -133,6 +136,8 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 | projected | 1.05x [0.98-1.10], OPM higher for 57 % of targets, 51 % of parcels | 1.15x [1.07-1.21], OPM higher for 69 % of targets, 66 % of parcels | 1.10x [1.04-1.16], OPM higher for 66 % of targets, 61 % of parcels |
 
 - Estimated (plug-in) covariance, detectability relative to oracle: intrinsic+brain: 0.91 (10 s), 0.98 (60 s), projected: 0.91 (10 s), 0.98 (60 s).
+- Metric dependence (vs combined, intrinsic+brain): detectability 1.11x; peak-channel SNR (best single channel) 0.88x [0.87-0.90], the OPM array higher for 20 % of targets (Neuromag ahead); mean-power SNR 1.06x.
+- After the external-field projection, by depth (vs combined): 10 mm 1.61x, 15 mm 1.35x, 20 mm 1.19x, 25 mm 1.07x, 30 mm 0.98x, 35 mm 0.90x, 40 mm 0.83x, 45 mm 0.76x, 50 mm 0.72x, 55 mm 0.70x, 60 mm 0.69x; the OPM array is behind Neuromag from 30 mm down.
 - Patches vs Neuromag combined (intrinsic+brain): 5 mm 1.11x, 10 mm 1.12x, 20 mm 1.11x.
 - Intrinsic noise only, break-even OPM noise (ratio = 1): vs combined 11.0 fT/sqrt(Hz), vs grad 47.4 fT/sqrt(Hz), vs mag 11.4 fT/sqrt(Hz).
 - Sensitivity, one factor at a time (vs combined, intrinsic+brain): opm asd 7fT 1.24x; opm asd 10fT 1.18x; opm asd 15fT 1.11x; opm asd 20fT 1.06x; opm asd 30fT 1.00x; background corr 5mm 1.12x; background corr 10mm 1.14x; background mag calibrated 1.11x; head x+5mm 1.10x; head x-5mm 1.11x; head y+5mm 1.12x; head y-5mm 1.10x; head z+5mm 1.08x; head z-5mm 1.14x; head pitch+5deg 1.09x; head pitch-5deg 1.12x; head well fitted 1.08x; gap 3mm 1.07x; gap 6mm 1.02x.
@@ -142,7 +147,7 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 
 ## OPM dense array (full system)
 
-- Geometry: 205 channels, 205 sites, 1 (scalp normal); scalp-to-sensor distance median 7.8 mm (5-95 %: 6.8-9.0 mm); role: densest feasible single-axis array (full system).
+- Geometry: 205 channels, 205 sites, 1 (scalp normal); scalp-to-sensor distance median 7.8 mm (5-95 %: 6.8-9.0 mm); role: densest feasible single-axis array (full system); the densest array found under the 17-mm centre-spacing rule, not proven maximal; the package footprint is an unverified assumption (U-OPM-PACK).
 - Retained rank: intrinsic 205, intrinsic+brain 205, intrinsic+brain+env 205, projected 197.
 - Noise composition (median RMS): intrinsic 88.8 fT, brain 490.9 fT, room 114.7 fT.
 
@@ -168,6 +173,8 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 | projected | 1.05x [0.99-1.10], OPM higher for 57 % of targets, 51 % of parcels | 1.15x [1.07-1.21], OPM higher for 69 % of targets, 66 % of parcels | 1.10x [1.04-1.16], OPM higher for 66 % of targets, 61 % of parcels |
 
 - Estimated (plug-in) covariance, detectability relative to oracle: intrinsic+brain: 0.91 (10 s), 0.98 (60 s), projected: 0.91 (10 s), 0.98 (60 s).
+- Metric dependence (vs combined, intrinsic+brain): detectability 1.11x; peak-channel SNR (best single channel) 0.88x [0.87-0.90], the OPM array higher for 20 % of targets (Neuromag ahead); mean-power SNR 1.06x.
+- After the external-field projection, by depth (vs combined): 10 mm 1.61x, 15 mm 1.35x, 20 mm 1.19x, 25 mm 1.07x, 30 mm 0.98x, 35 mm 0.90x, 40 mm 0.83x, 45 mm 0.76x, 50 mm 0.72x, 55 mm 0.70x, 60 mm 0.69x; the OPM array is behind Neuromag from 30 mm down.
 - Patches vs Neuromag combined (intrinsic+brain): 5 mm 1.12x, 10 mm 1.12x, 20 mm 1.11x.
 - Joint OPM noise x scalp gap (vs combined, intrinsic+brain; the same sites moved outward): gap0mm, asd15fT 1.11x; gap0mm, asd20fT 1.06x; gap0mm, asd30fT 1.00x; gap3mm, asd15fT 1.07x; gap3mm, asd20fT 1.02x; gap3mm, asd30fT 0.96x; gap6mm, asd15fT 1.02x; gap6mm, asd20fT 0.98x; gap6mm, asd30fT 0.91x.
 - Intrinsic noise only, break-even OPM noise (ratio = 1): vs combined 11.1 fT/sqrt(Hz), vs grad 47.5 fT/sqrt(Hz), vs mag 11.4 fT/sqrt(Hz).
@@ -175,6 +182,10 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 - By lobe (vs combined, intrinsic+brain): frontal 1.21x, parietal 1.13x, temporal 1.10x, occipital 1.07x, cingulate 1.01x, insula 1.04x.
 - Without the 558 medial-wall targets (7.3 %; FreeSurfer 'unknown', not cortex), vs combined: intrinsic+brain 1.12x, projected 1.07x.
 - Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.11x, 1-10Hz 1.11x, 8-30Hz 1.11x, 30-80Hz 1.09x.
+
+## Link to the analytical benchmark (G1A)
+
+- The sphere model with the real standoffs (OPM 7.7 mm, Neuromag 29.8 mm median; peak-field ratio, eta = 3) gives an equal-SNR depth of 26.8 mm (Jas's 0 / 18 mm standoffs: 27.7 mm); the matched OPM array on this head, by its peak-field ratio, 27.5 mm; it is ahead at every depth for eta <= 2 and behind at every depth for eta >= 4.75. The realistic comparison above replaces eta by explicit noise and the peak field by the known-topography detectability of all channels (methods section 8).
 
 ## Convergence
 

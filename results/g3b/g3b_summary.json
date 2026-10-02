@@ -129191,7 +129191,7 @@
     "adult_centred_unweighted_all_targets": 1.1108906702275743,
     "adult_centred_unweighted_cortical": 1.1239276681087031,
     "adult_centred_area_weighted_cortical_dB": 1.0940007576638926,
-    "note": "G2's headline (1.13x) is the unweighted median over all targets at the measured (= centred) position; G3B summaries are area-weighted and leave out the medial wall, and its primary placement is top contact"
+    "note": "G2's headline (1.11x, v3 arrays) is the unweighted median over all targets at the measured (= centred) position; G3B summaries are area-weighted and leave out the medial wall, and its primary placement is top contact"
   },
   "medial_wall_targets": {
     "adult": 558,
@@ -129209,6 +129209,7 @@
     "Placements are chosen from the scalp and helmet geometry only. Under the adult's measured pose a head with other fiducials need not be centred laterally; 'x-centred' shifts each head along device x to equal left/right median gaps before the top contact (shift: adult -1.5 mm, school-age size (scaled adult) -0.5 mm, 2-year size (scaled adult) -0.5 mm, 2-year template -6.5 mm, 18-month template -5.5 mm, 12-month template -2.5 mm; negative = to the left), and 'counterfactual_x-centred' scales the helmet about that laterally centred head. The counterfactual helmet (scaled with the head) is a mechanistic control, not a pediatric SQUID system.",
     "Targets on the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum and midbrain, not cortex) are left out of every summary; they would otherwise dominate the deepest strata."
   ],
+  "replotted_at_commit": "e1269fd",
   "provenance": {
     "commit": "19a8fd2",
     "mne_version": "1.13.2",

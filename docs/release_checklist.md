@@ -19,9 +19,11 @@ gh api repos/khan-laiba/opm-squid-meg --jq '{private: .private, visibility: .vis
 gh api repos/khan-laiba/opm-squid-meg/pages
 ```
 
-Last checked 2026-10-01: `private: true`, `visibility: private`, `has_pages: false`; the Pages
+Last checked 2026-10-02: `private: true`, `visibility: private`, `has_pages: false`; the Pages
 endpoint returns 404 (no site). Repository privacy does not establish website privacy: check Pages
-separately after any change.
+separately after any change. GitHub's documentation (read 2026-10-02, DOC-PAGES in the register)
+allows access-controlled Pages sites only on GitHub Enterprise Cloud; this repository belongs to a
+user account, so a Pages site, if ever enabled, would be public.
 
 ## 2. Done in preparation
 

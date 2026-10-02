@@ -66,9 +66,13 @@ Sites are moved outward along their axis in 0.5-mm steps by at most 5 mm, otherw
 infeasible and dropped. v2 checked only the
 integration points, which reach +-3.87 mm of the +-5-mm faces: the final review (2026-10-01) found
 cell corners up to 0.89 mm inside the head surface at 57 dense and 19 matched sites, so v3 applies
-the rule to the whole cell: it moves most sites outward (median 1.0 mm; matched sites by at most
-2.5 mm) and drops 7 dense and 2 matched sites, after which the greedy packing places a few dense
-sites differently. The rule keeps the forward model's outer boundary out of the cell (see section 3,
+the rule to the whole cell: it moves most sites outward (median 1.0 mm from their v2 positions, the
+matched sites by at most 2.5 mm; measured from the nominal standoff the moved sites sit 0.5-5 mm
+out) and drops 7 dense and 2 matched sites, after which the greedy packing places a few dense sites
+differently. The adult's BEM head surface lies about 1 mm outside its MRI scalp, so the rule moves
+most of the adult's sites (median sensing-centre height 7.8 mm); the templates' BEM head surfaces
+lie slightly inside their scalps and the children's sites stay at 7.0 mm (section 10, standoff
+sensitivity). The rule keeps the forward model's outer boundary out of the cell (see section 3,
 A-BEM-SKIN); the 27-point cell average agrees with a 1,000-point one to 1e-3 (`tests/test_opm.py`).
 
 Matched-site array: each Neuromag location is projected along its inward coil normal onto the
@@ -164,6 +168,8 @@ Configuration: `configs/hunold_reference.toml` (every value tagged as printed, c
   rebuilt on new anatomy); 600 nAm PCHIP spike through the digitised Fig. 2(b) waveform. Patches
   grown from each dipole along mesh edges within +/-10 deg until the area first exceeds 20 mm^2
   (2928 of 3783 grow), uniform density with a 622-nAm median total (611-722 nAm; paper 612-678).
+  The patch bins are not matched to the paper's counts (2,748 patches in its 7 x 8 grid vs 2,264),
+  and sparse bins (0-10 deg: at most 11 patches) are drawn without a minimum-count rule.
 * Background: 28,494 random usable vertices (10 %), independent band-limited Gaussian moments,
   each peak-normalised to 10 nAm over a stationary 6 s (generated with 3 s of padding each side),
   one realization shared by all sources and arrays. Two levels (U-HU-bglevel): `as_specified`,
@@ -209,7 +215,16 @@ Configuration: `configs/goldenholz_reference.toml`.
   7,661 usable oct-6 vertices, 50 pAm/mm^2 x vertex area, signed sum (median 424 and 1,107
   vertices, 2.81 and 7.29 cm^2; edge-path distances exceed true geodesics, so the areas are ~89-91 %
   of pi r^2 and patch SNRs ~1 dB below a metrically exact construction; the 16 - 10 difference is
-  unaffected).
+  unaffected). The usable-vertex rule (A-BEM-DIST) also removes patch members within 4 mm of the
+  inner skull: against the same patches over every valid vertex (median areas 2.86 and 7.54 cm^2)
+  22 % (10 mm) and 31 % (16 mm) of the patches lose more than 5 % of their area and 8 % and 7 % more
+  than 20 %; the pooled Eq. 1 SNR changes by a median 0 dB (5th percentile -1.3 and -1.5 dB; 7 % and
+  9 % of patches by more than 1 dB; `patch_truncation` in `g1c_summary.json`). The same patch
+  construction is used in G2, G3B and G4. G1C keeps the medial wall (aparc 'unknown': 5.9 % of the
+  usable vertices, 558 of the 7,661 patch centroids, 97 of the 1,736 noise sources), as the paper's
+  whole-cortex maps do, whereas G2 and G4 exclude it; without it the pooled focal median is -21.66
+  instead of -22.13 dB and 58.9 instead of 56.0 % of the vertices lie in the paper's display range
+  (`without_medial_wall`).
 * Forward: 3-layer BEM, skull 0.006 S/m (probable intended value) and 0.06 S/m (as printed),
   T3 coils, accurate integration; the sample recording's SSP (3 vectors) applied to all gains.
   MEG 2443, marked bad in the recording (baseline RMS 23x the gradiometer median), is excluded:
@@ -315,8 +330,10 @@ clearance; medians over the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 15
   (2.2-3.2x). The ratio scales as 1/(OPM noise): break-even at 11.1 (dense) and 7.7 (matched)
   fT/sqrt(Hz) against Neuromag combined.
 * With brain noise (intrinsic+brain): matched 95-site OPM 1.00x [0.97-1.02] Neuromag combined
-  (higher for 49 % of targets and 39 % of parcels: a tie), OPM 204 1.11x [1.08-1.14], dense
-  205-site OPM 1.11x [1.08-1.14] (higher for 90 % of targets and 94 % of parcels); vs gradiometers
+  (higher for 49 % of targets and 39 % of parcels: a tie), OPM 204 1.11x [1.08-1.14] (with 205 dense
+  sites this channel-budget control is practically the full system; a control against the 306
+  Neuromag channels would need multi-axis OPMs, not modelled), dense 205-site OPM 1.11x [1.08-1.14]
+  (higher for 90 % of targets and 94 % of parcels); vs gradiometers
   alone 1.10-1.28x, vs magnetometers alone 1.02-1.16x. Adding the room field changes little (0.99,
   1.11, 1.11x). After the external projection (rank n - 8; for Neuromag it acts on all 306 channels
   jointly, so "magnetometers" or "gradiometers" after the projection are subsets of the jointly
@@ -336,7 +353,10 @@ clearance; medians over the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 15
   channel is usually a gradiometer), mean-power SNR 1.06x; detectability 1.11x.
 * Estimated covariance (plug-in, Ledoit-Wolf): 10 s of data cost Neuromag combined 15 % and the
   dense OPM 9 % of the oracle detectability (60 s: 3 % and 2 %), so the dense/combined ratio is
-  1.19x (10 s) and 1.12x (60 s); matched 1.11x and 1.02x.
+  1.19x (10 s) and 1.12x (60 s); matched 1.11x and 1.02x. The plug-in covariances are estimated from
+  data drawn separately for each array (not one shared realization projected through every array, as
+  the oracle condition does), so their estimation noise is not paired across arrays; the spread over
+  draws is not reported.
 * Extended sources: the ratio barely depends on patch size (dense 1.12, 1.12, 1.11x for 5, 10,
   20 mm radius; matched 1.00x), although cancellation reduces the net moment to 0.78, 0.53 and
   0.33 of the scalar moment.
@@ -384,10 +404,14 @@ Detection design (`scripts/g4_epilepsy_adult.py`)
   false-positive probability 0.001) and a practical scanner that knows neither time nor source
   (three waveform templates x 716 cortical candidates distinct from the true sources). The
   scanner's templates are the three simulated morphologies, so its absolute sensitivity and
-  false-event rates are optimistic; the paired comparison between arrays is less affected. Whitener from
+  false-event rates are optimistic; the paired comparison between arrays is less affected. The
+  candidates' topographies come from the truth forward model (3-layer BEM, exact coregistration), a
+  convenience shared by every array that makes the scanner optimistic in the same way. Whitener from
   10 min of baseline null data; thresholds for 1 and 0.2 false events per minute from 20 min of
   independent calibration null data, frozen; held-out null (20 min) gives 0.65-1.15 and 0.1-0.35 false
-  events per minute. A hit is an emitted event (a local maximum of the scan statistic, events at
+  events per minute; each 1-per-minute threshold rests on about 20 calibration events, whose Poisson
+  95 % interval (0.6-1.5 per minute) matches that held-out spread, and the 0.2-per-minute one on
+  about 4. A hit is an emitted event (a local maximum of the scan statistic, events at
   least the 0.25-s refractory period apart, as counted on the null data) above threshold within
   +/-50 ms of the true spike peak (v3, final review; v2 took the statistic's maximum within the
   window, which also counted peaks that the event rule merges into a nearby higher noise event).
@@ -404,7 +428,8 @@ Detection design (`scripts/g4_epilepsy_adult.py`)
   The Wilson bands in the figure are event-level and descriptive.
 
 Detection results (v3 arrays, simulated at 19a8fd2 and summarised at d667a9d; focal, three morphologies pooled; strength for 50 %
-detection, S50, with a bootstrap over locations; practical detector at 1 false event per minute; the
+detection, S50, with a bootstrap over locations; practical detector at 1 false event per minute; the 50 %
+level and the 1-per-minute operating point are operational study choices, not clinical standards; the
 72 locations never lie on the medial wall; p-values uncorrected)
 * S50, Neuromag combined vs dense OPM vs matched OPM: 48 vs 37 vs 44 nAm at 10-20 mm, 85 vs 80 vs
   87 nAm at 20-30 mm, 136 vs 135 vs 146 nAm at 30-45 mm, 263 vs 268 vs 320 nAm at 45-70 mm
@@ -461,19 +486,41 @@ Localization design (`scripts/g4_localization.py`, bounded)
   location i uses draw i mod 8 in every condition (v2; v1 cycled draws by event, so each condition
   saw only 2 of them), median displacement at the true source 2.9 mm; noise covariance from 5 min
   of independent null data (Ledoit-Wolf).
-* MNE/dSPM (MNE conventions: depth 0.8, SNR 3) on a 5-mm Poisson-disk grid of 3,821 usable
+* MNE/dSPM: the study's own implementation of the minimum-norm estimator (`localization.MNEInverse`:
+  depth weighting with exponent 0.8 on the fixed-orientation whitened gains, no MNE-style limit on the
+  weights, regularisation at SNR 3, dSPM normalisation by each source's noise standard deviation),
+  not `mne.minimum_norm`, which applies depth weighting only to free-orientation forwards and limits
+  it to a factor 10; untested against MNE's operator, a documented deviation. On a 5-mm Poisson-disk
+  grid of 3,821 usable
   vertices that excludes the true source vertices; ECD with MNE's `fit_dipole` (same BEM and
   transform, at least 5 mm inside the inner skull) at the spike peak. Errors are measured on the
   MRI through the analyst's (perturbed) transform; the ECD error in the sensor frame is kept as a
   decomposition. Each event also passes through the practical detector (1 false event per
-  minute, thresholds from 10 min of independent null data).
+  minute, thresholds from 10 min of independent null data, without a held-out check of their rate).
+  The inverse is evaluated at the true peak sample (oracle timing), so the joint
+  detection-and-localization success is conditional on the event time being known; localization at
+  the detected event's time would add the detector's timing error.
 * No goodness-of-fit cut: MNE computes GOF on whitened data, where noise adds about one unit per
   channel, so at equal SNR it is higher for arrays with fewer channels (median for detected 320-nAm
   focal events: 72 % matched OPM, 52 % dense OPM, 40 % Neuromag). GOF, chi2/dof and the 95 %
-  confidence volume are descriptive.
+  confidence volume are descriptive. Failed fits: `mne.fit_dipole` returned a dipole for every event
+  (96 events x 3 arrays in each of the six anatomies; a failure would have stopped the run), so
+  failures are counted under declared criteria from the stored per-event tables
+  (`scripts/study_g4_fit_failures.py`, `results/g4/G4_fit_failures_report.md`): a dipole or dSPM peak
+  more than 30 mm from the true source (gross), and a dipole confidence volume above 10 cm^3. Over the
+  six anatomies (576 events per array) gross dipole errors number 205 (Neuromag), 199 (matched OPM)
+  and 177 (dense OPM), 24 of each among detected events; gross dSPM errors 262, 203 and 200 (detected
+  63, 28 and 29); 85 % of all gross errors belong to undetected events and 76 % to 80-nAm sources.
+  The medians reported below include these events ("all") or exclude the undetected ones
+  ("detected"); 110 of the adult's 288 dipole errors exceed 30 mm, 104 of them at undetected events
+  and 85 of those at 80 nAm.
 * Paired OPM-minus-Neuromag comparisons on identical events (one per location): median error
   difference with a bootstrap CI and Wilcoxon signed-rank p; exact McNemar p for joint detection +
   localization within 10 mm; 16 comparisons per OPM array, uncorrected.
+* Coverage limits of the epilepsy examples: the 72 detection locations are frontal-heavy (24 frontal,
+  2 occipital, 6 insular) and are not analysed by region; one patch extent (10-mm radius) and one
+  morphology family (three stretches of one spike-wave complex); the localization study compares
+  the OPM arrays with Neuromag combined only, not with the magnetometers or gradiometers alone.
 
 Localization results (v3 arrays, run at 19a8fd2, `results/g4/g4_localization_summary.json`;
 Neuromag combined, matched OPM, dense OPM)
@@ -578,6 +625,8 @@ Neuromag combined, matched OPM, dense OPM)
 * Metric (A-G3-METRIC): known-topography detectability d of a 10-nAm cortical-normal dipole with
   the oracle covariance, in dB (20 log10 d); D = dB_OPM - dB_SQUID for each SQUID comparator (102
   magnetometers, 204 gradiometers, combined 306); D_child, D_adult and Delta = D_child - D_adult
+  (for the scaled controls vertex-wise, for the templates the adult-area-weighted median over parcels
+  of the parcel-level difference, which differs from the difference of the two pooled medians)
   reported together. D does not depend on the moment. Peak-channel and mean-power SNR (dB) are
   secondary metrics. Homologous comparison: vertex-wise for the scaled controls; for the templates
   (no vertex correspondence) per Desikan-Killiany parcel and per declared depth (native mm below
@@ -643,7 +692,24 @@ means the 2-year template; the 18- and 12-month templates are named.)
   Delta is +0.88, +0.99 and +1.23 dB (24, 18, 12 months; overlapping intervals), but reweighted to
   the adult's depth mix the pooled differences are +0.48, +0.68 and +0.44 dB (below): the
   12-month template's top rank reflects its shallow cortex (the raw ordering also follows head
-  circumference, 495, 491 and 469 mm, so depth mix and size are not separated here).
+  circumference, 495, 491 and 469 mm, so depth mix and size are not separated here). The templates'
+  shallower cortex (42 % of the 2-year template's area at 10-20 mm depth vs 21 % of the adult's) may
+  partly be an artefact of template averaging, which smooths sulci; the depth-reweighted differences
+  are the more conservative statement.
+* Standoff asymmetry (goal review, 2026-10-02): the clearance rule moves most of the adult's OPM
+  sites outward (median sensing-centre height 7.8 mm above the scalp) and almost none of the
+  children's (7.0 mm), because the adult's BEM head surface lies about 1 mm outside its MRI scalp and
+  the templates' slightly inside theirs (section 2.2). D_adult therefore carries about 0.8 mm more
+  standoff than D_child. A sensitivity with the children's arrays moved outward by the adult's median
+  excess (same sites; `scripts/study_g3b_standoff.py`, `results/g3b/G3B_standoff_report.md`) bounds
+  the effect on Delta: the children's D_child falls by 0.11-0.18 dB (dense) and 0.03-0.12 dB
+  (matched), so at equal standoff the primary Delta (dense OPM vs Neuromag combined, top contact)
+  is +0.47, +1.12, +0.77, +0.81 and +1.07 dB instead of +0.59, +1.25, +0.88, +0.99 and +1.23 dB
+  (school-age size, 2-year size, 24, 18, 12 months), still positive in every head, and the
+  counterfactual helmet about the laterally centred head gives -0.19, -0.34, -0.34, -0.24 and
+  -0.06 dB instead of -0.08, -0.21, -0.20, -0.12 and +0.01 dB: with the helmet fitted, the
+  head-adaptive array's relative gain reverses in every head. The sign and the reading of G3B do not
+  change; the Deltas quoted elsewhere in this document carry the standoff asymmetry.
 * By depth (template vs adult, combined, native depth strata): Delta +0.26 to +0.67 dB down to 30 mm
   (intervals exclude 0), +0.43 [+0.28, +0.70] at 30-40 mm, +0.49 at 40-50 mm, +1.30 at 50-60 mm and
   +2.55 at 60-90 mm (83 template vs 26 adult targets, 79 of them isthmus cingulate). Within strata the
@@ -806,7 +872,8 @@ months.
   deepest band (0/7, p = 0.016).
 * So the detectability gains of G3B (Delta +0.59 to +1.25 dB) are not resolved by the practical
   detector with 18 locations per band beyond the superficial band, whose advantage is present in the
-  adult and every smaller head and weakest in the adult (strength ratio 1.29 against 1.33-1.61); they
+  adult and every smaller head, with the adult's point estimate the smallest (strength ratio 1.29
+  against 1.33-1.61; overlapping intervals); they
   appear in the oracle's 20-30 mm band and partly deeper.
 * Localization (24 locations; Neuromag, matched, dense): ECD errors of detected events are similar
   in every anatomy (320-nAm focal: 4.1-7.9 mm). dSPM, all events, 320-nAm focal: the dense array is

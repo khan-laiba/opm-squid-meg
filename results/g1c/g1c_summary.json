@@ -90,12 +90,55 @@
       "flat_disc": 8.042477193189871
     }
   },
+  "patch_truncation": {
+    "10": {
+      "median_area_cm2_all_valid": 2.8575055262662636,
+      "median_area_cm2_usable": 2.806695153774024,
+      "share_losing_over_5pct": 0.21890092677196188,
+      "share_losing_over_20pct": 0.07884088239133272,
+      "snr_change_db": {
+        "median": 0.0,
+        "p5": -1.3389674442426305,
+        "p95": 0.0,
+        "share_abs_over_1db": 0.07401122568855241
+      }
+    },
+    "16": {
+      "median_area_cm2_all_valid": 7.535971580593032,
+      "median_area_cm2_usable": 7.289434734547892,
+      "share_losing_over_5pct": 0.3070095287821433,
+      "share_losing_over_20pct": 0.07440281947526432,
+      "snr_change_db": {
+        "median": 0.0,
+        "p5": -1.5460419705237278,
+        "p95": 0.03293023042925114,
+        "share_abs_over_1db": 0.08641169560109646
+      }
+    }
+  },
   "lead_field_diagnostics": {
     "usable_columns_energy_ratio_max": 10.931159675771855,
     "usable_columns_ratio_gt_10": 3,
     "noise_grid_top_source_power_share": {
       "mag": 0.002830652840579677,
       "grad": 0.0035391808361426515
+    }
+  },
+  "without_medial_wall": {
+    "share_of_usable_vertices": 0.059315282432835556,
+    "centroids_on_wall": 558,
+    "noise_sources_on_wall": 97,
+    "focal_model_pooled": {
+      "median_db": -21.66418921247813,
+      "p5_p95_db": [
+        -33.34236141916283,
+        -16.66204078024357
+      ],
+      "share_in_paper_range": 0.5887723199295611
+    },
+    "with_wall_focal_model_pooled": {
+      "median_db": -22.12942084577727,
+      "share_in_paper_range": 0.5598575113622405
     }
   },
   "conductivity_runs": {
@@ -759,10 +802,10 @@
     }
   },
   "extension_note": "brain-noise sources calibrated on recorded minus empty-room variance (same SSP and band); intrinsic noise added explicitly; 'brain_only/' rows omit it",
-  "runtime_s": 248.3048141002655,
+  "runtime_s": 384.1680009365082,
   "note": "Magnetometer, gradiometer and pooled Eq. 1 values are kept separate; the paper reports only MEG (pooling unstated) vs EEG. D = SNR_MEG - SNR_EEG is out of scope (no EEG).",
   "provenance": {
-    "commit": "19a8fd2",
+    "commit": "34877f5",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

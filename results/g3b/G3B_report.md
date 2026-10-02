@@ -82,6 +82,23 @@ Link to G2: at the adult's measured (= centred) position the dense/combined dete
 | 12-month template | Neuromag grad | +3.65 dB [+3.21, +4.23] | +2.03 dB [+1.79, +2.24] | +1.31 dB [+1.07, +2.28] | parcel |
 | 12-month template | Neuromag mag | +2.45 dB [+1.99, +2.84] | +1.23 dB [+0.98, +1.45] | +1.21 dB [+0.77, +1.55] | parcel |
 
+Other metrics, dense OPM vs Neuromag combined, intrinsic + brain (peak-channel SNR: the best single channel, where Neuromag is ahead in the adult; mean-power SNR; both in dB):
+
+| child anatomy | metric | D_child | D_adult | Delta |
+|---|---|---|---|---|
+| school-age size (scaled adult) | peak-channel SNR | -0.34 dB | -1.30 dB | +0.84 dB |
+| school-age size (scaled adult) | mean-power SNR | +0.71 dB | +0.57 dB | +0.14 dB |
+| 2-year size (scaled adult) | peak-channel SNR | +0.57 dB | -1.30 dB | +1.83 dB |
+| 2-year size (scaled adult) | mean-power SNR | +1.08 dB | +0.57 dB | +0.53 dB |
+| 2-year template | peak-channel SNR | +0.32 dB | -1.30 dB | +1.72 dB |
+| 2-year template | mean-power SNR | +1.14 dB | +0.57 dB | +0.55 dB |
+| 18-month template | peak-channel SNR | +0.45 dB | -1.30 dB | +1.55 dB |
+| 18-month template | mean-power SNR | +1.33 dB | +0.57 dB | +0.67 dB |
+| 12-month template | peak-channel SNR | +0.79 dB | -1.30 dB | +1.69 dB |
+| 12-month template | mean-power SNR | +1.50 dB | +0.57 dB | +0.86 dB |
+
+OPM standoff per anatomy (median sensing-centre height above the MRI scalp, dense / matched array): adult 7.78 / 7.76 mm; school-age size (scaled adult) 7.00 / 7.00 mm; 2-year size (scaled adult) 7.00 / 7.00 mm; 2-year template 7.00 / 7.00 mm; 18-month template 7.00 / 7.01 mm; 12-month template 7.00 / 7.00 mm. The clearance rule (A-OPM-CLEAR) moves most of the adult's sites outward and almost none of the children's (the adult's BEM head surface lies outside its MRI scalp, the templates' inside), so D_adult carries a larger standoff than D_child; the effect on Delta is bounded in `results/g3b/G3B_standoff_report.md` (`scripts/study_g3b_standoff.py`).
+
 Projected condition (room-field subspace removed):
 
 | child anatomy | comparator | D_child | D_adult | Delta |

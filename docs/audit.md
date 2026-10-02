@@ -1,5 +1,10 @@
 # G0 audit of existing work (2026-09-30)
 
+Repository instructions and problem statement (recorded 2026-10-02): the repository holds no
+instruction file of its own besides this study's `GOAL.md` and `PLAN.md` (no CLAUDE.md, AGENTS.md or
+CONTRIBUTING file); the mentor-related problem statement is the goal text the owner supplied, copied
+verbatim into `GOAL.md`, which states that it does not claim the mentor's review or approval.
+
 Scope: everything present before the adult-to-pediatric study, i.e. the scripts and outputs
 now in `legacy/`, the anatomy and data on disk, and the sibling folder `/Volumes/T9/OPM_SQUID`
 (a separate, parallel implementation, read but not modified).

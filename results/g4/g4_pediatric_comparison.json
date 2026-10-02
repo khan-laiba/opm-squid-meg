@@ -9701,7 +9701,7 @@
     }
   },
   "provenance": {
-    "commit": "d667a9d",
+    "commit": "5a981c9",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }
