@@ -814,7 +814,22 @@ def write_report(anats, s, cfg):
             r = s["comparisons"][f"{c}/opm_dense/{ref}/intrinsic+brain/detect"]
             L.append(f"| {LABEL[c]} | {LABEL[ref]} | {fmt_ci(r['d_child'])} | {fmt_ci(r['d_adult'])} | {fmt_ci(r['delta'])} | "
                      f"{'vertex' if c in SCALED else 'parcel'} |")
-    L += ["", "Projected condition (room-field subspace removed):", "", "| child anatomy | comparator | D_child | D_adult | Delta |",
+    L += ["", "Other metrics, dense OPM vs Neuromag combined, intrinsic + brain (peak-channel SNR: the best single channel, where "
+          "Neuromag is ahead in the adult; mean-power SNR; both in dB):", "",
+          "| child anatomy | metric | D_child | D_adult | Delta |", "|---|---|---|---|---|"]
+    for c in CHILDREN:
+        for metric, mlabel in (("peak", "peak-channel SNR"), ("meanpow_db", "mean-power SNR")):
+            r = s["comparisons"].get(f"{c}/opm_dense/combined/intrinsic+brain/{metric}")
+            if r:
+                L.append(f"| {LABEL[c]} | {mlabel} | {fmt_ci(r['d_child'])} | {fmt_ci(r['d_adult'])} | {fmt_ci(r['delta'])} |")
+    sd = s["sensor_distances"]
+    L += ["", "OPM standoff per anatomy (median sensing-centre height above the MRI scalp, dense / matched array): "
+          + "; ".join(f"{LABEL[k]} {sd[k]['opm_dense']['median_mm']:.2f} / {sd[k]['opm_matched']['median_mm']:.2f} mm" for k in ANATOMIES
+                      if k in sd and "opm_dense" in sd[k])
+          + ". The clearance rule (A-OPM-CLEAR) moves most of the adult's sites outward and almost none of the children's (the adult's "
+          "BEM head surface lies outside its MRI scalp, the templates' inside), so D_adult carries a larger standoff than D_child; the "
+          "effect on Delta is bounded in `results/g3b/G3B_standoff_report.md` (`scripts/study_g3b_standoff.py`).",
+          "", "Projected condition (room-field subspace removed):", "", "| child anatomy | comparator | D_child | D_adult | Delta |",
           "|---|---|---|---|---|"]
     for c in CHILDREN:
         for ref in REFS:

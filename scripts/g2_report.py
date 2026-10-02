@@ -54,6 +54,9 @@ def main():
     L.append("## Common setup\n")
     L.append(f"- Anatomy: MNE sample subject, measured head position; {d['n_targets']} target dipoles (10 nAm, cortical normal, "
              f"usable oct-6 vertices); background grid of {d['n_background_grid']} area-weighted sources.")
+    L.append("- Neuromag geometry: the sample recording's Vectorview sensor positions and transforms with MRN T3 coil types "
+             "(3024 magnetometers, 3014 planar gradiometers), a representative Neuromag system, not one installation; TRIUX "
+             "typical noise values from the goal text (the specification image was not available).")
     L.append(f"- Band 1-40 Hz (ENBW {d['enbw_hz']:.1f} Hz). Intrinsic noise: SQUID magnetometers "
              f"{v['model']['intrinsic_rms_mag_fT']:.1f} fT, gradiometers {v['model']['intrinsic_rms_grad_fT_cm']:.1f} fT/cm; OPM at "
              "15 fT/sqrt(Hz) " + f"{v['model']['intrinsic_rms_opm_fT']['15']:.0f} fT (RMS in band).")
@@ -74,7 +77,9 @@ def main():
         L.append(f"- Geometry: {n_ch} channels" + (f", {geo.get('n_sites')} sites" if geo.get("n_sites") else "")
                  + f", {geo.get('axes', '102 sites with 1 magnetometer + 2 planar gradiometers')}; scalp-to-sensor distance median "
                  f"{br['median']:.1f} mm (5-95 %: {br['p5']:.1f}-{br['p95']:.1f} mm)"
-                 + (f"; role: {geo['role']}" if geo.get("role") else "") + ".")
+                 + (f"; role: {geo['role']}" if geo.get("role") else "")
+                 + ("; the densest array found under the 17-mm centre-spacing rule, not proven maximal; the package footprint is "
+                    "an unverified assumption (U-OPM-PACK)" if name == "opm_dense" else "") + ".")
         rk = f"squid_{cs}" if name == "squid" and cs != "combined" else name
         L.append("- Retained rank: " + ", ".join(f"{c} {d['retained_rank'].get(f'{rk}/{c}', d['retained_rank'][f'{name}/{c}'])}" for c in conds)
                  + (" (channel subset after the full-array projection)." if rk.startswith("squid_") else "."))
@@ -97,6 +102,17 @@ def main():
             L.append("\n- Estimated (plug-in) covariance, detectability relative to oracle: "
                      + ", ".join(f"{c}: {pl[f'{name}/opm/{c}/T10']:.2f} (10 s), {pl[f'{name}/opm/{c}/T60']:.2f} (60 s)" for c in headline) + ".")
             pa = d["patches"]["comparisons"]
+            P = d["primary"]
+            pk, mp = P["peak"][f"{name}/combined/intrinsic+brain"], P["meanpow_db"][f"{name}/combined/intrinsic+brain"]
+            L.append("- Metric dependence (vs combined, intrinsic+brain): detectability "
+                     f"{2 ** P['oracle'][f'{name}/combined/intrinsic+brain']['median_log2']:.2f}x; peak-channel SNR (best single channel) "
+                     f"{2 ** pk['median_log2']:.2f}x [{2 ** pk['ci95'][0]:.2f}-{2 ** pk['ci95'][1]:.2f}], the OPM array higher for "
+                     f"{100 * pk['share_opm_better']:.0f} % of targets" + (" (Neuromag ahead)" if pk["median_log2"] < 0 else "")
+                     + f"; mean-power SNR {2 ** mp['median_log2']:.2f}x.")
+            dep = [(r["lo"], 2 ** r["median"]) for r in d["log2_ratio_vs_depth"][f"{name}/combined/projected"] if r["median"] is not None]
+            below = [lo for lo, x in dep if x < 1.0]
+            L.append("- After the external-field projection, by depth (vs combined): " + ", ".join(f"{lo:.0f} mm {x:.2f}x" for lo, x in dep)
+                     + (f"; the OPM array is behind Neuromag from {min(below):.0f} mm down." if below else "; the OPM array stays ahead."))
             L.append("- Patches vs Neuromag combined (intrinsic+brain): " + ", ".join(
                 f"{r:g} mm {2 ** pa[f'{name}/combined/intrinsic+brain/{r:g}mm']['median_log2']:.2f}x" for r in d["patches"]["radii_mm"]) + ".")
             s = d["sensitivity"]
@@ -124,6 +140,14 @@ def main():
             L.append("\n- Estimated (plug-in) covariance, detectability relative to oracle: "
                      + ", ".join(f"{c}: {pl[f'squid/{cs}/{c}/T10']:.2f} (10 s), {pl[f'squid/{cs}/{c}/T60']:.2f} (60 s)" for c in headline) + ".")
         L.append("")
+    b = d["bridge_to_sphere"]
+    L.append("## Link to the analytical benchmark (G1A)\n")
+    L.append(f"- The sphere model with the real standoffs (OPM {b['sensor_distance_mm']['opm_matched']['median']:.1f} mm, Neuromag "
+             f"{b['sensor_distance_mm']['squid']['median']:.1f} mm median; peak-field ratio, eta = 3) gives an equal-SNR depth of "
+             f"{b['sphere_d_eq_mm']:.1f} mm (Jas: 27.7 mm); the matched OPM array on this head {b['opm_matched_d_eq_mm']:.1f} mm; the OPM is "
+             f"ahead at every depth for eta <= {b['opm_matched_eta_opm_ahead_at_all_depths']:g} and behind at every depth for eta >= "
+             f"{b['opm_matched_eta_squid_ahead_at_all_depths']:g}. The realistic comparison above replaces eta by explicit noise and the "
+             "peak field by the known-topography detectability of all channels (methods section 8).\n")
     L.append("## Convergence\n")
     c = d["convergence"]
     L.append(f"- Background grid vs every usable vertex: median log2 ratios change by <= {c['background_grid_vs_fullres']['max_abs_change_log2']:.3f}.")
