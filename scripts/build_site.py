@@ -32,7 +32,8 @@ RES = ROOT / "results"
 NAV = [("index.html", "Overview"), ("benchmarks.html", "Adult benchmarks (G1)"), ("adult.html", "Realistic adult (G2)"),
        ("pediatric.html", "Pediatric (G3)"), ("epilepsy.html", "Epilepsy (G4)"), ("methods.html", "Methods and limitations"),
        ("register.html", "Parameters and provenance"), ("reproduce.html", "Reproduce and download")]
-FROZEN_TAG = "adult-baseline-v3"
+FROZEN_TAG = "adult-baseline-v2"  # the adult baseline frozen before any pediatric outcome was compared
+CURRENT_TAG = "adult-baseline-v3"  # every array-dependent result recomputed after the final reviews (adult and pediatric alike)
 MARKER = ".opmsquid_site_build"  # marks an output directory as the builder's own (safe to replace)
 LABEL = {"squid": "Neuromag", "opm_matched": "OPM matched", "opm204": "OPM 204 (channel budget)",
          "opm_dense": "OPM dense", "combined": "combined", "grad": "gradiometers", "mag": "magnetometers"}
@@ -93,7 +94,8 @@ def page_index(d):
               ("G1A Jas et al. 2026 analytical benchmark", "REPRO", "done, internally reviewed"),
               ("G1B Hunold et al. 2016 depth-orientation spike SNR (MEG)", "ADAPT (+ NEW OPM column)", "done, internally reviewed"),
               ("G1C Goldenholz et al. 2009 cortical SNR maps (MEG)", "ADAPT (+ NEW OPM extension)", "done, internally reviewed"),
-              ("G2 realistic adult OPM vs Neuromag", "NEW", f"done, internally reviewed; frozen as {FROZEN_TAG}"),
+              ("G2 realistic adult OPM vs Neuromag", "NEW", f"done, internally reviewed; frozen as {FROZEN_TAG} before the pediatric "
+               f"outcomes; recomputed with the whole-cell OPM clearance as {CURRENT_TAG} after the final reviews"),
               ("G3A Jas head-size benchmark", "REPRO (+ NEW fixed shell)", "done" if d["g3a"] else "not run"),
               ("G3B pediatric fixed helmet vs head-adaptive OPM", "NEW",
                "done (12-, 18- and 24-month infant templates and scaled-adult size controls)" if d.get("g3b") else "in progress"),
@@ -101,7 +103,9 @@ def page_index(d):
                ("adult done; pediatric done (" + ", ".join(ANAT[x] for x in d["g4p"]["labels"] if x != "adult") + ")"
                 if d.get("g4p") else "adult done; pediatric in progress")
                + ("; head motion and OPM slippage: bounded extension done" if d.get("motion") else "")),
-              ("G5 software, reproduction, report", "-", "local report (not deployed); clean-environment smoke test passed")]
+              ("G5 software, reproduction, report", "-", "local report (not deployed); 133 tests; a clean clone of the result commit "
+               "passes them (one skip without the lead-field cache); a fresh-environment smoke test passed on 2026-09-30 at an earlier "
+               "commit")]
     h = ["<p>Simulation study comparing on-scalp optically pumped magnetometers (OPM) with the Neuromag SQUID system: "
          "an analytical benchmark and adaptations of two published adult studies, a realistic adult comparison, a pediatric "
          "fixed-helmet versus head-adaptive extension, and interictal-spike detection and localization examples in both. The "
@@ -526,10 +530,19 @@ def page_epilepsy_pediatric(d, out):
                   "event/min, 95 % interval from a bootstrap over locations"),
          sb.table(["Anatomy", *DEPTH_BANDS], prow, "Dense OPM vs Neuromag combined on identical events: locations favouring OPM / "
                   "Neuromag (exact sign-flip p, uncorrected) and the paired strength ratio Neuromag/OPM [95 % CI]")]
+    rates = [C[k]["1"] for k in C if k.endswith("/heldout_false_per_min") and "1" in C[k]]
+    h.append(f"<p>Operating points: the frozen 1-per-minute thresholds give {min(rates):.2f}-{max(rates):.2f} false events per "
+             "minute on each anatomy's held-out null data (event-level rates, distinct from the oracle's per-trial false-positive "
+             "probability). With every detector set to 1 per minute on the held-out null the superficial result is unchanged "
+             "(<code>results/g4/G4_matched_rate_report.md</code>, in the downloads). The 50 % detection level and the 1-per-minute "
+             "operating point are operational study choices, not clinical standards. Failed dipole fits under declared criteria: "
+             "<code>results/g4/G4_fit_failures_report.md</code>. Simulated IED-source recovery does not identify an epileptogenic "
+             "zone or establish surgical benefit.</p>")
     for lab in labs:
         if lab == "adult":
             continue
-        for kind, cap in (("detection", "detection probability vs strength"), ("localization", "localization errors")):
+        for kind, cap in (("detection", "detection probability vs strength"), ("roc", "sensitivity vs false events per minute"),
+                          ("localization", "localization errors")):
             png = RES / "g4" / f"Figure_G4_{kind}_{lab}.png"
             if png.exists():
                 h.append(fig(out, f"g4/Figure_G4_{kind}_{lab}.png", f"{ANAT[lab]}: {cap}.", f"{ANAT[lab]} {kind}"))
@@ -637,7 +650,8 @@ WRITTEN_BY = {"g1a_curves.csv": "g1a_benchmark.json", "g1b_sources.csv": "g1b_su
               "g3a_deq.csv": "g3a_size_benchmark.json", "g4_adult_events.csv": "g4_adult_summary.json",
               "g4_localization_events.csv": "g4_localization_summary.json", "G3B_report.md": "g3b_summary.json",
               "G4_pediatric_report.md": "g4_pediatric_comparison.json", "G4_motion_report.md": "g4_motion_summary.json",
-              "G4_matched_rate_report.md": "g4_matched_rate.json", "g4_motion_timecourse_example.csv": "g4_motion_summary.json"}
+              "G4_matched_rate_report.md": "g4_matched_rate.json", "g4_motion_timecourse_example.csv": "g4_motion_summary.json",
+              "G4_fit_failures_report.md": "g4_fit_failures.json"}
 # result folders whose files carry no provenance of their own: the run that wrote them
 PARENT_RUN = {"g1a/fig3": "g1a/g1a_benchmark.json"}
 for _k in ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo"):

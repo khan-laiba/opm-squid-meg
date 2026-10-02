@@ -154,11 +154,13 @@ def report(cmp: dict, labels) -> str:
                 else:
                     ci = v["ci95"]
                     cells.append(("none" if v["value"] is None else f"{v['value']:.0f}")
-                                 + (f" [{ci[0]:.0f}-{ci[1]:.0f}]" if ci and None not in ci else " [open]"))
+                                 + (" [" + "-".join("open" if x is None else f"{x:.0f}" for x in ci) + "]" if ci else ""))
             L.append(f"| {lab} | {d} | " + " | ".join(cells) + " |")
+    rates = [cmp[k]["1"] for k in cmp if k.endswith("/heldout_false_per_min") and "1" in cmp[k]]
     L += ["", "## Held-out false events per minute at the 1-per-minute thresholds, and sensitivity at a matched held-out rate", "",
           "Sensitivity for 40-nAm spikes at 10-30 mm with each detector's threshold set on the held-out null to 1 false event per "
-          "minute (the frozen thresholds give 0.5-1.7 per minute, unequal between arrays).", "",
+          f"minute (the frozen thresholds give {min(rates):.2f}-{max(rates):.2f} per minute over the anatomies and detectors, "
+          "unequal between arrays).", "",
           "| anatomy | detector | held-out rate at the frozen threshold | sensitivity at a matched 1 per minute |", "|---|---|---|---|"]
     for lab in ("adult",) + tuple(labels):
         for d in DETECTORS:
