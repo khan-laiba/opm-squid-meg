@@ -86,16 +86,25 @@
   "children_thinnest_layers": {
     "childA": {
       "white_to_scalp_min_mm": 3.6962033633142957,
+      "white_to_inner_skull_min_mm": 1.2235861186145562,
+      "white_vertices_outside_inner_skull": 0,
+      "n_white_vertices": 295051,
       "inner_to_outer_skull_min_mm": 0.9695440199349782,
       "outer_skull_to_head_min_mm": 0.9493701544129599
     },
     "childB": {
       "white_to_scalp_min_mm": 3.670906531243472,
+      "white_to_inner_skull_min_mm": 0.8907644646739753,
+      "white_vertices_outside_inner_skull": 0,
+      "n_white_vertices": 274035,
       "inner_to_outer_skull_min_mm": 0.9279905403617397,
       "outer_skull_to_head_min_mm": 0.17486549217758646
     },
     "childC": {
       "white_to_scalp_min_mm": 5.735953445652387,
+      "white_to_inner_skull_min_mm": 1.2553329481765263,
+      "white_vertices_outside_inner_skull": 0,
+      "n_white_vertices": 265918,
       "inner_to_outer_skull_min_mm": 1.7252201956378315,
       "outer_skull_to_head_min_mm": 1.8526682844209827
     }
@@ -195,7 +204,7 @@
     }
   },
   "provenance": {
-    "commit": "c36f718",
+    "commit": "ff6e25c",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }
