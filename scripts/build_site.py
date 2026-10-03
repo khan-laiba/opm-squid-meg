@@ -190,14 +190,58 @@ def page_index(d):
 def sens_sign(sens: dict, kids) -> str:
     """'positive' if every sensitivity variant leaves the child-minus-adult difference of the median D above 0, else the
     exceptions (the text must stay true for whatever the results are)."""
-    neg = []
+    names = {"background_x0.5": "background x0.5", "background_x2": "background x2", "bem1": "the 1-layer head model"}
+    neg = {}
     for key, v in sens.items():
         lab, variant = key.split("/")[0], key.split("/")[1]
         if lab in kids and key.endswith("/opm_dense/combined/intrinsic+brain"):
             a = sens.get(key.replace(lab + "/", "adult/", 1))
             if a is not None and v - a <= 0:
-                neg.append(f"{ANAT[lab]}, {variant}")
-    return "positive" if not neg else "positive except " + "; ".join(neg)
+                name = f"OPM noise {variant[8:-2]} fT/&radic;Hz" if variant.startswith("opm_asd_") else names.get(variant, variant)
+                neg.setdefault(name, []).append(ANAT[lab])
+    return "positive" if not neg else "positive except " + "; ".join(f"at {k} in {', '.join(v)}" for k, v in neg.items())
+
+
+def absolute_change(g3b: dict, kids) -> str:
+    """How each system's own detectability changes from the adult to each child (the text must stay true for the results)."""
+    a, prim = g3b["absolute_detectability_dB"], g3b["config"]["placement"]["primary"]
+
+    def o(k):
+        return a[f"{k}/opm_dense/opm/intrinsic+brain"] - a["adult/opm_dense/opm/intrinsic+brain"]
+
+    def s(k):
+        return a[f"{k}/squid:{prim}/combined/intrinsic+brain"] - a[f"adult/squid:{prim}/combined/intrinsic+brain"]
+
+    both = [c for c in kids if o(c) > 0 and s(c) > 0]
+    rest = [c for c in kids if c not in both]
+    parts = []
+    if both:
+        parts.append("rises for both systems in " + ", ".join(ANAT[c] for c in both)
+                     + (", the on-scalp OPM's more" if all(o(c) > s(c) for c in both) else ""))
+    if rest:
+        parts.append("changes in " + ", ".join(ANAT[c] for c in rest) + " by " + ", ".join(f"{o(c):+.2f} / {s(c):+.2f}" for c in rest)
+                     + " dB (same order)")
+    return ("With the background fixed per unit cortical area, the detectability of a 10-nAm dipole (dense OPM / Neuromag "
+            "combined, against the adult's) " + "; it ".join(parts) + ".")
+
+
+def scaled_helmet(dec: dict, kids) -> str:
+    """Delta in the helmet scaled with the head, about the laterally centred head, by comparator."""
+    def delta(c, ref):
+        return dec[f"{c}/counterfactual_x-centred_vs_adult_counterfactual_x-centred/{ref}"]["delta"]
+
+    le = [c for c in kids if delta(c, "combined")["median"] <= 0]
+    gt = [c for c in kids if c not in le]
+    grad_most = all(delta(c, "grad")["median"] <= min(delta(c, "combined")["median"], delta(c, "mag")["median"]) for c in kids)
+    text = "In a helmet scaled with the head, about the laterally centred head, "
+    if le:
+        text += "the SQUID" + (", its gradiometers most," if grad_most else "") + " gains as much as the OPM or more in " \
+            + ", ".join(ANAT[c] for c in le)
+    if gt:
+        text += ("; in " if le else "Delta is ") + ", ".join(
+            f"{ANAT[c]} Delta is {delta(c, 'combined')['median']:+.2f} dB [{delta(c, 'combined')['ci95'][0]:+.2f}, "
+            f"{delta(c, 'combined')['ci95'][1]:+.2f}]" for c in gt)
+    return text + "."
 
 
 def pediatric_findings(d):
@@ -225,11 +269,9 @@ def pediatric_findings(d):
         + " dB, and "
         + ", ".join(f"{dec[f'{c}/counterfactual_x-centred_vs_adult_counterfactual_x-centred/combined']['delta']['median']:+.2f}"
                     for c in kids)
-        + " dB about the laterally centred head (same order). With the background fixed per unit cortical area, both systems' detectability "
-        "rises in the smaller heads and the on-scalp OPM's rises more; in a helmet scaled with the head the SQUID, its "
-        "gradiometers most, gains as much or slightly more.",
-        f"The child-minus-adult difference of the median D is {sens_sign(sens, kids)} for OPM noise 7-30 fT/&radic;Hz, background "
-        f"variance x0.5 or x2 and a 1-layer head model; at 30 fT/&radic;Hz the adult's D is "
+        + " dB about the laterally centred head (same order). " + absolute_change(g3b, kids) + " " + scaled_helmet(dec, kids),
+        f"For OPM noise 7-30 fT/&radic;Hz, background variance x0.5 or x2 and a 1-layer head model the child-minus-adult "
+        f"difference of the median D is {sens_sign(sens, kids)}; at 30 fT/&radic;Hz the adult's D is "
         f"{sens['adult/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f} dB and the children's "
         + ", ".join(f"{sens[f'{k}/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f}" for k in kids
                     if f"{k}/opm_asd_30fT/opm_dense/combined/intrinsic+brain" in sens)

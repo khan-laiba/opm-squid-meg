@@ -1,0 +1,334 @@
+{
+ "dataset": "OpenNeuro ds005234",
+ "snapshot": "2.2.0",
+ "doi": "10.18112/openneuro.ds005234.v2.2.0",
+ "citation": "Fadeev et al. 2024, J Neurodev Disord 16:39 (doi:10.1186/s11689-024-09585-2)",
+ "license": "metadata: CC0; HowToAcknowledge: CC BY",
+ "note": "Files of the three children used by G3B and the pediatric G4 studies (configs/g3b_pediatric.toml, [[anatomy.school]]), fetched by scripts/fetch_school_subjects.py into data/external/school_subjects/<dest>. source is the S3 object behind the snapshot's file (OpenNeuro stores it under its owner's bem/ folder, the snapshot tree shows it in the preceding subject's surf/ folder), version its S3 object version; sizes in bytes.",
+ "approved": "owner, 2026-10-03 (three children: 39 files; then the six BEM files of children B and C, whose own BEMs the first files did not include)",
+ "n_files": 45,
+ "total_bytes": 124961312,
+ "files": [
+  {
+   "dest": "sub-Z209/surf/lh.white",
+   "size": 4911950,
+   "sha256": "89edbc1107bdf8093dbbcff245113923b2c5e738307e3021039d978c7b6a3bb9",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/surf/lh.white",
+   "version": "bPsWEQ3LgnACqwqXsfqZAxI7Ay54RcNT"
+  },
+  {
+   "dest": "sub-Z209/surf/rh.white",
+   "size": 4958570,
+   "sha256": "10d2ffcac70eebc342c71ef0d7bd21e1b306c73bbbfcc3c42e01da57e3f72861",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/surf/rh.white",
+   "version": "zgior2tvt5s7ULZajYblEnZXior.BACV"
+  },
+  {
+   "dest": "sub-Z209/surf/lh.sphere",
+   "size": 4913337,
+   "sha256": "c652b49b8e720a4912f161a90bb0e8301d355d0e1aeaffe3afd687513dc06a31",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/surf/lh.sphere",
+   "version": "mir.dzm1EJfSZA4I9.SdTYhiV38qRY29"
+  },
+  {
+   "dest": "sub-Z209/surf/rh.sphere",
+   "size": 4959957,
+   "sha256": "e5fa04459bf14368e865e893acfea69b9c26232fb9333e521bdfbcf628948866",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/surf/rh.sphere",
+   "version": "RBBXejaZU3zwyccHWjL_JTMVP3iIGbD_"
+  },
+  {
+   "dest": "sub-Z209/surf/lh.sphere.reg",
+   "size": 4913930,
+   "sha256": "b9c2e34d4f40aaf3976dc36ca2c8349335545a65b98e6ff303f89cc0552e33e3",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/surf/lh.sphere.reg",
+   "version": "kqQ9UUpZ2xvso5zQNKZhS7VGlTEV9.GE"
+  },
+  {
+   "dest": "sub-Z209/surf/rh.sphere.reg",
+   "size": 4960550,
+   "sha256": "70cbe7303f41128b13daacd4a6af60f03d18ee3c751f60ec8ca62ed0ed8dbafa",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/surf/rh.sphere.reg",
+   "version": "xGyd.eaK_N5hdW.vf2hbD9UWbcPZcIkU"
+  },
+  {
+   "dest": "sub-Z209/surf/inner_skull.surf",
+   "size": 369306,
+   "sha256": "e8aa8081e0e0e32bfbacf21e87d0743e65678dc1d3250960e734c334db756b89",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/bem/inner_skull.surf",
+   "version": "SCw88DwSPAwWkTNg.srG._HiFNxlHZfk"
+  },
+  {
+   "dest": "sub-Z209/surf/outer_skull.surf",
+   "size": 369306,
+   "sha256": "259eb63c775507af39d96453a96d1a2d0ecd5a15b10648dcc37348fa7275253d",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/bem/outer_skull.surf",
+   "version": "bB1IGsmkixBUCn1qe2AlbVYFnF09q2PH"
+  },
+  {
+   "dest": "sub-Z209/surf/outer_skin.surf",
+   "size": 369306,
+   "sha256": "00fae99dfec776111eac313fcd04fe2312ff444aea051d654424a6f47848f585",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/bem/outer_skin.surf",
+   "version": "5sBGHRvfpJ_cu3axh_AJn7CCjimw6zLY"
+  },
+  {
+   "dest": "sub-Z209/surf/lh.seghead",
+   "size": 7323896,
+   "sha256": "17c5e80becfac9cf35e030ed29b7ac14c5deb7b291a20cee950078442df3bece",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/surf/lh.seghead",
+   "version": "UXmLI1cK6GAriH7UvTOwgOhFjiwjQeJB"
+  },
+  {
+   "dest": "sub-Z209/label/lh.aparc.annot",
+   "size": 1092473,
+   "sha256": "7c88db2253fd045b05add1fdac7157fab604388b93330d89ea999636b20bf1ae",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/label/lh.aparc.annot",
+   "version": "FvXeMCKWHRGbjBqCgXaS5YTXfJFtizXU"
+  },
+  {
+   "dest": "sub-Z209/label/rh.aparc.annot",
+   "size": 1102833,
+   "sha256": "f760cbad91cd0863f34cf73c3c07eb5cf39e316bb59567e53c2bb5a382d45fca",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/label/rh.aparc.annot",
+   "version": "AsHdvgTWk.hRNemJQkr9.diAG.nMmX8U"
+  },
+  {
+   "dest": "sub-Z209/mri/transforms/talairach.xfm",
+   "size": 192,
+   "sha256": "89ca49b474010c5579b7c79ab1059aaf38d90977b71f1b20860d6bfcfef1b339",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/mri/transforms/talairach.xfm",
+   "version": "bXVYm4ypHc_bAZ3ZUl3zpAH5VP8Q9m19"
+  },
+  {
+   "dest": "sub-Z213/surf/lh.white",
+   "size": 5297554,
+   "sha256": "c91dfe4cf3c74ea5342f353afc4189f3adaa9f78b25713a13eac61a3f1bb20ef",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/surf/lh.white",
+   "version": "cKrtwOTrRRhIl4nfQoL6624rQQcRMKSh"
+  },
+  {
+   "dest": "sub-Z213/surf/rh.white",
+   "size": 5328694,
+   "sha256": "68e94a7202bda620afb6eefd08b4f9de727755c6d046fa0a3b35667f666d295e",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/surf/rh.white",
+   "version": "2ytsikzMglAelBSSdCO16D3BTXwhP_O8"
+  },
+  {
+   "dest": "sub-Z213/surf/lh.sphere",
+   "size": 5298792,
+   "sha256": "5f6b0cbfb97efddbf1e125eb9be05170fc513da21b7c4641a65a1a1d57ce7088",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/surf/lh.sphere",
+   "version": "SF6zqWSyF45gKocVOZfEcs_l22ey9o0U"
+  },
+  {
+   "dest": "sub-Z213/surf/rh.sphere",
+   "size": 5329932,
+   "sha256": "8d10866e4040648d0a57588a0f7e94dc3b814a37e69ccaca41b0f79d42231135",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/surf/rh.sphere",
+   "version": "O1SsBk4L4400SekRxfgYltCFEaD4dvvt"
+  },
+  {
+   "dest": "sub-Z213/surf/lh.sphere.reg",
+   "size": 5299298,
+   "sha256": "7c0f528a61d8cc71b2859016788763cecd5176449af85e52d27a3133c23f4ee9",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/surf/lh.sphere.reg",
+   "version": "vEpWwxrvRNETNG42FD9NMZBleP7rsm2x"
+  },
+  {
+   "dest": "sub-Z213/surf/rh.sphere.reg",
+   "size": 5330438,
+   "sha256": "c00e8389ca59c239e6b645158cee4ce0a59ee86e659ace155a9bfd3ffb9a4308",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/surf/rh.sphere.reg",
+   "version": "uVVKpeA3y9_9_yWpAh8iIpqtBOxe2Jmx"
+  },
+  {
+   "dest": "sub-Z213/surf/inner_skull.surf",
+   "size": 369309,
+   "sha256": "a805485ae79f8517e87f3519c4121ba1cb5bee3d9481c50683bcc26376c63fa6",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z214/bem/inner_skull.surf",
+   "version": "fa3WnIFQAHtjemPqoIZPrNyVlYgYB6Na"
+  },
+  {
+   "dest": "sub-Z213/surf/outer_skull.surf",
+   "size": 369309,
+   "sha256": "7d52dd7d152ba1fedbb84eaa237e2f47bcb0fffdb87a65620c396c0075525edd",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z214/bem/outer_skull.surf",
+   "version": "5b2cXhB_KDzS3IiYQHHv1DE9TcFEs1Vb"
+  },
+  {
+   "dest": "sub-Z213/surf/outer_skin.surf",
+   "size": 369309,
+   "sha256": "d9a08e6de4b4a223dd9a16b6060725c4f2bf8bb9bb645844dbbdf44c54ebc7fa",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z214/bem/outer_skin.surf",
+   "version": "CwPShHGqEq0FclxwoYnBC1ZqbIYqvt5Y"
+  },
+  {
+   "dest": "sub-Z213/surf/lh.seghead",
+   "size": 5547295,
+   "sha256": "4be2ebb3629d062cbef2c02ab9df01eab1b1e49203c126615415c75be5890166",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/surf/lh.seghead",
+   "version": "NPaCZ.Pd7Az8BCJX1qHJo.DbexAhzHRD"
+  },
+  {
+   "dest": "sub-Z213/label/lh.aparc.annot",
+   "size": 1178257,
+   "sha256": "9179c3c283528665981cdc9c849e9a7a7a84c996d2bdf75e8b4dfa0c45305745",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/label/lh.aparc.annot",
+   "version": "KMg7Cg7SW54cvu9nythLLu8B4ZqurSv0"
+  },
+  {
+   "dest": "sub-Z213/label/rh.aparc.annot",
+   "size": 1185177,
+   "sha256": "e18bcca0669f619ebf6a3ae91df5b3c5864f33b047a6399e9b8a60a6e74fc847",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/label/rh.aparc.annot",
+   "version": "h.dnN.H_CGNwDihybmNB_AEaBKpi50ZK"
+  },
+  {
+   "dest": "sub-Z213/mri/transforms/talairach.xfm",
+   "size": 193,
+   "sha256": "ca653c6592517fdef49c8b4f8347a26258020402e6143cb6f7000a6be3cc90f4",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z214/mri/transforms/talairach.xfm",
+   "version": "R3n.Y9i7T85iGPdsIDwo95F71kHs0Cfd"
+  },
+  {
+   "dest": "sub-Z226/surf/lh.white",
+   "size": 4692181,
+   "sha256": "ba8ed21d01756c64d6e213c6a339969a64258aae0ff78b648319a460ecd8d287",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/surf/lh.white",
+   "version": "RptH_Kztq_t6qPYSNu1ASHFQRxSkRC94"
+  },
+  {
+   "dest": "sub-Z226/surf/rh.white",
+   "size": 4885285,
+   "sha256": "b63ef176861867d7c43963ff0c442b75db92c0fe154914a2d360cc4450e80494",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/surf/rh.white",
+   "version": "4wItaJ0cL.M1V.ej2PArDRL058r9n0N6"
+  },
+  {
+   "dest": "sub-Z226/surf/lh.sphere",
+   "size": 4693419,
+   "sha256": "eaa781d9a8d822d84abd762b1faadc8e60efdf77e1aa5a1f74046b5da0df2336",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/surf/lh.sphere",
+   "version": "Ta9zAY9f2Ru6jzo4KMab7xWzSH8.kADb"
+  },
+  {
+   "dest": "sub-Z226/surf/rh.sphere",
+   "size": 4886523,
+   "sha256": "a844708e8623679aa4a3d3ab1fa5c5c55421a08a3c337f84ef392a40c48a71b0",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/surf/rh.sphere",
+   "version": "BzePQuBPpPJZDacRnPuSJ60icgpyCcOq"
+  },
+  {
+   "dest": "sub-Z226/surf/lh.sphere.reg",
+   "size": 4693925,
+   "sha256": "b699393f892a5ca1c64a5d36a001acb5dcdbe3d5b00217e06fc3ae137add33a6",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/surf/lh.sphere.reg",
+   "version": "Ktmq5hJXYriQewDqvGojQmL4uioRAtFJ"
+  },
+  {
+   "dest": "sub-Z226/surf/rh.sphere.reg",
+   "size": 4887029,
+   "sha256": "7b9049fda398d9e092ae9a4fd8e266c92824d167e52dc9b49c1998152a984974",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/surf/rh.sphere.reg",
+   "version": "3Su1sDGDyIfEf7cbU.jU1V_905363xr."
+  },
+  {
+   "dest": "sub-Z226/surf/inner_skull.surf",
+   "size": 369309,
+   "sha256": "ce20397af6021ee6bf9e0ac4128b8950b5f95fbe6bd07cf4530f8d7bf87e52ca",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z227/bem/inner_skull.surf",
+   "version": "9Z3k9SKDzFniig9QUULbe4dTHmpzp6Ly"
+  },
+  {
+   "dest": "sub-Z226/surf/outer_skull.surf",
+   "size": 369309,
+   "sha256": "0d5c62c60c72d30142825f9472fa7e545e35a5c711f98271df332e10cf8907ed",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z227/bem/outer_skull.surf",
+   "version": "KyB6s7lH9sD.1PyXBqDdX6MpBUqnsxpH"
+  },
+  {
+   "dest": "sub-Z226/surf/outer_skin.surf",
+   "size": 369309,
+   "sha256": "6b1de1e46e6574830d650ab747dccfca3cf6ebab915ad3c22c30f19a9ac775b4",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z227/bem/outer_skin.surf",
+   "version": "V.Xu2qogoRbCkSa.lG7ERYDqAoygCYal"
+  },
+  {
+   "dest": "sub-Z226/surf/lh.seghead",
+   "size": 9619450,
+   "sha256": "5791f2261d5ff145da952ef28fbf1c70f8f8660b80d414d0f352a592ac28d553",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/surf/lh.seghead",
+   "version": "C0iDN2xjBp0Q8gcwcRevjdXAI7LqosRm"
+  },
+  {
+   "dest": "sub-Z226/label/lh.aparc.annot",
+   "size": 1043729,
+   "sha256": "798e4f12bf417b96c67ca52d8470cb0903c2ccbc337e77d9e94cb5ebfefe340f",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/label/lh.aparc.annot",
+   "version": "qVL.TsPDWgNmPxWkpjvwdwE4qqs.tXnJ"
+  },
+  {
+   "dest": "sub-Z226/label/rh.aparc.annot",
+   "size": 1086641,
+   "sha256": "cb5cfeb91a6d7529446049cd1910027349f40683305a07bcdf4392cf77fd7756",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/label/rh.aparc.annot",
+   "version": "68GkcSNk1SULk7936J5QU9HaMEpYuSJM"
+  },
+  {
+   "dest": "sub-Z226/mri/transforms/talairach.xfm",
+   "size": 192,
+   "sha256": "06dd5c0eac8798429454d55d6567927483b86ed846cf0e55ccdce1ae3e2fa31b",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z227/mri/transforms/talairach.xfm",
+   "version": "7y5Mv9V2TNeeq77h6hbGFrSlnyhRG9hp"
+  },
+  {
+   "dest": "matched_bem/sub-Z207/surf/inner_skull.surf",
+   "size": 369307,
+   "sha256": "43301d0faf4306c1bf815179c148c14ce3fbe387026ab90c43af3f7550015b67",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/bem/inner_skull.surf",
+   "version": "Pi1INxVIC08MoFTzVAkznY5TQa45NiQc",
+   "note": "watershed BEM of sub-Z209 (stored in sub-Z207's folder)"
+  },
+  {
+   "dest": "matched_bem/sub-Z207/surf/outer_skin.surf",
+   "size": 369307,
+   "sha256": "252dc68900bcde0ecdbd1ed2b23d369865aa4bc242836ae0e545575596417b22",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/bem/outer_skin.surf",
+   "version": "FjwJm.L2xdyO0U9IaaLWVNe5LXNsSToF",
+   "note": "watershed BEM of sub-Z209 (stored in sub-Z207's folder)"
+  },
+  {
+   "dest": "matched_bem/sub-Z207/surf/outer_skull.surf",
+   "size": 369307,
+   "sha256": "90518cdc12c1b80b458e59a919af0097e1ec45bbdbd661915442e69249179c6e",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/bem/outer_skull.surf",
+   "version": "lTT4pc1aFs5GioKPp8s6603sX5y.qMUS",
+   "note": "watershed BEM of sub-Z209 (stored in sub-Z207's folder)"
+  },
+  {
+   "dest": "matched_bem/sub-Z224/surf/inner_skull.surf",
+   "size": 369309,
+   "sha256": "63fdbf551b36aa33dabe9fccf022e6a06c27e6fae4d17791ecd22a0f54410962",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/bem/inner_skull.surf",
+   "version": "CHGBTWG9xLMA3w_URGmTfnxcTGrc0wTc",
+   "note": "watershed BEM of sub-Z226 (stored in sub-Z224's folder)"
+  },
+  {
+   "dest": "matched_bem/sub-Z224/surf/outer_skin.surf",
+   "size": 369309,
+   "sha256": "2c90384b59b369de0f96ed361c172836c16ab3956cc16c2b85b3c295c3c0b176",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/bem/outer_skin.surf",
+   "version": "uEXrDUN.vnqum9_f6Jn_uF17uGNhUvDk",
+   "note": "watershed BEM of sub-Z226 (stored in sub-Z224's folder)"
+  },
+  {
+   "dest": "matched_bem/sub-Z224/surf/outer_skull.surf",
+   "size": 369309,
+   "sha256": "8b47c3eec8c967b4513cfeef89eb9075cfa98df2159451d0bb517b6edfc0c293",
+   "source": "https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/bem/outer_skull.surf",
+   "version": "yEAF3vTXJavpirE.WZ09CBGh.BkXRuiY",
+   "note": "watershed BEM of sub-Z226 (stored in sub-Z224's folder)"
+  }
+ ]
+}

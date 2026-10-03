@@ -2,7 +2,7 @@
 # Reproduce every milestone in order (see README.md). Requires the MNE sample data in
 # data/external/MNE-sample-data. Full-resolution lead fields take ~6 min each; the whole run
 # takes roughly 2 h on a laptop for the adult part (about 40 min of it for the lead fields) and
-# about 6 h for the pediatric part (G3B, five pediatric G4 runs of about 1 h each, the motion
+# about 9 h for the pediatric part (G3B, eight pediatric G4 runs of about 1 h each, the motion
 # extension). Each driver writes its outputs to results/<milestone>/ with the code commit and
 # package versions in its JSON.
 #
@@ -46,14 +46,20 @@ step g2_report $PY scripts/g2_report.py                                  # G2   
 step g4_adult $PY scripts/g4_epilepsy_adult.py                           # G4   IED detection, adult
 step g4_loc $PY scripts/g4_localization.py                               # G4   bounded localization, adult
 step g4_vs_g2 $PY scripts/study_g4_vs_g2.py                              # G4   detection vs the G2 detectability at the G4 locations
-# after the adult baseline; needs the 12-, 18- and 24-month infant templates (README, Data setup):
+# after the adult baseline; needs the 12-, 18- and 24-month infant templates and the school-aged
+# children (scripts/fetch_school_subjects.py; README, Reproduce):
 step g3a $PY scripts/g3a_jas_size_benchmark.py                           # G3A  Jas Table 1 / Fig. 5 (REPRO)
+step school_prep $PY scripts/prepare_school_subjects.py                  # G3B  school-aged children: modelled skull, fiducials, source space
+step child_bem $PY scripts/study_child_bem.py                            # G3B  the modelled skull (A-BEM-CHILD) checked on the adult
 step g3b $PY scripts/g3b_pediatric_helmet.py                             # G3B  fixed adult helmet vs head-adaptive OPM (NEW)
 step g4_infant2yr $PY scripts/g4_epilepsy_pediatric.py infant2yr --detection --localization    # G4  IED detection and localization, 2-year template
 step g4_infant18mo $PY scripts/g4_epilepsy_pediatric.py infant18mo --detection --localization  # G4  the same, 18-month template
 step g4_infant12mo $PY scripts/g4_epilepsy_pediatric.py infant12mo --detection --localization  # G4  the same, 12-month template
 step g4_school $PY scripts/g4_epilepsy_pediatric.py school --detection --localization          # G4  the same, school-age size control
 step g4_size2yr $PY scripts/g4_epilepsy_pediatric.py size2yr --detection --localization        # G4  the same, 2-year size control
+step g4_childA $PY scripts/g4_epilepsy_pediatric.py childA --detection --localization          # G4  the same, school-aged child A
+step g4_childB $PY scripts/g4_epilepsy_pediatric.py childB --detection --localization          # G4  the same, school-aged child B
+step g4_childC $PY scripts/g4_epilepsy_pediatric.py childC --detection --localization          # G4  the same, school-aged child C
 step g4_compare $PY scripts/g4_epilepsy_pediatric.py --compare           # G4  pediatric vs adult comparison and report
 step g4_matched $PY scripts/study_g4_matched_rate.py                     # G4  detection at matched held-out false-event rates
 step fit_failures $PY scripts/study_g4_fit_failures.py                   # G4  failed fits under declared criteria (from the event tables)

@@ -24,5 +24,5 @@ def require(path: Path, what: str) -> Path:
     """Return `path` if it exists; otherwise fail with a message naming the missing input."""
     path = Path(path)
     if not path.exists():
-        raise FileNotFoundError(f"{what} not found at {path} (see README.md, 'Data setup')")
+        raise FileNotFoundError(f"{what} not found at {path} (see README.md, 'Reproduce')")
     return path

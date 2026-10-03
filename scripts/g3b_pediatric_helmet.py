@@ -577,6 +577,9 @@ def summarise(anats, state, cfg) -> dict:
                          for n, v in r["arrays"].items()} for k, r in runs.items()}
     out["placements"] = {k: {n: {kk: vv for kk, vv in v.items() if kk not in ("trans", "info", "motion")} for n, v in r["placements"].items()}
                          for k, r in runs.items()}
+    # a placement that brings a magnetometer closer to the scalp than the Dewar spacing is not a possible position: its D
+    # is kept for completeness and marked, and it is left out of every placement range
+    out["infeasible_placements"] = {k: [n for n, v in pl.items() if not v["feasible"]] for k, pl in out["placements"].items()}
     out["sensor_distances"] = {k: {n: v for n, v in r["geometry"].items() if n != "source_to_sensor_mm"} for k, r in runs.items()}
     edges = np.array(cfg["strata"]["depth_edges_mm"])
     out["source_to_sensor_mm_by_depth"] = {}
@@ -862,7 +865,7 @@ def write_report(anats, s, cfg):
     # x-centred: lateral shift then top contact; counterfactual_x-centred: helmet scaled about the laterally centred head
     for k, pl in s["placements"].items():
         for n, v in pl.items():
-            if n in ("centred", "top", "back", "x-centred", "top-18mm", "counterfactual", "counterfactual_x-centred"):
+            if n in ("centred", "top", "back", "x-centred", "top-18mm", "counterfactual", "counterfactual_x-centred") or not v["feasible"]:
                 L.append(f"| {LABEL[k]} | {n} | {v.get('moved_mm', 0.0):.1f} | {v['min_dist_mm']:.1f} | {v['median_dist_mm']:.1f} | "
                          f"{v['feasible']} |")
     g = s["link_to_g2"]
@@ -1013,7 +1016,11 @@ def write_report(anats, s, cfg):
           "| anatomy | " + " | ".join(PLACEMENT_ORDER) + " |", "|---" * (len(PLACEMENT_ORDER) + 1) + "|"]
     for k in ANATOMIES:
         L.append(f"| {LABEL[k]} | " + " | ".join(f"{s['placement_D'][f'{k}/{n}/combined/intrinsic+brain']['median']:+.2f}"
+                                                + (" (infeasible)" if n in s["infeasible_placements"][k] else "")
                                                 for n in PLACEMENT_ORDER) + " |")
+    if any(s["infeasible_placements"].values()):
+        L += ["", "Infeasible: a magnetometer coil centre closer to the scalp than the 18-mm Dewar spacing (not a possible position; "
+              "its D is listed for completeness and left out of the placement ranges)."]
     sens = s["sensitivity_median_D_dB"]
     keys = [f"opm_asd_{a:g}fT" for a in (7, 10, 15, 20, 30)] + ["background_x0.5", "background_x2", "bem1"]
     L += ["", "| anatomy | " + " | ".join(keys) + " |", "|---" * (len(keys) + 1) + "|"]
@@ -1121,8 +1128,12 @@ def figures(anats, state, s, cfg):
     names = list(PLACEMENT_ORDER)
     fig, axs = plt.subplots(1, 2, figsize=(15, 4.8))
     for i, k in enumerate(ANATOMIES):
-        y = [s["placement_D"][f"{k}/{n}/combined/intrinsic+brain"]["median"] for n in names]
-        axs[0].plot(np.arange(len(names)) + (i - (len(ANATOMIES) - 1) / 2) * 0.1, y, "o", color=COLORS[k], label=LABEL[k], ms=5)
+        y = np.array([s["placement_D"][f"{k}/{n}/combined/intrinsic+brain"]["median"] for n in names])
+        x = np.arange(len(names)) + (i - (len(ANATOMIES) - 1) / 2) * 0.1
+        bad = np.array([n in s["infeasible_placements"][k] for n in names])
+        axs[0].plot(x[~bad], y[~bad], "o", color=COLORS[k], label=LABEL[k], ms=5)
+        if bad.any():
+            axs[0].plot(x[bad], y[bad], "o", mfc="none", color=COLORS[k], ms=5)
     for xv in np.arange(len(names) - 1) + 0.5:
         axs[0].axvline(xv, color="0.9", lw=0.6, zorder=0)
     axs[0].set_xticks(range(len(names)))
@@ -1130,7 +1141,7 @@ def figures(anats, state, s, cfg):
     axs[0].axhline(0, color="0.5", lw=0.8)
     axs[0].set_ylabel("median D, dense OPM vs Neuromag combined [dB]")
     axs[0].legend(fontsize=7)
-    axs[0].set_title("helmet placement (source-blind) and the counterfactual helmet", fontsize=9)
+    axs[0].set_title("helmet placement (source-blind) and the counterfactual helmet (open: infeasible)", fontsize=9)
     regions = list(s["sensor_distances"]["adult"]["squid:centred"]["regions"])
     w = 0.2
     for i, k in enumerate(ANATOMIES):

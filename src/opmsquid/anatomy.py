@@ -256,8 +256,9 @@ def model_skull(inner: dict, scalp: Surface, cortex_rr: np.ndarray, depth: float
                 smooth: int = 10, max_skull: float = 0.005) -> tuple[dict, dict, dict]:
     """A-BEM-CHILD: an inner skull that lies too close to the scalp (a failed watershed segmentation,
     as in the school-aged children) moved inward along its normals to ``depth`` [m] below the MRI
-    scalp wherever it is shallower, never closer than ``min_cortex`` to the cortex (``cortex_rr``,
-    white-surface vertices); the displacement is smoothed over the mesh (``smooth`` neighbour
+    scalp wherever it is shallower, no vertex closer than ``min_cortex`` to a cortex vertex
+    (``cortex_rr``, white-surface vertices; the triangles between them can come closer: 1.1-1.4 mm in
+    the children); the displacement is smoothed over the mesh (``smooth`` neighbour
     averages) and the cortex limit applied again. Parts already deeper than ``depth`` (the skull base)
     stay where they are. The outer skull is the modelled inner skull moved outward by half its
     local distance to the scalp (at least 1 mm of skull and 2 mm of scalp, at most ``max_skull`` of
@@ -358,8 +359,9 @@ def transfer_fiducials(adult_cortex: np.ndarray, adult_fids: dict, cortex: np.nd
     surface vertices) by trimmed iterative closest points (start: centroids and sizes aligned; the
     ``trim`` percent closest pairs refit each time), then moved to the nearest vertex of ``scalp``.
     The cortex is fitted rather than the scalp because faces scale differently from crania (on the
-    infant templates a scalp fit put the nasion 17-34 mm from theirs; this fit reproduces their
-    fiducials to 0.6-12 mm and their head frame to 4-5 deg). Returns (fiducials, report)."""
+    infant templates the same fit between the scalps puts the nasion 34-45 mm from theirs; this one
+    reproduces their fiducials to 1.6-14.4 mm and their head frame to 3.2-5.9 deg:
+    scripts/study_school_anatomy.py). Returns (fiducials, report)."""
     src = np.asarray(adult_cortex, float)
     src = src[:: max(1, len(src) // 8000)]
     tgt = np.asarray(cortex, float)

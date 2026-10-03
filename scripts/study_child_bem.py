@@ -2,9 +2,10 @@
 """A-BEM-CHILD checked on the adult: how much does the modelled skull change the G2 headline?
 
 The school-aged children's watershed segmentations (OpenNeuro ds005234) put the inner skull just
-below the scalp (a median 0.9-2.5 mm, against 9.7 mm in the adult and 5.6-8.5 mm in the infant
-templates), so their skull is modelled (``anatomy.model_skull``): the inner skull is moved inward
-to a set depth below the MRI scalp where it is shallower, never closer than 2 mm to the cortex, and
+below the scalp (a median 0.8-2.5 mm over the upper head, against 9.7 mm in the adult and 5.6-8.5
+mm in the infant templates: scripts/study_school_anatomy.py), so their skull is modelled
+(``anatomy.model_skull``): the inner skull is moved inward to a set depth below the MRI scalp where
+it is shallower, no vertex closer than 2 mm to a white-surface vertex, and
 the outer skull is put halfway to the scalp. Here the same procedure is applied to the adult, whose
 segmented skull is known: its inner skull is first degraded the way the children's failed (the
 part above its centroid moved to 1.5 mm below the scalp, blended in over 15 mm), then modelled at
@@ -41,7 +42,7 @@ OUT = ROOT / "results" / "g3b"
 CONDS = ("intrinsic+brain", "projected")
 DEPTHS = (0.006, 0.008, 0.0097, 0.010)
 DEPTH_EDGES = (10.0, 20.0, 30.0, 45.0, 70.0)
-FAILED_DEPTH = 0.0015  # the degraded inner skull's depth below the scalp (children: a median 0.9-2.5 mm)
+FAILED_DEPTH = 0.0015  # the degraded inner skull's depth below the scalp (children: a median 0.8-2.5 mm)
 BLEND = 0.015  # [m] above the inner skull's centroid over which the degradation is blended in
 
 

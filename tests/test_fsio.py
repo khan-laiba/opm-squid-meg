@@ -103,6 +103,65 @@ SCHOOL = ("sub-Z213", "sub-Z209", "sub-Z226")
 HAVE_SCHOOL = all((paths.EXTERNAL / anatomy.SCHOOL_SUBJECTS / s / "bem" / f"{s}-oct-6-src.fif").exists() for s in SCHOOL)
 
 
+def _fetch_module():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("fetch_school_subjects", paths.ROOT / "scripts" / "fetch_school_subjects.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+class TestSchoolManifest(unittest.TestCase):
+    """configs/school_subjects_manifest.json lists every file the preparation reads, once, with its checks."""
+
+    @classmethod
+    def setUpClass(cls):
+        import json
+        import tomllib
+
+        cls.manifest = json.loads((paths.CONFIGS / "school_subjects_manifest.json").read_text())
+        cls.children = tomllib.loads((paths.CONFIGS / "g3b_pediatric.toml").read_text())["anatomy"]["school"]
+
+    def test_entries(self):
+        files = self.manifest["files"]
+        self.assertEqual(len(files), self.manifest["n_files"])
+        self.assertEqual(sum(e["size"] for e in files), self.manifest["total_bytes"])
+        self.assertEqual(len({e["dest"] for e in files}), len(files))
+        for e in files:
+            self.assertRegex(e["sha256"], r"^[0-9a-f]{64}$")
+            self.assertTrue(e["source"].startswith("https://s3.amazonaws.com/openneuro.org/ds005234/derivatives/freesurfer/"))
+            self.assertTrue(e["version"])
+
+    def test_covers_the_preparation(self):
+        dests = {e["dest"] for e in self.manifest["files"]}
+        for child in self.children:
+            own, bem = child["subject"], child["bem_folder"]
+            need = [f"{own}/surf/{h}.{s}" for h in ("lh", "rh") for s in ("white", "sphere")]
+            need += [f"{own}/surf/lh.seghead"] + [f"{own}/label/{h}.aparc.annot" for h in ("lh", "rh")]
+            need += [f"{bem}/surf/{f}" for f in ("inner_skull.surf", "outer_skull.surf", "outer_skin.surf")]
+            self.assertFalse(set(need) - dests, child["key"])
+
+    def test_check_reports_missing_files(self):
+        import contextlib
+        import io as _io
+        from unittest import mock
+
+        mod = _fetch_module()
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(mod.paths, "EXTERNAL", Path(d)), \
+                contextlib.redirect_stdout(_io.StringIO()) as out:
+            self.assertEqual(mod.main(["--check"]), 1)
+        self.assertIn(f"0 of {self.manifest['n_files']} files present", out.getvalue())
+
+    @unittest.skipUnless((paths.EXTERNAL / anatomy.SCHOOL_SUBJECTS).is_dir(), "school-aged subjects not fetched")
+    def test_fetched_files_are_intact(self):
+        import contextlib
+        import io as _io
+
+        with contextlib.redirect_stdout(_io.StringIO()):
+            self.assertEqual(_fetch_module().main(["--check"]), 0)
+
+
 @unittest.skipUnless(HAVE_SCHOOL, "school-aged subjects not prepared (scripts/prepare_school_subjects.py)")
 class TestSchoolSubjects(unittest.TestCase):
     """The prepared children load like the templates: head surface on the scalp, nested BEM, full source space."""

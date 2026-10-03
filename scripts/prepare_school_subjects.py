@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Prepare the school-aged children of OpenNeuro ds005234 for G3B and the pediatric G4 studies.
 
-Input (git-ignored, data/external/school_subjects/, see its MANIFEST.json): for each child its own
+Input (git-ignored, data/external/school_subjects/: scripts/fetch_school_subjects.py, listed in
+configs/school_subjects_manifest.json): for each child its own
 FreeSurfer white and sphere surfaces, aparc annotations and dense MRI scalp (lh.seghead), and its
 watershed BEM surfaces, which the dataset stores in another subject's folder (configs/
 g3b_pediatric.toml, [[anatomy.school]] bem_folder; checked here by the files' volume information:
