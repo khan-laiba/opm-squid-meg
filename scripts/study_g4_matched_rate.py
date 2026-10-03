@@ -30,7 +30,7 @@ import g4_epilepsy_adult as G4  # noqa: E402
 from opmsquid import detection, io, paths  # noqa: E402
 
 OUT = ROOT / "results" / "g4"
-LABELS = ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo")
+LABELS = ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC")
 PAIRS = (("opm_dense/opm", "squid/combined"), ("opm_matched/opm", "squid/combined"))
 DETECTORS = ("squid/combined", "opm_matched/opm", "opm_dense/opm")
 

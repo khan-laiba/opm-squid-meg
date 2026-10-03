@@ -2,7 +2,7 @@
 """G4 localization: failed fits under declared criteria (docs/methods.md section 9; end-to-end goal review).
 
 `mne.fit_dipole` returned a dipole for every event (a failure would have stopped the run), so a
-"failed fit" has to be defined. This check reads the stored per-event tables of the six anatomies
+"failed fit" has to be defined. This check reads the stored per-event tables of the nine anatomies
 (`results/g4/g4_localization*_events.csv`, nothing is recomputed) and counts, per anatomy, array
 and condition, (i) gross errors: a dipole (ECD) or a dSPM peak more than 30 mm from the true source,
 among all events and among the detected ones, and (ii) the dipole confidence volume above 10 cm^3
@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from opmsquid import io  # noqa: E402
 
 OUT = ROOT / "results" / "g4"
-LABELS = ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo")
+LABELS = ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC")
 ARRAYS = ("squid", "opm_matched", "opm_dense")
 GROSS_MM = 30.0
 VOLUME_CM3 = 10.0
@@ -69,7 +69,7 @@ def report(res: dict) -> str:
             L.append(f"| {lab} | {arr} | {fam} {s} | {v['n_detected']}/{v['n']} | {v['ecd_gross']} / {v['ecd_gross_detected']} | "
                      f"{v['dspm_gross']} / {v['dspm_gross_detected']} | {v['ecd_unconstrained']} / {v['ecd_unconstrained_detected']} |")
     t = res["totals"]
-    L += ["", f"Totals over the six anatomies ({t['n']} events per array): gross ECD errors {t['ecd_gross']} (Neuromag), "
+    L += ["", f"Totals over the {len(LABELS)} anatomies ({t['n']} events per array): gross ECD errors {t['ecd_gross']} (Neuromag), "
           f"{t['ecd_gross_matched']} (matched OPM), {t['ecd_gross_dense']} (dense OPM), of which among detected events "
           f"{t['ecd_gross_detected']}, {t['ecd_gross_detected_matched']}, {t['ecd_gross_detected_dense']}; gross dSPM errors "
           f"{t['dspm_gross']}, {t['dspm_gross_matched']}, {t['dspm_gross_dense']} (detected: {t['dspm_gross_detected']}, "
