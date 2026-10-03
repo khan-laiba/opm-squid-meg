@@ -217,6 +217,77 @@ def head_on_scalp(surfaces: list, scalp: Surface) -> tuple[list, dict]:
     return out, report
 
 
+def model_skull(inner: dict, scalp: Surface, cortex_rr: np.ndarray, depth: float = 0.008, min_cortex: float = 0.002,
+                smooth: int = 10, max_skull: float = 0.005) -> tuple[dict, dict, dict]:
+    """A-BEM-CHILD: an inner skull that lies too close to the scalp (a failed watershed segmentation,
+    as in the school-aged children) moved inward along its normals to ``depth`` [m] below the MRI
+    scalp wherever it is shallower, never closer than ``min_cortex`` to the cortex (``cortex_rr``,
+    white-surface vertices); the displacement is smoothed over the mesh (``smooth`` neighbour
+    averages) and the cortex limit applied again. Parts already deeper than ``depth`` (the skull base)
+    stay where they are. The outer skull is the modelled inner skull moved outward by half its
+    local distance to the scalp (at least 1 mm of skull and 1 mm of scalp, at most ``max_skull`` of
+    skull, where the scalp is far: the skull base). Both keep the input's
+    triangles. Refused if a triangle flips, the surface folds, a cortex vertex is left outside or the
+    outer skull leaves the scalp. Returns (inner, outer skull, report); surfaces in the MRI frame [m]."""
+    import scipy.sparse as sp
+    from mne.surface import _CheckInside, complete_surface_info
+
+    tris = np.asarray(inner["tris"])
+    rr = np.asarray(inner["rr"], float)
+    nn = _outward(complete_surface_info(dict(rr=rr, tris=tris, np=len(rr), ntri=len(tris)), copy=False, verbose=False)).nn
+    scalp_surf = dict(rr=scalp.rr, tris=scalp.tris, nn=scalp.nn, np=len(scalp.rr), ntri=len(scalp.tris))
+    to_scalp = MeshDistance(scalp_surf)
+    cortex = cKDTree(np.asarray(cortex_rr, float))
+    d_s = to_scalp.unsigned(rr)
+    d_c = cortex.query(rr)[0]
+    limit = np.maximum(d_c - min_cortex, 0.0)
+    delta = np.minimum(np.clip(depth - d_s, 0.0, None), limit)
+    e = np.unique(np.sort(np.concatenate([tris[:, [0, 1]], tris[:, [1, 2]], tris[:, [2, 0]]]), axis=1), axis=0)
+    adj = sp.coo_matrix((np.ones(2 * len(e)), (np.r_[e[:, 0], e[:, 1]], np.r_[e[:, 1], e[:, 0]])), shape=(len(rr),) * 2).tocsr()
+    deg = np.asarray(adj.sum(axis=1)).ravel()
+    for _ in range(int(smooth)):
+        delta = np.minimum(0.5 * delta + 0.5 * (adj @ delta) / deg, limit)
+    new_rr = rr - delta[:, None] * nn
+
+    def face_normals(x):
+        return np.cross(x[tris[:, 1]] - x[tris[:, 0]], x[tris[:, 2]] - x[tris[:, 0]])
+
+    def check(x, ref, what):
+        flips = int(np.sum(np.einsum("ij,ij->i", face_normals(ref), face_normals(x)) <= 0))
+        if flips:
+            raise ValueError(f"A-BEM-CHILD: {flips} {what} triangles would flip")
+        if crossing_edges(x, tris):
+            raise ValueError(f"A-BEM-CHILD: the {what} would fold (an edge crosses a triangle)")
+
+    check(new_rr, rr, "inner-skull")
+    new_inner = complete_surface_info(dict(id=FIFF.FIFFV_BEM_SURF_ID_BRAIN, coord_frame=inner.get("coord_frame", FIFF.FIFFV_COORD_MRI),
+                                           rr=new_rr, tris=tris.copy(), np=len(new_rr), ntri=len(tris)), copy=False, verbose=False)
+    sample = np.asarray(cortex_rr, float)[:: max(1, len(cortex_rr) // 20000)]
+    if not _CheckInside(new_inner)(sample, verbose=False).all():
+        raise ValueError("A-BEM-CHILD: cortex outside the modelled inner skull")
+    nn_new = _outward(new_inner).nn
+    gap = to_scalp.unsigned(new_rr)
+    lo, hi = 0.001, np.clip(gap - 0.001, 0.001, max_skull)
+    t = np.clip(0.5 * gap, lo, hi)
+    for _ in range(int(smooth)):
+        t = np.clip(0.5 * t + 0.5 * (adj @ t) / deg, lo, hi)
+    os_rr = new_rr + t[:, None] * nn_new
+    check(os_rr, new_rr, "outer-skull")
+    outer = complete_surface_info(dict(id=FIFF.FIFFV_BEM_SURF_ID_SKULL, coord_frame=new_inner["coord_frame"], rr=os_rr, tris=tris.copy(),
+                                       np=len(os_rr), ntri=len(tris)), copy=False, verbose=False)
+    if not to_scalp.inside(os_rr, verbose=False).all():
+        raise ValueError("A-BEM-CHILD: the outer skull would leave the scalp")
+    d_new = to_scalp.unsigned(new_rr)
+    report = dict(depth_mm=depth * 1e3, min_cortex_mm=min_cortex * 1e3, smooth=int(smooth), n_vertices=len(rr),
+                  moved_share=float(np.mean(delta > 1e-4)), moved_median_mm=float(np.median(delta[delta > 1e-4]) * 1e3) if np.any(delta > 1e-4) else 0.0,
+                  moved_max_mm=float(delta.max() * 1e3),
+                  scalp_depth_before_mm=[float(x) for x in np.percentile(d_s * 1e3, [10, 50, 90])],
+                  scalp_depth_after_mm=[float(x) for x in np.percentile(d_new * 1e3, [10, 50, 90])],
+                  cortex_clearance_min_mm=float(MeshDistance(new_inner).unsigned(sample).min() * 1e3),
+                  skull_thickness_mm=[float(x) for x in np.percentile(t * 1e3, [10, 50, 90])])
+    return new_inner, outer, report
+
+
 def load_sample(spacing: str = "oct6") -> Subject:
     """The MNE sample subject, its BEM head surface on its MRI scalp (``head_on_scalp``).
     ``spacing``: 'oct6' (stored source space, 2 x 4098) or 'all'."""
