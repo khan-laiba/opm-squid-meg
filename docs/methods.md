@@ -63,9 +63,9 @@ within 0.71 mm of a sample and the distance is 1-Lipschitz, so the rule itself g
 larger than a cell, the cell is then outside it), not 1 mm. The exact cube-to-mesh distance of the
 final cells (`opm.exact_cell_clearance`: the closest vertex-face and edge-edge pairs over every
 triangle that could be closer, with an intersection test) is at least 1.056 mm (matched) and
-1.006 mm (dense) in the adult (v4; recorded in `g2_summary.json`); over the six G3B anatomies
-every cell is at least 0.995 mm out (18-month template, dense array; `g3b_summary.json`, sensor
-distances).
+1.006 mm (dense) in the adult (v4; recorded in `g2_summary.json`); over the nine G3B anatomies
+every cell is at least 0.986 mm out (child A, matched array; 0.995 mm over the other eight, 18-month
+template, dense array; `g3b_summary.json`, sensor distances).
 Sites are moved outward along their axis in 0.5-mm steps by at most 5 mm, otherwise they are
 infeasible and dropped. v2 checked only the
 integration points, which reach +-3.87 mm of the +-5-mm faces: the final review (2026-10-01) found
@@ -589,14 +589,14 @@ Localization design (`scripts/g4_localization.py`, bounded)
   channel, so at equal SNR it is higher for arrays with fewer channels (median for detected 320-nAm
   focal events: 65 % matched OPM, 51 % dense OPM, 39 % Neuromag). GOF, chi2/dof and the 95 %
   confidence volume are descriptive. Failed fits: `mne.fit_dipole` returned a dipole for every event
-  (96 events x 5 views in each of the six anatomies; a failure would have stopped the run), so
+  (96 events x 5 views in each of the nine anatomies; a failure would have stopped the run), so
   failures are counted under declared criteria from the stored per-event tables
   (`scripts/study_g4_fit_failures.py`, `results/g4/G4_fit_failures_report.md`; the three primary
   arrays): a dipole or dSPM peak more than 30 mm from the true source (gross), and a dipole
-  confidence volume above 10 cm^3. Over the six anatomies (576 events per array) gross dipole errors
-  number 208 (Neuromag), 193 (matched OPM) and 182 (dense OPM), 24, 28 and 35 of them among detected
-  events; gross dSPM errors 264, 201 and 197 (detected 63, 29 and 36); 83 % of all gross errors belong
-  to undetected events and 75 % to 80-nAm sources. The medians reported below include these events
+  confidence volume above 10 cm^3. Over the nine anatomies (864 events per array) gross dipole errors
+  number 332 (Neuromag), 325 (matched OPM) and 310 (dense OPM), 27, 38 and 44 of them among detected
+  events; gross dSPM errors 411, 327 and 329 (detected 77, 36 and 39); 87 % of all gross errors belong
+  to undetected events and 73 % to 80-nAm sources. The medians reported below include these events
   ("all") or exclude the undetected ones ("detected"); 111 of the adult's 288 dipole errors exceed
   30 mm, 93 of them at undetected events and 81 of those at 80 nAm.
 * Paired OPM-minus-Neuromag comparisons on identical events (one per location): median error
@@ -676,8 +676,39 @@ Neuromag combined, matched OPM, dense OPM)
   between children. They are templates, not individual children: results on them are conditional
   simulations, not population estimates, and anatomical variability is not assessed. The 12-month
   template's skull is 0.25 mm thick at its thinnest (as distributed; 23 of 2,562 inner-skull
-  vertices within 1 mm of the outer skull); the 1-layer BEM check does not depend on it. No
-  school-aged native anatomy was available (PLAN, inputs).
+  vertices within 1 mm of the outer skull); the 1-layer BEM check does not depend on it.
+* School-aged children (added 2026-10-03; D-G3-ANAT): three typically developing children of OpenNeuro
+  ds005234 (Fadeev et al. 2024), child A (sub-Z213, 7.8 years), B (sub-Z209, 8.3) and C (sub-Z226, 8.7),
+  individual MRIs processed with FreeSurfer by the dataset's authors. Used: their own white and
+  sphere surfaces, aparc annotations and dense MRI scalp (lh.seghead), which share each child's
+  volume information. The snapshot's file tree shifts each subject's watershed BEM and talairach.xfm
+  into the preceding subject's folder (the S3 objects behind them carry the owner's name; the BEMs
+  were identified by the same volume information as the child's surfaces). The watershed BEMs put
+  the inner skull just below the scalp (a median 0.8-2.5 mm over the upper head, against 9.7 mm in
+  the adult and 5.6-8.5 mm in the templates; `scripts/study_school_anatomy.py`,
+  `results/g3b/school_anatomy_checks.json`), with an outer skull crossing it. The skull is therefore
+  modelled (A-BEM-CHILD): the inner skull moved inward to 8 mm below the scalp where it is
+  shallower, no vertex closer than 2 mm to a white-surface vertex (the surface between vertices comes
+  within 1.1-1.4 mm of the cortex), the outer skull halfway to the scalp; over the upper head the
+  modelled inner skull lies a median 7.5, 5.7 and 7.8 mm below the scalp (child B's cortex lies close
+  to its scalp). The head surface is the watershed outer skin put on the scalp (A-BEM-CONFORM). On the
+  adult, whose segmented skull is known, the same procedure applied to a degraded inner skull changes
+  the G2 headline by at most 0.003 (within 0.01 in every depth band) for depths of 6-10 mm, although
+  at 8 mm its inner skull lies a median 1.7 mm from the segmented one (`scripts/study_child_bem.py`).
+  No fiducials come with the data. Fiducials from MNI coordinates (fsaverage's, mapped through the
+  talairach.xfm) are not used: on the adult, whose fiducials are digitised, they land 10-27 mm from
+  them (head frame 10.6 deg off), and only child A's own talairach.xfm was obtained (with it child A's
+  cortex centroid lies 3.9 mm from the adult's in MNI space; the files stored in the children's own
+  folders, which belong to other subjects, put it 17-27 mm away). Instead the adult's digitised
+  fiducials are transferred by a similarity fit of the cortices and moved to the nearest scalp vertex
+  (A-G3-FID; on the templates this reproduces their own fiducials to 1.6-14.4 mm and their head frame
+  to 3.2-5.9 deg, where the same fit between the scalps misplaces the nasion by 34-45 mm). Prepared by
+  `scripts/prepare_school_subjects.py` in the templates' file layout
+  (`results/g3b/school_subjects_preparation.json`); FreeSurfer files are read without nibabel
+  (`opmsquid.fsio`, checked against MNE's files of the sample subject). They are individuals, three
+  of one dataset, not a population; like the templates they are compared with the adult by parcel and
+  stratum, with their own bootstrap stream. No cortex maps are drawn for them (their inflated surfaces
+  were not obtained).
 * Head size from the dense scalp (head frame): occipitofrontal circumference (largest convex-hull
   perimeter of scalp sections parallel to the fiducial plane), breadth, length, vertex height,
   cap volume above the fiducial plane and inter-auricular distance.
@@ -743,14 +774,16 @@ Neuromag combined, matched OPM, dense OPM)
   12-month templates) is not cortex and is left out of every G3B summary (it made up most of the
   60-90 mm strata).
 
-G3B results (`results/g3b/g3b_summary.json`, `G3B_report.md`; computed at e53bea8, summaries, figures
-and report redrawn at 9512f1b, with all six anatomies and the v4 arrays: equal 7-mm standoff, A-BEM-CONFORM. Against v3 (19a8fd2) the adult's D
-rose from +0.85 to +1.00 dB and the scaled controls' by 0.04-0.05 dB, while the templates, whose head
-surfaces already lay on their scalps, did not change; every Delta fell by 0.11-0.27 dB and the
-conclusions did not change, below. Dense OPM vs
+G3B results (`results/g3b/g3b_summary.json`, `G3B_report.md`; computed at 71de176 with all nine anatomies and
+the v4 arrays: equal 7-mm standoff, A-BEM-CONFORM; the six anatomies of the v4 pass, computed at e53bea8 and
+redrawn at 9512f1b, reproduce exactly, 97,048 values; the school-aged children have their own bootstrap
+stream; summaries, report and figures redrawn at 6ebac95 to mark an infeasible placement, every number
+unchanged). For the six, against v3 (19a8fd2) the adult's D rose from +0.85 to +1.00 dB and the scaled
+controls' by 0.04-0.05 dB, while the templates, whose head surfaces already lay on their scalps, did not
+change; every Delta fell by 0.11-0.27 dB and the conclusions did not change, below. Dense OPM vs
 Neuromag, intrinsic + brain noise, primary placement unless stated; dB of detectability;
 area-weighted medians without the medial wall, parcel-bootstrap 95 % intervals. "Template" alone
-means the 2-year template; the 18- and 12-month templates are named.)
+means the 2-year template; the 18- and 12-month templates are named.
 * Heads: occipitofrontal circumference 586 mm (adult), 525 (school-age size, x0.895), 495 (2-year
   size, x0.844) and 495 mm (template); usable cortex 1,878, 1,470, 1,290 and 1,062 cm^2. Refitted
   OPM arrays: dense 208, 174, 155 and 151 sites (23.1-25.9 per 100 cm^2 of covered scalp, which
@@ -758,7 +791,8 @@ means the 2-year template; the 18- and 12-month templates are named.)
   primary placement, which for the adult is 5.5 mm above G2's measured position; as many sites pass
   the site rules there as in G2, 98). Top contact raises the heads by 5.5,
   22, 22 and 28 mm; the median magnetometer-to-scalp gap is then 28.4, 34.1, 39.1 and 38.5 mm
-  (centred 29.8, 41.3, 46.9, 47.3 mm). Every placement (17 per anatomy with the counterfactual helmets) is feasible;
+  (centred 29.8, 41.3, 46.9, 47.3 mm). Every placement of these four (17 per anatomy with the counterfactual
+  helmets) is feasible;
   the counterfactual factors are 0.895, 0.844 and 0.904 (template: under the adult's pose it sits
   right of the helmet's midline, centred left/right temporal gaps 48.9/33.3 mm, and its right side
   stops the helmet from shrinking to 0.844). Lateral centring moves the heads by -1.5 (adult), -0.5,
@@ -796,9 +830,47 @@ means the 2-year template; the 18- and 12-month templates are named.)
   shallower cortex (42 % of the 2-year template's area at 10-20 mm depth vs 21 % of the adult's) may
   partly be an artefact of template averaging, which smooths sulci; the depth-reweighted differences
   are the more conservative statement.
+* School-aged children (individual MRIs; A, B, C at 7.8, 8.3 and 8.7 years): occipitofrontal
+  circumference 520, 486 and 535 mm (school-age size control 525 mm, 2-year size control 495 mm), but
+  usable cortex 1,852, 1,666 and 1,869 cm^2, close to the adult's 1,878 cm^2 (school-age size control
+  1,470 cm^2);
+  dense 155, 153 and 167 sites, matched 90, 85 and 91; top contact raises them by 17, 26.5 and 21 mm
+  (median gap 35.2, 38.4 and 32.6 mm; centred 40.2, 47.3 and 41.3 mm). D_child +1.34, +1.51 and +1.19
+  dB, Delta +0.30 [+0.11, +0.38], +0.41 [+0.28, +0.54] and +0.17 [-0.07, +0.34] dB (66 parcels each;
+  Delta > 0 in 71, 84 and 59 % of their area): at a similar head circumference children A and C gain
+  less than the school-age size control (+0.44 [+0.34, +0.56] dB; the intervals overlap or touch),
+  child B, with a smaller head, about as much. Against the gradiometers +0.18, +0.34 and +0.11, the magnetometers +0.33, +0.50 and
+  +0.25 dB; with the external projection +0.03, +0.26 and -0.19 dB; matched-site array +0.27, +0.08 and
+  +0.17 dB; 5-, 10- and 20-mm patches +0.20/+0.31/+0.50, +0.49/+0.57/+0.35 and +0.06/+0.06/+0.35 dB;
+  peak-channel SNR +0.64, +0.98 and +0.24, mean-power SNR +0.16, +0.23 and +0.17 dB. Their cortex is
+  shallower than the adult's (42, 47 and 35 % of their area at 10-20 mm vs 21 %; median depth 21.6, 20.0
+  and 23.4 vs 26.2 mm): reweighted to the adult's depth mix the pooled difference falls from +0.34, +0.52
+  and +0.19 to -0.04, +0.05 and -0.05 dB, and within depth strata Delta is near zero or negative down to
+  30 mm (-0.36 to +0.08 dB; intervals excluding 0 for child A at 20-30 mm, child B at 15-25 mm and child
+  C at 20-25 mm) and positive deeper (30-60 mm: +0.01 to +1.77 dB). Mechanism: with the background
+  fixed per unit area, their nearly adult-sized cortex keeps Neuromag's brain noise near the adult's
+  (magnetometers 194, 168 and 174 fT vs 202 fT; gradiometers 40, 34 and 36 vs 41 fT/cm) and raises the
+  closer dense OPM's (711, 751 and 617 fT vs 494 fT) along with its peak signal (293, 326 and 240 fT vs
+  208 fT); absolute detectability of a 10-nAm dipole: dense OPM -1.55, -1.41 and -2.11 dB (adult -1.60),
+  Neuromag combined -2.91, -2.70 and -3.26 dB (adult -2.67). What drives Delta: centred +0.76, +1.57 and
+  +1.00 dB; laterally centred, then top contact +0.29, +0.36 and +0.09; true 18-mm contact +0.31, +0.40
+  and +0.17; back +0.44, +0.94 and +0.87 dB; in the counterfactual helmet -0.74 [-0.86, -0.60], -0.23
+  [-0.49, -0.05] and +0.56 [+0.37, +0.78] dB (factors 0.897, 0.884 and 0.973, raised from the
+  head-circumference ratios 0.887, 0.829 and 0.913 until no magnetometer is within 18 mm of the scalp:
+  child C's helmet barely shrinks), about the laterally centred head -0.76 [-0.84, -0.68], -0.59
+  [-0.74, -0.42] and +0.04 [-0.20, +0.20] dB (factors 0.897, 0.864 and 0.943). At an equal channel count Delta would be +0.66, +0.78 and +0.43 dB. Top contact
+  ranks 4th, 6th and 3rd from the lowest of the 12 source-blind placements (child C: of the 11 feasible;
+  its x-5mm placement brings a magnetometer to 17.0 mm from the scalp, inside the 18-mm Dewar spacing,
+  and is marked infeasible) (D_child 1.25-1.50, 1.40-1.96 and 1.05-1.91
+  dB over the others; against the family medians the differences of the medians are 0.12, 0.17 and 0.05
+  dB smaller). Sensitivity (difference of the medians): OPM noise 7-30 fT/sqrt(Hz) -0.15 to +0.60, -0.03
+  to +0.77 and -0.10 to +0.32 dB (negative at 7 fT/sqrt(Hz)), background x0.5 / x2 +0.46 / +0.20, +0.67
+  / +0.34 and +0.25 / +0.11 dB, 1-layer BEM +0.35, +0.48 and +0.19 dB. At 0.5 nAm/mm^2, 10-mm patches
+  reach d >= 5 at 40 / 51, 43 / 53 and 36 / 50 % of the centres (Neuromag / dense OPM; adult 43 / 54 %).
 * Equal standoff (v4): every anatomy's head surface lies on its MRI scalp (A-BEM-CONFORM), so the
-  OPM arrays of all six heads sit at a median 6.99-7.01 mm above their MRI scalp (sites moved out by
-  the clearance rule: adult 26 of 208, scaled controls 18 and 17, templates 3-5). In v3 the adult's
+  OPM arrays of all nine heads sit at a median 6.99-7.01 mm above their MRI scalp (sites moved out by
+  the clearance rule: adult 26 of 208, scaled controls 18 and 17, templates 3-5, school-aged children
+  6, 3 and 4). In v3 the adult's
   outer skin lay about 1 mm outside its scalp, so its sensors sat about 0.8 mm farther out than the
   children's and its axes were tilted (sections 2.2, 3). The v3 sensitivity that moved the children's
   arrays outward by the adult's excess predicted Delta +0.47, +1.12, +0.77, +0.81 and +1.07 dB and a
@@ -852,7 +924,9 @@ means the 2-year template; the 18- and 12-month templates are named.)
   helmet's fit; with a helmet that fits as the adult's does, it reverses (about the laterally
   centred head -0.21 and -0.38 dB for the scaled controls; -0.30, -0.16 and -0.18 dB for the templates,
   whose intervals include 0).
-* Mechanism. Both systems' detectability rises in the smaller heads, by different routes:
+* Mechanism (templates and size controls; for the school-aged children, whose cortex is nearly
+  adult-sized, see their bullet above). Both systems' detectability rises in these smaller heads, by
+  different routes:
   vertex-wise from the adult, the dense OPM gains +1.10 and +1.67 dB in the two scaled controls,
   Neuromag combined +0.65 and +0.54 dB (gradiometers +0.45 and +0.10, magnetometers +0.69 and
   +0.64 dB). The on-scalp OPM sees more signal from a cortex closer in absolute terms (median peak
@@ -865,8 +939,9 @@ means the 2-year template; the 18- and 12-month templates are named.)
   intrinsic) more than their signal (magnetometer peak 70 -> 66, 54, 65, 63 and 67 fT). Absolute
   detectability of a 10-nAm dipole (median dB): dense OPM -1.60 (adult), -0.61, -0.20, +0.92
   (template), +1.07 (18 months) and +1.86 (12 months); Neuromag combined -2.67, -2.15, -2.27,
-  -1.19, -1.03 and -0.62. In the counterfactual helmet the SQUID gains at
-  least as much as the OPM: the counterfactual Delta depends on the comparator (gradiometers -0.37
+  -1.19, -1.03 and -0.62. In the counterfactual helmet about the laterally centred head the SQUID
+  gains at least as much as the OPM (also in children A and B; child C +0.04 [-0.20, +0.20] dB): the
+  counterfactual Delta depends on the comparator (gradiometers -0.37
   and -0.60 dB, magnetometers -0.16 and -0.28 dB for the scaled controls), which points to a
   SQUID-side component (signal against fixed intrinsic noise, largest for the gradiometers, whose
   brain noise is only about twice their intrinsic noise) rather than to the OPM's fixed standoff
@@ -878,21 +953,25 @@ means the 2-year template; the 18- and 12-month templates are named.)
   144 sites: adult subsampled +0.61 and +0.46, Delta +1.37 and +1.43 dB): the smaller site count of
   the head-adaptive array works against it, and the headline Delta includes that loss.
 * Extended sources: the 5- and 10-mm patches' D is within 0.15 dB of the focal D at the same centres
-  in every head; for the 20-mm patches it is 0.1-0.7 dB lower (adult +0.83 vs +1.05 dB) and Delta is
-  +0.44, +0.99, +0.72, +0.89 and +0.91 dB. At a fixed current density of 0.5 nAm/mm^2 (median
-  moments about 35, 140 and 570 nAm) the share of patch centres with d >= 5 is, Neuromag / dense
-  OPM: 5-mm patches 0-8 % / 7-32 %, 10-mm 31-77 % / 53-85 % (adult 43 / 54 %), 20-mm 86-100 % /
-  92-100 %; both are higher on the templates, whose cortex is shallower.
+  in every head; for the 20-mm patches it is 0.1-0.7 dB lower in the adult, the size controls, the
+  templates and child A (adult +0.83 vs +1.05 dB), 0.08 dB lower in child B and 0.23 dB higher in
+  child C, and Delta is +0.44, +0.99, +0.72, +0.89 and +0.91 dB (children A-C +0.50, +0.35 and
+  +0.35 dB). At a fixed current density of 0.5 nAm/mm^2 (median moments about 35, 140 and 570 nAm)
+  the share of patch centres with d >= 5 is, Neuromag / dense OPM over the nine heads: 5-mm patches
+  0-8 % / 6-32 %, 10-mm 31-77 % / 50-85 % (adult 43 / 54 %), 20-mm 85-100 % / 91-100 %; both are
+  higher on the templates, whose cortex is shallower.
 * Placements: the source-blind variants (+-5 mm, pitch +-10 deg, roll +-5 deg, yaw +-10 deg, back
   contact) give
   D_child 1.46-2.56 (school-age size), 1.69-3.04 (2-year size), 1.75-2.51 (template), 1.80-2.48
   (18 months) and 1.98-2.79 dB (12 months), adult 0.98-1.43 dB; top contact (the primary) ranks in
-  the middle of the family for the children (5th-7th of 12) but second-lowest for the adult, so
-  against each anatomy's family median the child-minus-adult difference of the medians is 0.14-0.20 dB
-  smaller (+0.33, +1.00, +0.67, +0.70 and +0.88 dB vs +0.51, +1.14, +0.85, +0.90 and +1.05 dB at top
-  contact). Among the placements, true 18-mm contact gives the lowest D for the
-  adult, the school-age size control and the three templates (0.87, 1.38, 1.70, 1.75 and 1.85 dB),
-  but not for the 2-year size control (2.03 dB; pitch +10 deg gives 1.69). Regions:
+  the middle of the family for the templates and size controls (5th-7th of 12; children A-C 4th, 6th
+  and 3rd, above) but second-lowest for the adult, so against each anatomy's family median the
+  child-minus-adult difference of the medians is 0.14-0.20 dB smaller (+0.33, +1.00, +0.67, +0.70 and
+  +0.88 dB vs +0.51, +1.14, +0.85, +0.90 and +1.05 dB at top contact; children A-C 0.05-0.17 dB).
+  Among the placements, true 18-mm contact gives the lowest D for the adult, the school-age size
+  control, the three templates and children A and B (0.87, 1.38, 1.70, 1.75, 1.85, 1.24 and 1.40 dB),
+  but not for the 2-year size control (2.03 dB; pitch +10 deg gives 1.69) or child C (1.08 dB; pitch
+  +10 deg gives 1.05). Regions:
   raising the head (centred -> top) lowers D in every lobe, most in the parietal and frontal
   lobes (template frontal +3.71 -> +2.02, parietal +3.02 -> +1.39 dB); back contact favours the
   SQUID at the occiput (template occipital +1.25 dB vs +2.08 at top) and disfavours it frontally
@@ -901,20 +980,23 @@ means the 2-year template; the 18- and 12-month templates are named.)
   a check on the medians, not the paired Delta estimator; vs combined): OPM noise 7-30 fT/sqrt(Hz)
   +0.42 to +0.52 (school-age size), +1.03 to +1.14 (2-year size), +0.66 to +0.85 dB (template);
   background variance x0.5 / x2 +0.53 / +0.48, +1.18 / +1.07, +0.89 / +0.78 dB (the variants scale
-  the adult too; D_child itself moves by at most 0.06 dB, template 1.86 / 1.79 vs 1.84 dB); 1-layer
+  the adult too; D_child itself moves by at most 0.06 dB, template 1.86 / 1.79 vs 1.84 dB; in the
+  school-aged children by up to 0.16 dB, child B 1.64 / 1.35 vs 1.52 dB); 1-layer
   BEM +0.51, +1.13, +0.83 dB. 18- and 12-month templates: OPM noise +0.66 to +0.94 and +0.82 to
   +1.05 dB, background x0.5 / x2 +0.89 / +0.89 and +1.08 / +0.97 dB, 1-layer BEM +0.84 and +1.06 dB.
-  At 30 fT/sqrt(Hz) the adult's D is -0.05 dB (Neuromag slightly ahead) and the children's +0.37, +0.97, +0.61, +0.61
-  and +0.77 dB.
+  At 30 fT/sqrt(Hz) the adult's D is -0.05 dB (Neuromag slightly ahead) and the children's +0.37, +0.97,
+  +0.61, +0.61 and +0.77 dB (children A-C +0.55, +0.72 and +0.27 dB).
 * Usefulness (d >= 5) at 100 nAm, share of usable cortical area, both / OPM only / SQUID only /
   neither: adult 0.66 / 0.02 / 0.00 / 0.32, school-age size 0.69 / 0.04 / 0.00 / 0.28, 2-year size
   0.69 / 0.05 / 0.00 / 0.26, template 0.75 / 0.05 / 0.00 / 0.20, 18 months 0.76 / 0.05 / 0.00 / 0.19,
-  12 months 0.79 / 0.05 / 0.00 / 0.16; at 50 nAm OPM only 0.07, 0.10, 0.14, 0.12, 0.12 and 0.13. Over the
-  reference moments (20-200 nAm) the SQUID alone is usable on at most 0.14 % of the area (2-year
-  template at 100 nAm); the cortex neither reaches is mostly deep and
-  medial.
-* Limits: one adult, three templates of one database and two scaled copies; no between-child
-  variability; the templates are averages with smooth cortices; no age-specific background physiology (only the bounded x0.5/
+  12 months 0.79 / 0.05 / 0.00 / 0.16, children A-C 0.65 / 0.04 / 0.01 / 0.30, 0.65 / 0.04 / 0.01 / 0.29
+  and 0.63 / 0.04 / 0.01 / 0.32; at 50 nAm OPM only 0.07, 0.10, 0.14, 0.12, 0.12, 0.13, 0.10, 0.10 and
+  0.09. Over the reference moments (20-200 nAm) the SQUID alone is usable on at most 0.14 % of the area
+  in the adult, the size controls and the templates (2-year template at 100 nAm) and on 0.75-1.18 % in
+  the school-aged children (at 100 nAm); the cortex neither reaches is mostly deep and medial.
+* Limits: one adult, three templates of one database, three school-aged children of one dataset (their
+  skull modelled, their fiducials transferred) and two scaled copies; variability between three children
+  is shown, not estimated; the templates are averages with smooth cortices; no age-specific background physiology (only the bounded x0.5/
   x2 sensitivity); conductivities held at adult values (the 1-layer BEM bounds this for MEG); the
   intervals contain no between-subject variability. Delta measures a change in relative
   performance under these matching assumptions, not a clinical benefit.
@@ -929,97 +1011,124 @@ means the 2-year template; the 18- and 12-month templates are named.)
   adult results exactly (checked by rerunning the adult through it). Thresholds are calibrated on
   each anatomy's own null data. Locations are stratified by the adult depth and orientation bands;
   a band the anatomy cannot fill gets fewer locations, reported as such.
-* Anatomies: the 2-year template (primary), the 18- and 12-month templates, and the two size-only
-  controls (scaled adults). Templates are averages and not a population; the comparison with the
-  adult mixes head size, anatomy and the fixed-helmet fit, which G3B separates for detectability.
+* Anatomies: the 2-year template (primary), the 18- and 12-month templates, the two size-only
+  controls (scaled adults) and the three school-aged children with individual MRIs (A, B and C:
+  7.8, 8.3 and 8.7 years; OpenNeuro ds005234, with the modelled skull A-BEM-CHILD and the
+  transferred fiducials A-G3-FID, section 10). Templates are averages and three children are not a
+  population; the comparison with the adult mixes head size, anatomy and the fixed-helmet fit,
+  which G3B separates for detectability.
 
 Pediatric G4 results (`results/g4/G4_pediatric_report.md`, `g4_pediatric_comparison.json`; detection in
-every anatomy simulated at ed852b2 with the v4 arrays, localization at e53bea8, the comparison at
-9512f1b; 18 locations per depth band in every anatomy; p-values uncorrected, over 24 paired detection
-comparisons (3 comparators x 2 detectors x 4 bands) and 20 localization comparisons per OPM array and
-anatomy). The children's Neuromag is at the primary G3B placement (top contact), the adult's at its
-measured position (the G4 adult study as frozen); top contact would raise the adult's head by only
-5.5 mm, against the children's 22-33.5 mm. Order below: school-age size, 2-year size, 2-year
-template, 18 months, 12 months. The templates' arrays did not change in v4, so their outcomes are
-essentially those of v3 (every location count, p-value and S50 identical; the background scale,
-calibrated on the adult, changed slightly, which moves some held-out rates by up to 0.05 per minute); the scaled controls' arrays did (174 and 155 dense sites), and with their
-channel counts, so did their random streams.
+the adult and the five earlier children simulated at ed852b2 with the v4 arrays, their localization
+at e53bea8, both studies of children A-C at 71de176, the comparison at 011cec1 (adding the children
+left every earlier anatomy's entry unchanged); 18 locations per depth band in every anatomy; p-values
+uncorrected, over 24 paired detection comparisons (3 comparators x 2 detectors x 4 bands) and 20
+localization comparisons per OPM array and anatomy). The children's Neuromag is at the primary G3B
+placement (top contact), the adult's at its measured position (the G4 adult study as frozen); top
+contact would raise the adult's head by only 5.5 mm, against the children's 17-33.5 mm. Order below:
+school-age size, 2-year size, 2-year template, 18 months, 12 months, then children A, B and C. The
+templates' arrays did not change in v4, so their outcomes are essentially those of v3 (every
+location count, p-value and S50 identical; the background scale, calibrated on the adult, changed
+slightly, which moves some held-out rates by up to 0.05 per minute); the scaled controls' arrays did
+(174 and 155 dense sites), and with their channel counts, so did their random streams.
 * Held-out null: 0.4-1.55 false events per minute at the 1-per-minute thresholds (adult 0.65-1.3):
   thresholds calibrated on 20 min and checked on 20 min differ by up to this much, so operating
   points are approximate, and they are lopsided between arrays in either direction (dense OPM vs
-  Neuromag combined: 1.05 vs 1.4, 1.2 vs 0.4, 1.3 vs 0.7, 1.1 vs 0.9, 0.85 vs 1.2 per minute).
-  At a matched held-out rate of 1 per minute the superficial advantage remains (sensitivity for
-  40-nAm spikes at 10-30 mm, dense OPM vs Neuromag combined: 0.40 vs 0.20, 0.31 vs 0.14, 0.43 vs
-  0.26, 0.50 vs 0.37, 0.44 vs 0.28; adult 0.36 vs 0.20). With every detector's threshold set on the
-  held-out null to 1 false event per minute (`scripts/study_g4_matched_rate.py`,
-  `results/g4/G4_matched_rate_report.md`; in-sample for the held-out data) the paired 10-20 mm
-  result is unchanged in every anatomy (13-16 locations favour the dense OPM; strength ratio 1.63,
-  1.56, 1.40, 1.33 and 1.51; p <= 0.003). Of the deeper differences below, the 12-month template's
-  30-45 mm (9/1, p = 0.018) remains, and the adult's 20-30 and 45-70 mm (section 9); the 2-year size
-  control's 30-45 and 45-70 mm (8/3, p = 0.094; 7/2, p = 0.12) and the 18-month template's 45-70 mm
-  (7/1, p = 0.15) do not. For the matched-site array, 10-20 mm: 10/3, 12/0, 9/7, 11/1, 11/4 (p =
-  0.064, 0.0005, 0.66, 0.004, 0.03).
+  Neuromag combined: 1.05 vs 1.4, 1.2 vs 0.4, 1.3 vs 0.7, 1.1 vs 0.9, 0.85 vs 1.2, 0.75 vs 0.9, 0.7
+  vs 0.8 and 0.75 vs 1.2 per minute). At a matched held-out rate of 1 per minute the superficial
+  advantage remains (sensitivity for 40-nAm spikes at 10-30 mm, dense OPM vs Neuromag combined: 0.40
+  vs 0.20, 0.31 vs 0.14, 0.43 vs 0.26, 0.50 vs 0.37, 0.44 vs 0.28, 0.23 vs 0.12, 0.17 vs 0.12 and
+  0.31 vs 0.16; adult 0.36 vs 0.20). With every detector's threshold set on the held-out null to 1
+  false event per minute (`scripts/study_g4_matched_rate.py`, `results/g4/G4_matched_rate_report.md`;
+  in-sample for the held-out data) the paired 10-20 mm result is unchanged in every anatomy (the
+  five earlier children: 13-16 locations favour the dense OPM, strength ratio 1.63, 1.56, 1.40, 1.33
+  and 1.51, p <= 0.003; children A-C: 12/4, 13/3 and 14/2, ratio 1.29, 1.21 and 1.47, p = 0.015,
+  0.0056 and 0.0031). Of the deeper differences below, the 12-month template's 30-45 mm (9/1, p =
+  0.018) remains, and the adult's 20-30 and 45-70 mm (section 9); the 2-year size control's 30-45
+  and 45-70 mm (8/3, p = 0.094; 7/2, p = 0.12) and the 18-month template's 45-70 mm (7/1, p = 0.15)
+  do not; child C's 20-30 mm (10/2, p = 0.063, below) becomes 10/1 (p = 0.032). For the matched-site
+  array, 10-20 mm: 10/3, 12/0, 9/7, 11/1, 11/4, 8/6, 10/5 and 8/4 (p = 0.064, 0.0005, 0.66, 0.004,
+  0.03, 1.0, 0.59 and 0.42).
 * Strength for 50 % detection, practical detector, Neuromag combined vs dense OPM, 10-20 mm: adult
-  47 vs 34, then 53 vs 33, 61 vs 37, 43 vs 30, 36 vs 27 and 43 vs 29 nAm; 45-70 mm adult 302 vs 254,
-  then 299 vs 275, 273 vs 247, 240 vs 229, not reached vs 282 and 254 vs 248 nAm. The templates'
-  point estimates are lower than the adult's at 10-30 mm, but the intervals overlap (e.g. Neuromag
-  at 20-30 mm 71 [61-95], 62 [53-76] and 71 [57-98] vs 86 [66-116] nAm), and the sampled locations'
-  median depths differ between anatomies by a few mm (10-20 mm: 13.6-17.8 mm, adult 16.9; 45-70 mm:
-  48.0-54.3 mm, adult 51.7): no difference between the anatomies is claimed.
+  47 vs 34, then 53 vs 33, 61 vs 37, 43 vs 30, 36 vs 27, 43 vs 29, 61 vs 48, 65 vs 55 and 52 vs 36
+  nAm; 45-70 mm adult 302 vs 254, then 299 vs 275, 273 vs 247, 240 vs 229, not reached vs 282 and
+  254 vs 248 nAm; in children A-C Neuromag's is not reached and the dense OPM's only in child C (320
+  nAm). The templates' point estimates are lower than the adult's at 10-30 mm and children A-C's
+  higher at 10-45 mm, but the intervals overlap (e.g. Neuromag at 20-30 mm 71 [61-95], 62 [53-76]
+  and 71 [57-98] nAm in the templates, 111 [78-160], 132 [107-181] and 95 [73-112] nAm in children
+  A-C, vs 86 [66-116] nAm), and the sampled locations' median depths differ between anatomies by a
+  few mm (10-20 mm: 13.6-17.8 mm, adult 16.9; 45-70 mm: 48.0-54.3 mm, adult 51.7): no difference
+  between the anatomies is claimed.
 * Paired, dense OPM vs Neuromag combined (locations favouring OPM / Neuromag; paired strength ratio
   Neuromag / OPM): at 10-20 mm every anatomy favours the OPM: adult 11/1 (1.36 [1.10-1.58]), then
   13/0 (1.60 [1.31-1.87]), 17/0 (1.65 [1.41-1.87]), 14/2 (1.44 [1.20-1.65]), 16/0 (1.33
-  [1.16-1.62]) and 14/1 (1.46 [1.21-1.84]); p <= 0.004 in each. Deeper, a location-level difference
-  appears for the adult (20-30 mm 9/1, p = 0.014; 45-70 mm 9/0, p = 0.004; section 9), the 2-year
-  size control (30-45 mm 8/2, p = 0.049, 1.16 [1.01-1.35]; 45-70 mm 8/1, p = 0.031, 1.11, interval
-  open at both ends), the 12-month template at 30-45 mm (8/1, p = 0.031, 1.10 [1.03-1.23]) and the
-  18-month template at 45-70 mm (7/1, p = 0.047; Neuromag's S50 is not reached: ratio > 1.13,
-  interval open at both ends); none survives a correction over 24 comparisons (threshold 0.0021;
-  smallest p 0.004 in the adult, 0.031 in the children), and elsewhere p >= 0.15 (ratios
-  1.01-1.12). With the oracle every anatomy favours the OPM at 10-20 mm (12/1 to 17/0), five of the
-  six at 20-30 mm and three in a deeper band (the 2-year size control at 30-45 mm, 11/0, p = 0.001;
-  the 2-year template at 45-70 mm, 11/0, p = 0.001; the 18-month template at 30-45 and 45-70 mm, 10/3
-  and 12/2, p = 0.04 and 0.004; the 12-month template 9/1, 8/2 and 4/5 deeper than 20 mm). The
-  matched-site array favours the OPM at 10-20 mm with the practical detector in the 2-year size
-  control (14/0, p = 0.0001) and the 18-month template (12/0, p = 0.0005), not established in the
-  12-month template (11/4, p = 0.051), the school-age control (8/3, p = 0.25) or the 2-year template
-  (10/5, p = 0.15); unlike v3 (adult 1/9 and school-age control 0/7, p = 0.016), no anatomy has a
-  matched-site deficit in its deepest band (adult 3/6, school-age control 4/5).
-* So the detectability gains of G3B (Delta +0.44 to +1.07 dB) are not resolved by the practical
-  detector with 18 locations per band beyond the superficial band, whose advantage is present in the
-  adult and every smaller head at a similar size (strength ratio 1.36 in the adult, 1.33-1.65 in the
-  children; overlapping intervals); they appear in the oracle's 20-30 mm band and partly deeper.
+  [1.16-1.62]) and 14/1 (1.46 [1.21-1.84]), p <= 0.004 in each; children A-C 11/4 (1.27
+  [0.93-1.63], p = 0.022), 12/3 (1.18 [1.02-1.51], p = 0.0085) and 14/2 (1.43 [1.06-1.62], p =
+  0.0037), none of the three surviving the correction over 24 comparisons (threshold 0.0021) that
+  the five earlier children's results survive. Deeper, a location-level difference appears for the
+  adult (20-30 mm 9/1, p = 0.014; 45-70 mm 9/0, p = 0.004; section 9), the 2-year size control
+  (30-45 mm 8/2, p = 0.049, 1.16 [1.01-1.35]; 45-70 mm 8/1, p = 0.031, 1.11, interval open at both
+  ends), the 12-month template at 30-45 mm (8/1, p = 0.031, 1.10 [1.03-1.23]) and the 18-month
+  template at 45-70 mm (7/1, p = 0.047; Neuromag's S50 is not reached: ratio > 1.13, interval open
+  at both ends); none survives a correction over 24 comparisons (threshold 0.0021; smallest p 0.004
+  in the adult, 0.031 in the children), and elsewhere p >= 0.148 in the five earlier children
+  (ratios 1.01-1.12) and p >= 0.0625 in children A-C (ratios 0.97-1.15; the smallest p child A's
+  45-70 mm, 5/0, p = 0.0625, and child C's 20-30 mm, 10/2, p = 0.063). With the oracle every anatomy favours the
+  OPM at 10-20 mm (11 to 17 locations favouring the OPM, at most 3 Neuromag), five of the nine at
+  20-30 mm (none of children A-C: 9/3, 4/5 and 6/2) and four in a deeper band (the 2-year size
+  control at 30-45 mm, 11/0, p = 0.001; the 2-year template at 45-70 mm, 11/0, p = 0.001; the
+  18-month template at 30-45 and 45-70 mm, 10/3 and 12/2, p = 0.04 and 0.004; child B at 45-70 mm,
+  8/0, p = 0.008; the 12-month template 9/1, 8/2 and 4/5 deeper than 20 mm). The matched-site array
+  favours the OPM at 10-20 mm with the practical detector in the 2-year size control (14/0, p =
+  0.0001) and the 18-month template (12/0, p = 0.0005), not established in the 12-month template
+  (11/4, p = 0.051), the school-age control (8/3, p = 0.25), the 2-year template (10/5, p = 0.15) or
+  children A-C (8/6, 11/5 and 8/4; p = 1.0, 0.27 and 0.54); unlike v3 (adult 1/9 and school-age
+  control 0/7, p = 0.016), no anatomy has a matched-site deficit in its deepest band (adult 3/6,
+  school-age control 4/5, children A-C 2/0, 3/2 and 4/3).
+* So the detectability gains of G3B (Delta +0.44 to +1.07 dB in the templates and size controls,
+  +0.17 to +0.41 dB in children A-C) are not resolved by the practical detector with 18 locations
+  per band beyond the superficial band, whose advantage is present in the adult and every smaller
+  head at a similar size (strength ratio 1.36 in the adult, 1.33-1.65 in the five earlier children
+  and 1.18-1.43 in children A-C, where it is less certain; overlapping intervals); they appear in
+  the oracle's 20-30 mm band (not in children A-C) and partly deeper.
 * Localization (24 locations; Neuromag, matched, dense): ECD errors of detected events are similar
-  in every anatomy (320-nAm focal: 3.7-7.6 mm). dSPM, all events, 320-nAm focal: the dense array is
-  paired-closer than Neuromag in the school-age control (-7.0 mm, p = 0.0002, surviving the
-  corrections below), the 2-year size control (-3.6 mm, p = 0.02) and the 2-year and 18-month
-  templates (-4.7 and -5.3 mm; p = 0.035 and 0.0033), not in the 12-month template (0.0 mm,
-  p = 0.38) or the adult (0.0 mm); 320-nAm patches: school-age control -1.8 mm (p = 0.0049), 2-year
-  template -1.2 mm (p = 0.007), 12 months -2.0 mm (p = 0.0061), adult -5.6 mm (p = 0.054). With MNE's own dSPM the dense array's 320-nAm
-  focal differences are -5.0, -4.6, -1.8, 0.0 and -0.3 mm (p = 0.064, 0.054, 0.069, 0.030 and
-  0.055; at 18 months 11 of the 14 untied locations favour the OPM): the same direction, smaller in
-  the templates. ECD, 80-nAm sources, 18 months: -3.0 mm (focal, p = 0.003) and -4.3 mm (patches,
-  p = 0.002). Detected and localized within 10 mm (dSPM), 320-nAm focal spikes, Neuromag vs dense:
-  adult 0.21 vs 0.33; children 0.21 vs 0.50, 0.12 vs 0.21, 0.29 vs 0.54, 0.29 vs 0.58, 0.42 vs
-  0.58. Within an anatomy and OPM array (20 localization comparisons: the study's and MNE's dSPM
-  errors, ECD errors and joint detection-and-localization success with either estimator, for focal
-  and patch sources at 80 and 320 nAm; the comparison file holds the 12 error comparisons, the
-  localization summaries all 20) eight survive a Bonferroni correction (p < 0.0025), all favouring
-  an OPM array: the matched array's dSPM of 80-nAm patches at 12 months (-33 mm, p = 0.0002; MNE's
-  dSPM -27 mm, p = 0.0021; these weak patches are mostly not detected, so this compares
-  noise-dominated estimates), the dense array's dSPM of 320-nAm focal events in the school-age
-  control (-7.0 mm, p = 0.0002), MNE's dSPM of 80-nAm focal events at 12 months (matched -18 mm,
-  p = 0.0004; dense -12 mm, p = 0.0017) and of 80-nAm patches at 18 months (matched -17 mm,
-  p = 0.0017), the matched dSPM of 320-nAm focal events at 18 months (-4.8 mm, p = 0.0019) and the
-  dense ECD of 80-nAm patches at 18 months (-4.3 mm, p = 0.0020); across the five children and both
-  arrays (200 comparisons, p < 0.00025) the first two. None survives in the 2-year template, the
-  2-year size control or the adult, and which comparisons survive varies between runs (v3 had four
-  survivors under 16 comparisons, two of them among these; v2 seven). The direction is the more
-  robust observation: over all six anatomies 52 of the 240 localization comparisons have p < 0.05
-  (uncorrected; about 12 would be expected by chance if they were independent, which they are not),
-  51 of them in favour of an OPM array; 25 of the 52 concern weak 80-nAm sources, mostly undetected,
-  18 are the study's dSPM errors over all events and 20 MNE's (without MNE's dSPM, as in v3: 32 of
-  192, 31 favouring an OPM array).
+  in every anatomy (320-nAm focal: 3.7-7.6 mm; children A-C 4.4-6.7 mm). dSPM, all events, 320-nAm
+  focal: the dense array is paired-closer than Neuromag in the school-age control (-7.0 mm, p =
+  0.0002, surviving the within-anatomy correction below), the 2-year size control (-3.6 mm, p =
+  0.02) and the 2-year and 18-month templates (-4.7 and -5.3 mm; p = 0.035 and 0.0033), not in the
+  12-month template (0.0 mm, p = 0.38) or the adult (0.0 mm); in children A-C by -4.7, -2.9 and
+  -3.0 mm (p = 0.18, 0.071 and 0.25); 320-nAm patches: school-age control -1.8 mm (p = 0.0049),
+  2-year template -1.2 mm (p = 0.007), 12 months -2.0 mm (p = 0.0061), adult -5.6 mm (p = 0.054),
+  children A-C -6.6, -0.1 and -4.6 mm (p = 0.22, 0.52 and 0.053). With MNE's own dSPM the dense
+  array's 320-nAm focal differences are -5.0, -4.6, -1.8, 0.0 and -0.3 mm (p = 0.064, 0.054, 0.069,
+  0.030 and 0.055; at 18 months 11 of the 14 untied locations favour the OPM): the same direction,
+  smaller in the templates; in children A-C -5.5, -5.5 and -4.9 mm (p = 0.020, 0.009 and 0.012). The
+  matched array in child A: dSPM -7.9 mm for 320-nAm and -10.3 mm for 80-nAm focal events (p =
+  0.0046 and 0.0025). ECD, 80-nAm sources, 18 months: -3.0 mm (focal, p = 0.003) and -4.3 mm
+  (patches, p = 0.002). Detected and localized within 10 mm (dSPM), 320-nAm focal spikes, Neuromag
+  vs dense: adult 0.21 vs 0.33; children 0.21 vs 0.50, 0.12 vs 0.21, 0.29 vs 0.54, 0.29 vs 0.58,
+  0.42 vs 0.58, 0.21 vs 0.38, 0.08 vs 0.33 and 0.33 vs 0.33. Within an anatomy and OPM array (20
+  localization comparisons: the study's and MNE's dSPM errors, ECD errors and joint
+  detection-and-localization success with either estimator, for focal and patch sources at 80 and
+  320 nAm; the comparison file holds the 12 error comparisons, the localization summaries all 20)
+  eight survive a Bonferroni correction (p < 0.0025), all favouring an OPM array: the matched
+  array's dSPM of 80-nAm patches at 12 months (-33 mm, p = 0.0002; MNE's dSPM -27 mm, p = 0.0021;
+  these weak patches are mostly not detected, so this compares noise-dominated estimates), the dense
+  array's dSPM of 320-nAm focal events in the school-age control (-7.0 mm, p = 0.0002), MNE's dSPM
+  of 80-nAm focal events at 12 months (matched -18 mm, p = 0.0004; dense -12 mm, p = 0.0017) and of
+  80-nAm patches at 18 months (matched -17 mm, p = 0.0017), the matched dSPM of 320-nAm focal events
+  at 18 months (-4.8 mm, p = 0.0019) and the dense ECD of 80-nAm patches at 18 months (-4.3 mm, p =
+  0.0020). None survives in the 2-year template, the 2-year size control, children A-C (the
+  smallest p there, 0.00252 for child A's matched dSPM of 80-nAm focal events, misses the threshold)
+  or the adult; across the eight children and both arrays (320 comparisons, p < 0.00016) none (over
+  the five earlier children's 200, p < 0.00025, the first two survived), and which comparisons
+  survive varies between runs (v3 had four survivors under 16 comparisons, two of them among these;
+  v2 seven). The direction is the more robust observation: over all nine anatomies 65 of the 360
+  localization comparisons have p < 0.05 (uncorrected; about 18 would be expected by chance if they
+  were independent, which they are not), 64 of them in favour of an OPM array (children A-C: 13 of
+  their 120, all favouring an OPM array); 28 of the 65 concern weak 80-nAm sources, mostly undetected, 21
+  are the study's dSPM errors over all events and 27 MNE's (without MNE's dSPM, as in v3: 38 of 288,
+  37 favouring an OPM array).
 * The pediatric epilepsy examples use the same framework as the adult; detection and
   reconstruction claims rest on separate results. Simulated IED-source recovery does not
   identify an epileptogenic zone or establish surgical benefit.

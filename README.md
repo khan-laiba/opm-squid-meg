@@ -18,8 +18,8 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G1B Hunold et al. 2016 depth-orientation spike SNR (MEG part) | ADAPT (+ NEW OPM column) | done, internally reviewed |
 | G1C Goldenholz et al. 2009 cortical SNR maps (MEG part) | ADAPT (+ NEW OPM extension) | done, internally reviewed |
 | G2 realistic adult OPM vs Neuromag | NEW | done, internally reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2`, `adult-baseline-v3` and `adult-baseline-v4` (equal OPM standoff on every head) |
-| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`, recomputed with the v3 arrays (`adult-baseline-v3`) and with every head surface on its MRI scalp (`adult-baseline-v4`); the 2-year-template pass internally reviewed (approve with notes; fixes re-verified); the 18- and 12-month templates added on 2026-10-01 |
-| G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates and both size controls); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts internally reviewed |
+| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates, three school-aged children of OpenNeuro ds005234 with a modelled skull, and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`, recomputed with the v3 arrays (`adult-baseline-v3`) and with every head surface on its MRI scalp (`adult-baseline-v4`); the 2-year-template pass internally reviewed (approve with notes; fixes re-verified); the 18- and 12-month templates added on 2026-10-01, the school-aged children on 2026-10-03 (v4 only) |
+| G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates, both size controls and three school-aged children); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts internally reviewed |
 | G5 software, reproduction, report | - | 148 unit tests pass with the v4 results (a clean clone of db3f0dc, data through `OPMSQUID_DATA`, empty cache: 147 pass, 1 skipped without the stored lead fields); `scripts/run_all.sh` (resumable: `RESUME=1`); result CSVs carry a status line; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
 
 "Internally reviewed" means separate review passes by reviewer agents, with fixes re-verified
@@ -98,9 +98,10 @@ caveats in `docs/methods.md` and `results/g2/G2_report.md`:
   with the children), which leaves 208 dense and 98 matched sites (1.14x).
 
 Pediatric findings (G3B, NEW), conditional on one adult head, three average infant templates of
-one database (24, 18 and 12 months; O'Reilly et al. 2021) and two scaled copies of the adult (no
-school-aged native anatomy was available, although the goal asked for one first); the
-same Neuromag helmet, sensors and noise for every head; OPM arrays refitted to each head with the
+one database (24, 18 and 12 months; O'Reilly et al. 2021), three individual school-aged children of
+one dataset (7.8-8.7 years; OpenNeuro ds005234, Fadeev et al. 2024; their skull modelled because the
+dataset's segmentation failed, their fiducials transferred from the adult) and two scaled copies of
+the adult; the same Neuromag helmet, sensors and noise for every head; OPM arrays refitted to each head with the
 adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report.md`:
 - With the child raised to 20-mm contact with the top of the fixed helmet, the dense OPM array's
   known-topography detectability relative to Neuromag combined (D) rises from +1.00 dB in the adult
@@ -114,56 +115,80 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   Delta was 0.11-0.27 dB larger). Against the gradiometers or magnetometers alone, after the
   external-field projection (of all 306 channels jointly), for the matched-site OPM array and for
   extended sources (5-, 10- and 20-mm patches) the sign is the same.
-- The gain comes from the fixed helmet's fit: left at the adult's ear-line position Delta is
-  +1.14 to +2.50 dB; laterally centred or at true 18-mm contact it stays +0.44 to +1.09 dB; in a
-  counterfactual helmet scaled with the head, centred laterally, it is -0.21, -0.38, -0.30, -0.16
-  and -0.18 dB (without the lateral centring the off-centre 24- and 18-month templates kept +0.24
-  and +0.18 dB). With the background fixed per unit cortical area, both systems' detectability rises
-  in the smaller heads and the on-scalp OPM's rises more (vertex-wise +1.10 and +1.67 dB vs Neuromag
-  +0.65 and +0.54 dB in the scaled controls); with a helmet that fits, the SQUID gains at least as
-  much. The children's arrays also have fewer OPM sites (174, 155, 151, 157, 144 vs 208); at an
-  equal site count Delta would be larger.
+- In the templates and size controls the gain comes from the fixed helmet's fit: left at the adult's
+  ear-line position Delta is +1.14 to +2.50 dB; laterally centred or at true 18-mm contact it stays
+  +0.44 to +1.09 dB; in a counterfactual helmet scaled with the head, centred laterally, it is -0.21,
+  -0.38, -0.30, -0.16 and -0.18 dB (without the lateral centring the off-centre 24- and 18-month
+  templates kept +0.24 and +0.18 dB). With the background fixed per unit cortical area, both systems'
+  detectability rises in these smaller heads and the on-scalp OPM's rises more (vertex-wise +1.10 and
+  +1.67 dB vs Neuromag +0.65 and +0.54 dB in the scaled controls); with a helmet that fits (scaled
+  with the head, laterally centred), the SQUID gains at least as much. The children's arrays also
+  have fewer OPM sites (174, 155, 151, 157 and 144; school-aged children 155, 153 and 167; adult
+  208); at an equal site count Delta would be larger.
 - The child-minus-adult difference of the median D stays positive for OPM noise 7-30 fT/sqrt(Hz),
-  background variance x0.5 or x2 and a 1-layer head model; at 30 fT/sqrt(Hz) the adult's D is -0.05 dB (Neuromag slightly ahead) and
-  the templates' +0.61, +0.61 and +0.77 dB. In the scaled controls the gain is large near the
+  background variance x0.5 or x2 and a 1-layer head model (for the school-aged children except at 7
+  fT/sqrt(Hz), -0.15 to -0.03 dB); at 30 fT/sqrt(Hz) the adult's D is -0.05 dB (Neuromag slightly
+  ahead), the templates' +0.61, +0.61 and +0.77 dB and the school-aged children's +0.55, +0.72 and
+  +0.27 dB. In the scaled controls the gain is large near the
   surface (vertex-wise +2.40 dB at 10-15 mm for the 2-year size) and smallest at 40-60 mm. In the
   templates the within-stratum gain is smallest at 20-50 mm, larger near the surface and deeper (most
   deep in the 24- and 18-month templates, at 10-15 mm in the 12-month one) and larger for radial
   sources, but much of their pooled gain reflects their shallower cortex (reweighted to the adult's depth mix, +0.32, +0.53 and +0.29
   instead of +0.85, +0.90 and +1.05 dB at target level); it is also regionally asymmetric, with the
   templates off-centre in the helmet. Top contact is the adult's second-lowest of 12 source-blind
-  placements (mid-family for the children): against each head's family median the child-minus-adult
-  differences of the medians are 0.14-0.20 dB smaller.
+  placements (mid-family for the templates and size controls; 4th, 6th and 3rd from the lowest for
+  the school-aged children): against each head's family median the child-minus-adult differences of
+  the medians are 0.14-0.20 dB smaller (school-aged children 0.05-0.17 dB).
+- Native school-aged heads gain less than the infant templates and, at a similar head circumference,
+  less than the size-only control: Delta +0.30 [+0.11, +0.38], +0.41 [+0.28, +0.54] and +0.17 [-0.07,
+  +0.34] dB for children A, B and C (head circumference 520, 486 and 535 mm; the school-age size
+  control, 525 mm, +0.44 [+0.34, +0.56] dB; child B's smaller head gains about as much), after the
+  external-field projection +0.03, +0.26 and -0.19 dB. Their cortex is nearly adult-sized
+  (1,666-1,869 cm^2 of usable cortex, adult 1,878, school-age size control 1,470), so with the
+  background fixed per unit area Neuromag's brain noise stays near the adult's while the closer OPM
+  sees more of it; reweighted to the adult's depth mix their gain is -0.05 to +0.05 dB, and within
+  depth strata it is near zero or negative down to 30 mm and positive only deeper. A scaled adult
+  therefore overstates the gain of school-aged heads of its size; the 2-year size control and the
+  infant templates, whose cortices are smaller, may too. In a helmet scaled with the head, about the
+  laterally centred head, Delta is -0.76, -0.59 and +0.04 dB (centred -0.74, -0.23 and +0.56 dB;
+  child C's helmet barely shrinks).
 - At 100 nAm (detectability >= 5, an operational threshold) both systems reach 66 % of the
-  adult's and 75-79 % of the templates' usable cortex, the OPM alone a further 2 % and 5 %, and the
-  SQUID alone at most 0.14 %. At a fixed current density of 0.5 nAm/mm^2, 10-mm patches (about
+  adult's, 63-65 % of the school-aged children's and 75-79 % of the templates' usable cortex, the OPM
+  alone a further 2 %, 4 % and 5 %, and the SQUID alone at most 0.14 % (0.75-1.18 % in the
+  school-aged children). At a fixed current density of 0.5 nAm/mm^2, 10-mm patches (about
   140 nAm) reach it at 43 % (Neuromag) and 54 % (dense OPM) of the adult's patch centres and at
   66-77 % and 76-85 % on the templates.
-- Simulated spikes (same detectors and seeds as the adult): the full OPM array's superficial
-  detection advantage is present in the adult and every smaller head (strength for 50 % detection
-  at 10-20 mm, Neuromag combined / dense OPM: adult 47/34; children 53/33, 61/37, 43/30, 36/27 and
-  43/29 nAm; paired strength ratio 1.33-1.65 against the adult's 1.36; 13-17 of 18 locations favour
-  the OPM in each); deeper, location-level differences appear for the adult (20-30 and 45-70 mm),
-  the 2-year size control (30-70 mm), the 12-month template (30-45 mm) and the 18-month template
-  (45-70 mm), uncorrected and none surviving a correction, so G3B's deeper gain is mostly not
-  resolved at this sample size. The frozen thresholds give unequal held-out false-event rates
-  (0.4-1.55 per minute); with every detector set to 1 per minute on the held-out null
-  (`results/g4/G4_matched_rate_report.md`) the superficial result is unchanged (ratios 1.33-1.63)
-  and of the children's deeper ones only the 12-month template's 30-45 mm remains (p = 0.018,
-  uncorrected). Localization: dipole errors similar; dSPM of strong focal spikes 3.6-7.0 mm better
-  with the dense OPM in both size controls and the 2-year and 18-month templates (p = 0.0002 to
-  0.035, uncorrected; MNE's own dSPM agrees in direction, -5.0 to 0.0 mm), not in the 12-month
-  template or the adult (0 mm). Eight pediatric localization comparisons survive a Bonferroni
-  correction within their anatomy and array (20 each) and two across all children (the school-age
+- Simulated spikes (same detectors and seeds as the adult): at 10-20 mm more locations favour the
+  full OPM array in the adult and every smaller head (strength for 50 % detection
+  at 10-20 mm, Neuromag combined / dense OPM: adult 47/34; templates and size controls 53/33, 61/37,
+  43/30, 36/27 and 43/29 nAm, paired strength ratio 1.33-1.65 against the adult's 1.36, 13-17 of 18
+  locations favour the OPM in each; the three school-aged children 61/48, 65/55 and 52/36 nAm, ratio
+  1.18-1.43, 11-14 locations, p = 0.004-0.022, none of the three surviving the correction over the 24
+  detection comparisons); deeper, location-level differences appear for the adult (20-30 and 45-70
+  mm), the 2-year size control (30-70 mm), the 12-month template (30-45 mm) and the 18-month template
+  (45-70 mm), not for the school-aged children, uncorrected and none surviving a correction, so G3B's
+  deeper gain is mostly not resolved at this sample size. The frozen thresholds give unequal held-out
+  false-event rates (0.4-1.55 per minute); with every detector set to 1 per minute on the held-out
+  null (`results/g4/G4_matched_rate_report.md`) the superficial result is unchanged (ratios
+  1.21-1.63), of the children's deeper ones the 12-month template's 30-45 mm remains (p = 0.018,
+  uncorrected) and one school-aged child's 20-30 mm appears (p = 0.032, uncorrected). Localization:
+  dipole errors similar; dSPM of strong focal spikes 3.6-7.0 mm better with the dense OPM in both size
+  controls and the 2-year and 18-month templates (p = 0.0002 to 0.035, uncorrected; MNE's own dSPM
+  agrees in direction, -5.0 to 0.0 mm), not in the 12-month template or the adult (0 mm), and 2.9-4.7
+  mm in the school-aged children without a clear difference (p = 0.071-0.25; MNE's dSPM -4.9 to -5.5
+  mm, p = 0.009-0.020). Eight pediatric localization comparisons survive a Bonferroni correction
+  within their anatomy and array (20 each), none of them in the school-aged children, and none across
+  all eight children (320 comparisons; across the five earlier children two did: the school-age
   control's dense dSPM of strong focal spikes and the 12-month matched array's dSPM of weak, mostly
   undetected 80-nAm patches); which ones survive varies between runs, the direction does not: of the
-  240 localization comparisons in the six anatomies, 52 have p < 0.05 (uncorrected; about 12 would
-  be expected by chance if they were independent, which they are not), 51 of them favouring an OPM
-  array; about half concern weak, mostly undetected 80-nAm sources.
+  360 localization comparisons in the nine anatomies, 65 have p < 0.05 (uncorrected; about 18 would
+  be expected by chance if they were independent, which they are not), 64 of them favouring an OPM
+  array; 28 concern weak, mostly undetected 80-nAm sources.
 
-Scope: G3B is a geometry and helmet-fit experiment on average templates and scaled copies of one
-adult, and the G4 examples are bounded recovery of simulated sources. Neither shows a diagnostic
-benefit, identifies an epileptogenic zone or establishes a surgical benefit.
+Scope: G3B is a geometry and helmet-fit experiment on average templates, three individual
+school-aged children and scaled copies of one adult, and the G4 examples are bounded recovery of
+simulated sources. Neither shows a diagnostic benefit, identifies an epileptogenic zone or
+establishes a surgical benefit.
 
 Head motion and OPM slippage (G4, NEW, a bounded secondary extension; `docs/methods.md` section 12,
 `results/g4/G4_motion_report.md`), adult and the 24- and 12-month templates, declared conditions:
@@ -206,7 +231,8 @@ python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -c "import mne; mne.datasets.sample.data_path(path='data/external')"  # ~1.6 GB download
 .venv/bin/python -c "import mne; [mne.datasets.fetch_infant_template(a, subjects_dir='data/external/infant_subjects') for a in ('2yr', '18mo', '12mo')]"  # ~1.15 GB (G3B, pediatric G4)
-bash scripts/run_all.sh     # tests, then every milestone in order (~8 h on a 10-core laptop: adult ~2 h, five pediatric G4 runs ~1 h each)
+.venv/bin/python scripts/fetch_school_subjects.py  # ~125 MB: three school-aged children of OpenNeuro ds005234 (G3B, pediatric G4)
+bash scripts/run_all.sh     # tests, then every milestone in order (~11 h on a 10-core laptop: adult ~2 h, eight pediatric G4 runs ~1 h each)
 ```
 
 Smoke run (about 15 min: the unit tests, which skip the full-resolution lead-field check without
@@ -238,8 +264,16 @@ release (release-ready and publicly deployed are separate statuses).
   derived from them (every `results/g3b` figure that shows a template, `results/g3b/g3b_targets_infant*`,
   `results/g4/*infant*` and the motion results) cite both papers; confirm their redistribution with
   the owner before any public release (the source database has its own terms).
+- The school-aged children (OpenNeuro ds005234, Fadeev et al. 2024; individual, de-identified MRIs of
+  typically developing children) are not committed (`data/external/school_subjects/`, fetched by
+  `scripts/fetch_school_subjects.py` and listed with S3 object versions, sizes and SHA-256 in
+  `configs/school_subjects_manifest.json`). Results derived from them (`results/g3b/g3b_targets_child*.csv`,
+  `school_subjects_preparation.json`, `school_anatomy_checks.json`, the G3B summary, report and figures,
+  `results/g4/*child*` and the pediatric G4 cross-reading summaries and reports) are derived quantities
+  only; the dataset's metadata say CC0 and its acknowledgement text CC BY: cite it, and confirm with the
+  owner before any public release.
 - Not committed: the reference PDFs, the MNE sample data and anatomy (`data/`), computed caches
-  (`cache/`). Results contain only derived quantities of the public MNE sample dataset.
+  (`cache/`). Results contain only derived quantities of the public datasets.
 - Release preparation (`docs/release_checklist.md`): every figure is set in open fonts (DejaVu
   Sans, STIX); the published Jas et al. Fig. 3 raster used by the legacy verification is CC-BY 4.0
   and carries its attribution; output summaries no longer record local absolute paths. Still the

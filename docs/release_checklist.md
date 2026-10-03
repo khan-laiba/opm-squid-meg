@@ -38,7 +38,8 @@ user account, so a Pages site, if ever enabled, would be public.
   (`verification_report.json`).
 - Output summaries record file names relative to the summary instead of local absolute paths
   (legacy scripts), and the realistic-head summary no longer records the local SUBJECTS_DIR.
-- Not committed: reference PDFs, MNE sample data and anatomy, the infant templates, fsaverage,
+- Not committed: reference PDFs, MNE sample data and anatomy, the infant templates, the school-aged
+  children (OpenNeuro ds005234), fsaverage,
   caches (`.gitignore`; `git ls-files` lists only generated figures as PDFs).
 - No secrets: `git grep -I -i -E "api[_-]?key|secret|token|passw"` finds only the goal text and
   this checklist.
@@ -67,29 +68,36 @@ user account, so a Pages site, if ever enabled, would be public.
    `G4_motion_report.md`, `g4_motion_timecourse_example.csv`, `Figure_G4_motion.png`), and the
    report pages built from them (pediatric, epilepsy, G3B and motion reports, downloads). Confirm
    redistribution; both papers are cited wherever these appear.
-4. **fsaverage derivatives** (`legacy/realistic_head_output/`): FreeSurfer's fsaverage; confirm
+4. **School-aged children's derivatives** (OpenNeuro ds005234, Fadeev et al. 2024): `results/g3b/g3b_targets_child*.csv`,
+   `results/g3b/school_subjects_preparation.json`, `results/g3b/school_anatomy_checks.json`, the G3B summary, report
+   and figures that include children A-C, `results/g4/*child*`, the pediatric G4 cross-reading summaries and reports
+   (`g4_pediatric_comparison.json`, `G4_pediatric_report.md`, `g4_matched_rate.json`, `G4_matched_rate_report.md`,
+   `g4_fit_failures.json`, `G4_fit_failures_report.md`) and the report pages built from them. The dataset's metadata
+   say CC0, its acknowledgement text CC BY; cite it and confirm. `configs/school_subjects_manifest.json` lists the
+   source files only (public S3 object versions, sizes, SHA-256; no data).
+5. **fsaverage derivatives** (`legacy/realistic_head_output/`): FreeSurfer's fsaverage; confirm
    the terms for derived figures and per-vertex tables.
-5. **Published figure raster.** `legacy/figure3_output/Figure3_published_extracted.png`,
+6. **Published figure raster.** `legacy/figure3_output/Figure3_published_extracted.png`,
    `Figure3_overlay.png`, `Figure3_side_by_side.png` and `Figure3_difference.png` contain the
    published Jas et al. Fig. 3 raster (bioRxiv, doi 10.64898/2026.08.17.744953; the preprint's own
    header states a CC-BY 4.0 International licence, checked 2026-10-01). Keep the attribution with
    them, or leave them out of the release.
-6. **Digitised figure data.** `scripts/digitise_hunold_fig6.py` and its output reproduce a
+7. **Digitised figure data.** `scripts/digitise_hunold_fig6.py` and its output reproduce a
    waveform digitised from Hunold et al. (2016) Fig. 6; confirm that publishing the digitised
    values is acceptable.
-7. **Local references.** `docs/audit.md` and `goal_condition.txt` name the local working folders,
+8. **Local references.** `docs/audit.md` and `goal_condition.txt` name the local working folders,
    and `legacy/realistic_head_output/realistic_head_results.npz` stores the local SUBJECTS_DIR of
    the original run; edit or drop before publication if the folder names should not appear.
-8. **Literature extractions.** `docs/literature/{jas2026,hunold2016,goldenholz2009}.md` are long
+9. **Literature extractions.** `docs/literature/{jas2026,hunold2016,goldenholz2009}.md` are long
    paraphrased extractions, with parameter tables and digitised figure values, of three papers, two
    of them paywalled; confirm that publishing them is acceptable, or keep them private and cite page
    numbers only.
-9. **The goal text.** `GOAL.md` and its copy `OPM_SQUID_Adult_to_Pediatric_Goal.md` name a third
+10. **The goal text.** `GOAL.md` and its copy `OPM_SQUID_Adult_to_Pediatric_Goal.md` name a third
    person and describe a mentoring relationship; decide whether they belong in a public release.
-10. **Historic diagnoses.** `results/g2/bem_skin_refinement_v1_arrays.json` and
+11. **Historic diagnoses.** `results/g2/bem_skin_refinement_v1_arrays.json` and
     `results/g2/near_mesh_check_v1_arrays.json` record a dirty commit (historic v1 diagnoses, labelled
     in `docs/methods.md` and in the report's download list); keep them labelled or drop them.
-11. **Visibility and Pages.** Only after 1-10: change visibility and, separately, enable Pages;
+12. **Visibility and Pages.** Only after 1-11: change visibility and, separately, enable Pages;
     re-run section 1.
 
 ## 4. Re-run before release

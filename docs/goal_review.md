@@ -318,3 +318,43 @@ Verdicts after v4: G2 met (the reservations above addressed); G3B still partiall
 the missing native school-aged anatomy (owner decision; a download would need approval); G5 met for
 a private deliverable (148 tests; a clean clone of db3f0dc passes 147, one skip without the lead-field cache; no CI
 workflow, an owner decision); the rest unchanged.
+
+## Addendum (2026-10-03, later): a native school-aged anatomy
+
+The one remaining G3 gap was the missing school-aged native anatomy. With the owner's approval three
+typically developing children of OpenNeuro ds005234 (Fadeev et al. 2024; 7.8, 8.3 and 8.7 years) were
+added as children A-C. Their own white surfaces, aparc labels and dense MRI scalp are used. The dataset
+has two problems, both measured before use: the snapshot's file tree shifts each subject's watershed
+BEM and talairach.xfm into the preceding subject's folder (the BEMs matched by the surfaces' volume
+information), and the watershed inner skull lies just below the scalp (a median 0.8-2.5 mm over the
+upper head, against 9.7 mm in the adult; `results/g3b/school_anatomy_checks.json`). The skull is
+therefore modelled (A-BEM-CHILD: inner skull at 8 mm below the scalp where shallower, no vertex within
+2 mm of a white-surface vertex), which on the adult, whose skull is segmented, changes the G2 headline
+by at most 0.003; the fiducials are the adult's transferred by a cortex fit (A-G3-FID), which
+reproduces the templates' own to 1.6-14.4 mm and their head frame to 3.2-5.9 deg. Adding the children
+left every number of the six earlier anatomies unchanged (97,048 values).
+
+Result: at a similar head circumference (520 and 535 mm against 525 mm) children A and C gain less than
+the scaled school-age control: Delta +0.30 [+0.11, +0.38] and +0.17 [-0.07, +0.34] dB against +0.44
+[+0.34, +0.56] dB (the intervals overlap or touch); child B, with a smaller head (486 mm), gains +0.41
+[+0.28, +0.54] dB. Reweighted to the adult's depth mix the children's differences are -0.05 to +0.05 dB.
+Their cortex is nearly adult-sized (1,666-1,869 cm^2 against 1,878 cm^2; scaled control 1,470 cm^2),
+so with the background fixed per unit area Neuromag's brain noise stays near the adult's; the size-only
+control, which shrinks the cortex with the head, gains more than the two children of its head size.
+In the counterfactual helmet about the laterally centred head children A and B lose (-0.76 and -0.59
+dB) and child C, whose helmet barely shrinks, is level (+0.04 [-0.20, +0.20] dB), so the earlier
+statement that it reverses the gain in every child holds for A and B but not for C.
+Pediatric G4 (same detectors, seeds and inverse as the other anatomies): at 10-20 mm more locations
+favour the dense OPM in each child (11/4, 12/3 and 14/2; strength ratio 1.27 [0.93-1.63], 1.18
+[1.02-1.51] and 1.43 [1.06-1.62]; p = 0.022, 0.0085 and 0.0037, none surviving the correction over 24
+detection comparisons); there is no deeper difference with the practical detector; both arrays' point
+estimates of the strength for 50 % detection are higher than the adult's (Neuromag at 20-30 mm 95-132
+against 86 nAm, dense OPM 82-122 against 72 nAm), with overlapping intervals and no difference claimed.
+Localization: dipole errors similar (4.4-6.7 mm for detected 320-nAm focal spikes); dense dSPM errors
+2.9-4.7 mm smaller (p = 0.071-0.25; MNE's dSPM 4.9-5.5 mm, p = 0.009-0.020); 13 of the children's 120
+localization comparisons have p < 0.05, all favouring an OPM array, none surviving a correction
+(`docs/methods.md` section 11).
+
+Verdict after this addendum: G3 met with reservations. The school-aged anatomy is native in its cortex
+and scalp, but its skull is modelled and its fiducials transferred; three children of one dataset show
+between-child differences without estimating a population.
