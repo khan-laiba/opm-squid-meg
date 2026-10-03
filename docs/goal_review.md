@@ -357,7 +357,7 @@ localization comparisons have p < 0.05, all favouring an OPM array, none survivi
 
 Reproduction: the children's 45 input files are fetched and checked (S3 object versions, SHA-256) by
 `scripts/fetch_school_subjects.py` from `configs/school_subjects_manifest.json`, then prepared, checked
-and run by `scripts/run_all.sh`; 160 tests, of which a clean clone of 8bdeb8b passes 159 (one skip
+and run by `scripts/run_all.sh`; 160 tests, of which a clean clone of 0b57bba passes 159 (one skip
 without the stored lead fields).
 
 Verdict after this addendum: G3 met with reservations. The school-aged anatomy is native in its cortex

@@ -778,7 +778,7 @@ G3B results (`results/g3b/g3b_summary.json`, `G3B_report.md`; computed at 71de17
 the v4 arrays: equal 7-mm standoff, A-BEM-CONFORM; the six anatomies of the v4 pass, computed at e53bea8 and
 redrawn at 9512f1b, reproduce exactly, 97,048 values; the school-aged children have their own bootstrap
 stream; summaries, report and figures redrawn at 6ebac95 to mark an infeasible placement and the notes
-at ff6e25c, every number unchanged). For the six, against v3 (19a8fd2) the adult's D rose from +0.85 to +1.00 dB and the scaled
+at ff6e25c and d3bb1a9, every number unchanged). For the six, against v3 (19a8fd2) the adult's D rose from +0.85 to +1.00 dB and the scaled
 controls' by 0.04-0.05 dB, while the templates, whose head surfaces already lay on their scalps, did not
 change; every Delta fell by 0.11-0.27 dB and the conclusions did not change, below. Dense OPM vs
 Neuromag, intrinsic + brain noise, primary placement unless stated; dB of detectability;
