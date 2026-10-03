@@ -51,6 +51,7 @@ step g4_vs_g2 $PY scripts/study_g4_vs_g2.py                              # G4   
 step g3a $PY scripts/g3a_jas_size_benchmark.py                           # G3A  Jas Table 1 / Fig. 5 (REPRO)
 step school_prep $PY scripts/prepare_school_subjects.py                  # G3B  school-aged children: modelled skull, fiducials, source space
 step child_bem $PY scripts/study_child_bem.py                            # G3B  the modelled skull (A-BEM-CHILD) checked on the adult
+step school_checks $PY scripts/study_school_anatomy.py                  # G3B  skull depth, fiducial transfer and talairach checks
 step g3b $PY scripts/g3b_pediatric_helmet.py                             # G3B  fixed adult helmet vs head-adaptive OPM (NEW)
 step g4_infant2yr $PY scripts/g4_epilepsy_pediatric.py infant2yr --detection --localization    # G4  IED detection and localization, 2-year template
 step g4_infant18mo $PY scripts/g4_epilepsy_pediatric.py infant18mo --detection --localization  # G4  the same, 18-month template
