@@ -14,8 +14,8 @@ Placement rules (A-G3-PLACE; chosen without reference to any test source):
   magnetometer coil centre is ``clearance`` (20 mm = the 18-mm Dewar spacing HW-18mm + 2 mm) from
   the scalp; ``top`` moves up (+z, the usual pediatric positioning against the top of the helmet),
   ``back`` moves posterior (-y, the occiput against the back of the helmet, as in a supine child).
-* bounded variants (``x+5mm`` ... ``roll-5deg``): the centred head translated by +-5 mm along device
-  x and y, pitched by +-10 deg or rolled by +-5 deg about the head origin, then raised to the same
+* bounded variants (``x+5mm`` ... ``yaw-10deg``): the centred head translated by +-5 mm along device
+  x and y, pitched by +-10 deg, rolled by +-5 deg or turned (yaw) by +-10 deg about the head origin, then raised to the same
   top contact where there is room (a pose already within the clearance, e.g. an adult head shifted
   towards the helmet wall, stays as it is). For a child these are variants of ``top``.
 * ``x-centred``: the centred head shifted along device x until the median magnetometer-to-scalp
@@ -165,7 +165,7 @@ def lateral_centring(info: mne.Info, subject, dev_head: np.ndarray, max_shift: f
 
 
 def placements(info: mne.Info, subject, base_dev_head: np.ndarray, translation: float = 0.005, pitch_deg: float = 10.0,
-               roll_deg: float = 5.0, clearance: float = CLEARANCE) -> dict:
+               roll_deg: float = 5.0, clearance: float = CLEARANCE, yaw_deg: float = 10.0) -> dict:
     """Source-blind head placements in the helmet of ``info`` (see the module docstring): name ->
     dict(trans=device-to-head 4x4, rule, distance stats, feasible)."""
     fit = HelmetFit(info, subject)
@@ -179,6 +179,7 @@ def placements(info: mne.Info, subject, base_dev_head: np.ndarray, translation: 
     variants.update({f"y{s}{translation * 1e3:g}mm": translate(sg * translation * np.eye(3)[1]) for s, sg in (("+", 1), ("-", -1))})
     variants.update({f"pitch{s}{pitch_deg:g}deg": rotate_about(0, sg * pitch_deg, origin) for s, sg in (("+", 1), ("-", -1))})
     variants.update({f"roll{s}{roll_deg:g}deg": rotate_about(1, sg * roll_deg, origin) for s, sg in (("+", 1), ("-", -1))})
+    variants.update({f"yaw{s}{yaw_deg:g}deg": rotate_about(2, sg * yaw_deg, origin) for s, sg in (("+", 1), ("-", -1))})
     for name, m in variants.items():
         t, d = fit.contact(moved(base_dev_head, m), (0, 0, 1), clearance)
         out[name] = dict(trans=t, rule=f"centred, {name}, then up to contact where there is room", moved_mm=d * 1e3)

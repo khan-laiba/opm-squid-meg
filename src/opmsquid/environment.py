@@ -57,6 +57,7 @@ class EnvironmentModel:
     sfreq: float
     explained_fraction: dict  # empty-room variance explained per channel type
     r0: np.ndarray
+    residual_var: np.ndarray | None = None  # per channel (SQUID order): in-band empty-room variance the fit leaves (NaN: bad)
 
     def covariance(self, basis: np.ndarray) -> np.ndarray:
         return basis @ self.coef_cov @ basis.T
@@ -87,7 +88,9 @@ def fit_empty_room(raw: mne.io.BaseRaw, squid_info: mne.Info, analysis_filter, r
     coef, *_ = np.linalg.lstsq(basis * wts[:, None], data * wts[:, None], rcond=None)
     resid = data - basis @ coef
     explained = {k: float(1.0 - np.sum(resid[kinds == k] ** 2) / np.sum(data[kinds == k] ** 2)) for k in ("mag", "grad")}
-    return EnvironmentModel(np.cov(coef), coef, float(raw.info["sfreq"]), explained, np.asarray(r0, float))
+    residual_var = np.full(len(names), np.nan)
+    residual_var[good] = np.mean(resid**2, axis=1)
+    return EnvironmentModel(np.cov(coef), coef, float(raw.info["sfreq"]), explained, np.asarray(r0, float), residual_var)
 
 
 class _Null:

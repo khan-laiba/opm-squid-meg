@@ -123,8 +123,11 @@ def compare(labels) -> dict:
                             n_locations=r["n_locations"], p_values="uncorrected")
     for lab, s in loc.items():
         for k, v in s["results"].items():
-            out[f"{lab}/localization/{k}"] = {kk: v[kk] for kk in ("n", "detected", "dspm_error_mm_median_all", "ecd_error_mm_median_detected",
-                                                                     "joint_detect_and_dspm_within_10mm", "joint_detect_and_ecd_within_10mm")}
+            out[f"{lab}/localization/{k}"] = {kk: v.get(kk) for kk in ("n", "detected", "dspm_error_mm_median_all", "dspm_mne_error_mm_median_all",
+                                                                         "ecd_error_mm_median_detected", "joint_detect_and_dspm_within_10mm",
+                                                                         "joint_detect_and_ecd_within_10mm")}
+        if s.get("thresholds_heldout"):
+            out[f"{lab}/thresholds_heldout"] = s["thresholds_heldout"]
         for k, v in s["paired"].items():
             out[f"{lab}/localization_paired/{k}"] = {m: v[m] for m in ("dspm_error_mm", "ecd_error_mm")}
     return out
@@ -182,14 +185,23 @@ def report(cmp: dict, labels) -> str:
                          + detection.format_s50_ratio(r["s50_ratio_squid_over_opm"]))
         L.append(f"| {lab} | " + " | ".join(cells) + " |")
     L += ["", "## Localization (median error [mm]; joint detection + localization within 10 mm)", "",
-          "| anatomy | array | condition | dSPM error (all) | ECD error (detected) | detected | joint dSPM | joint ECD |",
-          "|---|---|---|---|---|---|---|---|"]
+          "| anatomy | array | condition | dSPM error (all) | dSPM, MNE (all) | ECD error (detected) | detected | joint dSPM | joint ECD |",
+          "|---|---|---|---|---|---|---|---|---|"]
     for lab in ("adult",) + tuple(labels):
         for k, v in cmp.items():
             if k.startswith(f"{lab}/localization/"):
                 arr, fam, s = k.split("/")[2:5]
-                L.append(f"| {lab} | {arr} | {fam} {s} | {fmt(v['dspm_error_mm_median_all'])} | {fmt(v['ecd_error_mm_median_detected'])} | "
-                         f"{v['detected']:.2f} | {v['joint_detect_and_dspm_within_10mm']:.2f} | {v['joint_detect_and_ecd_within_10mm']:.2f} |")
+                L.append(f"| {lab} | {arr} | {fam} {s} | {fmt(v['dspm_error_mm_median_all'])} | {fmt(v.get('dspm_mne_error_mm_median_all'))} | "
+                         f"{fmt(v['ecd_error_mm_median_detected'])} | {v['detected']:.2f} | {v['joint_detect_and_dspm_within_10mm']:.2f} | "
+                         f"{v['joint_detect_and_ecd_within_10mm']:.2f} |")
+    held = [(lab, cmp[f"{lab}/thresholds_heldout"]) for lab in ("adult",) + tuple(labels) if f"{lab}/thresholds_heldout" in cmp]
+    if held:
+        L += ["", "Localization detectors (1 false event per minute on 10 min of null data) on independent held-out null data: false "
+              "events per minute [exact 95 % interval]:", "", "| anatomy | " + " | ".join(held[0][1]["false_events"]) + " |",
+              "|---" * (len(held[0][1]["false_events"]) + 1) + "|"]
+        for lab, h in held:
+            L.append(f"| {lab} | " + " | ".join(f"{v['rate_per_min']:.2f} [{v['ci95'][0]:.2f}-{v['ci95'][1]:.2f}]"
+                                                for v in h["false_events"].values()) + " |")
     L += ["", "Simulated IED-source recovery does not identify an epileptogenic zone or establish surgical benefit. Average "
           "templates of one database are not a population; the scaled adults are size-only controls."]
     return "\n".join(L) + "\n"

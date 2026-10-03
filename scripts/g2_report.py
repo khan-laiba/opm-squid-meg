@@ -99,7 +99,7 @@ def main():
             for cond in conds:
                 L.append(f"| {cond} | " + " | ".join(ratio(d["primary"]["oracle"][f"{name}/{ref}/{cond}"]) for ref in REFS) + " |")
             pl = d["plugin_over_oracle_median"]
-            L.append("\n- Estimated (plug-in) covariance, detectability relative to oracle: "
+            L.append("\n- Estimated (plug-in) covariance (from one noise realization shared by all arrays), detectability relative to oracle: "
                      + ", ".join(f"{c}: {pl[f'{name}/opm/{c}/T10']:.2f} (10 s), {pl[f'{name}/opm/{c}/T60']:.2f} (60 s)" for c in headline) + ".")
             pa = d["patches"]["comparisons"]
             P = d["primary"]
@@ -140,6 +140,28 @@ def main():
             L.append("\n- Estimated (plug-in) covariance, detectability relative to oracle: "
                      + ", ".join(f"{c}: {pl[f'squid/{cs}/{c}/T10']:.2f} (10 s), {pl[f'squid/{cs}/{c}/T60']:.2f} (60 s)" for c in headline) + ".")
         L.append("")
+    tx = d.get("triaxial_control")
+    if tx:
+        L.append("## Channel-count control: a triaxial OPM at the matched sites (A-OPM-TRIAX)\n")
+        L.append(f"{tx['sites']} matched sites x 3 axes = {tx['channels']} channels (Neuromag: 102 sites x 3 = 306): the normal and the two "
+                 f"tangential axes of each 10-mm cell, {tx['opm_asd_fT']:g} fT/sqrt(Hz) on every axis, or the tangential axes at twice that. "
+                 "Median detectability ratio (95 % CI, parcel bootstrap):\n")
+        L.append("| tangential noise | condition | vs combined | vs gradiometers | vs magnetometers | triaxial / normal axis only |")
+        L.append("|---|---|---|---|---|---|")
+        for lab, txt in (("equal_noise", "equal"), ("tangential_noise_x2", "x2")):
+            for cond in headline:
+                L.append(f"| {txt} | {cond} | " + " | ".join(ratio(tx[f"{lab}/{ref}/{cond}"]) for ref in REFS)
+                         + f" | {ratio(tx[f'{lab}/over_matched_normal_only/{cond}'])} |")
+        L.append("")
+    ms = d["sensitivity"].get("squid_measured_spectrum")
+    if ms:
+        r = ms["intrinsic_rms"]
+        L.append("## Neuromag sensor noise from the measured spectrum\n")
+        L.append(f"- Per channel, the in-band empty-room variance the 8-term room fit leaves (an upper bound on the sensor noise in this "
+                 f"room): median {r['mag_fT']:.1f} fT (magnetometers) and {r['grad_fT_cm']:.1f} fT/cm (gradiometers), vs the brochure "
+                 f"{r['brochure_mag_fT']:.1f} fT and {r['brochure_grad_fT_cm']:.1f} fT/cm in the band. Dense / matched vs combined: "
+                 + ", ".join(f"{c} {2 ** ms[f'opm_dense/combined/{c}']['median_log2']:.2f}x / {2 ** ms[f'opm_matched/combined/{c}']['median_log2']:.2f}x"
+                             for c in headline) + ".\n")
     b = d["bridge_to_sphere"]
     L.append("## Link to the analytical benchmark (G1A)\n")
     L.append(f"- The sphere model with the real standoffs (OPM {b['sensor_distance_mm']['opm_matched']['median']:.1f} mm, Neuromag "
@@ -171,10 +193,20 @@ def main():
     L.append("- One adult anatomy and one measured head position; between-subject variability is not represented.")
     L.append("- OPM intrinsic noise is a declared sweep, not a device specification; OPM movement artefacts, cross-talk and "
              "calibration errors are not modelled.")
-    L.append("- Head model: 3-layer BEM with the head surface refined to 20,480 triangles and the whole OPM cell >= 1 mm outside it "
-             "at the sampled points (v3; exact cube-to-mesh distance >= 1.001 mm). Refining the head surface changes the headline by "
-             "-0.1 %; if the error falls with the square of the mesh size (not verified on this head), the refined surface is within "
-             "~0.03 % (methods section 3). The 1-layer model gives nearly the same dense/combined ratio (convergence section).")
+    geo = d["arrays"]
+    exact = ", ".join(f"{n.split('_')[1]} {geo[n]['exact_cell_clearance_min_mm']:.3f} mm" for n in ("opm_matched", "opm_dense")
+                      if "exact_cell_clearance_min_mm" in geo.get(n, {}))
+    skin = OUT / "bem_skin_refinement.json"
+    refine = ""
+    if skin.exists():
+        m = json.loads(skin.read_text())["models"]
+        key = "opm_dense/combined/intrinsic+brain"
+        if "bem3_5120" in m and "bem3_skin20480" in m:
+            refine = (f" Refining the head surface from 5,120 to 20,480 triangles changes the dense/combined headline from "
+                      f"{m['bem3_5120']['ratio'][key]:.3f}x to {m['bem3_skin20480']['ratio'][key]:.3f}x (`bem_skin_refinement.json`).")
+    L.append("- Head model: 3-layer BEM, the head surface on the MRI scalp (A-BEM-CONFORM) and refined to 20,480 triangles; the whole "
+             f"OPM cell >= 1 mm outside it at the sampled points (exact cube-to-mesh distance: {exact or 'not recorded'})." + refine
+             + " The 1-layer model gives nearly the same dense/combined ratio (convergence section).")
     L.append("- Scalp-gap variants move the primary OPM sites outward along their axes (same sites).")
     (OUT / "G2_report.md").write_text("\n".join(L) + "\n")
     print(f"wrote {OUT / 'G2_report.md'} ({len(L)} lines)")

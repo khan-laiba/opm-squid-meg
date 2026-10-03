@@ -61,7 +61,7 @@ SCALED = ("school", "size2yr")
 REFS = ("combined", "grad", "mag")
 OTHER_PLACEMENTS = ("centred", "back", "x-centred", "top-18mm", "counterfactual", "counterfactual_x-centred")
 PLACEMENT_ORDER = ("centred", "top", "back", "x+5mm", "x-5mm", "y+5mm", "y-5mm", "pitch+10deg", "pitch-10deg", "roll+5deg",
-                   "roll-5deg", "x-centred", "top-18mm", "counterfactual", "counterfactual_x-centred")
+                   "roll-5deg", "yaw+10deg", "yaw-10deg", "x-centred", "top-18mm", "counterfactual", "counterfactual_x-centred")
 OPMS = ("opm_dense", "opm_matched")
 LABEL = {"adult": "adult", "school": "school-age size (scaled adult)", "size2yr": "2-year size (scaled adult)",
          "infant2yr": "2-year template", "infant18mo": "18-month template", "infant12mo": "12-month template",
@@ -160,7 +160,7 @@ def build_arrays(an: Anatomy, com: Common, cfg) -> tuple[dict, dict]:
     """SQUID arrays (one per placement, plus the counterfactual helmet) and the refitted OPM arrays."""
     pc = cfg["placement"]
     pl = P.placements(com.squid_info, an.subject, com.base, pc["translation_mm"] * 1e-3, pc["pitch_deg"], pc["roll_deg"],
-                      pc["clearance_mm"] * 1e-3)
+                      pc["clearance_mm"] * 1e-3, yaw_deg=pc["yaw_deg"])
     arrays = {}
     for name, v in pl.items():
         arrays[f"squid:{name}"] = g2.Array("squid", P.with_dev_head(com.squid_info, v["trans"]), com.kinds, None,
@@ -262,6 +262,15 @@ def channel_count_control(an: Anatomy, run: dict, com: Common, cfg, counts) -> d
     return out
 
 
+def patch_centres(centres: np.ndarray, cfg) -> dict:
+    """Patch centres per radius: every k-th of ``centres`` (``patch_centre_stride``; the larger
+    patches on a spread subset, which bounds the number of member vertices)."""
+    radii, stride = cfg["sources"]["patch_radii_mm"], cfg["sources"]["patch_centre_stride"]
+    if len(stride) != len(radii):
+        raise ValueError("configs/g3b_pediatric.toml: patch_centre_stride needs one entry per patch radius")
+    return {r: centres[::int(k)] for r, k in zip(radii, stride)}
+
+
 def run_patches(an: Anatomy, run: dict, com: Common, cfg, centres: np.ndarray) -> dict:
     """Extended sources on a bounded subset of targets: fixed-total geodesic patches (signed sums of
     cortical-normal dipoles) for the primary SQUID placement and the dense OPM array."""
@@ -270,14 +279,16 @@ def run_patches(an: Anatomy, run: dict, com: Common, cfg, centres: np.ndarray) -
     primary = f"squid:{cfg['placement']['primary']}"
     radii = cfg["sources"]["patch_radii_mm"]
     total = cfg["sources"]["patch_total_nAm"] * 1e-9
-    members = {r: goldenholz.geodesic_patches(an.cortex.adjacency, an.src.target[centres], r * 1e-3, an.cortex.usable) for r in radii}
+    cen = patch_centres(centres, cfg)
+    members = {r: goldenholz.geodesic_patches(an.cortex.adjacency, an.src.target[cen[r]], r * 1e-3, an.cortex.usable) for r in radii}
     union = np.unique(np.concatenate([np.concatenate(m) for m in members.values()]))
     col = np.full(an.cortex.n, -1)
     col[union] = np.arange(len(union))
     area = {r: np.array([an.cortex.area[m].sum() for m in members[r]]) for r in radii}
     bem3 = an.subject.bem_model(com.bem)
     G_t, G_g = run["_G"]
-    out = dict(centres=centres, area_cm2={f"{r:g}": area[r] * 1e4 for r in radii}, det={})
+    out = dict(centres=centres, centres_by_radius={f"{r:g}": cen[r] for r in radii}, area_cm2={f"{r:g}": area[r] * 1e4 for r in radii},
+               det={})
     for name in (primary, "opm_dense"):
         a = run["_arrays"][name]
         g = gains(an, a, bem3, union)
@@ -305,7 +316,9 @@ def sensor_geometry(an: Anatomy, arrays: dict, pl: dict) -> dict:
                              regions={k: float(np.median(d[idx]) * 1e3) for k, idx in regions.items()})
         else:
             d = tree.query(np.array([c["loc"][:3] for c in a.info["chs"]]))[0]
-            out[name] = dict(median_mm=float(np.median(d) * 1e3), min_mm=float(d.min() * 1e3))
+            head = next(s for s in an.subject.bem_surfaces if s["id"] == mne.io.constants.FIFF.FIFFV_BEM_SURF_ID_HEAD)
+            exact = opm.exact_cell_clearance(a.info, head, an.subject.trans["trans"])
+            out[name] = dict(median_mm=float(np.median(d) * 1e3), min_mm=float(d.min() * 1e3), exact_cell_clearance_min_mm=float(exact.min() * 1e3))
     return out
 
 
@@ -648,17 +661,31 @@ def summarise(anats, state, cfg) -> dict:
     out["sensitivity_median_D_dB"] = sens
     # patches
     pt = {}
+    rho = cfg["sources"]["fixed_density_nAm_per_mm2"] * 1e-3  # nAm/mm^2 -> A m per m^2
+    total = cfg["sources"]["patch_total_nAm"] * 1e-9
+    thr = cfg["usefulness"]["detectability_threshold"]
     for k, p in patches.items():
         for r_ in cfg["sources"]["patch_radii_mm"]:
+            c_r = p.get("centres_by_radius", {}).get(f"{r_:g}", p["centres"])
+            w = anats[k].weights[c_r]
+            ok = anats[k].cortical[c_r]
             pt[f"{k}/area_cm2/{r_:g}mm"] = float(np.median(p["area_cm2"][f"{r_:g}"]))
+            pt[f"{k}/n_centres/{r_:g}mm"] = int(len(c_r))
             for ref in REFS:
                 for cond in headline:
-                    x = np.where(anats[k].cortical[p["centres"]],
-                                 20 * np.log10(p["det"][("opm_dense", "opm", cond, r_)] / p["det"][(primary, ref, cond, r_)]), np.nan)
-                    w = anats[k].weights[p["centres"]]
+                    x = np.where(ok, 20 * np.log10(p["det"][("opm_dense", "opm", cond, r_)] / p["det"][(primary, ref, cond, r_)]), np.nan)
                     pt[f"{k}/{r_:g}mm/{ref}/{cond}"] = P.weighted_median(x, w)
-                    focal = D[(k, "opm_dense", primary, ref, cond, "detect")][p["centres"]]
-                    pt[f"{k}/focal_same_centres/{ref}/{cond}"] = P.weighted_median(focal, w)
+                    focal = np.where(ok, D[(k, "opm_dense", primary, ref, cond, "detect")][c_r], np.nan)
+                    tag = "" if len(c_r) == len(p["centres"]) else f"_{r_:g}mm"
+                    pt[f"{k}/focal_same_centres{tag}/{ref}/{cond}"] = P.weighted_median(focal, w)
+            # fixed density (absolute detectability; D is the same under any moment convention): moment = rho x area
+            scale = rho * p["area_cm2"][f"{r_:g}"] * 1e-4 / total
+            for name, cs in ((primary, "combined"), ("opm_dense", "opm")):
+                for cond in headline:
+                    det = p["det"][(name, cs, cond, r_)] * scale
+                    lab = "squid" if name == primary else "opm_dense"
+                    pt[f"{k}/fixed_density/{r_:g}mm/{lab}/{cond}/median_detectability"] = P.weighted_median(np.where(ok, det, np.nan), w)
+                    pt[f"{k}/fixed_density/{r_:g}mm/{lab}/{cond}/share_usable"] = float(np.sum(w[ok] * (det[ok] >= thr)) / np.sum(w[ok]))
     for c in CHILDREN:
         for r_ in cfg["sources"]["patch_radii_mm"]:
             for ref in REFS:
@@ -830,7 +857,8 @@ def write_report(anats, s, cfg):
           "clearance rule moved outward): "
           + "; ".join(f"{LABEL[k]} {sd[k]['opm_dense']['median_mm']:.2f} / {sd[k]['opm_matched']['median_mm']:.2f} mm "
                       f"({arr[k]['opm_dense'].get('n_moved_out', '?')} of {arr[k]['opm_dense']['n']} / "
-                      f"{arr[k]['opm_matched'].get('n_moved_out', '?')} of {arr[k]['opm_matched']['n']} moved)"
+                      f"{arr[k]['opm_matched'].get('n_moved_out', '?')} of {arr[k]['opm_matched']['n']} moved; exact cell clearance "
+                      f">= {min(sd[k][n].get('exact_cell_clearance_min_mm', float('nan')) for n in OPMS):.2f} mm)"
                       for k in ANATOMIES if k in sd and "opm_dense" in sd[k])
           + ". Every anatomy's BEM head surface has its vertices on its MRI scalp (A-BEM-CONFORM: the templates' are built so, the "
           "adult's stored outer skin, about 1 mm outside its scalp, is conformed at loading), so the clearance rule (A-OPM-CLEAR) moves "
@@ -873,6 +901,32 @@ def write_report(anats, s, cfg):
     for c in SCALED:
         L.append(f"| {LABEL[c]} | {vw[f'{c}/opm_dense/opm/intrinsic+brain']:+.2f} | "
                  + " | ".join(f"{vw[f'{c}/squid:{primary}/{ref}/intrinsic+brain']:+.2f}" for ref in REFS) + " |")
+    pt = s.get("patches_median_D_dB", {})
+    if pt:
+        rho = cfg["sources"]["fixed_density_nAm_per_mm2"]
+        L += ["", "## Extended sources (geodesic patches, primary placement, intrinsic + brain)", "",
+              "Median D (dense OPM vs Neuromag combined) over the patch centres (cortical, area-weighted) and the focal D at the "
+              "same centres; the 20-mm patches use every third of the 300 centres. D does not depend on the moment convention.", "",
+              "| anatomy | radius [mm] | centres | median area [cm2] | D patch | D focal, same centres | Delta patch |",
+              "|---|---|---|---|---|---|---|"]
+        for k in ANATOMIES:
+            for r_ in cfg["sources"]["patch_radii_mm"]:
+                n_c = pt.get(f"{k}/n_centres/{r_:g}mm")
+                tag = "" if n_c == cfg["sources"]["n_patch_centres"] else f"_{r_:g}mm"
+                delta = pt.get(f"delta/{k}/{r_:g}mm/combined/intrinsic+brain")
+                L.append(f"| {LABEL[k]} | {r_:g} | {n_c} | {pt[f'{k}/area_cm2/{r_:g}mm']:.2f} | "
+                         f"{pt[f'{k}/{r_:g}mm/combined/intrinsic+brain']:+.2f} | {pt[f'{k}/focal_same_centres{tag}/combined/intrinsic+brain']:+.2f} | "
+                         f"{'' if delta is None else f'{delta:+.2f}'} |")
+        L += ["", f"Absolute detectability at a fixed current density of {rho:g} nAm/mm^2 (moment = density x patch area; human "
+              "neocortex 0.16-0.77 nAm/mm^2, Murakami & Okada 2015): median detectability and the share of patch centres at or "
+              f"above the usefulness threshold ({cfg['usefulness']['detectability_threshold']:g}):", "",
+              "| anatomy | radius [mm] | Neuromag combined | OPM dense | usable, Neuromag / OPM |", "|---|---|---|---|---|"]
+        for k in ANATOMIES:
+            for r_ in cfg["sources"]["patch_radii_mm"]:
+                f_ = {lab: (pt[f"{k}/fixed_density/{r_:g}mm/{lab}/intrinsic+brain/median_detectability"],
+                            pt[f"{k}/fixed_density/{r_:g}mm/{lab}/intrinsic+brain/share_usable"]) for lab in ("squid", "opm_dense")}
+                L.append(f"| {LABEL[k]} | {r_:g} | {f_['squid'][0]:.1f} | {f_['opm_dense'][0]:.1f} | "
+                         f"{f_['squid'][1]:.0%} / {f_['opm_dense'][1]:.0%} |")
     cc = s.get("channel_count_control", {})
     if cc:
         L += ["", "## Channel count: the adult's dense array subsampled to each child's site count", "",

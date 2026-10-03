@@ -45,6 +45,17 @@ class TestLocalization(unittest.TestCase):
         lopsided[[55, 56, 57, 58, 59]] = True
         self.assertEqual(localization.support_recovery(est, lopsided), 0.6)  # the 5 strongest are 53-57
 
+    def test_channel_views(self):
+        from types import SimpleNamespace
+
+        arrays = {"squid": SimpleNamespace(n=5, kinds=np.array(["mag", "grad", "grad", "mag", "grad"])), "opm": SimpleNamespace(n=3, kinds=None)}
+        v = localization.channel_views(arrays, ("mag", "grad"))
+        self.assertEqual(list(v), ["squid", "opm", "squid_mag", "squid_grad"])
+        np.testing.assert_array_equal(v["squid_mag"][1], [0, 3])
+        np.testing.assert_array_equal(v["squid_grad"][1], [1, 2, 4])
+        self.assertEqual(v["opm"][0], "opm")
+        np.testing.assert_array_equal(v["opm"][1], [0, 1, 2])
+
     def test_perturb_trans_bounds(self):
         rng = np.random.default_rng(3)
         t = np.eye(4)

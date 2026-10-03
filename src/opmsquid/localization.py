@@ -41,6 +41,17 @@ class MNEInverse:
         return est / self.noise_sd[:, None] if method == "dSPM" else est
 
 
+def channel_views(arrays: dict, subsets=()) -> dict:
+    """Localization views: every array with all its channels and the Neuromag array ('squid')
+    restricted to each sensor type in ``subsets`` ('squid_mag', 'squid_grad'): name -> (array
+    name, channel indices). The physical arrays come first, in their order."""
+    views = {name: (name, np.arange(a.n)) for name, a in arrays.items()}
+    if "squid" in arrays:
+        for k in subsets:
+            views[f"squid_{k}"] = ("squid", np.flatnonzero(np.asarray(arrays["squid"].kinds) == k))
+    return views
+
+
 def peak_error(estimate: np.ndarray, src_rr: np.ndarray, true_rr: np.ndarray) -> tuple[float, int]:
     """Distance [m] from the true position to the source with the largest |estimate|."""
     i = int(np.argmax(np.abs(estimate)))

@@ -174,8 +174,9 @@ def main():
             summary["lead_field_diagnostics"] = artefact_diagnostics(g, kinds, cortex, valid_idx, use, noise_cols)
             # the truncation's effect on the patch SNR (pooled channels, modelled noise)
             mp = sets["pooled"]
+            topo_all = {r: goldenholz.patch_topographies(g, members_all[r], col_of, weights) for r in members}
             for r in members:
-                snr_all = goldenholz.eq1_snr_db(goldenholz.patch_topographies(g, members_all[r], col_of, weights)[mp], model_var[mp])
+                snr_all = goldenholz.eq1_snr_db(topo_all[r][mp], model_var[mp])
                 diff = res[f"patch{r:g}/model/pooled"] - snr_all
                 summary["patch_truncation"][f"{r:g}"].update(snr_change_db=dict(
                     median=float(np.median(diff)), p5=float(np.percentile(diff, 5)), p95=float(np.percentile(diff, 95)),
@@ -193,6 +194,25 @@ def main():
                                         share_in_paper_range=float(np.mean((f_all[keep] >= PAPER_RANGE_DB[0]) & (f_all[keep] <= PAPER_RANGE_DB[1])))),
                 with_wall_focal_model_pooled=dict(median_db=float(np.median(f_all[use])),
                                                   share_in_paper_range=float(np.mean((f_all[use] >= PAPER_RANGE_DB[0]) & (f_all[use] <= PAPER_RANGE_DB[1])))))
+            # variant (review, 2026-10-02): without the medial wall and with untruncated patches (members over every valid
+            # vertex, also those within 4 mm of the inner skull, where the BEM is less accurate: A-BEM-DIST), next to the
+            # primary rows (usable members, wall kept); modelled noise, probable default conductivities
+            off_wall = ~wall[centroids]
+
+            def stats_db(x):
+                return dict(median_db=float(np.median(x)), p5_db=float(np.percentile(x, 5)), p95_db=float(np.percentile(x, 95)),
+                            share_in_paper_range=float(np.mean((x >= PAPER_RANGE_DB[0]) & (x <= PAPER_RANGE_DB[1]))))
+
+            variant = dict(n_centroids=int(off_wall.sum()), n_centroids_primary=int(len(centroids)),
+                           note="patches over every valid vertex (not truncated near the inner skull) at centroids off the medial wall")
+            for cs in CH_SETS:
+                m = sets[cs]
+                variant[f"focal/model/{cs}"] = dict(stats_db(res[f"focal/model/{cs}"][keep]),
+                                                    primary=stats_db(res[f"focal/model/{cs}"][use]))
+                for r in members:
+                    snr_v = goldenholz.eq1_snr_db(topo_all[r][m], model_var[m])[off_wall]
+                    variant[f"patch{r:g}/model/{cs}"] = dict(stats_db(snr_v), primary=stats_db(res[f"patch{r:g}/model/{cs}"]))
+            summary["variant_no_wall_untruncated"] = variant
         else:
             del g
 

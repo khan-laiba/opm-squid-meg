@@ -139,6 +139,20 @@ def discrete_gain(info: mne.Info, trans, rr_mri: np.ndarray, nn_mri: np.ndarray,
     return gain, meta
 
 
+def discrete_forward(info: mne.Info, trans, rr_mri: np.ndarray, nn_mri: np.ndarray, bem_solution,
+                      coil_def: Path | None = None) -> mne.Forward:
+    """MNE forward solution (free orientation, not cached) for dipoles at ``rr_mri`` with normals
+    ``nn_mri`` (a discrete source space), e.g. for ``mne.minimum_norm.make_inverse_operator`` with
+    fixed orientation; ``bem_solution`` as from ``mne.make_bem_solution``."""
+    src = mne.setup_volume_source_space(pos=dict(rr=np.asarray(rr_mri, float), nn=np.asarray(nn_mri, float)), verbose=False)
+    ctx = mne.use_coil_def(coil_def) if coil_def else _null()
+    with ctx:
+        fwd = mne.make_forward_solution(info, trans, src, bem_solution, meg=True, eeg=False, mindist=0.0, verbose=False)
+    if fwd["nsource"] != len(rr_mri):
+        raise RuntimeError("the forward model dropped sources (outside the inner skull?)")
+    return fwd
+
+
 def chunked_discrete_gain(info: mne.Info, trans, rr_mri: np.ndarray, nn_mri: np.ndarray, bem_surfaces: list,
                           coil_def: Path | None = None, chunk: int = 20000, label: str = "") -> np.ndarray:
     """``discrete_gain`` over many points in cached chunks (float32 result, (n_channels, n))."""

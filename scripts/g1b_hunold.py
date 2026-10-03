@@ -172,6 +172,15 @@ def fig6_spike_comparison(gains, cortex, depth, orient, region, w_unit, dip_am=6
     return out
 
 
+def bin_map(values, rows, cols, family, min_patches):
+    """Bin means; a patch bin with fewer than ``min_patches`` patches is left blank (NaN): its
+    mean rests on too few patches to compare with the paper (dipole bins follow the paper's counts)."""
+    mean, count = hunold.bin_means(values, rows, cols, SHAPE)
+    if family == "patch":
+        mean[count < min_patches] = np.nan
+    return mean
+
+
 def per_bin_test(a, b, rows, cols, shape):
     """Unpaired test per bin as in the paper: Student's t if both groups pass Shapiro-Wilk
     (p > 0.05), else the Wilcoxon rank-sum test. Returns p-values."""
@@ -362,6 +371,7 @@ def main():
     fam_desc = {"dipole": (depth[dip], orient[dip]), "patch": (p_depth, p_orient)}
     bins_of = {fam: hunold.bin_index(*fam_desc[fam]) for fam in fam_desc}
 
+    min_patches = int(cfg["descriptors"]["min_patches_per_bin"])
     results, all_maps, variants_out = {}, {}, {}
     for var in VARIANTS:
         bg = bgs[var]
@@ -371,13 +381,17 @@ def main():
             rows, cols = bins_of[fam]
             results[(var, fam)] = {k: hunold.spike_snr(topo[fam][k], w_unit, bg[k], onset, a_bg[k]) for k in ARRAYS}
             for num in NUMERATORS:
-                maps = {k: hunold.bin_means(results[(var, fam)][k][num], rows, cols, SHAPE)[0] for k in ARRAYS}
+                maps = {k: bin_map(results[(var, fam)][k][num], rows, cols, fam, min_patches) for k in ARRAYS}
                 counts = hunold.bin_means(results[(var, fam)]["mag"][num], rows, cols, SHAPE)[1]
+                blank = (counts > 0) & (counts < min_patches) if fam == "patch" else np.zeros(SHAPE, bool)
                 all_maps[(var, fam, num)] = maps
                 pv = {(a, b): per_bin_test(results[(var, fam)][a][num], results[(var, fam)][b][num], rows, cols, SHAPE)
                       for a, b in (("grad", "mag"), ("opm", "mag"), ("opm", "grad"))}
+                for p_ in pv.values():
+                    p_[blank] = np.nan
                 key = f"{fam}/{num}"
-                summary_bins[key] = dict(counts=counts, mean_snr=maps,
+                summary_bins[key] = dict(counts=counts, mean_snr=maps, sparse_bins_left_blank=int(blank.sum()),
+                                         sources_in_blank_bins=int(counts[blank].sum()),
                                          share_of_bins_ge_2p5={k: float(np.mean(maps[k][np.isfinite(maps[k])] >= 2.5)) for k in ARRAYS})
                 comparisons[key] = {k: compare_with_paper(maps[k], k, fam) for k in ("mag", "grad")}
                 gm_mm[key] = gm_minus_mm_sign_agreement(maps, fam)
@@ -416,7 +430,24 @@ def main():
                     tr = filt.apply(bgs[var][k] + n)
                     a = hunold.background_amplitude(tr, base)
                     snr = hunold.spike_snr(topo[fam][k], w_f, tr, onset, a)["p2p"]
-                    ext[var][fam][f"{k}@{asd * 1e15:g}"] = hunold.bin_means(snr, rows, cols, SHAPE)[0]
+                    ext[var][fam][f"{k}@{asd * 1e15:g}"] = bin_map(snr, rows, cols, fam, min_patches)
+
+    # variant (review, 2026-10-02): the Hilbert envelope of the 1-s baseline segment alone instead of the whole
+    # trace cropped to it (the paper does not say which); primary background level, p2p numerator
+    seg_only = {}
+    bg = bgs["fig6_calibrated"]
+    for k in ARRAYS:
+        whole = hunold.background_amplitude(bg[k], base)
+        seg = hunold.background_amplitude(bg[k], base, segment_only=True)
+        ratio = seg / whole
+        seg_only[f"amplitude_ratio_segment_over_whole/{k}"] = dict(median=float(np.median(ratio)), p5=float(np.percentile(ratio, 5)),
+                                                                   p95=float(np.percentile(ratio, 95)))
+        for fam in ("dipole", "patch"):
+            snr = hunold.spike_snr(topo[fam][k], w_unit, bg[k], onset, seg)["p2p"]
+            m = bin_map(snr, *bins_of[fam], fam, min_patches)
+            if k != "opm":
+                seg_only[f"{fam}/p2p/{k}/comparison_with_paper"] = compare_with_paper(m, k, fam)
+            seg_only[f"{fam}/p2p/{k}/share_of_bins_ge_2p5"] = float(np.mean(m[np.isfinite(m)] >= 2.5))
 
     # per-source table
     with open(OUT / "g1b_sources.csv", "w", newline="") as fh:
@@ -447,6 +478,9 @@ def main():
                                "p2p / (2 mean|hilbert|) = 0.87-1.10 x printed depending on digitisation handling; literal "
                                "noisy peak 0.61-0.73 x")),
         fig6_calibration=calib, calibration_sensitivity=calib_sens, fig6_spike_comparison=spike_cmp, variants=variants_out,
+        bins=dict(min_patches_per_bin=min_patches,
+                  rule="a patch bin with fewer patches is left blank in the maps, comparisons and tests (counts kept)"),
+        hilbert_segment_only=seg_only,
         extension_intrinsic_noise=dict(description="0.5-70 Hz zero-phase Butterworth (order 4) on spike, background and white "
                                                    "sensor noise; SQUID brochure noise; OPM 7/15/30 fT/sqrt(Hz); p2p numerator",
                                        mean_snr=ext),

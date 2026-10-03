@@ -130,6 +130,15 @@ def event_height(times: np.ndarray, heights: np.ndarray, t0: int, tol: int) -> f
     return float(heights[near].max()) if near.any() else 0.0
 
 
+def rate_with_ci(count: int, minutes: float) -> dict:
+    """Events per minute with the exact (Garwood) Poisson 95 % interval."""
+    from scipy.stats import chi2
+
+    lo = 0.0 if count == 0 else chi2.ppf(0.025, 2 * count) / 2.0
+    hi = chi2.ppf(0.975, 2 * count + 2) / 2.0
+    return dict(count=int(count), minutes=float(minutes), rate_per_min=count / minutes, ci95=[lo / minutes, hi / minutes])
+
+
 def threshold_for_rate(heights: np.ndarray, minutes: float, rate_per_min: float) -> float:
     """Smallest threshold with at most rate x minutes null events above it."""
     h = np.sort(np.asarray(heights))[::-1]

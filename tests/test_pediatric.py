@@ -97,6 +97,14 @@ class TestPlacements(unittest.TestCase):
         cls.child = anatomy.scaled(cls.adult, 0.85)
         cls.pl = P.placements(cls.info, cls.child, cls.base)
 
+    def test_rotation_variants(self):
+        for name in ("pitch+10deg", "pitch-10deg", "roll+5deg", "roll-5deg", "yaw+10deg", "yaw-10deg"):
+            self.assertIn(name, self.pl)
+        # a yaw turns the head about device z: the rotation part of the device-to-head transform changes by 10 deg (to the
+        # single precision of the measured transform)
+        r = self.pl["yaw+10deg"]["trans"][:3, :3] @ self.base[:3, :3].T
+        self.assertAlmostEqual(np.degrees(np.arccos((np.trace(r) - 1) / 2)), 10.0, delta=0.01)
+
     def test_centred_is_the_adult_measured_position(self):
         np.testing.assert_allclose(self.pl["centred"]["trans"], self.base)
 

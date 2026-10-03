@@ -20,6 +20,7 @@ Configuration: configs/g2_adult.toml. Outputs: results/g2/.
 from __future__ import annotations
 
 import csv
+import dataclasses
 import json
 import pickle
 import sys
@@ -134,10 +135,10 @@ class Study:
         g = g2.gains(array, self.subject, self.cortex, self.points, job, **kw)
         return g[:, :self.nt], g[:, self.nt:]
 
-    def noise(self, array, g_grid, brain_scale, env, asd=None, corr=None):
+    def noise(self, array, g_grid, brain_scale, env, asd=None, corr=None, squid_ivar=None):
         corr_arg = None if not corr else (self.cortex.rr[self.src.grid], corr)
         return g2.array_noise(array, g_grid, self.src.grid_area, brain_scale, env, self.enbw,
-                              self.opm_asd if asd is None else asd, corr_arg)
+                              self.opm_asd if asd is None else asd, corr_arg, squid_ivar)
 
     def unit_brain(self, g_grid, corr=None):
         mc = (background.moment_covariance(self.src.grid_area) if not corr else
@@ -196,6 +197,10 @@ def main():
     grads, mags = good & (squid.kinds == "grad"), good & (squid.kinds == "mag")
     geometry = {name: {**{k: v for k, v in a.meta.items() if not isinstance(v, (list, np.ndarray)) or k == "excluded_sites"},
                        "channels": a.n} for name, a in arrays.items()}
+    head = next(s for s in st.subject.bem_surfaces if s["id"] == mne.io.constants.FIFF.FIFFV_BEM_SURF_ID_HEAD)
+    for name in OPMS:  # exact cube-to-mesh distance of every cell (the clearance rule samples the cell)
+        geometry[name]["exact_cell_clearance_min_mm"] = float(opm.exact_cell_clearance(arrays[name].info, head, st.subject.trans["trans"]).min() * 1e3)
+    geometry["head_surface_conform"] = st.subject.head_conform
 
     # --- measured noise, environment, background calibration ------------------------------------
     meas = g2.measured_noise(squid.info, st.filt, bads)
@@ -259,11 +264,18 @@ def main():
 
     # --- primary evaluation: oracle and plug-in covariances --------------------------------------
     n_est = {f"T{int(t)}": int(2 * st.bandwidth * t) for t in cfg["covariance"]["estimate_seconds"]}
+    # plug-in covariances from one common noise realization per estimation length: the same background sources and
+    # room field seen by every array, intrinsic noise per array (review, 2026-10-02: the draws were separate per array)
+    cov_est = {name: {cond: {} for cond in conds} for name in arrays}
+    for lab, n in n_est.items():
+        samples = g2.paired_noise_samples(noise_nom, G_g, background.moment_covariance(st.src.grid_area), brain_scale, env, n, st.rng)
+        for name in arrays:
+            for cond, c in g2.plugin_covariances(samples[name], noise_nom[name], conds).items():
+                cov_est[name][cond][lab] = c
+        del samples
     res = {}
     for name, a in arrays.items():
-        cov_est = {cond: {lab: g2.sample_covariance(noise_nom[name].covariance(cond), n, st.rng) for lab, n in n_est.items()}
-                   for cond in conds}
-        res[name] = evaluate_all(G_t[name] * st.q, a, noise_nom[name], conds, cov_est)
+        res[name] = evaluate_all(G_t[name] * st.q, a, noise_nom[name], conds, cov_est.pop(name))
         log(f"evaluated {name}")
     primary = dict(oracle=comparisons(st, res, conds))
     for lab in n_est:
@@ -328,6 +340,23 @@ def main():
                                                         groups=st.src.region[lobe == lb]) for lb in plotting.DK_LOBES}
     log("primary comparisons done")
 
+    # --- channel-count control (review, 2026-10-02): a triaxial OPM at the matched sites, three channels per site as
+    # Neuromag has, normal and two tangential axes over the same 10-mm cell (A-OPM-TRIAX; tangential noise equal or doubled)
+    tri = g2.triaxial_opm(arrays["opm_matched"])
+    gt_tri, gg_tri = st.gains(tri, fullres=False)
+    nz_tri = st.noise(tri, gg_tri, brain_scale, env)
+    tangential = tri.meta["axis_role"] != "normal"
+    triax = dict(sites=tri.meta["sites"], channels=tri.n, opm_asd_fT=st.opm_asd * 1e15)
+    for lab, factor in (("equal_noise", 1.0), ("tangential_noise_x2", 2.0)):
+        nz = dataclasses.replace(nz_tri, intrinsic_var=np.where(tangential, factor**2, 1.0) * nz_tri.intrinsic_var)
+        r_tri = evaluate_all(gt_tri * st.q, tri, nz, headline)
+        for cond in headline:
+            for ref in REFS:
+                triax[f"{lab}/{ref}/{cond}"] = compare(r_tri[("opm", cond)]["detect"], detect_of(res, "squid", ref, cond), st.rng, 1000)
+            triax[f"{lab}/over_matched_normal_only/{cond}"] = compare(r_tri[("opm", cond)]["detect"], detect_of(res, "opm_matched", None, cond),
+                                                                      st.rng, 1000)
+    log("channel-count control (triaxial) done")
+
     # --- extended sources (full-resolution lead fields) -----------------------------------------
     patches = patch_analysis(st, arrays, noise_nom, headline, cfg)
     log("patches done")
@@ -363,6 +392,19 @@ def main():
     sens["background_mag_calibrated"] = comparisons(st, r2, headline, n_boot=200)
     sens["background_mag_calibrated"]["scale_over_primary"] = float(bs_mag / brain_scale)
     log("sensitivity: magnetometer-calibrated background done")
+    # SQUID sensor noise from the measured empty-room spectrum (review, 2026-10-02): per channel, the in-band variance the
+    # 8-term room-field fit leaves in the sample's empty-room recording, instead of the brochure white noise
+    sq_ivar = g2.measured_squid_variance(env, squid.kinds)
+    r2 = {"squid": evaluate_all(G_t["squid"] * st.q, squid, st.noise(squid, G_g["squid"], brain_scale, env, squid_ivar=sq_ivar), headline)}
+    for a in OPMS:
+        r2[a] = {k: v2 for k, v2 in res[a].items() if k[1] in headline}
+    sens["squid_measured_spectrum"] = comparisons(st, r2, headline, n_boot=200)
+    sens["squid_measured_spectrum"]["intrinsic_rms"] = dict(
+        mag_fT=float(np.sqrt(np.median(sq_ivar[squid.kinds == "mag"])) * 1e15),
+        grad_fT_cm=float(np.sqrt(np.median(sq_ivar[squid.kinds == "grad"])) * 1e13),
+        brochure_mag_fT=float(np.sqrt(g2.SQUID_ASD["mag"] ** 2 * st.enbw) * 1e15),
+        brochure_grad_fT_cm=float(np.sqrt(g2.SQUID_ASD["grad"] ** 2 * st.enbw) * 1e13))
+    log("sensitivity: measured-spectrum SQUID noise done")
     # head position (SQUID only; OPMs are head-mounted)
     hp = g2.head_position_variants(squid.info, st.subject, cfg["head_position"]["translation_mm"] * 1e-3,
                                    cfg["head_position"]["pitch_deg"], cfg["head_position"]["fit_clearance_mm"] * 1e-3,
@@ -426,7 +468,7 @@ def main():
         enbw_hz=st.enbw, n_estimate_samples=n_est, noise_validation=validation, noise_composition=comp, retained_rank=ranks,
         primary=primary, plugin_over_oracle_median=plugin_loss, amplitude_vs_depth=amp_vs_depth, detectability_vs_depth=snr_vs_depth,
         log2_ratio_vs_depth=ratio_vs_depth, by_lobe=by_lobe, strata=strata, medial_wall=medial_wall, projection=projection,
-        break_even_opm_asd_fT=break_even,
+        break_even_opm_asd_fT=break_even, triaxial_control=triax,
         bridge_to_sphere=bridge, patches=patches, sensitivity=sens, sensitivity_joint_asd_gap=sens_joint, convergence=conv,
         runtime_s=time.time() - t_start,
         notes=["Bootstrap CIs resample Desikan-Killiany parcels of one anatomy (targets within a parcel are correlated); they do "

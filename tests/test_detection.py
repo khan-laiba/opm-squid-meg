@@ -92,6 +92,16 @@ class TestDetection(unittest.TestCase):
         self.assertEqual(detection.event_height(*det.events(stat), 118, 3), 6.0)
 
 
+class TestRate(unittest.TestCase):
+    def test_exact_poisson_interval(self):
+        r = detection.rate_with_ci(0, 10.0)
+        self.assertEqual(r["ci95"][0], 0.0)
+        self.assertAlmostEqual(r["ci95"][1], 0.36889, places=5)  # 3.689 events / 10 min
+        r = detection.rate_with_ci(5, 10.0)
+        self.assertAlmostEqual(r["rate_per_min"], 0.5)
+        np.testing.assert_allclose(r["ci95"], [0.16235, 1.16683], atol=1e-5)  # Garwood interval for 5 events
+
+
 class TestCensoredS50(unittest.TestCase):
     strengths = np.array([10.0, 20.0, 40.0, 80.0, 160.0, 320.0])
 

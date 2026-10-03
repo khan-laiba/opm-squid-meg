@@ -21,7 +21,10 @@ one unit per channel, so a fixed GOF threshold favours arrays with fewer channel
 
 Each event is also passed through a practical detector (1 false event per minute, thresholds from
 independent null data), so that localization among detected events and joint detection +
-localization are reported separately. Paired OPM-minus-Neuromag differences on identical events:
+localization are reported separately; the thresholds are checked on further held-out null data.
+Secondary (review, 2026-10-02): Neuromag with magnetometers or gradiometers alone (their own
+covariance, detector and inverse), and dSPM through MNE's own ``mne.minimum_norm`` next to the
+study's implementation (opmsquid.localization), which differs from it in the depth weighting. Paired OPM-minus-Neuromag differences on identical events:
 median error difference with a bootstrap CI over events (one event per location and condition),
 Wilcoxon signed-rank p, and McNemar exact p for joint detection + localization within 10 mm.
 
@@ -56,8 +59,8 @@ def log(msg):
     print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
 
-def evoked_for(array, data, fs):
-    info = array.info.copy()
+def evoked_for(info_or_array, data, fs):
+    info = getattr(info_or_array, "info", info_or_array).copy()
     with info._unlock():
         info["sfreq"] = fs
         info["lowpass"], info["highpass"] = 40.0, 1.0
@@ -111,24 +114,31 @@ def localize(ctx, cfg, rng):
     trans_used = [mne.transforms.Transform("head", "mri", localization.perturb_trans(
         ctx.subject.trans["trans"], rng, lc["coreg_shift_mm"] * 1e-3, lc["coreg_angle_deg"])) for _ in range(n_draws)]
     mri_to_head = mne.transforms.invert_transform(ctx.subject.trans)
-    inv = {}
+    views = localization.channel_views(arrays, lc.get("neuromag_subsets", []))  # name -> (physical array, channel indices)
+    inv_phys, fwd_phys = {}, {}
     for name, a in arrays.items():
         for k in range(n_draws):
             g_inv, _ = forward.discrete_gain(a.info, trans_used[k], ctx.cortex.rr[grid], ctx.cortex.nn[grid], bem1, opm.coil_def_file())
-            inv[name, k] = g_inv.astype(np.float64)
-    log(f"{ctx.label}: {len(loc)} locations, inverse grid {len(grid)} sources (5 mm, off-grid), {n_draws} coregistration draws")
+            inv_phys[name, k] = g_inv.astype(np.float64)
+            if lc.get("mne_dspm"):
+                fwd_phys[name, k] = forward.discrete_forward(a.info, trans_used[k], ctx.cortex.rr[grid], ctx.cortex.nn[grid], bem1_sol,
+                                                             opm.coil_def_file())
+    inv = {(v, k): inv_phys[phys, k][idx] for v, (phys, idx) in views.items() for k in range(n_draws)}
+    vinfo = {v: mne.pick_info(arrays[phys].info, idx) for v, (phys, idx) in views.items()}
+    log(f"{ctx.label}: {len(loc)} locations, inverse grid {len(grid)} sources (5 mm, off-grid), {n_draws} coregistration draws; "
+        f"views {list(views)}")
 
     # noise covariance (5 min) and a practical detector (thresholds from 10 min) per array, independent null data
-    def null_data(minutes):
+    def null_data(minutes, stream=None):
         acc = {name: [] for name in arrays}
         for _ in range(int(round(minutes * 60 / sim["segment_s"]))):
-            for name, y in gen.segment(sim["segment_s"], rng).items():
+            for name, y in gen.segment(sim["segment_s"], rng if stream is None else stream).items():
                 acc[name].append(y)
         return {name: np.concatenate(v, axis=1) for name, v in acc.items()}
 
     base = null_data(lc["baseline_min"])
-    covs = {name: metrics.ledoit_wolf_covariance(base[name])[0] for name in arrays}
-    whit = {name: metrics.whitener(covs[name]) for name in arrays}
+    covs = {v: metrics.ledoit_wolf_covariance(base[phys][idx])[0] for v, (phys, idx) in views.items()}
+    whit = {v: metrics.whitener(c) for v, c in covs.items()}
     del base
     cal = null_data(lc["calibration_min"])
     valid_c = np.flatnonzero(ctx.cortex.usable)
@@ -136,14 +146,32 @@ def localize(ctx, cfg, rng):
     templates = {s: ied.filtered_template(ctx.filt, s, sim["decimate"]) for s in cfg["events"]["stretches"]}
     dets, thr = {}, {}
     refr = int(round(cfg["detector"]["refractory_s"] * fs))
-    for name, a in arrays.items():
-        cg = ctx.gain(name, cand)
-        dets[name] = detection.ScanDetector.build(cal[name], whit[name], templates, cg, refr)
-        _, h = dets[name].events(dets[name].statistic(cal[name])[0])
-        thr[name] = detection.threshold_for_rate(h, lc["calibration_min"], 1.0)
-    del cal
+    cand_gain = {name: ctx.gain(name, cand) for name in arrays}
+    for v, (phys, idx) in views.items():
+        dets[v] = detection.ScanDetector.build(cal[phys][idx], whit[v], templates, cand_gain[phys][idx], refr)
+        _, h = dets[v].events(dets[v].statistic(cal[phys][idx])[0])
+        thr[v] = detection.threshold_for_rate(h, lc["calibration_min"], 1.0)
+    del cal, cand_gain
+    heldout = {}
+    if lc.get("holdout_min"):  # the thresholds on independent null data (own random stream: the events stay those of the primary run)
+        held = null_data(lc["holdout_min"], np.random.default_rng(lc["seed"] + 1))
+        for v, (phys, idx) in views.items():
+            _, h = dets[v].events(dets[v].statistic(held[phys][idx])[0])
+            heldout[v] = detection.rate_with_ci(int(np.sum(h > thr[v])), lc["holdout_min"])
+        del held
     minv = {key: localization.MNEInverse.make(g_, covs[key[0]], snr=lc["snr"], depth=lc["depth"]) for key, g_ in inv.items()}
-    mne_cov = {name: mne.Covariance(covs[name], a.info.ch_names, [], [], nfree=int(lc["baseline_min"] * 60 * fs)) for name, a in arrays.items()}
+    nfree = int(lc["baseline_min"] * 60 * fs)
+    mne_cov = {v: mne.Covariance(covs[v], vinfo[v].ch_names, [], [], nfree=nfree) for v in views}
+    mne_inv = {}
+    if lc.get("mne_dspm"):
+        lambda2 = 1.0 / lc["snr"] ** 2
+        for v, (phys, idx) in views.items():
+            for k in range(n_draws):
+                fwd_v = mne.pick_channels_forward(fwd_phys[phys, k], include=vinfo[v].ch_names, ordered=True, verbose=False)
+                op = mne.minimum_norm.make_inverse_operator(vinfo[v], fwd_v, mne_cov[v], loose=0.0, fixed=True, depth=lc["depth"],
+                                                            verbose=False)
+                mne_inv[v, k] = mne.minimum_norm.prepare_inverse_operator(op, nave=1, lambda2=lambda2, method="dSPM", verbose=False)
+        del fwd_phys
     log("inverse operators and detectors ready")
 
     events = [(i, fam, s) for i in range(len(loc)) for fam in ("focal", "patch") for s in lc["strengths_nAm"]]
@@ -156,15 +184,22 @@ def localize(ctx, cfg, rng):
         # displacement the coregistration error alone produces at the true source (MRI frame)
         coreg_mm = 1e3 * float(np.linalg.norm(mne.transforms.apply_trans(
             trans_used[k], mne.transforms.apply_trans(mri_to_head, centre[i])) - centre[i]))
-        for name, a in arrays.items():
-            y = seg[name]
-            ied.inject(y, topo[(name, i, fam)], tpl, pk, s * 1e-9, t_peak)
+        for name in arrays:
+            ied.inject(seg[name], topo[(name, i, fam)], tpl, pk, s * 1e-9, t_peak)
+        for name, (phys, idx) in views.items():
+            y = seg[phys][idx]
             stat, _ = dets[name].statistic(y)
             detected = detection.event_height(*dets[name].events(stat), t_peak, tol) > thr[name]
             d = minv[name, k].apply(y[:, [t_peak]], "dSPM")[:, 0]
             err, j = localization.peak_error(d, ctx.cortex.rr[grid], centre[i])
             sup = localization.support_recovery(d, np.isin(grid, members[i])) if fam == "patch" else np.nan
-            ev_ = evoked_for(a, y[:, t_peak:t_peak + 1], fs)
+            ev_ = evoked_for(vinfo[name], y[:, t_peak:t_peak + 1], fs)
+            if mne_inv:
+                d_mne = mne.minimum_norm.apply_inverse(ev_, mne_inv[name, k], 1.0 / lc["snr"] ** 2, "dSPM", prepared=True,
+                                                       verbose=False).data[:, 0]
+                err_mne = localization.peak_error(d_mne, ctx.cortex.rr[grid], centre[i])[0]
+            else:
+                d_mne, err_mne = np.full(1, np.nan), np.nan
             with mne.use_coil_def(opm.coil_def_file()):
                 dip, _ = mne.fit_dipole(ev_, mne_cov[name], bem1_sol, trans_used[k], min_dist=lc["ecd_min_dist_mm"], verbose=False)
             # where the analyst reads the dipole (MRI via the perturbed transform), and in the sensor frame (true transform)
@@ -172,6 +207,7 @@ def localize(ctx, cfg, rng):
             ecd_sensor = mne.transforms.apply_trans(ctx.subject.trans, dip.pos[0])
             rows.append(dict(event=e_idx, location=i, family=fam, strength_nAm=s, array=name, coreg_draw=k, detected=detected,
                              dspm_error_mm=err * 1e3, dspm_peak=float(np.abs(d).max()), support=sup,
+                             dspm_mne_error_mm=err_mne * 1e3, dspm_mne_peak=float(np.abs(d_mne).max()),
                              ecd_error_mm=1e3 * float(np.linalg.norm(ecd_mri - centre[i])),
                              ecd_error_sensor_frame_mm=1e3 * float(np.linalg.norm(ecd_sensor - centre[i])),
                              coreg_displacement_mm=coreg_mm, ecd_gof=float(dip.gof[0]), ecd_conf_vol_mm3=float(dip.conf["vol"][0]) * 1e9,
@@ -190,10 +226,16 @@ def localize(ctx, cfg, rng):
             wr.writerow({k: v for k, v in r.items() if k != "stratum"})
     summary = dict(status=status, anatomy=ctx.notes,
                    config=cfg["localization"], n_events=len(events), inverse_grid=int(len(grid)), thresholds_1_per_min=thr,
+                   views={v: dict(array=phys, channels=int(len(idx))) for v, (phys, idx) in views.items()},
+                   thresholds_heldout=dict(minutes=lc.get("holdout_min"), false_events=heldout,
+                                           note="false events per minute at the calibrated thresholds on independent null data "
+                                                "(exact Poisson 95 % interval); target 1 per minute"),
                    coreg_displacement_mm_median=float(np.median([r["coreg_displacement_mm"] for r in rows])),
-                   results=summarise(rows, arrays, lc), paired=paired(rows, arrays, lc, rng))
+                   results=summarise(rows, views, lc), paired=paired(rows, views, lc, rng),
+                   paired_secondary=paired(rows, views, lc, np.random.default_rng(lc["seed"] + 2),
+                                           comparators=[v for v in views if v.startswith("squid_")]))
     io.write_json(summary, OUT / f"g4_localization{tag}_summary.json")
-    figure(rows, arrays, lc, ctx.label)
+    figure(rows, views, lc, ctx.label)
     return rows, summary
 
 
@@ -210,7 +252,8 @@ def summarise(rows, arrays, lc):
                 sel = [r for r in rows if r["array"] == name and r["family"] == fam and r["strength_nAm"] == s]
                 det = np.array([r["detected"] for r in sel])
                 col = {c: np.array([r[c] for r in sel], float) for c in ("dspm_error_mm", "ecd_error_mm", "ecd_error_sensor_frame_mm",
-                                                                        "ecd_gof", "ecd_conf_vol_mm3", "ecd_khi2_per_dof", "support")}
+                                                                        "ecd_gof", "ecd_conf_vol_mm3", "ecd_khi2_per_dof", "support",
+                                                                        "dspm_mne_error_mm")}
                 out[f"{name}/{fam}/{s:g}nAm"] = dict(
                     n=len(sel), detected=float(det.mean()),
                     dspm_error_mm_median_all=_med(col["dspm_error_mm"]), dspm_error_mm_median_detected=_med(col["dspm_error_mm"][det]),
@@ -218,49 +261,58 @@ def summarise(rows, arrays, lc):
                     ecd_error_sensor_frame_mm_median_detected=_med(col["ecd_error_sensor_frame_mm"][det]),
                     ecd_gof_median_detected=_med(col["ecd_gof"][det]), ecd_conf_vol_mm3_median_detected=_med(col["ecd_conf_vol_mm3"][det]),
                     ecd_khi2_per_dof_median_detected=_med(col["ecd_khi2_per_dof"][det]),
+                    dspm_mne_error_mm_median_all=_med(col["dspm_mne_error_mm"]),
+                    dspm_mne_error_mm_median_detected=_med(col["dspm_mne_error_mm"][det]),
                     joint_detect_and_dspm_within_10mm=float(np.mean(det & (col["dspm_error_mm"] <= 10))),
+                    joint_detect_and_dspm_mne_within_10mm=float(np.mean(det & (col["dspm_mne_error_mm"] <= 10))),
                     joint_detect_and_ecd_within_10mm=float(np.mean(det & (col["ecd_error_mm"] <= 10))),
                     support_recovery_median=_med(col["support"]) if fam == "patch" else None)
     return out
 
 
-def paired(rows, arrays, lc, rng, n_boot=2000):
-    """OPM minus Neuromag on identical events (same location, noise and coregistration draw)."""
+def paired(rows, arrays, lc, rng, n_boot=2000, comparators=("squid",)):
+    """OPM minus Neuromag on identical events (same location, noise and coregistration draw);
+    ``comparators``: the Neuromag views compared with (primary: combined)."""
     from scipy.stats import binomtest, wilcoxon
 
     by = {(r["array"], r["event"]): r for r in rows}
     out = {}
-    for a in [n for n in arrays if n != "squid"]:
+    pairs = [(a, ref) for ref in comparators for a in arrays if not a.startswith("squid")]
+    for a, ref in pairs:
         for fam in ("focal", "patch"):
             for s in lc["strengths_nAm"]:
                 ev = sorted({r["event"] for r in rows if r["family"] == fam and r["strength_nAm"] == s})
                 res = dict(n=len(ev))
-                for metric in ("dspm_error_mm", "ecd_error_mm"):
-                    diff = np.array([by[a, e][metric] - by["squid", e][metric] for e in ev])
+                for metric in ("dspm_error_mm", "ecd_error_mm", "dspm_mne_error_mm"):
+                    if not np.all(np.isfinite([by[a, e][metric] for e in ev])):
+                        continue
+                    diff = np.array([by[a, e][metric] - by[ref, e][metric] for e in ev])
                     boot = np.median(diff[rng.integers(0, len(diff), (n_boot, len(diff)))], axis=1)
                     p = float(wilcoxon(diff).pvalue) if np.any(diff != 0) else 1.0
                     res[metric] = dict(median_difference=float(np.median(diff)), ci95=[float(np.percentile(boot, 2.5)), float(np.percentile(boot, 97.5))],
                                        wilcoxon_p=p, share_opm_smaller=float(np.mean(diff < 0)))
                 for metric in ("dspm", "ecd"):
-                    ok = {n: np.array([by[n, e]["detected"] and by[n, e][f"{metric}_error_mm"] <= 10 for e in ev]) for n in (a, "squid")}
-                    only_a, only_b = int(np.sum(ok[a] & ~ok["squid"])), int(np.sum(~ok[a] & ok["squid"]))
-                    res[f"joint_{metric}_10mm"] = dict(opm=float(ok[a].mean()), squid=float(ok["squid"].mean()), only_opm=only_a, only_squid=only_b,
+                    ok = {n: np.array([by[n, e]["detected"] and by[n, e][f"{metric}_error_mm"] <= 10 for e in ev]) for n in (a, ref)}
+                    only_a, only_b = int(np.sum(ok[a] & ~ok[ref])), int(np.sum(~ok[a] & ok[ref]))
+                    res[f"joint_{metric}_10mm"] = dict(opm=float(ok[a].mean()), squid=float(ok[ref].mean()), only_opm=only_a, only_squid=only_b,
                                                        mcnemar_exact_p=float(binomtest(only_a, only_a + only_b, 0.5).pvalue) if only_a + only_b else 1.0)
-                out[f"{a}_vs_squid/{fam}/{s:g}nAm"] = res
+                out[f"{a}_vs_{ref}/{fam}/{s:g}nAm"] = res
     return out
 
 
 def figure(rows, arrays, lc, label="adult"):
-    colors = {"squid": "k", "opm_matched": "tab:green", "opm204": "tab:blue", "opm_dense": "tab:purple"}
+    colors = {"squid": "k", "squid_mag": "tab:blue", "squid_grad": "tab:red", "opm_matched": "tab:green", "opm204": "tab:cyan",
+              "opm_dense": "tab:purple"}
     conds = [(f, s) for f in ("focal", "patch") for s in lc["strengths_nAm"]]
+    step = len(arrays) + 1
     fig, axs = plt.subplots(1, 3, figsize=(15, 4.4))
     for ax, meth in zip(axs[:2], ("dspm", "ecd")):
         for k_, name in enumerate(arrays):
             for m_, (fam, s) in enumerate(conds):
                 v = [r[f"{meth}_error_mm"] for r in rows if r["array"] == name and r["family"] == fam and r["strength_nAm"] == s]
-                ax.boxplot(v, positions=[m_ * 4 + k_], widths=0.7, patch_artist=True, showfliers=False,
+                ax.boxplot(v, positions=[m_ * step + k_], widths=0.7, patch_artist=True, showfliers=False,
                            boxprops=dict(facecolor=colors.get(name, "0.5"), alpha=0.4))
-        ax.set_xticks([m_ * 4 + 1 for m_ in range(len(conds))])
+        ax.set_xticks([m_ * step + (len(arrays) - 1) / 2 for m_ in range(len(conds))])
         ax.set_xticklabels([f"{f}\n{s:g} nAm" for f, s in conds], fontsize=8)
         ax.set_ylabel("localization error on the MRI [mm] (all events)")
         ax.set_title({"dspm": "dSPM peak (5-mm grid; true sources off the grid)", "ecd": "equivalent current dipole"}[meth], fontsize=9)

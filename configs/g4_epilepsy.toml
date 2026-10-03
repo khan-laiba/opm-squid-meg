@@ -44,4 +44,7 @@ snr = 3.0                        # MNE lambda^2 = 1 / snr^2
 depth = 0.8
 coreg_draws = 8                  # coregistration-error draws shared by all arrays; location i uses draw i mod K
 ecd_min_dist_mm = 5.0            # fit_dipole min_dist to the inner skull (MNE default); no GOF cut (whitened GOF depends on channel count)
+neuromag_subsets = ["mag", "grad"]  # review (2026-10-02): Neuromag also with one sensor type (own covariance, detector, inverse); secondary
+holdout_min = 10.0               # review: independent null data (own seed) for the false-event rate at the calibrated thresholds
+mne_dspm = true                  # review: dSPM also through mne.minimum_norm (make_inverse_operator / apply_inverse) next to opmsquid.localization
 seed = 45

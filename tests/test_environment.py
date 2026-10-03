@@ -77,6 +77,12 @@ class TestEnvironmentBasis(unittest.TestCase):
         env = environment.fit_empty_room(raw, self.info, filt, trim_s=1.0, bads=[bad])
         self.assertGreater(env.explained_fraction["mag"], 0.99)
         self.assertGreater(env.explained_fraction["grad"], 0.9)
+        # the per-channel residual (measured-spectrum SQUID scenario): about the white noise left, NaN for the bad channel
+        rv = env.residual_var
+        self.assertTrue(np.isnan(rv[10]) and np.isfinite(np.delete(rv, 10)).all())
+        white = filt.enbw() / (fs / 2) * np.where(self.kind == "mag", 2e-15, 2e-13) ** 2
+        ratio = np.delete(rv / white, 10)
+        self.assertTrue(0.8 < np.median(ratio) < 1.05, np.median(ratio))
 
 
 if __name__ == "__main__":

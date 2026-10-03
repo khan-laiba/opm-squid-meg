@@ -114,6 +114,33 @@ def _opm_array(name, arr, meta) -> Array:
     return Array(name, info, np.array(["mag"] * len(arr.pos)), opm.coil_def_file(), meta)
 
 
+TRIAX_FRAMES = ((0, 1, 2), (1, 2, 0), (2, 0, 1))  # (ex, ey, n) -> sensitive axis n, ex, ey; each frame right-handed
+
+
+def triaxial_opm(matched: Array) -> Array:
+    """Channel-count control (A-OPM-TRIAX): the matched array's sites with three orthogonal
+    sensitive axes each, the site's axis (scalp normal) and the two in-plane axes of its cell, as
+    many channels per site as Neuromag (3 x 98 here vs 3 x 102). Every channel integrates over the
+    same 10-mm cube (its 3 x 3 x 3 Gauss points are symmetric under the axis permutation), so the
+    three channels of a site differ only in the field component they measure."""
+    names = [f"{ch}{ax}" for ch in matched.info.ch_names for ax in ("z", "x", "y")]
+    info = mne.create_info(names, matched.info["sfreq"], "mag")
+    roles = []
+    with info._unlock():
+        info["dev_head_t"] = matched.info["dev_head_t"]
+        for i, src in enumerate(matched.info["chs"]):
+            frame = (src["loc"][3:6], src["loc"][6:9], src["loc"][9:12])
+            for j, (a, b, c) in enumerate(TRIAX_FRAMES):
+                ch = info["chs"][3 * i + j]
+                ch["loc"][:3] = src["loc"][:3]
+                ch["loc"][3:6], ch["loc"][6:9], ch["loc"][9:12] = frame[a], frame[b], frame[c]
+                ch["coil_type"], ch["coord_frame"], ch["unit"] = src["coil_type"], src["coord_frame"], src["unit"]
+                roles.append(("normal", "tangential_x", "tangential_y")[j])
+    meta = dict(role="channel-count control: triaxial OPM at the matched sites", sites=matched.n, channels=3 * matched.n,
+                axes="3 (normal + 2 tangential)", axis_role=np.array(roles), standoff_mm=matched.meta.get("standoff_mm"))
+    return Array("opm_triax", info, np.array(["mag"] * len(names)), matched.coil_def, meta)
+
+
 def with_scalp_gap(array: Array, gap: float) -> Array:
     """The same OPM sites moved outward along their sensitive axes by ``gap`` [m] (A-OPM-GAP):
     the helmet sits farther from the scalp and every sensor keeps its site, so a gap variant
@@ -286,11 +313,61 @@ def sample_covariance(cov: np.ndarray, n_samples: int, rng: np.random.Generator,
     return metrics.ledoit_wolf_covariance(x)[0] if shrink else metrics.empirical_covariance(x)
 
 
+def measured_squid_variance(env: environment.EnvironmentModel, kinds: np.ndarray) -> np.ndarray:
+    """SQUID intrinsic variance per channel from the measured empty-room spectrum: the in-band
+    variance the 8-term room-field fit leaves (an upper bound on this system's sensor noise in this
+    room: it also holds what the room model does not describe); bad channels take their type's
+    median."""
+    rv = np.array(env.residual_var, float)
+    for k in ("mag", "grad"):
+        m = kinds == k
+        rv[m & ~np.isfinite(rv)] = np.nanmedian(rv[m])
+    return rv
+
+
+def paired_noise_samples(noises: dict, grid_gains: dict, moment_cov, brain_scale: float, env: environment.EnvironmentModel,
+                         n: int, rng: np.random.Generator) -> dict:
+    """``n`` noise samples per array from one common realization: the same cortical background
+    sources through every array's lead fields (``background.joint_factor``), the same room-field
+    coefficients through every array's basis, and independent intrinsic noise per array.
+    Returns {name: dict(intrinsic=, brain=, env=)} (channels x n, same order as ``noises``)."""
+    names = list(noises)
+    f, rows = background.joint_factor([grid_gains[k] for k in names], brain_scale * np.asarray(moment_cov))
+    brain = f @ rng.standard_normal((f.shape[1], n))
+    ev, u = np.linalg.eigh(0.5 * (env.coef_cov + env.coef_cov.T))
+    coef = (u * np.sqrt(np.clip(ev, 0.0, None))) @ rng.standard_normal((len(ev), n))
+    out = {}
+    for k, sl in zip(names, rows):
+        nz = noises[k]
+        out[k] = dict(intrinsic=np.sqrt(nz.intrinsic_var)[:, None] * rng.standard_normal((len(nz.intrinsic_var), n)),
+                      brain=brain[sl], env=nz.ext_basis @ coef)
+    return out
+
+
+def plugin_covariances(samples: dict, noise: noisemodel.ArrayNoise, conditions) -> dict:
+    """Ledoit-Wolf covariance estimates per condition from one array's ``paired_noise_samples``
+    (the projected condition: the projection applied to the samples, as to the data)."""
+    out = {}
+    for cond in conditions:
+        x = samples["intrinsic"].copy()
+        if cond in ("intrinsic+brain", "intrinsic+brain+env", "projected"):
+            x += samples["brain"]
+        if cond in ("intrinsic+brain+env", "projected"):
+            x += samples["env"]
+        if cond == "projected":
+            x = noise.projector() @ x
+        out[cond] = metrics.ledoit_wolf_covariance(x)[0]
+    return out
+
+
 def array_noise(array: Array, g_grid: np.ndarray, grid_area: np.ndarray, brain_scale: float, env: environment.EnvironmentModel,
-                enbw: float, opm_asd: float, corr: tuple | None = None) -> noisemodel.ArrayNoise:
+                enbw: float, opm_asd: float, corr: tuple | None = None, squid_ivar: np.ndarray | None = None) -> noisemodel.ArrayNoise:
     """Noise model of one array: intrinsic white noise, calibrated cortical background (independent,
-    or correlated with corr = (grid_points, length)), and the common room field."""
-    if array.name == "squid":
+    or correlated with corr = (grid_points, length)), and the common room field. ``squid_ivar``
+    replaces the SQUID's brochure white noise by per-channel in-band variances (e.g. measured)."""
+    if array.name == "squid" and squid_ivar is not None:
+        ivar = np.asarray(squid_ivar, float)
+    elif array.name == "squid":
         ivar = np.array([SQUID_ASD[k] ** 2 for k in array.kinds]) * enbw
     else:
         ivar = np.full(array.n, opm_asd**2 * enbw)

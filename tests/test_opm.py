@@ -88,6 +88,40 @@ class TestOPMCoil(unittest.TestCase):
 
 
 
+class TestTriaxial(unittest.TestCase):
+    """A-OPM-TRIAX: three orthogonal axes per matched site over the same cell (channel-count control)."""
+
+    def setUp(self):
+        from opmsquid import g2
+
+        rng = np.random.default_rng(4)
+        pos = rng.normal(size=(4, 3)) * 0.01 + np.array([0.0, 0.0, 0.1])
+        nn = rng.normal(size=(4, 3))
+        nn /= np.linalg.norm(nn, axis=1, keepdims=True)
+        arr = opm.OPMArray(pos, nn, pos.copy(), np.arange(4), opm.STANDOFF, 0.0, "test")
+        self.matched = g2.Array("opm_matched", opm.make_info(arr), np.array(["mag"] * 4), opm.coil_def_file(), dict(standoff_mm=7.0))
+        self.tri = g2.triaxial_opm(self.matched)
+
+    def test_frames(self):
+        self.assertEqual(self.tri.n, 12)
+        for i, src in enumerate(self.matched.info["chs"]):
+            np.testing.assert_array_equal(self.tri.info["chs"][3 * i]["loc"], src["loc"])  # the normal channel is the matched one
+            for j in range(3):
+                loc = self.tri.info["chs"][3 * i + j]["loc"]
+                f = np.array([loc[3:6], loc[6:9], loc[9:12]])
+                np.testing.assert_allclose(f @ f.T, np.eye(3), atol=1e-12)
+                np.testing.assert_allclose(np.cross(f[0], f[1]), f[2], atol=1e-12)  # right-handed
+                np.testing.assert_array_equal(loc[:3], src["loc"][:3])
+        self.assertEqual(list(self.tri.meta["axis_role"][:3]), ["normal", "tangential_x", "tangential_y"])
+
+    def test_uniform_field_component(self):
+        from opmsquid import environment
+
+        basis = environment.external_basis(self.tri.info, coil_def=self.tri.coil_def)[:, :3]  # unit homogeneous fields
+        axes = np.array([ch["loc"][9:12] for ch in self.tri.info["chs"]])
+        np.testing.assert_allclose(basis, axes, atol=1e-12)  # each channel reads the field along its own axis
+
+
 class TestArrayHelpers(unittest.TestCase):
     def test_farthest_point_subset_spreads_and_keeps_spacing(self):
         rng = np.random.default_rng(0)

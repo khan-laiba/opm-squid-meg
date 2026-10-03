@@ -36,7 +36,8 @@ FROZEN_TAG = "adult-baseline-v2"  # the adult baseline frozen before any pediatr
 CURRENT_TAG = "adult-baseline-v3"  # every array-dependent result recomputed after the final reviews (adult and pediatric alike)
 MARKER = ".opmsquid_site_build"  # marks an output directory as the builder's own (safe to replace)
 LABEL = {"squid": "Neuromag", "opm_matched": "OPM matched", "opm204": "OPM 204 (channel budget)",
-         "opm_dense": "OPM dense", "combined": "combined", "grad": "gradiometers", "mag": "magnetometers"}
+         "opm_dense": "OPM dense", "combined": "combined", "grad": "gradiometers", "mag": "magnetometers",
+         "squid_mag": "Neuromag magnetometers", "squid_grad": "Neuromag gradiometers"}
 DETECTORS = {"squid/combined": "Neuromag combined", "squid/grad": "Neuromag gradiometers", "squid/mag": "Neuromag magnetometers",
              "opm_matched/opm": "OPM matched", "opm_dense/opm": "OPM dense"}
 DEPTH_BANDS = ("10-20 mm", "20-30 mm", "30-45 mm", "45-70 mm")
@@ -476,17 +477,26 @@ def page_epilepsy(d, out):
 
         rows.append(["Neuromag combined" if name == "squid" else LABEL[name], fam, s.replace("nAm", " nAm"), f"{100 * v['detected']:.0f} %",
                      f(v["ecd_error_mm_median_detected"]),
-                     f(v["dspm_error_mm_median_detected"]), f"{100 * v['joint_detect_and_ecd_within_10mm']:.0f} %",
+                     f(v["dspm_error_mm_median_detected"]), f(v.get("dspm_mne_error_mm_median_detected")),
+                     f"{100 * v['joint_detect_and_ecd_within_10mm']:.0f} %",
                      f"{100 * v['joint_detect_and_dspm_within_10mm']:.0f} %"])
+    held = (loc.get("thresholds_heldout") or {}).get("false_events") or {}
+    held_txt = ("; ".join(f"{'Neuromag combined' if k == 'squid' else LABEL.get(k, k)} {v['rate_per_min']:.2f} "
+                          f"[{v['ci95'][0]:.2f}-{v['ci95'][1]:.2f}]" for k, v in held.items()))
     h += ["<h2 id=\"localization\">Bounded localization</h2>",
           f"<p>24 locations; inverse with a 1-layer BEM and a 2-mm/2-deg coregistration error ({loc['config']['coreg_draws']} draws "
           f"shared by all arrays; median displacement at the source {loc['coreg_displacement_mm_median']:.1f} mm). Errors are "
           "measured on the MRI through the analyst's transform. No goodness-of-fit cut: whitened GOF rises as the channel count "
-          "falls.</p>",
+          "falls. Neuromag is also localized with one sensor type (its own covariance, detector and inverse; secondary), and "
+          "dSPM is also computed with MNE's own <code>mne.minimum_norm</code> (it differs from the study's implementation in the "
+          "depth weighting).</p>"
+          + (f"<p>Detector thresholds (1 false event per minute, 10 min of null data) on {loc['thresholds_heldout']['minutes']:g} "
+             f"min of independent null data: false events per minute [exact 95 % interval]: {held_txt}.</p>" if held else ""),
           fig(out, "g4/Figure_G4_localization.png", "Localization error on the MRI (all events) for dSPM and the equivalent current "
               "dipole, and the share of events both detected and localized within 10 mm.", "Localization errors"),
           sb.table(["Array", "Source", "Strength", "Detected", "ECD error, detected [mm]", "dSPM error, detected [mm]",
-                    "Detected + ECD <= 10 mm", "Detected + dSPM <= 10 mm"], rows, "Medians per condition (one event per location)")]
+                    "dSPM (MNE), detected [mm]", "Detected + ECD <= 10 mm", "Detected + dSPM <= 10 mm"], rows,
+                   "Medians per condition (one event per location)")]
     h.append(page_epilepsy_pediatric(d, out))
     h.append(page_motion(d, out))
     return "\n".join(h)
