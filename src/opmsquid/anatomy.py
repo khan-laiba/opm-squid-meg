@@ -188,11 +188,23 @@ def head_on_scalp(surfaces: list, scalp: Surface) -> tuple[list, dict]:
     k = next(i for i, s in enumerate(surfaces) if s["id"] == FIFF.FIFFV_BEM_SURF_ID_HEAD)
     head = surfaces[k]
     old = np.asarray(head["rr"], float)
-    _, idx = cKDTree(scalp.rr).query(old)
+    tree = cKDTree(scalp.rr)
+    _, idx = tree.query(old)
+    n_shared = 0
+    if len(np.unique(idx)) != len(idx):  # two vertices nearest to one scalp vertex: the farther one takes its next free one
+        _, cand = tree.query(old, k=10)
+        taken = set()
+        for v in np.argsort(np.linalg.norm(np.asarray(scalp.rr)[idx] - old, axis=1)):
+            free = [c for c in cand[v] if c not in taken]
+            if not free:
+                raise ValueError("A-BEM-CONFORM: no free scalp vertex among the 10 nearest")
+            n_shared += int(free[0] != idx[v])
+            idx[v] = free[0]
+            taken.add(free[0])
     new_rr = np.asarray(scalp.rr, float)[idx]
     moved = np.linalg.norm(new_rr - old, axis=1)
     report = dict(n_vertices=len(old), moved_median_mm=float(np.median(moved) * 1e3), moved_p90_mm=float(np.percentile(moved, 90) * 1e3),
-                  moved_max_mm=float(moved.max() * 1e3))
+                  moved_max_mm=float(moved.max() * 1e3), reassigned=n_shared)
     if not np.any(moved > 0):
         return list(surfaces), dict(report, identity=True)
     if len(np.unique(idx)) != len(idx):
@@ -202,6 +214,29 @@ def head_on_scalp(surfaces: list, scalp: Surface) -> tuple[list, dict]:
     def face_normals(rr):
         return np.cross(rr[tris[:, 1]] - rr[tris[:, 0]], rr[tris[:, 2]] - rr[tris[:, 0]])
 
+    n_repaired = 0
+    nbrs = None
+    for _ in range(50):  # a vertex whose triangle would flip goes to the free scalp vertex nearest its neighbours' mean
+        bad = np.einsum("ij,ij->i", face_normals(old), face_normals(new_rr)) <= 0
+        if not bad.any():
+            break
+        if nbrs is None:
+            nbrs = [set() for _ in range(len(old))]
+            for a, b, c in tris:
+                nbrs[a] |= {b, c}
+                nbrs[b] |= {a, c}
+                nbrs[c] |= {a, b}
+        used = set(idx.tolist())
+        for v in np.unique(tris[bad]):
+            _, cand = tree.query(new_rr[list(nbrs[v])].mean(axis=0), k=10)
+            free = [c for c in cand if c not in used or c == idx[v]]
+            if free and free[0] != idx[v]:
+                used.discard(idx[v])
+                idx[v] = free[0]
+                used.add(free[0])
+                new_rr[v] = np.asarray(scalp.rr[free[0]], float)
+                n_repaired += 1
+    report.update(repaired=n_repaired, moved_max_mm=float(np.linalg.norm(new_rr - old, axis=1).max() * 1e3))
     if np.any(np.einsum("ij,ij->i", face_normals(old), face_normals(new_rr)) <= 0):
         raise ValueError("A-BEM-CONFORM: a head-surface triangle would flip")
     if crossing_edges(new_rr, tris):
@@ -225,7 +260,7 @@ def model_skull(inner: dict, scalp: Surface, cortex_rr: np.ndarray, depth: float
     white-surface vertices); the displacement is smoothed over the mesh (``smooth`` neighbour
     averages) and the cortex limit applied again. Parts already deeper than ``depth`` (the skull base)
     stay where they are. The outer skull is the modelled inner skull moved outward by half its
-    local distance to the scalp (at least 1 mm of skull and 1 mm of scalp, at most ``max_skull`` of
+    local distance to the scalp (at least 1 mm of skull and 2 mm of scalp, at most ``max_skull`` of
     skull, where the scalp is far: the skull base). Both keep the input's
     triangles. Refused if a triangle flips, the surface folds, a cortex vertex is left outside or the
     outer skull leaves the scalp. Returns (inner, outer skull, report); surfaces in the MRI frame [m]."""
@@ -234,7 +269,6 @@ def model_skull(inner: dict, scalp: Surface, cortex_rr: np.ndarray, depth: float
 
     tris = np.asarray(inner["tris"])
     rr = np.asarray(inner["rr"], float)
-    nn = _outward(complete_surface_info(dict(rr=rr, tris=tris, np=len(rr), ntri=len(tris)), copy=False, verbose=False)).nn
     scalp_surf = dict(rr=scalp.rr, tris=scalp.tris, nn=scalp.nn, np=len(scalp.rr), ntri=len(scalp.tris))
     to_scalp = MeshDistance(scalp_surf)
     cortex = cKDTree(np.asarray(cortex_rr, float))
@@ -245,6 +279,15 @@ def model_skull(inner: dict, scalp: Surface, cortex_rr: np.ndarray, depth: float
     e = np.unique(np.sort(np.concatenate([tris[:, [0, 1]], tris[:, [1, 2]], tris[:, [2, 0]]]), axis=1), axis=0)
     adj = sp.coo_matrix((np.ones(2 * len(e)), (np.r_[e[:, 0], e[:, 1]], np.r_[e[:, 1], e[:, 0]])), shape=(len(rr),) * 2).tocsr()
     deg = np.asarray(adj.sum(axis=1)).ravel()
+
+    def smoothed_normals(x):  # vertex normals averaged over ``smooth`` neighbour rings: offsets along them do not cross
+        n = _outward(complete_surface_info(dict(rr=x, tris=tris, np=len(x), ntri=len(tris)), copy=False, verbose=False)).nn
+        for _ in range(int(smooth)):
+            n = 0.5 * n + 0.5 * (adj @ n) / deg[:, None]
+            n /= np.linalg.norm(n, axis=1, keepdims=True)
+        return n
+
+    nn = smoothed_normals(rr)
     for _ in range(int(smooth)):
         delta = np.minimum(0.5 * delta + 0.5 * (adj @ delta) / deg, limit)
     new_rr = rr - delta[:, None] * nn
@@ -265,13 +308,20 @@ def model_skull(inner: dict, scalp: Surface, cortex_rr: np.ndarray, depth: float
     sample = np.asarray(cortex_rr, float)[:: max(1, len(cortex_rr) // 20000)]
     if not _CheckInside(new_inner)(sample, verbose=False).all():
         raise ValueError("A-BEM-CHILD: cortex outside the modelled inner skull")
-    nn_new = _outward(new_inner).nn
+    nn_new = smoothed_normals(new_rr)
     gap = to_scalp.unsigned(new_rr)
-    lo, hi = 0.001, np.clip(gap - 0.001, 0.001, max_skull)
+    lo, hi = 0.001, np.clip(gap - 0.002, 0.001, max_skull)
     t = np.clip(0.5 * gap, lo, hi)
     for _ in range(int(smooth)):
         t = np.clip(0.5 * t + 0.5 * (adj @ t) / deg, lo, hi)
     os_rr = new_rr + t[:, None] * nn_new
+    for _ in range(30):  # where an offset triangle would flip (a crease of the modelled inner skull), thin the skull there
+        bad = np.einsum("ij,ij->i", face_normals(new_rr), face_normals(os_rr)) <= 0
+        if not bad.any():
+            break
+        v = np.unique(tris[bad])
+        t[v] = np.maximum(0.7 * t[v], lo)
+        os_rr = new_rr + t[:, None] * nn_new
     check(os_rr, new_rr, "outer-skull")
     outer = complete_surface_info(dict(id=FIFF.FIFFV_BEM_SURF_ID_SKULL, coord_frame=new_inner["coord_frame"], rr=os_rr, tris=tris.copy(),
                                        np=len(os_rr), ntri=len(tris)), copy=False, verbose=False)
@@ -286,6 +336,50 @@ def model_skull(inner: dict, scalp: Surface, cortex_rr: np.ndarray, depth: float
                   cortex_clearance_min_mm=float(MeshDistance(new_inner).unsigned(sample).min() * 1e3),
                   skull_thickness_mm=[float(x) for x in np.percentile(t * 1e3, [10, 50, 90])])
     return new_inner, outer, report
+
+
+def similarity_fit(src: np.ndarray, tgt: np.ndarray) -> tuple[float, np.ndarray, np.ndarray]:
+    """Least-squares similarity tgt ~ s R src + t of corresponding points (Umeyama 1991)."""
+    mu_s, mu_t = src.mean(axis=0), tgt.mean(axis=0)
+    a, b = src - mu_s, tgt - mu_t
+    u, d, vt = np.linalg.svd(b.T @ a / len(src))
+    e = np.ones(3)
+    if np.linalg.det(u) * np.linalg.det(vt) < 0:
+        e[-1] = -1.0
+    r = u @ np.diag(e) @ vt
+    s = float(np.sum(d * e) / np.mean(np.sum(a**2, axis=1)))
+    return s, r, mu_t - s * r @ mu_s
+
+
+def transfer_fiducials(adult_cortex: np.ndarray, adult_fids: dict, cortex: np.ndarray, scalp: np.ndarray, n_iter: int = 60,
+                       trim: float = 90.0) -> tuple[dict, dict]:
+    """A-G3-FID: fiducials of a head that has none of its own: the adult's (LPA, nasion, RPA; MRI
+    frame [m]) mapped by a similarity transform fitted from the adult's cortex to ``cortex`` (white
+    surface vertices) by trimmed iterative closest points (start: centroids and sizes aligned; the
+    ``trim`` percent closest pairs refit each time), then moved to the nearest vertex of ``scalp``.
+    The cortex is fitted rather than the scalp because faces scale differently from crania (on the
+    infant templates a scalp fit put the nasion 17-34 mm from theirs; this fit reproduces their
+    fiducials to 0.6-12 mm and their head frame to 4-5 deg). Returns (fiducials, report)."""
+    src = np.asarray(adult_cortex, float)
+    src = src[:: max(1, len(src) // 8000)]
+    tgt = np.asarray(cortex, float)
+    tgt = tgt[:: max(1, len(tgt) // 8000)]
+    size = lambda x: np.linalg.norm(x.max(axis=0) - x.min(axis=0))  # noqa: E731
+    s = size(tgt) / size(src)
+    r = np.eye(3)
+    t = tgt.mean(axis=0) - s * src.mean(axis=0)
+    tree = cKDTree(tgt)
+    for _ in range(int(n_iter)):
+        d, idx = tree.query(s * src @ r.T + t)
+        keep = d <= np.percentile(d, trim)
+        s, r, t = similarity_fit(src[keep], tgt[idx[keep]])
+    d, _ = tree.query(s * src @ r.T + t)
+    mapped = {k: s * r @ np.asarray(v, float) + t for k, v in adult_fids.items()}
+    stree = cKDTree(scalp)
+    out = {k: np.asarray(scalp[stree.query(v)[1]], float) for k, v in mapped.items()}
+    report = dict(scale=float(s), rotation_deg=float(np.degrees(np.arccos(np.clip((np.trace(r) - 1) / 2, -1, 1)))),
+                  cortex_fit_median_mm=float(np.median(d) * 1e3), projection_mm={k: float(np.linalg.norm(out[k] - mapped[k]) * 1e3) for k in out})
+    return out, report
 
 
 def load_sample(spacing: str = "oct6") -> Subject:
@@ -315,16 +409,14 @@ def fiducial_info(fiducials: dict) -> mne.Info:
 
 
 INFANT_SUBJECTS = "infant_subjects"  # data/external/infant_subjects (mne.datasets.fetch_infant_template)
+SCHOOL_SUBJECTS = "school_subjects"  # data/external/school_subjects (scripts/prepare_school_subjects.py)
 
 
-def load_template(name: str = "ANTS2-0Years3T") -> Subject:
-    """An infant template (O'Reilly et al. 2021, via ``mne.datasets.fetch_infant_template``) in its
-    native dimensions: 3-layer BEM (5,120 triangles per surface), dense head surface, oct-6 source
-    space (whose full white surface also provides the full-resolution cortex), aparc labels. The
-    head frame is defined by the template's MRI-frame fiducials (Neuromag convention), so the
-    head-to-MRI transform follows from them."""
-    sd = paths.require(paths.EXTERNAL / INFANT_SUBJECTS, "infant template directory")
-    bem_dir = paths.require(sd / name / "bem", f"{name} BEM directory")
+def _load_prepared(root: Path, name: str, description: str) -> Subject:
+    """A subject laid out as MNE packages the infant templates: bem/{name}-5120-5120-5120-bem.fif,
+    -head.fif (dense MRI scalp), -oct-6-src.fif, -fiducials.fif (MRI frame), label/*.annot. The head
+    frame follows from the fiducials; the BEM head surface is put on the scalp (A-BEM-CONFORM)."""
+    bem_dir = paths.require(root / name / "bem", f"{name} BEM directory")
     src_file = bem_dir / f"{name}-oct-6-src.fif"
     src = mne.read_source_spaces(src_file, verbose=False)
     surfs = mne.read_bem_surfaces(bem_dir / f"{name}-5120-5120-5120-bem.fif", verbose=False)
@@ -339,10 +431,28 @@ def load_template(name: str = "ANTS2-0Years3T") -> Subject:
     trans = mne.transforms.Transform("head", "mri", np.linalg.inv(mri_head))
     fid_head = {k: mne.transforms.apply_trans(mri_head, v) for k, v in mri.items()}
     scalp = _outward(head)
-    surfs, conform = head_on_scalp(surfs, scalp)  # the identity: the template's head surface is on its scalp
-    return Subject(name, sd, src, surfs, scalp, _outward(inner), trans, label_dir=sd / name / "label",
-                   surface_src=src_file, fiducials=fid_head,
-                   description=f"infant template {name} (O'Reilly et al. 2021; native dimensions)", head_conform=conform)
+    surfs, conform = head_on_scalp(surfs, scalp)
+    return Subject(name, root, src, surfs, scalp, _outward(inner), trans, label_dir=root / name / "label",
+                   surface_src=src_file, fiducials=fid_head, description=description, head_conform=conform)
+
+
+def load_template(name: str = "ANTS2-0Years3T") -> Subject:
+    """An infant template (O'Reilly et al. 2021, via ``mne.datasets.fetch_infant_template``) in its
+    native dimensions: 3-layer BEM (5,120 triangles per surface), dense head surface, oct-6 source
+    space (whose full white surface also provides the full-resolution cortex), aparc labels. The
+    head frame is defined by the template's MRI-frame fiducials (Neuromag convention), so the
+    head-to-MRI transform follows from them. Its head surface is already on its scalp (identity)."""
+    sd = paths.require(paths.EXTERNAL / INFANT_SUBJECTS, "infant template directory")
+    return _load_prepared(sd, name, f"infant template {name} (O'Reilly et al. 2021; native dimensions)")
+
+
+def load_school(name: str) -> Subject:
+    """A school-aged child of OpenNeuro ds005234 (Fadeev et al. 2024) prepared by
+    ``scripts/prepare_school_subjects.py``: its own white surfaces, aparc labels and dense MRI scalp;
+    its watershed outer skin as the BEM head surface (A-BEM-CONFORM: put on the scalp at loading);
+    a modelled skull (A-BEM-CHILD) and fiducials transferred from the adult (A-G3-FID)."""
+    sd = paths.require(paths.EXTERNAL / SCHOOL_SUBJECTS, "school-aged subjects directory")
+    return _load_prepared(sd, name, f"school-aged child {name} (OpenNeuro ds005234; individual MRI)")
 
 
 def _scaled_surface(surf: dict, s: float) -> dict:

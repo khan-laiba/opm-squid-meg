@@ -11,6 +11,10 @@ Anatomies (src/opmsquid/anatomy.py):
              template, not an individual child
   infant18mo, infant12mo  the 18- and 12-month templates of the same series (variability across
              templates; still averages from one database)
+  childA, childB, childC  three typically developing school-aged children (7.8, 8.3 and 8.7 years;
+             OpenNeuro ds005234): their own cortex, labels and MRI scalp, a modelled skull
+             (A-BEM-CHILD) and fiducials transferred from the adult (A-G3-FID), prepared by
+             scripts/prepare_school_subjects.py
 Arrays: the same Neuromag helmet (coils 3014/3024, 'accurate' integration, intrinsic noise) at
 source-blind placements (src/opmsquid/pediatric.py: centred, top and back contact, bounded
 translations and rotations) and a counterfactual helmet scaled with the head (mechanistic
@@ -23,7 +27,7 @@ conductivities. Nothing is changed with age except the geometry.
 Metric: known-topography detectability d of a 10-nAm cortical-normal dipole, in dB (20 log10 d);
 D = dB_OPM - dB_SQUID for each SQUID comparator (mag, grad, combined); Delta = D_child - D_adult on
 homologous sources: vertex-wise for the scaled controls; Desikan-Killiany parcels and declared
-depth/orientation strata for the template. Summaries are area-weighted medians with intervals from
+depth/orientation strata for the templates and the school-aged children. Summaries are area-weighted medians with intervals from
 a bootstrap over parcels. Peak-channel and mean-power SNR (dB) are secondary metrics.
 Configuration: configs/g3b_pediatric.toml (and configs/g2_adult.toml). Outputs: results/g3b/.
 """
@@ -51,11 +55,13 @@ from opmsquid import (anatomy, background, forward, g2, goldenholz, io, neuromag
                       pediatric as P, plotting)
 
 OUT = ROOT / "results" / "g3b"
-STATUS = ("NEW (G3B: fixed adult Neuromag helmet vs head-adaptive OPM on smaller heads; size-only controls and "
-          "the 12-, 18- and 24-month templates)")
+STATUS = ("NEW (G3B: fixed adult Neuromag helmet vs head-adaptive OPM on smaller heads; size-only controls, "
+          "the 12-, 18- and 24-month templates and three school-aged children)")
 STATE = ROOT / "cache" / "g3b" / "state.pkl"
 TEMPLATES = {"infant2yr": "ANTS2-0Years3T", "infant18mo": "ANTS18-0Months3T", "infant12mo": "ANTS12-0Months3T"}
-ANATOMIES = ("adult", "school", "size2yr") + tuple(TEMPLATES)
+SCHOOL = {"childA": "sub-Z213", "childB": "sub-Z209", "childC": "sub-Z226"}  # D-G3-ANAT: individual school-aged children
+NATIVE = {**TEMPLATES, **SCHOOL}  # anatomies with their own cortex: compared by parcel and stratum, not vertex
+ANATOMIES = ("adult", "school", "size2yr") + tuple(TEMPLATES) + tuple(SCHOOL)
 CHILDREN = ANATOMIES[1:]
 SCALED = ("school", "size2yr")
 REFS = ("combined", "grad", "mag")
@@ -65,10 +71,11 @@ PLACEMENT_ORDER = ("centred", "top", "back", "x+5mm", "x-5mm", "y+5mm", "y-5mm",
 OPMS = ("opm_dense", "opm_matched")
 LABEL = {"adult": "adult", "school": "school-age size (scaled adult)", "size2yr": "2-year size (scaled adult)",
          "infant2yr": "2-year template", "infant18mo": "18-month template", "infant12mo": "12-month template",
+         "childA": "child A (7.8 y)", "childB": "child B (8.3 y)", "childC": "child C (8.7 y)",
          "opm_dense": "OPM dense (refitted)", "opm_matched": "OPM matched",
          "combined": "Neuromag combined", "grad": "Neuromag grad", "mag": "Neuromag mag"}
 COLORS = {"adult": "k", "school": "tab:blue", "size2yr": "tab:green", "infant2yr": "tab:red", "infant18mo": "tab:orange",
-          "infant12mo": "tab:purple"}
+          "infant12mo": "tab:purple", "childA": "tab:brown", "childB": "tab:pink", "childC": "tab:olive"}
 METRICS = ("detect", "peak", "meanpow_db")
 
 
@@ -150,6 +157,13 @@ def load_anatomies(cfg, g2cfg) -> dict:
         cor = anatomy.full_resolution(sub)
         out[key] = Anatomy(key, sub, cor, scaled_sources(adult, sub, cor), P.head_size(sub), f"{note}: {f:.4f}")
     out.update(templates)
+    if {c["key"]: c["subject"] for c in cfg["anatomy"]["school"]} != SCHOOL:
+        raise ValueError("configs/g3b_pediatric.toml [[anatomy.school]] must match SCHOOL")
+    for key, name in SCHOOL.items():
+        s_sub = anatomy.load_school(name)
+        s_cor = anatomy.full_resolution(s_sub)
+        out[key] = Anatomy(key, s_sub, s_cor, g2.make_sources(s_sub, s_cor, np.random.default_rng(seed)), P.head_size(s_sub),
+                           f"{LABEL[key]} ({name}), individual MRI, modelled skull")
     for an in out.values():
         an.ofc_ratio = an.size["ofc_mm"] / adult.size["ofc_mm"]
     return out
@@ -514,7 +528,7 @@ def main():
         runs = {}
         for key in ANATOMIES:  # the adult first: it fixes the background scale
             runs[key] = run_anatomy(anats[key], com, cfg)
-        # patch centres: homologous for the adult and the scaled controls, own for the template
+        # patch centres: homologous for the adult and the scaled controls, own for the templates and the school-aged children
         rng = np.random.default_rng(g2cfg["sources"]["seed"] + 1)
         a = anats["adult"]
         common_t = np.intersect1d(np.intersect1d(a.src.target, anats["school"].src.target), anats["size2yr"].src.target)
@@ -522,7 +536,7 @@ def main():
         patches = {}
         for key in ANATOMIES:
             an = anats[key]
-            idx = (np.searchsorted(an.src.target, chosen) if key not in TEMPLATES
+            idx = (np.searchsorted(an.src.target, chosen) if key not in NATIVE
                    else np.sort(rng.choice(an.nt, cfg["sources"]["n_patch_centres"], replace=False)))
             patches[key] = run_patches(an, runs[key], com, cfg, idx)
         counts = sorted({runs[c]["arrays"]["opm_dense"]["n"] for c in CHILDREN})
@@ -551,6 +565,7 @@ def summarise(anats, state, cfg) -> dict:
     headline = cfg["conditions"]["headline"]
     conds = cfg["conditions"]["all"]
     rng = np.random.default_rng(7)
+    rng_school = np.random.default_rng(8)  # the school-aged children's own stream: adding them leaves the others' intervals unchanged
     out = dict(status=STATUS, config=cfg, brain_scale=state["brain_scale"], enbw_hz=state["enbw"])
     out["anatomies"] = {k: dict(description=an.subject.description, scale_note=an.scale_note, head_size=an.size,
                                 ofc_ratio_to_adult=an.ofc_ratio, n_targets=an.nt, n_background_grid=int(len(an.src.grid)),
@@ -591,7 +606,7 @@ def summarise(anats, state, cfg) -> dict:
                     for metric in METRICS:
                         nb = 0 if metric != "detect" else (cfg["strata"]["n_boot"] if o == "opm_dense" else 200)
                         res = compare(anats[c], anats["adult"], D[(c, o, primary, ref, cond, metric)],
-                                      D[("adult", o, primary, ref, cond, metric)], cfg, rng, nb)
+                                      D[("adult", o, primary, ref, cond, metric)], cfg, rng_school if c in SCHOOL else rng, nb)
                         res.pop("_delta_vertex", None)
                         comp[f"{c}/{o}/{ref}/{cond}/{metric}"] = res
     out["comparisons"] = comp
@@ -614,7 +629,7 @@ def summarise(anats, state, cfg) -> dict:
                 xc = np.where(anats[c].cortical, d_db(runs[c]["res"], "opm_dense", f"squid:{name}", ref, "intrinsic+brain"), np.nan)
                 xa = np.where(anats["adult"].cortical, d_db(runs["adult"]["res"], "opm_dense", f"squid:{name}", ref, "intrinsic+brain"),
                               np.nan)
-                res = compare(anats[c], anats["adult"], xc, xa, cfg, rng, 200)
+                res = compare(anats[c], anats["adult"], xc, xa, cfg, rng_school if c in SCHOOL else rng, 200)
                 out.setdefault("delta_other_placements", {})[f"{c}/{name}_vs_adult_{name}/{ref}"] = dict(
                     d_child=res["d_child"], d_adult=res["d_adult"], delta=res["delta"])
     # absolute detectability of each system (dB of d for 10 nAm), and its vertex-wise change in the scaled controls
@@ -727,8 +742,13 @@ def summarise(anats, state, cfg) -> dict:
         "Scaled controls: the adult's vertices, so Delta is vertex-wise. The absolute 4-mm usable-source rule drops "
         f"{anats['adult'].nt - anats['school'].nt} and {anats['adult'].nt - anats['size2yr'].nt} superficial adult targets in the "
         "scaled copies, so D_child and D_adult are medians over slightly different target sets while Delta uses the common vertices. "
-        "The templates: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per declared depth/orientation "
-        "stratum from area-weighted medians.",
+        "The templates and the school-aged children: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per "
+        "declared depth/orientation stratum from area-weighted medians.",
+        "School-aged children (OpenNeuro ds005234, typically developing, 7.8-8.7 years): their own white surfaces, aparc labels and "
+        "MRI scalp; the dataset's watershed inner skull lies just below the scalp, so the skull is modelled (A-BEM-CHILD: the inner "
+        "skull moved to 8 mm below the scalp where shallower, at least 2 mm from the cortex; the outer skull halfway to the scalp), "
+        "and the fiducials are the adult's transferred by a cortex-to-cortex similarity fit (A-G3-FID). Individual children, not a "
+        "population; no cortex maps are drawn for them (their inflated surfaces were not obtained).",
         "Intervals: bootstrap over parcels of one anatomy (or of each anatomy, for between-anatomy strata); they do not include "
         f"between-subject variability. {('One', 'Two', 'Three', 'Four')[len(TEMPLATES) - 1]} average templates of one database ("
         + ", ".join(LABEL[k] for k in TEMPLATES)
@@ -771,7 +791,7 @@ def template_depth_checks(anats, D, primary, cfg) -> dict:
         return float(w[ok & (d >= lo) & (d < hi)].sum() / w[ok].sum())
 
     out = {}
-    for k in TEMPLATES:
+    for k in NATIVE:
         an = anats[k]
         xc = D[(k,) + key]
         dc, oc, wc, okc = an.src.depth_mm, an.src.orientation_deg, an.weights, np.isfinite(xc)
@@ -968,11 +988,11 @@ def write_report(anats, s, cfg):
             L.append(f"| {LABEL[c]} | {row['lo']:g}-{row['hi']:g} | {row['n']} | {cell} |")
     tdc = s.get("template_depth_checks", {})
     if tdc:
-        L += ["", "Templates: the pooled difference of the medians (D_child - D_adult over all targets) and the same with the "
-              "template's targets reweighted to the adult's area share per depth stratum; then radial (0-30 deg) and tangential "
+        L += ["", "Templates and school-aged children: the pooled difference of the medians (D_child - D_adult over all targets) "
+              "and the same with the child's targets reweighted to the adult's area share per depth stratum; then radial (0-30 deg) and tangential "
               "(60-90 deg) sources at matched depth (difference of the medians; '-': fewer than "
               f"{cfg['strata']['min_n']} targets):", "",
-              "| template | pooled | depth-reweighted | area at 10-20 mm (adult) | median depth [mm] (adult) | radial 0-15 / 15-25 / "
+              "| anatomy | pooled | depth-reweighted | area at 10-20 mm (adult) | median depth [mm] (adult) | radial 0-15 / 15-25 / "
               "25-40 / 40-90 mm | tangential 0-15 / 15-25 / 25-40 / 40-90 mm |", "|---|---|---|---|---|---|---|"]
         for k, r in tdc.items():
             rad = " / ".join(fmt_opt(row["radial"]) for row in r["orientation_at_matched_depth"])

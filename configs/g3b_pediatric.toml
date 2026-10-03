@@ -8,6 +8,29 @@ templates = ["ANTS2-0Years3T", "ANTS18-0Months3T", "ANTS12-0Months3T"]  # D-G3-A
 school_age_scale = 0.8947368421052632    # 85/95: Jas et al. 2026 Table 1 child (8 y) / adult head radius (size-only control)
 size_matched_rule = "ofc"                # second size-only control: adult scaled by the template/adult occipitofrontal circumference
 bem_conductivity = [0.3, 0.006, 0.3]     # as G2 (geometry-only comparison first; 1-layer BEM as the conductivity-free check)
+child_skull_depth_mm = 8.0               # A-BEM-CHILD: modelled inner skull this far below the MRI scalp where the watershed put it shallower
+child_skull_min_cortex_mm = 2.0          # A-BEM-CHILD: and never closer to the cortex (white surface) than this
+
+# D-G3-ANAT: individual typically developing school-aged children (OpenNeuro ds005234, Fadeev et al. 2024; FreeSurfer
+# surfaces made by the dataset's authors). Each child's own watershed BEM is stored in another subject's folder (the
+# dataset's derivatives are shifted by one subject); bem_folder names where, as checked by the files' volume information.
+[[anatomy.school]]
+key = "childA"
+subject = "sub-Z213"
+age_y = 7.75
+bem_folder = "sub-Z209"
+
+[[anatomy.school]]
+key = "childB"
+subject = "sub-Z209"
+age_y = 8.333
+bem_folder = "matched_bem/sub-Z207"
+
+[[anatomy.school]]
+key = "childC"
+subject = "sub-Z226"
+age_y = 8.667
+bem_folder = "matched_bem/sub-Z224"
 
 [placement]                              # A-G3-PLACE (src/opmsquid/pediatric.py)
 primary = "top"                          # head raised to 20-mm contact with the top of the helmet

@@ -125,7 +125,7 @@ class TestHeadOnScalp(unittest.TestCase):
         self.assertGreater(anatomy.crossing_edges(folded, s["tris"]), 0)
 
     def test_refusals(self):
-        with self.assertRaisesRegex(ValueError, "one scalp vertex"):  # a scalp coarser than the head surface
+        with self.assertRaisesRegex(ValueError, "scalp vertex"):  # a scalp coarser than the head surface: no free vertex
             anatomy.head_on_scalp(self._model(), self._scalp(grade=1))
         with self.assertRaisesRegex(ValueError, "outer skull"):  # the skull would stick out of the conformed head
             anatomy.head_on_scalp(self._model(skull_r=0.0899), self._scalp(radius=0.0895))

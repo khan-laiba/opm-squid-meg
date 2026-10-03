@@ -84,7 +84,7 @@ class TestModelSkull(unittest.TestCase):
         r_new = np.linalg.norm(new["rr"], axis=1)
         np.testing.assert_allclose(r_new, 0.082, atol=2e-4)  # 8 mm below the 90-mm scalp
         r_out = np.linalg.norm(outer["rr"], axis=1)
-        np.testing.assert_allclose(r_out, 0.086, atol=2e-4)  # halfway to the scalp
+        np.testing.assert_allclose(r_out, 0.086, atol=2e-4)  # halfway to the scalp (4 mm of skull, 4 mm of scalp)
         self.assertAlmostEqual(rep["scalp_depth_after_mm"][1], 8.0, delta=0.3)
 
     def test_cortex_limit(self):
@@ -97,6 +97,33 @@ class TestModelSkull(unittest.TestCase):
         crr, _ = _sphere(0.084, 5)  # cortex 6 mm below the scalp: the inner skull stops 2 mm outside it
         new, _, _ = anatomy.model_skull(inner, scalp, crr, depth=0.008, min_cortex=0.002)
         self.assertGreater(np.linalg.norm(new["rr"], axis=1).min(), 0.0855)
+
+
+SCHOOL = ("sub-Z213", "sub-Z209", "sub-Z226")
+HAVE_SCHOOL = all((paths.EXTERNAL / anatomy.SCHOOL_SUBJECTS / s / "bem" / f"{s}-oct-6-src.fif").exists() for s in SCHOOL)
+
+
+@unittest.skipUnless(HAVE_SCHOOL, "school-aged subjects not prepared (scripts/prepare_school_subjects.py)")
+class TestSchoolSubjects(unittest.TestCase):
+    """The prepared children load like the templates: head surface on the scalp, nested BEM, full source space."""
+
+    def test_load(self):
+        from mne.io.constants import FIFF
+        from mne.surface import _CheckInside
+
+        for name in SCHOOL:
+            with self.subTest(name=name):
+                s = anatomy.load_school(name)
+                self.assertTrue(s.head_conform["identity"])  # conformed when prepared
+                self.assertEqual([h["nuse"] for h in s.src], [4098, 4098])
+                self.assertEqual(set(s.fiducials), {"lpa", "nasion", "rpa"})
+                surf = {b["id"]: b for b in s.bem_surfaces}
+                self.assertTrue(_CheckInside(surf[FIFF.FIFFV_BEM_SURF_ID_SKULL])(surf[FIFF.FIFFV_BEM_SURF_ID_BRAIN]["rr"]).all())
+                self.assertTrue(_CheckInside(surf[FIFF.FIFFV_BEM_SURF_ID_HEAD])(surf[FIFF.FIFFV_BEM_SURF_ID_SKULL]["rr"]).all())
+                cortex = anatomy.full_resolution(s)
+                self.assertGreater(cortex.usable.mean(), 0.85)
+                ear = np.linalg.norm(s.fiducials["rpa"] - s.fiducials["lpa"])
+                self.assertTrue(0.10 < ear < 0.16)  # inter-auricular distance of a school-aged head [m]
 
 
 if __name__ == "__main__":

@@ -12,7 +12,8 @@ morphologies, detectors, operating points, null durations, inverse settings and 
 error); thresholds are calibrated on this anatomy's own null data. Event locations are stratified
 by the same depth and orientation bands; strata the anatomy cannot fill are reported as such.
 
-Usage: g4_epilepsy_pediatric.py [infant2yr|infant18mo|infant12mo|school|size2yr] [--detection] [--localization] [--compare]
+Usage: g4_epilepsy_pediatric.py [infant2yr|infant18mo|infant12mo|school|size2yr|childA|childB|childC] [--detection] [--localization]
+[--compare]
 (default: infant2yr, all three). Outputs: results/g4/g4_<label>_*, g4_localization_<label>_*,
 g4_pediatric_comparison.json and G4_pediatric_report.md.
 """
@@ -203,7 +204,8 @@ def report(cmp: dict, labels) -> str:
             L.append(f"| {lab} | " + " | ".join(f"{v['rate_per_min']:.2f} [{v['ci95'][0]:.2f}-{v['ci95'][1]:.2f}]"
                                                 for v in h["false_events"].values()) + " |")
     L += ["", "Simulated IED-source recovery does not identify an epileptogenic zone or establish surgical benefit. Average "
-          "templates of one database are not a population; the scaled adults are size-only controls."]
+          "templates of one database are not a population; the scaled adults are size-only controls; the school-aged children "
+          "(childA-C) are three individuals of OpenNeuro ds005234 with a modelled skull and fiducials transferred from the adult."]
     return "\n".join(L) + "\n"
 
 
