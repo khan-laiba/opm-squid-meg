@@ -233,15 +233,14 @@ def scaled_helmet(dec: dict, kids) -> str:
     le = [c for c in kids if delta(c, "combined")["median"] <= 0]
     gt = [c for c in kids if c not in le]
     grad_most = all(delta(c, "grad")["median"] <= min(delta(c, "combined")["median"], delta(c, "mag")["median"]) for c in kids)
-    text = "In a helmet scaled with the head, about the laterally centred head, "
+    parts = []
     if le:
-        text += "the SQUID" + (", its gradiometers most," if grad_most else "") + " gains as much as the OPM or more in " \
-            + ", ".join(ANAT[c] for c in le)
+        parts.append("the SQUID" + (", its gradiometers most," if grad_most else "") + " gains as much as the OPM or more in "
+                     + ", ".join(ANAT[c] for c in le))
     if gt:
-        text += ("; in " if le else "Delta is ") + ", ".join(
-            f"{ANAT[c]} Delta is {delta(c, 'combined')['median']:+.2f} dB [{delta(c, 'combined')['ci95'][0]:+.2f}, "
-            f"{delta(c, 'combined')['ci95'][1]:+.2f}]" for c in gt)
-    return text + "."
+        parts.append("Delta is " + ", ".join(f"{delta(c, 'combined')['median']:+.2f} dB [{delta(c, 'combined')['ci95'][0]:+.2f}, "
+                                             f"{delta(c, 'combined')['ci95'][1]:+.2f}] in {ANAT[c]}" for c in gt))
+    return "In a helmet scaled with the head, about the laterally centred head, " + "; ".join(parts) + "."
 
 
 def pediatric_findings(d):

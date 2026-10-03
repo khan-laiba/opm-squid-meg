@@ -17,8 +17,9 @@
    centroid in MNI305 against the adult's (through each one's talairach.xfm), and the median
    distance of the child's MNI cortex to the adult's, for each child with the file stored in its
    own folder and with its own file where it was downloaded (child A's, in sub-Z209's folder).
-5. The children's thinnest layers: white surface to MRI scalp, modelled inner to outer skull, and
-   outer skull to the BEM head surface (minimum distances).
+5. The children's thinnest layers: white surface to MRI scalp and to the modelled inner skull (every
+   white vertex; how many lie outside it), modelled inner to outer skull, and outer skull to the BEM
+   head surface (minimum distances).
 
 Output: results/g3b/school_anatomy_checks.json (derived quantities only).
 """
@@ -37,6 +38,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import mne  # noqa: E402
 import numpy as np  # noqa: E402
 from mne.io.constants import FIFF  # noqa: E402
+from mne.surface import _CheckInside  # noqa: E402
 from scipy.spatial import cKDTree  # noqa: E402
 
 import prepare_school_subjects as prep  # noqa: E402
@@ -107,8 +109,11 @@ def main():
         whites = np.vstack([fsio.read_geometry(root / name / "surf" / f"{h}.white")[0] for h in ("lh", "rh")]) / 1e3
         surf = {b["id"]: b for b in s.bem_surfaces}
         brain_rr, skull_rr = surf[FIFF.FIFFV_BEM_SURF_ID_BRAIN]["rr"], surf[FIFF.FIFFV_BEM_SURF_ID_SKULL]["rr"]
+        inner = surf[FIFF.FIFFV_BEM_SURF_ID_BRAIN]
         thin[child["key"]] = dict(
             white_to_scalp_min_mm=float(anatomy.MeshDistance(dict(rr=s.scalp.rr, tris=s.scalp.tris)).unsigned(whites).min() * 1e3),
+            white_to_inner_skull_min_mm=float(anatomy.MeshDistance(inner).unsigned(whites).min() * 1e3),
+            white_vertices_outside_inner_skull=int((~_CheckInside(inner)(whites, verbose=False)).sum()), n_white_vertices=len(whites),
             inner_to_outer_skull_min_mm=float(anatomy.MeshDistance(surf[FIFF.FIFFV_BEM_SURF_ID_SKULL]).unsigned(brain_rr).min() * 1e3),
             outer_skull_to_head_min_mm=float(anatomy.MeshDistance(surf[FIFF.FIFFV_BEM_SURF_ID_HEAD]).unsigned(skull_rr).min() * 1e3))
     out["inner_skull_scalp_depth_upper_head"] = depth

@@ -257,14 +257,16 @@ def model_skull(inner: dict, scalp: Surface, cortex_rr: np.ndarray, depth: float
     """A-BEM-CHILD: an inner skull that lies too close to the scalp (a failed watershed segmentation,
     as in the school-aged children) moved inward along its normals to ``depth`` [m] below the MRI
     scalp wherever it is shallower, no vertex closer than ``min_cortex`` to a cortex vertex
-    (``cortex_rr``, white-surface vertices; the triangles between them can come closer: 1.1-1.4 mm in
-    the children); the displacement is smoothed over the mesh (``smooth`` neighbour
-    averages) and the cortex limit applied again. Parts already deeper than ``depth`` (the skull base)
-    stay where they are. The outer skull is the modelled inner skull moved outward by half its
-    local distance to the scalp (at least 1 mm of skull and 2 mm of scalp, at most ``max_skull`` of
-    skull, where the scalp is far: the skull base). Both keep the input's
-    triangles. Refused if a triangle flips, the surface folds, a cortex vertex is left outside or the
-    outer skull leaves the scalp. Returns (inner, outer skull, report); surfaces in the MRI frame [m]."""
+    (``cortex_rr``, white-surface vertices; the surface between its vertices can come closer: 0.9-1.3
+    mm in the children, scripts/study_school_anatomy.py); the displacement is smoothed over the mesh
+    (``smooth`` neighbour averages) and the cortex limit applied again. Parts already deeper than
+    ``depth`` (the skull base) stay where they are. The outer skull is the modelled inner skull moved
+    outward by half its local distance to the scalp (at least 1 mm, leaving 2 mm of scalp where that
+    distance allows; at most ``max_skull``, where the scalp is far: the skull base). Both keep the
+    input's triangles. Refused if a triangle flips, the surface folds, a vertex of an even sample of
+    the cortex (about 20,000) is left outside or the outer skull leaves the scalp; the report's cortex
+    clearance is over the same sample. Returns (inner, outer skull, report); surfaces in the MRI frame
+    [m]."""
     import scipy.sparse as sp
     from mne.surface import _CheckInside, complete_surface_info
 

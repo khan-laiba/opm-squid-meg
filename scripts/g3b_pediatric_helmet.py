@@ -738,6 +738,16 @@ def summarise(anats, state, cfg) -> dict:
         note="G2's headline is the unweighted median over all targets at the measured (= centred) position; G3B "
              "summaries are area-weighted and leave out the medial wall, and its primary placement is top contact")
     out["medial_wall_targets"] = {k: int(np.sum(~an.cortical)) for k, an in anats.items()}
+    absd, sq = out["absolute_detectability_dB"], f"{primary}/combined"
+
+    def gain(k, key):  # change of a system's own detectability from the adult [dB]
+        return absd[f"{k}/{key}/intrinsic+brain"] - absd[f"adult/{key}/intrinsic+brain"]
+
+    rise = [c for c in CHILDREN if 0 < gain(c, sq) < gain(c, "opm_dense/opm")]
+    other = [c for c in CHILDREN if c not in rise]
+    bg_move = max(abs(sens[f"{c}/background_x{f}/opm_dense/combined/intrinsic+brain"]
+                      - comp[f"{c}/opm_dense/combined/intrinsic+brain/detect"]["d_child"]["median"])
+                  for c in TEMPLATES for f in ("0.5", "2"))
     out["notes"] = [
         "D = 20 log10(d_OPM / d_SQUID) of a 10-nAm cortical-normal dipole (known-topography detectability with the oracle noise "
         "covariance; independent of the moment). Delta = D_child - D_adult. A positive Delta is an increase in relative OPM "
@@ -749,7 +759,8 @@ def summarise(anats, state, cfg) -> dict:
         "declared depth/orientation stratum from area-weighted medians.",
         "School-aged children (OpenNeuro ds005234, typically developing, 7.8-8.7 years): their own white surfaces, aparc labels and "
         "MRI scalp; the dataset's watershed inner skull lies just below the scalp, so the skull is modelled (A-BEM-CHILD: the inner "
-        "skull moved to 8 mm below the scalp where shallower, at least 2 mm from the cortex; the outer skull halfway to the scalp), "
+        "skull moved to 8 mm below the scalp where shallower, no vertex within 2 mm of a white-surface vertex; the outer skull "
+        "halfway to the scalp), "
         "and the fiducials are the adult's transferred by a cortex-to-cortex similarity fit (A-G3-FID). Individual children, not a "
         "population; no cortex maps are drawn for them (their inflated surfaces were not obtained).",
         "Intervals: bootstrap over parcels of one anatomy (or of each anatomy, for between-anatomy strata); they do not include "
@@ -758,14 +769,19 @@ def summarise(anats, state, cfg) -> dict:
         + ") are not a population: template results are conditional simulations.",
         "Every child array uses the adult's conventions: background moment variance per unit cortical area, room field, "
         "intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. Both systems' detectability "
-        "rises in the smaller heads, the OPM's more (absolute detectability table), by different routes: the on-scalp OPM sees "
-        "more signal from a cortex that is closer in absolute terms at about the same brain noise, while the SQUIDs' brain noise "
-        "falls (the cortex is farther from the fixed helmet and, with the background fixed per unit area, smaller) more than "
-        "their signal. The templates' averaged white surfaces are smoother than an individual cortex (usable area "
+        "rises in " + ", ".join(LABEL[k] for k in rise) + ", the OPM's more (absolute detectability table), by different routes: "
+        "the on-scalp OPM sees more signal from a cortex that is closer in absolute terms at about the same brain noise, while "
+        "the SQUIDs' brain noise falls (the cortex is farther from the fixed helmet and, with the background fixed per unit "
+        "area, smaller) more than their signal."
+        + (" In " + ", ".join(LABEL[k] for k in other) + " (dense OPM / Neuromag combined, against the adult: "
+           + ", ".join(f"{gain(k, 'opm_dense/opm'):+.2f} / {gain(k, sq):+.2f} dB" for k in other)
+           + ") the cortex is nearly adult-sized, so the background does not shrink and Neuromag's detectability falls."
+           if other else "")
+        + " The templates' averaged white surfaces are smoother than an individual cortex (usable area "
         + ", ".join(f"{out['anatomies'][k]['cortical_area_cm2']:,.0f}" for k in TEMPLATES) + " cm^2 for the "
         + ", ".join(LABEL[k] for k in TEMPLATES) + f" vs {out['anatomies']['adult']['cortical_area_cm2']:,.0f} cm^2 for the adult), "
         "which lowers their background power and their patch cancellation further; scaling the background variance x0.5 or x2 "
-        "leaves D_child almost unchanged.",
+        f"moves their D_child by at most {bg_move:.2f} dB (sensitivity table).",
         "Placements are chosen from the scalp and helmet geometry only. Under the adult's measured pose a head with other "
         "fiducials need not be centred laterally; 'x-centred' shifts each head along device x to equal left/right median gaps "
         "before the top contact (shift: " + ", ".join(f"{LABEL[k]} {out['placements'][k]['x-centred']['shift_x_mm']:+.1f} mm"
