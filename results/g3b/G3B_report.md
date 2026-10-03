@@ -12,6 +12,9 @@ Code commit: see `g3b_summary.json` (provenance). Configuration: `configs/g3b_pe
 | 2-year template | 2-year template (ANTS2-0Years3T), native dimensions | 495 | 140 x 175 | 8134 | 1062 | 151 / 83 |
 | 18-month template | 18-month template (ANTS18-0Months3T), native dimensions | 491 | 137 x 172 | 7994 | 975 | 157 / 80 |
 | 12-month template | 12-month template (ANTS12-0Months3T), native dimensions | 469 | 133 x 164 | 8088 | 895 | 144 / 82 |
+| child A (7.8 y) | child A (7.8 y) (sub-Z213), individual MRI, modelled skull | 520 | 154 x 177 | 7618 | 1852 | 155 / 90 |
+| child B (8.3 y) | child B (8.3 y) (sub-Z209), individual MRI, modelled skull | 486 | 141 x 174 | 7428 | 1666 | 153 / 85 |
+| child C (8.7 y) | child C (8.7 y) (sub-Z226), individual MRI, modelled skull | 535 | 161 x 185 | 7947 | 1869 | 167 / 91 |
 
 ## Placements in the fixed helmet (magnetometer coil centre to scalp)
 
@@ -59,6 +62,27 @@ Code commit: see `g3b_summary.json` (provenance). Configuration: `configs/g3b_pe
 | 12-month template | top-18mm | 36.0 | 18.2 | 39.7 | True |
 | 12-month template | counterfactual | 0.0 | 18.1 | 29.5 | True |
 | 12-month template | counterfactual_x-centred | 0.0 | 18.5 | 27.7 | True |
+| child A (7.8 y) | centred | 0.0 | 30.9 | 40.2 | True |
+| child A (7.8 y) | top | 17.0 | 20.1 | 35.2 | True |
+| child A (7.8 y) | back | 21.0 | 20.1 | 36.0 | True |
+| child A (7.8 y) | x-centred | 17.0 | 20.1 | 35.2 | True |
+| child A (7.8 y) | top-18mm | 19.0 | 18.4 | 34.8 | True |
+| child A (7.8 y) | counterfactual | 0.0 | 18.1 | 26.1 | True |
+| child A (7.8 y) | counterfactual_x-centred | 0.0 | 18.1 | 26.1 | True |
+| child B (8.3 y) | centred | 0.0 | 33.6 | 47.3 | True |
+| child B (8.3 y) | top | 26.5 | 20.1 | 38.4 | True |
+| child B (8.3 y) | back | 24.5 | 20.1 | 42.2 | True |
+| child B (8.3 y) | x-centred | 27.5 | 20.3 | 38.7 | True |
+| child B (8.3 y) | top-18mm | 28.5 | 18.3 | 38.1 | True |
+| child B (8.3 y) | counterfactual | 0.0 | 18.5 | 31.4 | True |
+| child B (8.3 y) | counterfactual_x-centred | 0.0 | 18.1 | 28.0 | True |
+| child C (8.7 y) | centred | 0.0 | 21.6 | 41.3 | True |
+| child C (8.7 y) | top | 21.0 | 20.0 | 32.6 | True |
+| child C (8.7 y) | back | 11.0 | 20.0 | 38.0 | True |
+| child C (8.7 y) | x-centred | 20.5 | 20.2 | 33.1 | True |
+| child C (8.7 y) | top-18mm | 23.0 | 18.1 | 31.9 | True |
+| child C (8.7 y) | counterfactual | 0.0 | 18.5 | 36.8 | True |
+| child C (8.7 y) | counterfactual_x-centred | 0.0 | 18.2 | 33.1 | True |
 
 Link to G2: at the adult's measured (= centred) position the dense/combined detectability ratio is 1.144x as an unweighted median over all targets (G2's headline), 1.148x without the medial wall and +1.27 dB area-weighted without it (the G3B convention).
 
@@ -81,6 +105,15 @@ Link to G2: at the adult's measured (= centred) position the dense/combined dete
 | 12-month template | Neuromag combined | +2.04 dB [+1.64, +2.43] | +1.00 dB [+0.83, +1.18] | +0.96 dB [+0.61, +1.51] | parcel |
 | 12-month template | Neuromag grad | +3.65 dB [+3.21, +4.23] | +2.23 dB [+2.01, +2.45] | +1.33 dB [+0.82, +2.18] | parcel |
 | 12-month template | Neuromag mag | +2.45 dB [+2.00, +2.84] | +1.39 dB [+1.19, +1.59] | +0.98 dB [+0.68, +1.47] | parcel |
+| child A (7.8 y) | Neuromag combined | +1.34 dB [+1.09, +1.59] | +1.00 dB [+0.83, +1.19] | +0.30 dB [+0.11, +0.38] | parcel |
+| child A (7.8 y) | Neuromag grad | +2.34 dB [+2.02, +2.72] | +2.23 dB [+2.04, +2.45] | +0.18 dB [+0.04, +0.28] | parcel |
+| child A (7.8 y) | Neuromag mag | +1.71 dB [+1.44, +1.99] | +1.39 dB [+1.19, +1.59] | +0.33 dB [+0.14, +0.37] | parcel |
+| child B (8.3 y) | Neuromag combined | +1.51 dB [+1.23, +1.79] | +1.00 dB [+0.82, +1.18] | +0.41 dB [+0.28, +0.54] | parcel |
+| child B (8.3 y) | Neuromag grad | +2.59 dB [+2.18, +2.95] | +2.23 dB [+2.03, +2.45] | +0.34 dB [+0.26, +0.53] | parcel |
+| child B (8.3 y) | Neuromag mag | +1.93 dB [+1.62, +2.21] | +1.39 dB [+1.18, +1.59] | +0.50 dB [+0.29, +0.66] | parcel |
+| child C (8.7 y) | Neuromag combined | +1.19 dB [+0.96, +1.39] | +1.00 dB [+0.82, +1.18] | +0.17 dB [-0.07, +0.34] | parcel |
+| child C (8.7 y) | Neuromag grad | +2.30 dB [+1.99, +2.64] | +2.23 dB [+2.03, +2.45] | +0.11 dB [-0.00, +0.32] | parcel |
+| child C (8.7 y) | Neuromag mag | +1.55 dB [+1.26, +1.79] | +1.39 dB [+1.17, +1.61] | +0.25 dB [-0.14, +0.37] | parcel |
 
 Other metrics, dense OPM vs Neuromag combined, intrinsic + brain (peak-channel SNR: the best single channel, where Neuromag is ahead in the adult; mean-power SNR; both in dB):
 
@@ -96,8 +129,14 @@ Other metrics, dense OPM vs Neuromag combined, intrinsic + brain (peak-channel S
 | 18-month template | mean-power SNR | +1.33 dB | +0.34 dB | +0.92 dB |
 | 12-month template | peak-channel SNR | +0.79 dB | -1.11 dB | +1.60 dB |
 | 12-month template | mean-power SNR | +1.50 dB | +0.34 dB | +1.08 dB |
+| child A (7.8 y) | peak-channel SNR | -0.64 dB | -1.11 dB | +0.64 dB |
+| child A (7.8 y) | mean-power SNR | +0.49 dB | +0.34 dB | +0.16 dB |
+| child B (8.3 y) | peak-channel SNR | -0.28 dB | -1.11 dB | +0.98 dB |
+| child B (8.3 y) | mean-power SNR | +0.47 dB | +0.34 dB | +0.23 dB |
+| child C (8.7 y) | peak-channel SNR | -0.85 dB | -1.11 dB | +0.24 dB |
+| child C (8.7 y) | mean-power SNR | +0.41 dB | +0.34 dB | +0.17 dB |
 
-OPM standoff per anatomy (median sensing-centre height above the MRI scalp, dense / matched array, and the sites the clearance rule moved outward): adult 7.00 / 6.99 mm (26 of 208 / 9 of 98 moved; exact cell clearance >= 1.00 mm); school-age size (scaled adult) 6.99 / 6.99 mm (18 of 174 / 9 of 89 moved; exact cell clearance >= 1.00 mm); 2-year size (scaled adult) 6.99 / 6.99 mm (17 of 155 / 11 of 90 moved; exact cell clearance >= 1.01 mm); 2-year template 7.00 / 7.00 mm (3 of 151 / 3 of 83 moved; exact cell clearance >= 1.00 mm); 18-month template 7.00 / 7.01 mm (5 of 157 / 4 of 80 moved; exact cell clearance >= 1.00 mm); 12-month template 7.00 / 7.00 mm (4 of 144 / 5 of 82 moved; exact cell clearance >= 1.01 mm). Every anatomy's BEM head surface has its vertices on its MRI scalp (A-BEM-CONFORM: the templates' are built so, the adult's stored outer skin, about 1 mm outside its scalp, is conformed at loading), so the clearance rule (A-OPM-CLEAR) moves only the sites the anatomy demands and every array has the same nominal standoff.
+OPM standoff per anatomy (median sensing-centre height above the MRI scalp, dense / matched array, and the sites the clearance rule moved outward): adult 7.00 / 6.99 mm (26 of 208 / 9 of 98 moved; exact cell clearance >= 1.00 mm); school-age size (scaled adult) 6.99 / 6.99 mm (18 of 174 / 9 of 89 moved; exact cell clearance >= 1.00 mm); 2-year size (scaled adult) 6.99 / 6.99 mm (17 of 155 / 11 of 90 moved; exact cell clearance >= 1.01 mm); 2-year template 7.00 / 7.00 mm (3 of 151 / 3 of 83 moved; exact cell clearance >= 1.00 mm); 18-month template 7.00 / 7.01 mm (5 of 157 / 4 of 80 moved; exact cell clearance >= 1.00 mm); 12-month template 7.00 / 7.00 mm (4 of 144 / 5 of 82 moved; exact cell clearance >= 1.01 mm); child A (7.8 y) 7.00 / 7.00 mm (6 of 155 / 4 of 90 moved; exact cell clearance >= 0.99 mm); child B (8.3 y) 7.00 / 7.00 mm (3 of 153 / 3 of 85 moved; exact cell clearance >= 1.07 mm); child C (8.7 y) 7.00 / 7.00 mm (4 of 167 / 3 of 91 moved; exact cell clearance >= 1.02 mm). Every anatomy's BEM head surface has its vertices on its MRI scalp (A-BEM-CONFORM: the templates' are built so, the adult's stored outer skin, about 1 mm outside its scalp, is conformed at loading), so the clearance rule (A-OPM-CLEAR) moves only the sites the anatomy demands and every array has the same nominal standoff.
 
 Projected condition (room-field subspace removed):
 
@@ -118,6 +157,15 @@ Projected condition (room-field subspace removed):
 | 12-month template | Neuromag combined | +1.77 dB [+1.29, +2.26] | +0.86 dB [+0.66, +1.07] | +0.83 dB [+0.35, +1.38] |
 | 12-month template | Neuromag grad | +3.13 dB [+2.48, +3.64] | +1.80 dB [+1.55, +2.05] | +1.10 dB [+0.60, +2.01] |
 | 12-month template | Neuromag mag | +2.32 dB [+1.73, +2.79] | +1.46 dB [+1.25, +1.69] | +0.83 dB [+0.47, +1.48] |
+| child A (7.8 y) | Neuromag combined | +0.95 dB [+0.57, +1.25] | +0.86 dB [+0.64, +1.08] | +0.03 dB [-0.17, +0.22] |
+| child A (7.8 y) | Neuromag grad | +1.76 dB [+1.31, +2.14] | +1.80 dB [+1.55, +2.05] | +0.08 dB [-0.21, +0.23] |
+| child A (7.8 y) | Neuromag mag | +1.46 dB [+0.99, +1.80] | +1.46 dB [+1.26, +1.69] | +0.03 dB [-0.18, +0.27] |
+| child B (8.3 y) | Neuromag combined | +1.20 dB [+0.89, +1.55] | +0.86 dB [+0.66, +1.07] | +0.26 dB [+0.04, +0.39] |
+| child B (8.3 y) | Neuromag grad | +2.12 dB [+1.63, +2.56] | +1.80 dB [+1.54, +2.06] | +0.29 dB [-0.00, +0.46] |
+| child B (8.3 y) | Neuromag mag | +1.75 dB [+1.33, +2.10] | +1.46 dB [+1.26, +1.68] | +0.28 dB [+0.00, +0.46] |
+| child C (8.7 y) | Neuromag combined | +0.90 dB [+0.59, +1.19] | +0.86 dB [+0.66, +1.07] | -0.19 dB [-0.38, +0.18] |
+| child C (8.7 y) | Neuromag grad | +1.77 dB [+1.34, +2.14] | +1.80 dB [+1.55, +2.05] | -0.11 dB [-0.31, +0.18] |
+| child C (8.7 y) | Neuromag mag | +1.37 dB [+0.98, +1.67] | +1.46 dB [+1.26, +1.68] | -0.22 dB [-0.58, +0.09] |
 
 Matched-site OPM (coverage control), intrinsic + brain:
 
@@ -138,6 +186,15 @@ Matched-site OPM (coverage control), intrinsic + brain:
 | 12-month template | Neuromag combined | +0.72 dB [+0.45, +1.01] | -0.01 dB [-0.09, +0.08] | +0.76 dB [+0.44, +1.16] |
 | 12-month template | Neuromag grad | +2.30 dB [+1.85, +2.84] | +0.97 dB [+0.81, +1.16] | +1.18 dB [+0.77, +2.08] |
 | 12-month template | Neuromag mag | +1.05 dB [+0.74, +1.40] | +0.27 dB [+0.15, +0.40] | +0.66 dB [+0.45, +1.20] |
+| child A (7.8 y) | Neuromag combined | +0.27 dB [+0.11, +0.48] | -0.01 dB [-0.08, +0.06] | +0.27 dB [+0.09, +0.36] |
+| child A (7.8 y) | Neuromag grad | +1.05 dB [+0.80, +1.40] | +0.97 dB [+0.82, +1.16] | +0.08 dB [-0.08, +0.35] |
+| child A (7.8 y) | Neuromag mag | +0.56 dB [+0.37, +0.81] | +0.27 dB [+0.15, +0.40] | +0.25 dB [+0.06, +0.35] |
+| child B (8.3 y) | Neuromag combined | +0.21 dB [+0.05, +0.46] | -0.01 dB [-0.09, +0.08] | +0.08 dB [-0.05, +0.31] |
+| child B (8.3 y) | Neuromag grad | +1.06 dB [+0.78, +1.40] | +0.97 dB [+0.84, +1.16] | +0.08 dB [-0.26, +0.23] |
+| child B (8.3 y) | Neuromag mag | +0.52 dB [+0.32, +0.77] | +0.27 dB [+0.15, +0.40] | +0.11 dB [-0.08, +0.23] |
+| child C (8.7 y) | Neuromag combined | +0.17 dB [-0.02, +0.32] | -0.01 dB [-0.08, +0.08] | +0.17 dB [+0.08, +0.29] |
+| child C (8.7 y) | Neuromag grad | +1.11 dB [+0.80, +1.37] | +0.97 dB [+0.81, +1.14] | +0.20 dB [-0.07, +0.42] |
+| child C (8.7 y) | Neuromag mag | +0.47 dB [+0.26, +0.62] | +0.27 dB [+0.14, +0.40] | +0.21 dB [+0.07, +0.26] |
 
 ## What drives Delta: placement and helmet fit (dense OPM vs Neuromag combined, intrinsic + brain)
 
@@ -150,6 +207,9 @@ Each child placement is compared with the adult at the same rule (the adult's co
 | 2-year template | +0.73 dB [+0.46, +0.98] | +1.83 dB [+1.46, +2.32] | +0.71 dB [+0.52, +0.86] | +0.77 dB [+0.45, +0.90] | +1.39 dB [+1.05, +1.67] | +0.24 dB [+0.13, +0.56] | -0.30 dB [-0.42, +0.02] |
 | 18-month template | +0.88 dB [+0.54, +1.05] | +2.08 dB [+1.71, +2.22] | +0.75 dB [+0.48, +1.08] | +0.85 dB [+0.57, +1.24] | +1.49 dB [+1.17, +1.76] | +0.18 dB [+0.11, +0.47] | -0.16 dB [-0.39, +0.03] |
 | 12-month template | +0.96 dB [+0.61, +1.51] | +2.50 dB [+2.20, +2.97] | +0.91 dB [+0.60, +1.45] | +0.85 dB [+0.54, +1.46] | +1.68 dB [+1.03, +2.26] | -0.02 dB [-0.16, +0.11] | -0.18 dB [-0.37, +0.06] |
+| child A (7.8 y) | +0.30 dB [+0.11, +0.38] | +0.76 dB [+0.60, +1.18] | +0.29 dB [+0.14, +0.39] | +0.31 dB [+0.15, +0.39] | +0.44 dB [+0.28, +0.79] | -0.74 dB [-0.86, -0.60] | -0.76 dB [-0.84, -0.68] |
+| child B (8.3 y) | +0.41 dB [+0.28, +0.54] | +1.57 dB [+1.16, +1.72] | +0.36 dB [+0.19, +0.45] | +0.40 dB [+0.30, +0.54] | +0.94 dB [+0.66, +1.32] | -0.23 dB [-0.49, -0.05] | -0.59 dB [-0.74, -0.42] |
+| child C (8.7 y) | +0.17 dB [-0.07, +0.34] | +1.00 dB [+0.74, +1.12] | +0.09 dB [-0.03, +0.37] | +0.17 dB [-0.00, +0.36] | +0.87 dB [+0.70, +1.13] | +0.56 dB [+0.37, +0.78] | +0.04 dB [-0.20, +0.20] |
 
 Counterfactual Delta by comparator (helmet scaled with the head; the dependence on the comparator points to the SQUID side of the change):
 
@@ -170,6 +230,15 @@ Counterfactual Delta by comparator (helmet scaled with the head; the dependence 
 | 12-month template | Neuromag combined | -0.02 dB [-0.16, +0.11] | -0.18 dB [-0.37, +0.06] |
 | 12-month template | Neuromag grad | -0.26 dB [-0.45, +0.17] | -0.36 dB [-0.67, -0.00] |
 | 12-month template | Neuromag mag | +0.03 dB [-0.05, +0.18] | -0.12 dB [-0.20, +0.21] |
+| child A (7.8 y) | Neuromag combined | -0.74 dB [-0.86, -0.60] | -0.76 dB [-0.84, -0.68] |
+| child A (7.8 y) | Neuromag grad | -1.16 dB [-1.21, -0.96] | -1.14 dB [-1.25, -1.01] |
+| child A (7.8 y) | Neuromag mag | -0.57 dB [-0.61, -0.36] | -0.58 dB [-0.64, -0.37] |
+| child B (8.3 y) | Neuromag combined | -0.23 dB [-0.49, -0.05] | -0.59 dB [-0.74, -0.42] |
+| child B (8.3 y) | Neuromag grad | -0.47 dB [-0.65, -0.27] | -0.94 dB [-1.04, -0.69] |
+| child B (8.3 y) | Neuromag mag | -0.09 dB [-0.17, +0.10] | -0.32 dB [-0.49, -0.21] |
+| child C (8.7 y) | Neuromag combined | +0.56 dB [+0.37, +0.78] | +0.04 dB [-0.20, +0.20] |
+| child C (8.7 y) | Neuromag grad | +0.73 dB [+0.48, +0.87] | -0.16 dB [-0.38, +0.20] |
+| child C (8.7 y) | Neuromag mag | +0.61 dB [+0.24, +0.78] | +0.07 dB [-0.11, +0.24] |
 
 ## Absolute detectability (median 20 log10 d of a 10-nAm dipole, intrinsic + brain, primary placement)
 
@@ -181,6 +250,9 @@ Counterfactual Delta by comparator (helmet scaled with the head; the dependence 
 | 2-year template | +0.92 | -0.41 | -1.19 | -2.70 | -1.52 |
 | 18-month template | +1.07 | -0.30 | -1.03 | -2.66 | -1.34 |
 | 12-month template | +1.86 | +0.44 | -0.62 | -2.23 | -0.97 |
+| child A (7.8 y) | -1.55 | -2.86 | -2.91 | -3.92 | -3.25 |
+| child B (8.3 y) | -1.41 | -2.87 | -2.70 | -3.82 | -3.04 |
+| child C (8.7 y) | -2.11 | -3.25 | -3.26 | -4.36 | -3.61 |
 
 Vertex-wise change from the adult (scaled controls; same vertex): both systems gain, the OPM more.
 
@@ -213,6 +285,15 @@ Median D (dense OPM vs Neuromag combined) over the patch centres (cortical, area
 | 12-month template | 5 | 300 | 0.69 | +2.08 | +2.07 | +1.05 |
 | 12-month template | 10 | 300 | 2.82 | +2.07 | +2.07 | +1.02 |
 | 12-month template | 20 | 100 | 11.47 | +1.74 | +2.38 | +0.91 |
+| child A (7.8 y) | 5 | 300 | 0.69 | +1.24 | +1.25 | +0.20 |
+| child A (7.8 y) | 10 | 300 | 2.81 | +1.35 | +1.25 | +0.31 |
+| child A (7.8 y) | 20 | 100 | 11.42 | +1.32 | +1.65 | +0.50 |
+| child B (8.3 y) | 5 | 300 | 0.69 | +1.53 | +1.47 | +0.49 |
+| child B (8.3 y) | 10 | 300 | 2.81 | +1.62 | +1.47 | +0.57 |
+| child B (8.3 y) | 20 | 100 | 11.46 | +1.17 | +1.25 | +0.35 |
+| child C (8.7 y) | 5 | 300 | 0.69 | +1.09 | +1.16 | +0.06 |
+| child C (8.7 y) | 10 | 300 | 2.87 | +1.11 | +1.16 | +0.06 |
+| child C (8.7 y) | 20 | 100 | 11.94 | +1.18 | +0.96 | +0.35 |
 
 Absolute detectability at a fixed current density of 0.5 nAm/mm^2 (moment = density x patch area; human neocortex 0.16-0.77 nAm/mm^2, Murakami & Okada 2015): median detectability and the share of patch centres at or above the usefulness threshold (5):
 
@@ -236,6 +317,15 @@ Absolute detectability at a fixed current density of 0.5 nAm/mm^2 (moment = dens
 | 12-month template | 5 | 2.7 | 3.6 | 6% / 32% |
 | 12-month template | 10 | 8.0 | 10.5 | 77% / 85% |
 | 12-month template | 20 | 16.4 | 20.2 | 100% / 100% |
+| child A (7.8 y) | 5 | 1.5 | 1.8 | 0% / 6% |
+| child A (7.8 y) | 10 | 4.1 | 5.0 | 40% / 51% |
+| child A (7.8 y) | 20 | 10.5 | 12.2 | 85% / 93% |
+| child B (8.3 y) | 5 | 1.7 | 2.0 | 2% / 9% |
+| child B (8.3 y) | 10 | 4.5 | 5.4 | 43% / 53% |
+| child B (8.3 y) | 20 | 9.0 | 10.5 | 86% / 91% |
+| child C (8.7 y) | 5 | 1.8 | 2.1 | 1% / 10% |
+| child C (8.7 y) | 10 | 4.2 | 5.0 | 36% / 50% |
+| child C (8.7 y) | 20 | 8.6 | 9.4 | 88% / 92% |
 
 ## Channel count: the adult's dense array subsampled to each child's site count
 
@@ -246,6 +336,9 @@ Absolute detectability at a fixed current density of 0.5 nAm/mm^2 (moment = dens
 | 2-year template | 151 | +1.84 dB [+1.56, +2.19] | +0.54 dB [+0.41, +0.69] | +1.23 dB [+1.01, +1.43] |
 | 18-month template | 157 | +1.89 dB [+1.65, +2.20] | +0.61 dB [+0.48, +0.74] | +1.37 dB [+0.90, +1.45] |
 | 12-month template | 144 | +2.04 dB [+1.67, +2.42] | +0.46 dB [+0.34, +0.60] | +1.43 dB [+0.99, +2.17] |
+| child A (7.8 y) | 155 | +1.34 dB [+1.08, +1.61] | +0.59 dB [+0.45, +0.71] | +0.66 dB [+0.43, +0.94] |
+| child B (8.3 y) | 153 | +1.51 dB [+1.25, +1.78] | +0.56 dB [+0.43, +0.72] | +0.78 dB [+0.66, +0.98] |
+| child C (8.7 y) | 167 | +1.19 dB [+1.00, +1.40] | +0.68 dB [+0.53, +0.83] | +0.43 dB [+0.26, +0.75] |
 
 ## Delta by depth stratum (dense OPM vs Neuromag combined, intrinsic + brain)
 
@@ -296,6 +389,33 @@ Absolute detectability at a fixed current density of 0.5 nAm/mm^2 (moment = dens
 | 12-month template | 40-50 | 390 / 913 | +0.58 | +0.30 | +0.28 [+0.11, +0.49] |
 | 12-month template | 50-60 | 184 / 321 | +1.12 | +0.34 | +0.78 [+0.24, +0.95] |
 | 12-month template | 60-90 | 19 / 26 | +1.42 | +0.58 | +0.84 [+0.77, +1.15] |
+| child A (7.8 y) | 0-10 | 43 / 0 | sparse | | |
+| child A (7.8 y) | 10-15 | 1188 / 222 | +3.18 | +3.41 | -0.23 [-0.61, +0.14] |
+| child A (7.8 y) | 15-20 | 1699 / 1221 | +2.04 | +2.27 | -0.23 [-0.55, +0.11] |
+| child A (7.8 y) | 20-25 | 1409 / 1572 | +1.20 | +1.48 | -0.28 [-0.49, -0.09] |
+| child A (7.8 y) | 25-30 | 987 / 1289 | +0.74 | +0.87 | -0.13 [-0.25, -0.01] |
+| child A (7.8 y) | 30-40 | 1089 / 1539 | +0.52 | +0.45 | +0.08 [-0.02, +0.25] |
+| child A (7.8 y) | 40-50 | 461 / 913 | +0.45 | +0.30 | +0.15 [-0.01, +0.85] |
+| child A (7.8 y) | 50-60 | 247 / 321 | +1.00 | +0.34 | +0.66 [+0.10, +1.25] |
+| child A (7.8 y) | 60-90 | 15 / 26 | +1.22 | +0.58 | +0.65 [+0.58, +1.19] |
+| child B (8.3 y) | 0-10 | 247 / 0 | sparse | | |
+| child B (8.3 y) | 10-15 | 1550 / 222 | +3.18 | +3.41 | -0.23 [-0.58, +0.19] |
+| child B (8.3 y) | 15-20 | 1538 / 1221 | +1.92 | +2.27 | -0.34 [-0.60, -0.07] |
+| child B (8.3 y) | 20-25 | 1131 / 1572 | +1.12 | +1.48 | -0.36 [-0.55, -0.16] |
+| child B (8.3 y) | 25-30 | 780 / 1289 | +0.73 | +0.87 | -0.14 [-0.31, +0.08] |
+| child B (8.3 y) | 30-40 | 1042 / 1539 | +0.60 | +0.45 | +0.15 [+0.01, +0.40] |
+| child B (8.3 y) | 40-50 | 429 / 913 | +0.78 | +0.30 | +0.48 [+0.19, +1.23] |
+| child B (8.3 y) | 50-60 | 146 / 321 | +2.11 | +0.34 | +1.77 [+1.13, +2.07] |
+| child B (8.3 y) | 60-90 | 3 / 26 | sparse | | |
+| child C (8.7 y) | 0-10 | 11 / 0 | sparse | | |
+| child C (8.7 y) | 10-15 | 842 / 222 | +3.49 | +3.41 | +0.08 [-0.32, +0.53] |
+| child C (8.7 y) | 15-20 | 1602 / 1221 | +2.19 | +2.27 | -0.07 [-0.35, +0.18] |
+| child C (8.7 y) | 20-25 | 1515 / 1572 | +1.28 | +1.48 | -0.20 [-0.45, -0.02] |
+| child C (8.7 y) | 25-30 | 1155 / 1289 | +0.75 | +0.87 | -0.12 [-0.28, +0.05] |
+| child C (8.7 y) | 30-40 | 1333 / 1539 | +0.46 | +0.45 | +0.01 [-0.11, +0.16] |
+| child C (8.7 y) | 40-50 | 639 / 913 | +0.37 | +0.30 | +0.07 [-0.09, +0.49] |
+| child C (8.7 y) | 50-60 | 280 / 321 | +0.70 | +0.34 | +0.36 [-0.03, +1.04] |
+| child C (8.7 y) | 60-90 | 15 / 26 | +0.98 | +0.58 | +0.41 [+0.21, +1.20] |
 
 Scaled controls, vertex-wise (homologous) Delta by the adult's depth:
 
@@ -320,13 +440,16 @@ Scaled controls, vertex-wise (homologous) Delta by the adult's depth:
 | 2-year size (scaled adult) | 50-60 | 320 | +0.33 [+0.21, +0.46] |
 | 2-year size (scaled adult) | 60-90 | 26 | +0.71 [-0.30, +0.72] |
 
-Templates: the pooled difference of the medians (D_child - D_adult over all targets) and the same with the template's targets reweighted to the adult's area share per depth stratum; then radial (0-30 deg) and tangential (60-90 deg) sources at matched depth (difference of the medians; '-': fewer than 10 targets):
+Templates and school-aged children: the pooled difference of the medians (D_child - D_adult over all targets) and the same with the child's targets reweighted to the adult's area share per depth stratum; then radial (0-30 deg) and tangential (60-90 deg) sources at matched depth (difference of the medians; '-': fewer than 10 targets):
 
-| template | pooled | depth-reweighted | area at 10-20 mm (adult) | median depth [mm] (adult) | radial 0-15 / 15-25 / 25-40 / 40-90 mm | tangential 0-15 / 15-25 / 25-40 / 40-90 mm |
+| anatomy | pooled | depth-reweighted | area at 10-20 mm (adult) | median depth [mm] (adult) | radial 0-15 / 15-25 / 25-40 / 40-90 mm | tangential 0-15 / 15-25 / 25-40 / 40-90 mm |
 |---|---|---|---|---|---|---|
 | 2-year template | +0.85 | +0.32 | 42% (21%) | 21.8 (26.2) | +0.76 / +0.65 / +0.63 / +0.08 | +0.22 / +0.30 / +0.11 / +0.61 |
 | 18-month template | +0.90 | +0.53 | 36% (21%) | 23.2 (26.2) | +1.19 / +1.32 / +0.88 / +0.11 | +0.38 / +0.49 / +0.20 / +0.52 |
 | 12-month template | +1.05 | +0.29 | 46% (21%) | 20.6 (26.2) | +1.49 / +0.70 / +0.64 / +0.08 | +0.52 / +0.41 / +0.10 / +0.57 |
+| child A (7.8 y) | +0.34 | -0.04 | 42% (21%) | 21.6 (26.2) | +0.03 / -0.57 / -0.04 / -0.14 | -0.41 / -0.16 / -0.05 / +0.39 |
+| child B (8.3 y) | +0.52 | +0.05 | 47% (21%) | 20.0 (26.2) | -0.68 / -0.29 / +0.20 / +0.17 | -0.33 / -0.25 / -0.05 / +0.70 |
+| child C (8.7 y) | +0.19 | -0.05 | 35% (21%) | 23.4 (26.2) | -0.03 / -0.12 / +0.01 / -0.05 | -0.13 / -0.04 / -0.06 / +0.17 |
 
 ## Delta by orientation stratum (0 deg = radial to the inner skull; dense OPM vs Neuromag combined)
 
@@ -347,6 +470,15 @@ Templates: the pooled difference of the medians (D_child - D_adult over all targ
 | 12-month template | 0-30 | 1294 / 707 | +3.16 | +0.84 | +2.32 [+1.46, +3.37] |
 | 12-month template | 30-60 | 2461 / 2346 | +1.90 | +0.83 | +1.07 [+0.59, +1.53] |
 | 12-month template | 60-90.1 | 3837 / 4050 | +1.87 | +1.13 | +0.75 [+0.35, +1.16] |
+| child A (7.8 y) | 0-30 | 571 / 707 | +0.88 | +0.84 | +0.04 [-0.27, +0.47] |
+| child A (7.8 y) | 30-60 | 2001 / 2346 | +1.18 | +0.83 | +0.35 [+0.03, +0.68] |
+| child A (7.8 y) | 60-90.1 | 4566 / 4050 | +1.47 | +1.13 | +0.34 [-0.01, +0.65] |
+| child B (8.3 y) | 0-30 | 647 / 707 | +1.30 | +0.84 | +0.46 [-0.03, +1.00] |
+| child B (8.3 y) | 30-60 | 1989 / 2346 | +1.37 | +0.83 | +0.54 [+0.21, +0.90] |
+| child B (8.3 y) | 60-90.1 | 4230 / 4050 | +1.62 | +1.13 | +0.50 [+0.15, +0.81] |
+| child C (8.7 y) | 0-30 | 830 / 707 | +1.01 | +0.84 | +0.17 [-0.22, +0.52] |
+| child C (8.7 y) | 30-60 | 2301 / 2346 | +1.00 | +0.83 | +0.18 [-0.11, +0.41] |
+| child C (8.7 y) | 60-90.1 | 4261 / 4050 | +1.33 | +1.13 | +0.21 [-0.08, +0.51] |
 
 ## Placement, counterfactual helmet and sensitivity (median D, dense OPM vs Neuromag combined, intrinsic + brain)
 
@@ -358,6 +490,9 @@ Templates: the pooled difference of the medians (D_child - D_adult over all targ
 | 2-year template | +3.08 | +1.84 | +2.51 | +2.07 | +1.75 | +1.84 | +1.85 | +1.78 | +2.00 | +1.79 | +2.04 | +1.90 | +1.78 | +1.76 | +1.70 | +1.55 | +1.00 |
 | 18-month template | +3.13 | +1.89 | +2.48 | +2.05 | +1.80 | +1.86 | +1.82 | +1.80 | +2.03 | +1.80 | +2.04 | +1.90 | +1.81 | +1.81 | +1.75 | +1.47 | +1.02 |
 | 12-month template | +3.65 | +2.04 | +2.79 | +2.13 | +2.03 | +2.07 | +2.06 | +1.98 | +2.22 | +2.01 | +2.11 | +2.07 | +1.99 | +1.98 | +1.85 | +1.16 | +0.99 |
+| child A (7.8 y) | +2.07 | +1.34 | +1.40 | +1.42 | +1.40 | +1.39 | +1.33 | +1.25 | +1.50 | +1.45 | +1.42 | +1.40 | +1.31 | +1.34 | +1.24 | +0.62 | +0.62 |
+| child B (8.3 y) | +2.63 | +1.51 | +1.76 | +1.77 | +1.48 | +1.53 | +1.45 | +1.40 | +1.96 | +1.45 | +1.70 | +1.55 | +1.45 | +1.47 | +1.40 | +1.06 | +0.78 |
+| child C (8.7 y) | +2.08 | +1.19 | +1.83 | +1.24 | +2.00 | +1.18 | +1.19 | +1.05 | +1.87 | +1.91 | +1.59 | +1.33 | +1.32 | +1.25 | +1.08 | +1.73 | +1.33 |
 
 | anatomy | opm_asd_7fT | opm_asd_10fT | opm_asd_15fT | opm_asd_20fT | opm_asd_30fT | background_x0.5 | background_x2 | bem1 |
 |---|---|---|---|---|---|---|---|---|
@@ -367,6 +502,9 @@ Templates: the pooled difference of the medians (D_child - D_adult over all targ
 | 2-year template | +2.81 | +2.40 | +1.84 | +1.38 | +0.61 | +1.86 | +1.79 | +1.80 |
 | 18-month template | +2.98 | +2.53 | +1.89 | +1.39 | +0.61 | +1.86 | +1.90 | +1.81 |
 | 12-month template | +3.06 | +2.64 | +2.04 | +1.54 | +0.77 | +2.05 | +1.98 | +2.03 |
+| child A (7.8 y) | +1.89 | +1.66 | +1.34 | +1.06 | +0.55 | +1.43 | +1.21 | +1.33 |
+| child B (8.3 y) | +2.02 | +1.82 | +1.51 | +1.23 | +0.72 | +1.64 | +1.35 | +1.45 |
+| child C (8.7 y) | +1.95 | +1.65 | +1.19 | +0.81 | +0.27 | +1.22 | +1.12 | +1.16 |
 
 Difference of these medians, child minus adult, with the same variant applied to both (a sensitivity of the medians, not the paired Delta estimator; the background variants scale the adult too):
 
@@ -377,6 +515,9 @@ Difference of these medians, child minus adult, with the same variant applied to
 | 2-year template | +0.76 | +0.82 | +0.85 | +0.82 | +0.66 | +0.89 | +0.78 | +0.83 |
 | 18-month template | +0.93 | +0.94 | +0.90 | +0.83 | +0.66 | +0.89 | +0.89 | +0.84 |
 | 12-month template | +1.01 | +1.05 | +1.05 | +0.98 | +0.82 | +1.08 | +0.97 | +1.06 |
+| child A (7.8 y) | -0.15 | +0.08 | +0.34 | +0.50 | +0.60 | +0.46 | +0.20 | +0.35 |
+| child B (8.3 y) | -0.03 | +0.24 | +0.52 | +0.67 | +0.77 | +0.67 | +0.34 | +0.48 |
+| child C (8.7 y) | -0.10 | +0.06 | +0.19 | +0.25 | +0.32 | +0.25 | +0.11 | +0.19 |
 
 ## Regions that gain or lose with the placement (median D by lobe, dense OPM vs Neuromag combined, intrinsic + brain)
 
@@ -412,6 +553,21 @@ Difference of these medians, child minus adult, with the same variant applied to
 | 12-month template | x-centred | +2.42 | +1.37 | +3.01 | +2.26 | +0.57 | +1.19 |
 | 12-month template | back | +4.69 | +2.58 | +2.92 | +1.07 | +1.01 | +1.59 |
 | 12-month template | counterfactual | +2.06 | +0.85 | +1.24 | +0.62 | +0.44 | +0.71 |
+| child A (7.8 y) | centred | +2.42 | +1.91 | +2.25 | +2.26 | +0.54 | +0.60 |
+| child A (7.8 y) | top | +1.44 | +0.94 | +1.90 | +1.91 | +0.35 | +0.41 |
+| child A (7.8 y) | x-centred | +1.44 | +0.94 | +1.90 | +1.91 | +0.35 | +0.41 |
+| child A (7.8 y) | back | +2.75 | +1.11 | +1.51 | +0.51 | +0.48 | +0.49 |
+| child A (7.8 y) | counterfactual | +0.83 | +0.40 | +0.77 | +0.83 | +0.22 | +0.17 |
+| child B (8.3 y) | centred | +2.69 | +2.84 | +2.92 | +2.79 | +0.87 | +1.07 |
+| child B (8.3 y) | top | +1.34 | +1.18 | +2.33 | +2.08 | +0.46 | +0.72 |
+| child B (8.3 y) | x-centred | +1.30 | +1.12 | +2.29 | +2.03 | +0.45 | +0.69 |
+| child B (8.3 y) | back | +2.97 | +2.13 | +1.87 | +0.84 | +0.73 | +0.89 |
+| child B (8.3 y) | counterfactual | +1.10 | +0.98 | +1.30 | +1.26 | +0.41 | +0.37 |
+| child C (8.7 y) | centred | +2.50 | +2.46 | +1.73 | +2.35 | +0.62 | +0.69 |
+| child C (8.7 y) | top | +1.20 | +1.22 | +1.23 | +1.71 | +0.26 | +0.29 |
+| child C (8.7 y) | x-centred | +1.19 | +1.26 | +1.41 | +1.82 | +0.28 | +0.35 |
+| child C (8.7 y) | back | +2.68 | +2.12 | +1.41 | +1.53 | +0.60 | +0.61 |
+| child C (8.7 y) | counterfactual | +2.10 | +2.07 | +1.33 | +1.96 | +0.52 | +0.53 |
 
 ## Source-to-sensor distance (median, mm) by depth below the scalp
 
@@ -429,6 +585,12 @@ Difference of these medians, child minus adult, with the same variant applied to
 | 18-month template | opm_dense | 18 | 22 | 26 | 30 | 35 | 42 | 52 | 62 | 69 |
 | 12-month template | squid:top | 50 | 47 | 51 | 57 | 60 | 70 | 73 | 83 | 85 |
 | 12-month template | opm_dense | 19 | 21 | 26 | 30 | 35 | 42 | 51 | 62 | 68 |
+| child A (7.8 y) | squid:top | 46 | 47 | 52 | 57 | 62 | 69 | 76 | 83 | 85 |
+| child A (7.8 y) | opm_dense | 18 | 22 | 26 | 31 | 35 | 43 | 52 | 62 | 68 |
+| child B (8.3 y) | squid:top | 44 | 49 | 54 | 59 | 64 | 72 | 77 | 82 | 89 |
+| child B (8.3 y) | opm_dense | 18 | 21 | 26 | 31 | 35 | 42 | 52 | 61 | 68 |
+| child C (8.7 y) | squid:top | 45 | 47 | 50 | 55 | 60 | 67 | 76 | 83 | 91 |
+| child C (8.7 y) | opm_dense | 18 | 22 | 26 | 31 | 36 | 43 | 52 | 62 | 68 |
 
 ## Noise composition (median per-channel RMS in the band; magnetometers and OPM in fT, gradiometers in fT/cm)
 
@@ -470,6 +632,24 @@ Difference of these medians, child minus adult, with the same variant applied to
 | 12-month template | squid:centred/mag | 88.1 | 20.7 |
 | 12-month template | opm_dense/mag | 474.2 | 88.8 |
 | 12-month template | opm_matched/mag | 470.1 | 88.8 |
+| child A (7.8 y) | squid:top/grad | 39.6 | 21.3 |
+| child A (7.8 y) | squid:top/mag | 193.9 | 20.7 |
+| child A (7.8 y) | squid:centred/grad | 30.3 | 21.3 |
+| child A (7.8 y) | squid:centred/mag | 171.6 | 20.7 |
+| child A (7.8 y) | opm_dense/mag | 710.5 | 88.8 |
+| child A (7.8 y) | opm_matched/mag | 696.3 | 88.8 |
+| child B (8.3 y) | squid:top/grad | 33.6 | 21.3 |
+| child B (8.3 y) | squid:top/mag | 168.2 | 20.7 |
+| child B (8.3 y) | squid:centred/grad | 23.0 | 21.3 |
+| child B (8.3 y) | squid:centred/mag | 136.7 | 20.7 |
+| child B (8.3 y) | opm_dense/mag | 751.3 | 88.8 |
+| child B (8.3 y) | opm_matched/mag | 743.4 | 88.8 |
+| child C (8.7 y) | squid:top/grad | 36.4 | 21.3 |
+| child C (8.7 y) | squid:top/mag | 174.1 | 20.7 |
+| child C (8.7 y) | squid:centred/grad | 25.2 | 21.3 |
+| child C (8.7 y) | squid:centred/mag | 149.5 | 20.7 |
+| child C (8.7 y) | opm_dense/mag | 616.6 | 88.8 |
+| child C (8.7 y) | opm_matched/mag | 626.6 | 88.8 |
 
 ## Usefulness (dense OPM vs Neuromag combined, intrinsic + brain): share of usable cortical area
 
@@ -501,12 +681,25 @@ A source counts as usable when its detectability reaches 5 at the reference mome
 | 12-month template | 50 | 0.46 | 0.13 | 0.00 | 0.41 |
 | 12-month template | 100 | 0.79 | 0.05 | 0.00 | 0.16 |
 | 12-month template | 200 | 0.94 | 0.02 | 0.00 | 0.05 |
+| child A (7.8 y) | 20 | 0.00 | 0.06 | 0.00 | 0.94 |
+| child A (7.8 y) | 50 | 0.33 | 0.10 | 0.00 | 0.57 |
+| child A (7.8 y) | 100 | 0.65 | 0.04 | 0.01 | 0.30 |
+| child A (7.8 y) | 200 | 0.86 | 0.02 | 0.01 | 0.11 |
+| child B (8.3 y) | 20 | 0.00 | 0.08 | 0.00 | 0.92 |
+| child B (8.3 y) | 50 | 0.34 | 0.10 | 0.00 | 0.56 |
+| child B (8.3 y) | 100 | 0.65 | 0.04 | 0.01 | 0.29 |
+| child B (8.3 y) | 200 | 0.88 | 0.02 | 0.01 | 0.09 |
+| child C (8.7 y) | 20 | 0.00 | 0.06 | 0.00 | 0.94 |
+| child C (8.7 y) | 50 | 0.31 | 0.09 | 0.00 | 0.59 |
+| child C (8.7 y) | 100 | 0.63 | 0.04 | 0.01 | 0.32 |
+| child C (8.7 y) | 200 | 0.86 | 0.02 | 0.01 | 0.11 |
 
 ## Notes
 
 - D = 20 log10(d_OPM / d_SQUID) of a 10-nAm cortical-normal dipole (known-topography detectability with the oracle noise covariance; independent of the moment). Delta = D_child - D_adult. A positive Delta is an increase in relative OPM performance under these matching assumptions; it does not by itself mean that OPM beats SQUID in the child.
-- Scaled controls: the adult's vertices, so Delta is vertex-wise. The absolute 4-mm usable-source rule drops 154 and 248 superficial adult targets in the scaled copies, so D_child and D_adult are medians over slightly different target sets while Delta uses the common vertices. The templates: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per declared depth/orientation stratum from area-weighted medians.
+- Scaled controls: the adult's vertices, so Delta is vertex-wise. The absolute 4-mm usable-source rule drops 154 and 248 superficial adult targets in the scaled copies, so D_child and D_adult are medians over slightly different target sets while Delta uses the common vertices. The templates and the school-aged children: no vertex correspondence; Delta is computed per Desikan-Killiany parcel and per declared depth/orientation stratum from area-weighted medians.
+- School-aged children (OpenNeuro ds005234, typically developing, 7.8-8.7 years): their own white surfaces, aparc labels and MRI scalp; the dataset's watershed inner skull lies just below the scalp, so the skull is modelled (A-BEM-CHILD: the inner skull moved to 8 mm below the scalp where shallower, at least 2 mm from the cortex; the outer skull halfway to the scalp), and the fiducials are the adult's transferred by a cortex-to-cortex similarity fit (A-G3-FID). Individual children, not a population; no cortex maps are drawn for them (their inflated surfaces were not obtained).
 - Intervals: bootstrap over parcels of one anatomy (or of each anatomy, for between-anatomy strata); they do not include between-subject variability. Three average templates of one database (2-year template, 18-month template, 12-month template) are not a population: template results are conditional simulations.
 - Every child array uses the adult's conventions: background moment variance per unit cortical area, room field, intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. Both systems' detectability rises in the smaller heads, the OPM's more (absolute detectability table), by different routes: the on-scalp OPM sees more signal from a cortex that is closer in absolute terms at about the same brain noise, while the SQUIDs' brain noise falls (the cortex is farther from the fixed helmet and, with the background fixed per unit area, smaller) more than their signal. The templates' averaged white surfaces are smoother than an individual cortex (usable area 1,062, 975, 895 cm^2 for the 2-year template, 18-month template, 12-month template vs 1,878 cm^2 for the adult), which lowers their background power and their patch cancellation further; scaling the background variance x0.5 or x2 leaves D_child almost unchanged.
-- Placements are chosen from the scalp and helmet geometry only. Under the adult's measured pose a head with other fiducials need not be centred laterally; 'x-centred' shifts each head along device x to equal left/right median gaps before the top contact (shift: adult -1.5 mm, school-age size (scaled adult) -0.5 mm, 2-year size (scaled adult) -0.5 mm, 2-year template -6.5 mm, 18-month template -5.5 mm, 12-month template -2.5 mm; negative = to the left), and 'counterfactual_x-centred' scales the helmet about that laterally centred head. The counterfactual helmet (scaled with the head) is a mechanistic control, not a pediatric SQUID system.
+- Placements are chosen from the scalp and helmet geometry only. Under the adult's measured pose a head with other fiducials need not be centred laterally; 'x-centred' shifts each head along device x to equal left/right median gaps before the top contact (shift: adult -1.5 mm, school-age size (scaled adult) -0.5 mm, 2-year size (scaled adult) -0.5 mm, 2-year template -6.5 mm, 18-month template -5.5 mm, 12-month template -2.5 mm, child A (7.8 y) +0.0 mm, child B (8.3 y) -2.5 mm, child C (8.7 y) +3.5 mm; negative = to the left), and 'counterfactual_x-centred' scales the helmet about that laterally centred head. The counterfactual helmet (scaled with the head) is a mechanistic control, not a pediatric SQUID system.
 - Targets on the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum and midbrain, not cortex) are left out of every summary; they would otherwise dominate the deepest strata.

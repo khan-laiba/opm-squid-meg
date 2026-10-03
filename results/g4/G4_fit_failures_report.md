@@ -76,5 +76,41 @@ Every event has a dipole (`mne.fit_dipole` never failed). Counted here, from the
 | infant12mo | squid | focal 320nAm | 23/24 | 0 / 0 | 0 / 0 | 3 / 2 |
 | infant12mo | squid | patch 80nAm | 8/24 | 9 / 1 | 18 / 6 | 14 / 2 |
 | infant12mo | squid | patch 320nAm | 23/24 | 1 / 1 | 5 / 4 | 3 / 2 |
+| childA | opm_dense | focal 80nAm | 6/24 | 14 / 0 | 15 / 0 | 10 / 0 |
+| childA | opm_dense | focal 320nAm | 17/24 | 7 / 2 | 7 / 0 | 7 / 2 |
+| childA | opm_dense | patch 80nAm | 4/24 | 19 / 1 | 19 / 1 | 15 / 2 |
+| childA | opm_dense | patch 320nAm | 13/24 | 8 / 1 | 8 / 0 | 7 / 1 |
+| childA | opm_matched | focal 80nAm | 6/24 | 11 / 0 | 13 / 0 | 17 / 0 |
+| childA | opm_matched | focal 320nAm | 16/24 | 8 / 0 | 6 / 0 | 7 / 1 |
+| childA | opm_matched | patch 80nAm | 3/24 | 18 / 0 | 16 / 1 | 19 / 0 |
+| childA | opm_matched | patch 320nAm | 13/24 | 8 / 1 | 7 / 0 | 8 / 1 |
+| childA | squid | focal 80nAm | 6/24 | 13 / 0 | 17 / 0 | 18 / 0 |
+| childA | squid | focal 320nAm | 15/24 | 5 / 0 | 9 / 1 | 8 / 0 |
+| childA | squid | patch 80nAm | 3/24 | 20 / 0 | 18 / 1 | 20 / 0 |
+| childA | squid | patch 320nAm | 13/24 | 6 / 0 | 7 / 1 | 10 / 1 |
+| childB | opm_dense | focal 80nAm | 10/24 | 14 / 0 | 13 / 0 | 14 / 2 |
+| childB | opm_dense | focal 320nAm | 20/24 | 6 / 3 | 5 / 2 | 7 / 3 |
+| childB | opm_dense | patch 80nAm | 4/24 | 16 / 0 | 19 / 0 | 13 / 0 |
+| childB | opm_dense | patch 320nAm | 15/24 | 9 / 1 | 8 / 0 | 6 / 1 |
+| childB | opm_matched | focal 80nAm | 7/24 | 13 / 0 | 13 / 0 | 15 / 1 |
+| childB | opm_matched | focal 320nAm | 20/24 | 5 / 2 | 6 / 3 | 6 / 2 |
+| childB | opm_matched | patch 80nAm | 3/24 | 18 / 2 | 17 / 0 | 16 / 1 |
+| childB | opm_matched | patch 320nAm | 16/24 | 11 / 3 | 9 / 2 | 9 / 2 |
+| childB | squid | focal 80nAm | 7/24 | 12 / 0 | 15 / 2 | 11 / 0 |
+| childB | squid | focal 320nAm | 19/24 | 4 / 0 | 6 / 2 | 6 / 2 |
+| childB | squid | patch 80nAm | 2/24 | 17 / 0 | 20 / 0 | 22 / 1 |
+| childB | squid | patch 320nAm | 15/24 | 7 / 0 | 9 / 2 | 10 / 2 |
+| childC | opm_dense | focal 80nAm | 10/24 | 11 / 0 | 14 / 0 | 9 / 1 |
+| childC | opm_dense | focal 320nAm | 21/24 | 3 / 0 | 2 / 0 | 3 / 1 |
+| childC | opm_dense | patch 80nAm | 4/24 | 14 / 1 | 16 / 0 | 15 / 0 |
+| childC | opm_dense | patch 320nAm | 14/24 | 7 / 0 | 6 / 0 | 8 / 1 |
+| childC | opm_matched | focal 80nAm | 9/24 | 13 / 0 | 13 / 0 | 17 / 2 |
+| childC | opm_matched | focal 320nAm | 21/24 | 5 / 2 | 4 / 1 | 5 / 2 |
+| childC | opm_matched | patch 80nAm | 3/24 | 15 / 0 | 15 / 0 | 16 / 0 |
+| childC | opm_matched | patch 320nAm | 14/24 | 7 / 0 | 7 / 0 | 8 / 1 |
+| childC | squid | focal 80nAm | 9/24 | 13 / 0 | 13 / 0 | 13 / 1 |
+| childC | squid | focal 320nAm | 21/24 | 5 / 2 | 6 / 3 | 4 / 1 |
+| childC | squid | patch 80nAm | 4/24 | 16 / 1 | 19 / 1 | 17 / 0 |
+| childC | squid | patch 320nAm | 15/24 | 6 / 0 | 8 / 1 | 9 / 2 |
 
-Totals over the six anatomies (576 events per array): gross ECD errors 208 (Neuromag), 193 (matched OPM), 182 (dense OPM), of which among detected events 24, 28, 35; gross dSPM errors 264, 201, 197 (detected: 63, 29, 36). Of all gross errors (both estimators, three arrays), 83 % belong to undetected events and 75 % to 80-nAm sources, whose estimates are largely those of noise.
+Totals over the 9 anatomies (864 events per array): gross ECD errors 332 (Neuromag), 325 (matched OPM), 310 (dense OPM), of which among detected events 27, 38, 44; gross dSPM errors 411, 327, 329 (detected: 77, 36, 39). Of all gross errors (both estimators, three arrays), 87 % belong to undetected events and 73 % to 80-nAm sources, whose estimates are largely those of noise.

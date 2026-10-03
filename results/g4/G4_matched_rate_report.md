@@ -28,6 +28,18 @@ The frozen thresholds (set on 20 min of calibration null data) give unequal fals
 | infant12mo | opm_dense vs squid/combined | matched | 14/1, p 0.00043, 1.51 [1.24-1.87] | 11/3, p 0.11, 1.15 [1.03-1.29] | 9/1, p 0.018, 1.11 [1.04-1.24] | 3/2, p 0.75, 1.02 [0.93-open] |
 | infant12mo | opm_matched vs squid/combined | frozen | 11/4, p 0.051, 1.28 [1.09-1.46] | 9/3, p 0.097, 1.12 [1.01-1.25] | 4/4, p 0.8, 1.01 [0.93-1.11] | 2/2, p 1, 0.99 [open-open] |
 | infant12mo | opm_matched vs squid/combined | matched | 11/4, p 0.033, 1.34 [1.12-1.53] | 9/3, p 0.078, 1.13 [1.02-1.25] | 6/3, p 0.31, 1.05 [0.97-1.17] | 2/2, p 1, 0.99 [open-open] |
+| childA | opm_dense vs squid/combined | frozen | 11/4, p 0.022, 1.27 [0.93-1.63] | 6/5, p 0.64, 1.14 [0.93-1.44] | 5/2, p 0.38, 1.07 [0.96-1.25] | 5/0, p 0.062, neither reaches 50 % [open-open] |
+| childA | opm_dense vs squid/combined | matched | 12/4, p 0.015, 1.29 [0.97-1.63] | 6/4, p 0.46, 1.15 [0.99-1.45] | 6/2, p 0.27, 1.09 [0.97-1.27] | 5/0, p 0.062, neither reaches 50 % [open-open] |
+| childA | opm_matched vs squid/combined | frozen | 8/6, p 1, 1.05 [0.75-1.40] | 6/8, p 0.87, 0.98 [0.80-1.28] | 7/3, p 0.59, 1.04 [0.93-1.16] | 2/0, p 0.5, neither reaches 50 % [open-open] |
+| childA | opm_matched vs squid/combined | matched | 8/6, p 1, 1.05 [0.75-1.39] | 6/8, p 0.74, 0.98 [0.80-1.28] | 4/5, p 0.78, 0.99 [0.89-1.06] | 1/0, p 1, neither reaches 50 % [open-open] |
+| childB | opm_dense vs squid/combined | frozen | 12/3, p 0.0085, 1.18 [1.02-1.51] | 7/2, p 0.12, 1.08 [1.00-1.25] | 3/3, p 1, 0.97 [open-open] | 4/2, p 0.53, neither reaches 50 % [open-open] |
+| childB | opm_dense vs squid/combined | matched | 13/3, p 0.0056, 1.21 [1.04-1.55] | 8/2, p 0.076, 1.10 [1.01-1.27] | 5/3, p 0.73, 1.01 [0.86-1.10] | 3/2, p 0.75, neither reaches 50 % [open-open] |
+| childB | opm_matched vs squid/combined | frozen | 11/5, p 0.27, 1.06 [0.87-1.35] | 6/3, p 1, 1.01 [0.86-1.16] | 6/2, p 0.44, 1.05 [0.87-1.24] | 3/2, p 0.75, > 1.03 (Neuromag does not reach 50 %) [open-open] |
+| childB | opm_matched vs squid/combined | matched | 10/5, p 0.59, 1.01 [0.84-1.26] | 4/3, p 0.83, 0.96 [0.81-1.07] | 4/3, p 1, 1.00 [open-1.10] | 1/2, p 1, neither reaches 50 % [open-open] |
+| childC | opm_dense vs squid/combined | frozen | 14/2, p 0.0037, 1.43 [1.06-1.62] | 10/2, p 0.063, 1.15 [0.98-1.33] | 2/4, p 1, 1.00 [0.93-1.09] | 6/2, p 0.18, > 1.00 (Neuromag does not reach 50 %) [open-open] |
+| childC | opm_dense vs squid/combined | matched | 14/2, p 0.0031, 1.47 [1.11-1.65] | 10/1, p 0.032, 1.18 [0.99-1.35] | 3/1, p 0.5, 1.07 [0.96-1.18] | 7/2, p 0.09, > 1.03 (Neuromag does not reach 50 %) [open-open] |
+| childC | opm_matched vs squid/combined | frozen | 8/4, p 0.54, 1.08 [0.92-1.31] | 4/3, p 0.92, 0.98 [0.80-1.10] | 2/3, p 0.5, 1.00 [0.86-1.11] | 4/3, p 0.67, neither reaches 50 % [open-open] |
+| childC | opm_matched vs squid/combined | matched | 8/4, p 0.42, 1.11 [0.96-1.31] | 5/3, p 1, 1.00 [0.82-1.12] | 2/2, p 0.75, 1.00 [0.86-1.11] | 4/2, p 0.34, neither reaches 50 % [open-open] |
 
 Held-out false events per minute at the frozen thresholds (matched: 1.00 by construction):
 
@@ -39,3 +51,6 @@ Held-out false events per minute at the frozen thresholds (matched: 1.00 by cons
 | infant2yr | 0.70 | 1.55 | 1.30 |
 | infant18mo | 0.90 | 1.45 | 1.10 |
 | infant12mo | 1.20 | 0.95 | 0.85 |
+| childA | 0.90 | 1.35 | 0.75 |
+| childB | 0.80 | 1.55 | 0.70 |
+| childC | 1.20 | 0.70 | 0.75 |

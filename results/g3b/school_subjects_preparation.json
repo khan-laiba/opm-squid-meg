@@ -1,0 +1,235 @@
+{
+  "status": "NEW (G3B: school-aged children of OpenNeuro ds005234 prepared; A-BEM-CHILD, A-G3-FID, A-BEM-CONFORM)",
+  "children": [
+    {
+      "key": "childA",
+      "subject": "sub-Z213",
+      "age_y": 7.75,
+      "bem_folder": "sub-Z209",
+      "n_white_vertices": [
+        147093,
+        147958
+      ],
+      "n_scalp_vertices": 154048,
+      "watershed_inner_skull_scalp_depth_mm_p10_p50_p90": [
+        0.7904446799462964,
+        2.716162015118523,
+        14.060419122736173
+      ],
+      "skull_model": {
+        "depth_mm": 8.0,
+        "min_cortex_mm": 2.0,
+        "smooth": 10,
+        "n_vertices": 2562,
+        "moved_share": 0.9141295862607338,
+        "moved_median_mm": 4.812892229049795,
+        "moved_max_mm": 7.084405639879367,
+        "scalp_depth_before_mm": [
+          0.7904446799462964,
+          2.716162015118523,
+          14.060419122736173
+        ],
+        "scalp_depth_after_mm": [
+          5.965758189413993,
+          7.632343005261589,
+          14.165378982625393
+        ],
+        "cortex_clearance_min_mm": 1.3665153126391196,
+        "skull_thickness_mm": [
+          3.0756813903700713,
+          3.8387342433960905,
+          4.877949377613541
+        ]
+      },
+      "fiducials": {
+        "scale": 0.9234865048878275,
+        "rotation_deg": 9.299513293077265,
+        "cortex_fit_median_mm": 2.795082548757794,
+        "projection_mm": {
+          "lpa": 1.989074067143173,
+          "nasion": 0.8331286083510829,
+          "rpa": 4.447152277753265
+        }
+      },
+      "head_conform": {
+        "n_vertices": 2562,
+        "moved_median_mm": 1.916389440444347,
+        "moved_p90_mm": 2.2787613562309392,
+        "moved_max_mm": 5.607180987715515,
+        "reassigned": 0,
+        "repaired": 0,
+        "identity": false,
+        "outer_skull_min_mm": 0.9493677910553882
+      },
+      "head_conform_at_loading": {
+        "n_vertices": 2562,
+        "moved_median_mm": 0.0,
+        "moved_p90_mm": 0.0,
+        "moved_max_mm": 0.0,
+        "reassigned": 0,
+        "identity": true
+      },
+      "cortex_inside_inner_skull_share": 1.0,
+      "cortex_usable_share": 0.916865219911134,
+      "oct6_sources": [
+        4098,
+        4098
+      ]
+    },
+    {
+      "key": "childB",
+      "subject": "sub-Z209",
+      "age_y": 8.333,
+      "bem_folder": "matched_bem/sub-Z207",
+      "n_white_vertices": [
+        136370,
+        137665
+      ],
+      "n_scalp_vertices": 203382,
+      "watershed_inner_skull_scalp_depth_mm_p10_p50_p90": [
+        0.20007658389775967,
+        1.311166981797043,
+        15.535441205695223
+      ],
+      "skull_model": {
+        "depth_mm": 8.0,
+        "min_cortex_mm": 2.0,
+        "smooth": 10,
+        "n_vertices": 2562,
+        "moved_share": 0.8723653395784543,
+        "moved_median_mm": 5.224135700096935,
+        "moved_max_mm": 7.307922805650955,
+        "scalp_depth_before_mm": [
+          0.20007658389775967,
+          1.311166981797043,
+          15.535441205695223
+        ],
+        "scalp_depth_after_mm": [
+          4.287472812461444,
+          6.473623717146257,
+          15.550047621838738
+        ],
+        "cortex_clearance_min_mm": 1.096195760128414,
+        "skull_thickness_mm": [
+          2.0117554391184407,
+          3.1644091377729753,
+          4.949464844305428
+        ]
+      },
+      "fiducials": {
+        "scale": 0.8818734792860896,
+        "rotation_deg": 8.246174809283424,
+        "cortex_fit_median_mm": 2.8034160632984024,
+        "projection_mm": {
+          "lpa": 1.5174035173142637,
+          "nasion": 0.8036773355339987,
+          "rpa": 7.86613670252149
+        }
+      },
+      "head_conform": {
+        "n_vertices": 2562,
+        "moved_median_mm": 1.9428431900779657,
+        "moved_p90_mm": 2.4120086906248273,
+        "moved_max_mm": 11.334108381331202,
+        "reassigned": 0,
+        "repaired": 0,
+        "identity": false,
+        "outer_skull_min_mm": 0.17486532895587378
+      },
+      "head_conform_at_loading": {
+        "n_vertices": 2562,
+        "moved_median_mm": 0.0,
+        "moved_p90_mm": 0.0,
+        "moved_max_mm": 0.0,
+        "reassigned": 0,
+        "identity": true
+      },
+      "cortex_inside_inner_skull_share": 1.0,
+      "cortex_usable_share": 0.8827631506924298,
+      "oct6_sources": [
+        4098,
+        4098
+      ]
+    },
+    {
+      "key": "childC",
+      "subject": "sub-Z226",
+      "age_y": 8.667,
+      "bem_folder": "matched_bem/sub-Z224",
+      "n_white_vertices": [
+        130277,
+        135641
+      ],
+      "n_scalp_vertices": 267150,
+      "watershed_inner_skull_scalp_depth_mm_p10_p50_p90": [
+        1.2075327940054392,
+        3.44072063087917,
+        20.274180883920927
+      ],
+      "skull_model": {
+        "depth_mm": 8.0,
+        "min_cortex_mm": 2.0,
+        "smooth": 10,
+        "n_vertices": 2562,
+        "moved_share": 0.8536299765807962,
+        "moved_median_mm": 4.822587590728541,
+        "moved_max_mm": 7.507407178784072,
+        "scalp_depth_before_mm": [
+          1.2075327940054392,
+          3.44072063087917,
+          20.274180883920927
+        ],
+        "scalp_depth_after_mm": [
+          6.798723813913973,
+          7.97751780840208,
+          20.285614655785302
+        ],
+        "cortex_clearance_min_mm": 1.359401298535015,
+        "skull_thickness_mm": [
+          3.593375113184926,
+          3.976019548726471,
+          4.969974013488971
+        ]
+      },
+      "fiducials": {
+        "scale": 0.8759414050166408,
+        "rotation_deg": 9.707181307693835,
+        "cortex_fit_median_mm": 2.8595097880017017,
+        "projection_mm": {
+          "lpa": 10.309132264608243,
+          "nasion": 5.399829373205093,
+          "rpa": 2.5769588560292416
+        }
+      },
+      "head_conform": {
+        "n_vertices": 2562,
+        "moved_median_mm": 2.2204972047545777,
+        "moved_p90_mm": 3.188034244358419,
+        "moved_max_mm": 17.94276562824363,
+        "reassigned": 1,
+        "repaired": 4,
+        "identity": false,
+        "outer_skull_min_mm": 1.8526657097517731
+      },
+      "head_conform_at_loading": {
+        "n_vertices": 2562,
+        "moved_median_mm": 0.0,
+        "moved_p90_mm": 0.0,
+        "moved_max_mm": 0.0,
+        "reassigned": 0,
+        "identity": true
+      },
+      "cortex_inside_inner_skull_share": 1.0,
+      "cortex_usable_share": 0.9654667980354846,
+      "oct6_sources": [
+        4098,
+        4098
+      ]
+    }
+  ],
+  "provenance": {
+    "commit": "71de176",
+    "mne_version": "1.13.2",
+    "numpy_version": "2.5.3"
+  }
+}

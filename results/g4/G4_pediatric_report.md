@@ -36,6 +36,21 @@ Same framework, configuration and seeds as the adult (configs/g4_epilepsy.toml);
 | infant12mo | squid/mag | 41 [33-56] | 71 [60-98] | 132 [115-166] | 256 [219-open] |
 | infant12mo | opm_matched/opm | 33 [30-44] | 63 [53-85] | 130 [109-170] | 256 [221-open] |
 | infant12mo | opm_dense/opm | 29 [21-41] | 63 [50-93] | 119 [98-156] | 248 [215-320] |
+| childA | squid/combined | 61 [48-85] | 111 [78-160] | 202 [164-234] | none [open-open] |
+| childA | squid/grad | 66 [53-93] | 122 [97-193] | 213 [181-243] | none [open-open] |
+| childA | squid/mag | 59 [47-80] | 111 [78-171] | 200 [160-226] | none [open-open] |
+| childA | opm_matched/opm | 58 [39-98] | 113 [76-184] | 193 [160-218] | none [open-open] |
+| childA | opm_dense/opm | 48 [33-85] | 98 [69-175] | 188 [148-219] | none [285-open] |
+| childB | squid/combined | 65 [51-101] | 132 [107-181] | 245 [193-311] | none [277-open] |
+| childB | squid/grad | 75 [60-119] | 132 [112-180] | 249 [202-320] | none [open-open] |
+| childB | squid/mag | 69 [54-104] | 129 [104-174] | 235 [187-283] | none [282-open] |
+| childB | opm_matched/opm | 61 [47-83] | 131 [104-174] | 233 [178-306] | 312 [262-open] |
+| childB | opm_dense/opm | 55 [42-72] | 122 [100-155] | 251 [196-open] | none [262-open] |
+| childC | squid/combined | 52 [39-65] | 95 [73-112] | 166 [131-230] | none [269-open] |
+| childC | squid/grad | 57 [42-75] | 96 [76-116] | 174 [136-266] | none [286-open] |
+| childC | squid/mag | 54 [41-68] | 93 [75-109] | 166 [132-230] | none [262-open] |
+| childC | opm_matched/opm | 48 [37-60] | 96 [80-111] | 167 [134-245] | none [264-open] |
+| childC | opm_dense/opm | 36 [28-59] | 82 [66-101] | 166 [131-226] | 320 [251-open] |
 
 ## Held-out false events per minute at the 1-per-minute thresholds, and sensitivity at a matched held-out rate
 
@@ -73,6 +88,21 @@ Sensitivity for 40-nAm spikes at 10-30 mm with each detector's threshold set on 
 | infant12mo | squid/mag | 0.95 | 0.30 |
 | infant12mo | opm_matched/opm | 0.95 | 0.43 |
 | infant12mo | opm_dense/opm | 0.85 | 0.44 |
+| childA | squid/combined | 0.90 | 0.12 |
+| childA | squid/grad | 0.45 | 0.09 |
+| childA | squid/mag | 1.40 | 0.12 |
+| childA | opm_matched/opm | 1.35 | 0.19 |
+| childA | opm_dense/opm | 0.75 | 0.23 |
+| childB | squid/combined | 0.80 | 0.12 |
+| childB | squid/grad | 0.65 | 0.06 |
+| childB | squid/mag | 0.95 | 0.08 |
+| childB | opm_matched/opm | 1.55 | 0.10 |
+| childB | opm_dense/opm | 0.70 | 0.17 |
+| childC | squid/combined | 1.20 | 0.16 |
+| childC | squid/grad | 1.10 | 0.13 |
+| childC | squid/mag | 1.10 | 0.15 |
+| childC | opm_matched/opm | 0.70 | 0.19 |
+| childC | opm_dense/opm | 0.75 | 0.31 |
 
 ## Paired OPM dense vs Neuromag combined (practical detector, 1 false event/min; locations favouring OPM / SQUID, sign-flip p, S50 ratio SQUID/OPM [95 % CI])
 
@@ -84,6 +114,9 @@ Sensitivity for 40-nAm spikes at 10-30 mm with each detector's threshold set on 
 | infant2yr | 14/2, p 0.00153, 1.44 [1.20-1.65] | 6/1, p 0.219, 1.07 [0.97-1.23] | 7/3, p 0.465, 1.03 [0.93-1.15] | 7/2, p 0.148, 1.05 [0.96-1.13] |
 | infant18mo | 16/0, p 3.05e-05, 1.33 [1.16-1.62] | 6/2, p 0.188, 1.05 [0.89-1.25] | 8/3, p 0.183, 1.05 [0.98-1.13] | 7/1, p 0.0469, > 1.13 (Neuromag does not reach 50 %) [open-open] |
 | infant12mo | 14/1, p 0.000488, 1.46 [1.21-1.84] | 9/3, p 0.221, 1.12 [1.01-1.25] | 8/1, p 0.0312, 1.10 [1.03-1.23] | 3/2, p 0.75, 1.02 [0.93-open] |
+| childA | 11/4, p 0.0225, 1.27 [0.93-1.63] | 6/5, p 0.637, 1.14 [0.93-1.44] | 5/2, p 0.375, 1.07 [0.96-1.25] | 5/0, p 0.0625, neither reaches 50 % [open-open] |
+| childB | 12/3, p 0.00854, 1.18 [1.02-1.51] | 7/2, p 0.121, 1.08 [1.00-1.25] | 3/3, p 1, 0.97 [open-open] | 4/2, p 0.531, neither reaches 50 % [open-open] |
+| childC | 14/2, p 0.00372, 1.43 [1.06-1.62] | 10/2, p 0.063, 1.15 [0.98-1.33] | 2/4, p 1, 1.00 [0.93-1.09] | 6/2, p 0.18, > 1.00 (Neuromag does not reach 50 %) [open-open] |
 
 ## Localization (median error [mm]; joint detection + localization within 10 mm)
 
@@ -209,6 +242,66 @@ Sensitivity for 40-nAm spikes at 10-30 mm with each detector's threshold set on 
 | infant12mo | squid_grad | focal 320nAm | 15.8 | 12.1 | 5.3 | 0.96 | 0.33 | 0.79 |
 | infant12mo | squid_grad | patch 80nAm | 42.3 | 50.8 | 7.2 | 0.25 | 0.04 | 0.17 |
 | infant12mo | squid_grad | patch 320nAm | 16.4 | 15.5 | 7.5 | 0.96 | 0.25 | 0.58 |
+| childA | squid | focal 80nAm | 52.1 | 54.8 | 5.5 | 0.25 | 0.08 | 0.21 |
+| childA | squid | focal 320nAm | 18.9 | 18.0 | 4.4 | 0.62 | 0.21 | 0.54 |
+| childA | squid | patch 80nAm | 64.4 | 67.1 | 9.6 | 0.12 | 0.00 | 0.08 |
+| childA | squid | patch 320nAm | 20.1 | 16.8 | 7.2 | 0.54 | 0.17 | 0.42 |
+| childA | opm_matched | focal 80nAm | 33.1 | 39.9 | 4.8 | 0.25 | 0.25 | 0.25 |
+| childA | opm_matched | focal 320nAm | 11.2 | 10.6 | 5.1 | 0.67 | 0.46 | 0.58 |
+| childA | opm_matched | patch 80nAm | 56.5 | 55.9 | 5.0 | 0.12 | 0.04 | 0.12 |
+| childA | opm_matched | patch 320nAm | 15.5 | 15.3 | 6.7 | 0.54 | 0.21 | 0.33 |
+| childA | opm_dense | focal 80nAm | 47.3 | 46.4 | 3.4 | 0.25 | 0.25 | 0.21 |
+| childA | opm_dense | focal 320nAm | 13.4 | 9.5 | 4.6 | 0.71 | 0.38 | 0.58 |
+| childA | opm_dense | patch 80nAm | 54.3 | 59.8 | 15.2 | 0.17 | 0.04 | 0.08 |
+| childA | opm_dense | patch 320nAm | 12.9 | 14.8 | 9.6 | 0.54 | 0.33 | 0.33 |
+| childA | squid_mag | focal 80nAm | 46.4 | 46.3 | 4.8 | 0.25 | 0.08 | 0.21 |
+| childA | squid_mag | focal 320nAm | 17.4 | 14.9 | 5.1 | 0.62 | 0.21 | 0.58 |
+| childA | squid_mag | patch 80nAm | 59.0 | 58.0 | 10.1 | 0.12 | 0.04 | 0.04 |
+| childA | squid_mag | patch 320nAm | 22.1 | 19.6 | 6.9 | 0.54 | 0.12 | 0.33 |
+| childA | squid_grad | focal 80nAm | 45.5 | 45.5 | 4.4 | 0.25 | 0.08 | 0.25 |
+| childA | squid_grad | focal 320nAm | 15.5 | 15.5 | 5.6 | 0.62 | 0.29 | 0.54 |
+| childA | squid_grad | patch 80nAm | 64.8 | 65.7 | 9.4 | 0.12 | 0.00 | 0.08 |
+| childA | squid_grad | patch 320nAm | 23.0 | 25.9 | 8.9 | 0.58 | 0.17 | 0.29 |
+| childB | squid | focal 80nAm | 48.6 | 45.9 | 4.2 | 0.29 | 0.04 | 0.29 |
+| childB | squid | focal 320nAm | 20.3 | 19.5 | 4.9 | 0.79 | 0.08 | 0.58 |
+| childB | squid | patch 80nAm | 63.7 | 60.3 | 18.6 | 0.08 | 0.00 | 0.04 |
+| childB | squid | patch 320nAm | 24.7 | 21.9 | 5.3 | 0.62 | 0.04 | 0.50 |
+| childB | opm_matched | focal 80nAm | 41.6 | 34.0 | 5.9 | 0.29 | 0.12 | 0.25 |
+| childB | opm_matched | focal 320nAm | 15.2 | 10.4 | 5.7 | 0.83 | 0.25 | 0.62 |
+| childB | opm_matched | patch 80nAm | 51.7 | 48.2 | 31.1 | 0.12 | 0.04 | 0.04 |
+| childB | opm_matched | patch 320nAm | 17.8 | 17.7 | 7.3 | 0.67 | 0.21 | 0.46 |
+| childB | opm_dense | focal 80nAm | 41.5 | 34.9 | 3.5 | 0.42 | 0.17 | 0.38 |
+| childB | opm_dense | focal 320nAm | 14.5 | 12.0 | 5.3 | 0.83 | 0.33 | 0.67 |
+| childB | opm_dense | patch 80nAm | 53.1 | 54.0 | 5.7 | 0.17 | 0.00 | 0.12 |
+| childB | opm_dense | patch 320nAm | 15.9 | 10.4 | 5.0 | 0.62 | 0.29 | 0.54 |
+| childB | squid_mag | focal 80nAm | 46.4 | 34.0 | 5.4 | 0.25 | 0.00 | 0.21 |
+| childB | squid_mag | focal 320nAm | 18.6 | 16.1 | 5.1 | 0.79 | 0.17 | 0.58 |
+| childB | squid_mag | patch 80nAm | 45.9 | 45.9 | 17.6 | 0.08 | 0.00 | 0.04 |
+| childB | squid_mag | patch 320nAm | 22.6 | 18.6 | 4.4 | 0.62 | 0.12 | 0.50 |
+| childB | squid_grad | focal 80nAm | 48.8 | 43.7 | 7.4 | 0.29 | 0.00 | 0.21 |
+| childB | squid_grad | focal 320nAm | 21.3 | 19.5 | 5.3 | 0.75 | 0.12 | 0.67 |
+| childB | squid_grad | patch 80nAm | 52.8 | 56.7 | 9.0 | 0.04 | 0.00 | 0.04 |
+| childB | squid_grad | patch 320nAm | 22.6 | 21.8 | 4.8 | 0.54 | 0.00 | 0.50 |
+| childC | squid | focal 80nAm | 32.4 | 37.9 | 4.7 | 0.38 | 0.12 | 0.33 |
+| childC | squid | focal 320nAm | 15.6 | 15.6 | 5.5 | 0.88 | 0.33 | 0.62 |
+| childC | squid | patch 80nAm | 70.1 | 75.5 | 10.6 | 0.17 | 0.00 | 0.04 |
+| childC | squid | patch 320nAm | 19.5 | 18.5 | 5.8 | 0.62 | 0.21 | 0.54 |
+| childC | opm_matched | focal 80nAm | 40.4 | 39.0 | 6.0 | 0.38 | 0.12 | 0.33 |
+| childC | opm_matched | focal 320nAm | 13.1 | 12.3 | 6.7 | 0.88 | 0.33 | 0.62 |
+| childC | opm_matched | patch 80nAm | 51.0 | 48.5 | 8.7 | 0.12 | 0.04 | 0.08 |
+| childC | opm_matched | patch 320nAm | 13.7 | 10.8 | 4.8 | 0.58 | 0.25 | 0.54 |
+| childC | opm_dense | focal 80nAm | 39.6 | 27.0 | 4.9 | 0.42 | 0.25 | 0.38 |
+| childC | opm_dense | focal 320nAm | 11.8 | 10.3 | 5.1 | 0.88 | 0.33 | 0.67 |
+| childC | opm_dense | patch 80nAm | 54.3 | 54.1 | 17.9 | 0.17 | 0.08 | 0.04 |
+| childC | opm_dense | patch 320nAm | 11.1 | 11.2 | 5.7 | 0.58 | 0.38 | 0.50 |
+| childC | squid_mag | focal 80nAm | 36.8 | 36.5 | 4.3 | 0.38 | 0.17 | 0.33 |
+| childC | squid_mag | focal 320nAm | 14.9 | 12.9 | 5.7 | 0.88 | 0.25 | 0.62 |
+| childC | squid_mag | patch 80nAm | 65.5 | 62.5 | 10.5 | 0.17 | 0.00 | 0.08 |
+| childC | squid_mag | patch 320nAm | 18.8 | 18.5 | 5.7 | 0.58 | 0.25 | 0.54 |
+| childC | squid_grad | focal 80nAm | 47.3 | 47.6 | 3.5 | 0.38 | 0.08 | 0.29 |
+| childC | squid_grad | focal 320nAm | 13.7 | 12.9 | 5.6 | 0.88 | 0.25 | 0.71 |
+| childC | squid_grad | patch 80nAm | 60.8 | 59.9 | 21.2 | 0.12 | 0.00 | 0.04 |
+| childC | squid_grad | patch 320nAm | 22.3 | 19.4 | 5.0 | 0.58 | 0.12 | 0.50 |
 
 Localization detectors (1 false event per minute on 10 min of null data) on independent held-out null data: false events per minute [exact 95 % interval]:
 
@@ -220,5 +313,8 @@ Localization detectors (1 false event per minute on 10 min of null data) on inde
 | infant2yr | 1.00 [0.48-1.84] | 1.30 [0.69-2.22] | 1.60 [0.91-2.60] | 0.70 [0.28-1.44] | 1.50 [0.84-2.47] |
 | infant18mo | 1.30 [0.69-2.22] | 1.50 [0.84-2.47] | 0.80 [0.35-1.58] | 1.10 [0.55-1.97] | 1.30 [0.69-2.22] |
 | infant12mo | 1.50 [0.84-2.47] | 0.70 [0.28-1.44] | 1.40 [0.77-2.35] | 1.80 [1.07-2.84] | 1.10 [0.55-1.97] |
+| childA | 0.70 [0.28-1.44] | 1.20 [0.62-2.10] | 1.00 [0.48-1.84] | 0.10 [0.00-0.56] | 1.30 [0.69-2.22] |
+| childB | 1.60 [0.91-2.60] | 0.20 [0.02-0.72] | 1.50 [0.84-2.47] | 0.90 [0.41-1.71] | 0.40 [0.11-1.02] |
+| childC | 1.00 [0.48-1.84] | 1.90 [1.14-2.97] | 1.70 [0.99-2.72] | 1.30 [0.69-2.22] | 1.80 [1.07-2.84] |
 
-Simulated IED-source recovery does not identify an epileptogenic zone or establish surgical benefit. Average templates of one database are not a population; the scaled adults are size-only controls.
+Simulated IED-source recovery does not identify an epileptogenic zone or establish surgical benefit. Average templates of one database are not a population; the scaled adults are size-only controls; the school-aged children (childA-C) are three individuals of OpenNeuro ds005234 with a modelled skull and fiducials transferred from the adult.
