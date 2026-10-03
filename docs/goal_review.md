@@ -254,3 +254,66 @@ labelled; (11) G3B patch families (no 20-mm or fixed-density patches): open; (12
 evidence uncited, no yaw variant: open; (13) representative geometry in the G2 report: added;
 (14) the G2 report's cross-references: added; (15) template averaging and depth mix: stated.
 Notes: stale constants in code comments fixed; the 2.5-mm matched-site statement clarified.
+
+## Addendum (2026-10-03): equal OPM standoff (`adult-baseline-v4`) and the open items
+
+After this review the owner asked for the G3B standoff asymmetry to be fixed and every pending item
+done. What changed, and what it changes in the verdicts above:
+
+Equal standoff. The infant templates' BEM head surfaces are built on their MRI head surfaces (each
+vertex a vertex of it); the sample subject's stored outer skin lay a median 0.8 mm outside its MRI
+scalp over the sensor region. The whole-cell clearance rule therefore pushed the adult's OPM
+sensors outward (median height above the MRI scalp 7.78 / 7.76 mm vs 7.00 mm in every child), and
+the stored outer skin's vertex normals, which are not its triangles' normals (they lie close to
+radial), tilted the adult's sensitive axes by a median 8-9 deg against the local scalp (the
+templates' by under 1 deg). From v4 every anatomy's head surface has its vertices on its MRI scalp
+(A-BEM-CONFORM; the identity for the templates, inherited by the scaled controls): every OPM array
+sits at a median 6.99-7.01 mm and its axes within about 1 deg (median) of the scalp plane. The rule
+is defined by geometry alone and was fixed before any v4 result existed, but it changes the adult
+baseline after the pediatric outcomes were known: a deviation from the freeze sequence, recorded in
+the decisions log. Every result that depends on the head model or the OPM arrays was recomputed
+(phase A at ed852b2: lead fields, adult and pediatric detection, BEM studies, motion; phase B at
+e53bea8: G1B, G1C, G2, G3B, every localization; the cross-reading summaries and a decomposition of
+the change at 236068d/9512f1b).
+
+Effect on the findings (v3 -> v4). G2: the dense array 1.11x -> 1.14x [1.12-1.17] Neuromag combined;
+after the external-field projection 1.05x [0.99-1.10] (a tie) -> 1.12x [1.08-1.15]; the matched array
+1.00x -> 1.01x (a tie), 0.89x -> 0.95x projected. The shallow ratios did not change (1.6x at 10-15 mm);
+the deep ones rose. A decomposition (`scripts/study_head_surface_effect.py`) attributes the
+projected-condition change mainly to the axes (nearly radial axes had made the room-field patterns
+alike those of deep sources), partly to the sites (standoff, and 12 lower occipital sites the
+inflated outer skin had excluded: about 2 %), and none of it to the conductor surface; the 1-layer
+BEM, which has no head surface, moved the same way. G3B: D_adult +0.85 -> +1.00 dB, while the
+templates' D did not change and the scaled controls' rose by 0.04-0.05 dB, so Delta fell by
+0.11-0.27 dB to +0.44 (school-age size), +1.07 (2-year size), +0.73, +0.88 and +0.96 dB (24, 18 and
+12 months), close to what the v3 standoff sensitivity predicted (+0.47 to +1.12 dB); after the
+external-field projection it fell more (+1.00 to +1.81 -> +0.42 to +1.09 dB), as the adult's
+projected D rose (G2). The counterfactual helmet about the laterally centred head now reverses the
+gain in every child (-0.16 to -0.38 dB; the templates' intervals include 0), so the reading (the
+gain is the fixed helmet's fit) is unchanged. With the yaw variants added, top contact is the adult's second-lowest
+of 12 source-blind placements (v3: third-lowest of 10); against each head's family median the differences of the medians are
+0.14-0.20 dB smaller. G4: the adult's
+superficial detection advantage 8/2 -> 11/1 locations (p = 0.004), and in v4 also at 20-30 and 45-70
+mm (uncorrected; of the earlier runs only an early v2 run found one, at 20-30 mm, so reported, not
+established); the matched
+array's deficit at 45-70 mm (1/9) is not seen (3/6); localization: the adult's dSPM errors
+for 320-nAm patches are 5.6 and 2.4 mm smaller with the dense and matched arrays (p = 0.054 and 0.067;
+with MNE's own dSPM 1.0 and 2.3 mm; v3 0 mm), still not robust; across the six anatomies the direction
+holds (52 of 240 comparisons with p < 0.05, 51 favouring an OPM array; eight survive a correction
+within their anatomy and array, two across the children). The templates' detection outcomes are essentially
+those of v3 (their arrays did not change); the scaled controls' superficial strength ratios are 1.60 and
+1.65 (v3 1.40 and 1.61).
+
+Open items closed: G2's three reservations (plug-in covariances now from one common realization;
+a measured-spectrum Neuromag noise scenario; a triaxial channel-count control at Neuromag's channel
+count); G3B's standoff reservation; G1C variant without the medial wall and with untruncated
+patches; G1B minimum-count rule and segment-only Hilbert variant; bounded localization with
+`mne.minimum_norm`, with Neuromag magnetometers or gradiometers alone, and with a held-out check of
+the detector thresholds; G3B 20-mm and fixed-density patches, a yaw placement variant and citations
+for the placement; status lines in every result CSV and on the G1A replica's summary;
+`RESUME=1 scripts/run_all.sh`. An independent code review of the v4 changes (no critical finding;
+three major, eight minor) was addressed before the cross-reading summaries were run.
+
+Verdicts after v4: G2 met (the reservations above addressed); G3B still partially met, now only for
+the missing native school-aged anatomy (owner decision; a download would need approval); G5 met for
+a private deliverable (148 tests; no CI workflow, an owner decision); the rest unchanged.
