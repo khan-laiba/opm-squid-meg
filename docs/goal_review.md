@@ -316,4 +316,5 @@ three major, eight minor) was addressed before the cross-reading summaries were 
 
 Verdicts after v4: G2 met (the reservations above addressed); G3B still partially met, now only for
 the missing native school-aged anatomy (owner decision; a download would need approval); G5 met for
-a private deliverable (148 tests; no CI workflow, an owner decision); the rest unchanged.
+a private deliverable (148 tests; a clean clone of db3f0dc passes 147, one skip without the lead-field cache; no CI
+workflow, an owner decision); the rest unchanged.
