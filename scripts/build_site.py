@@ -42,9 +42,11 @@ DETECTORS = {"squid/combined": "Neuromag combined", "squid/grad": "Neuromag grad
              "opm_matched/opm": "OPM matched", "opm_dense/opm": "OPM dense"}
 DEPTH_BANDS = ("10-20 mm", "20-30 mm", "30-45 mm", "45-70 mm")
 ANAT = {"adult": "adult (sample subject)", "school": "school-age size (scaled adult)", "size2yr": "2-year size (scaled adult)",
-        "infant2yr": "2-year template", "infant18mo": "18-month template", "infant12mo": "12-month template"}
-CHILDREN = ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo")
+        "infant2yr": "2-year template", "infant18mo": "18-month template", "infant12mo": "12-month template",
+        "childA": "child A (7.8 y)", "childB": "child B (8.3 y)", "childC": "child C (8.7 y)"}
+CHILDREN = ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC")
 TEMPLATES = ("infant2yr", "infant18mo", "infant12mo")
+SCHOOL = ("childA", "childB", "childC")  # individual school-aged children (OpenNeuro ds005234)
 
 
 def load(rel):
@@ -100,7 +102,8 @@ def page_index(d):
                f"anatomy's head surface on its MRI scalp, so that every OPM array has the same standoff, as {CURRENT_TAG}"),
               ("G3A Jas head-size benchmark", "REPRO (+ NEW fixed shell)", "done" if d["g3a"] else "not run"),
               ("G3B pediatric fixed helmet vs head-adaptive OPM", "NEW",
-               "done (12-, 18- and 24-month infant templates and scaled-adult size controls)" if d.get("g3b") else "in progress"),
+               "done (12-, 18- and 24-month infant templates, three school-aged children and scaled-adult size controls)"
+               if d.get("g3b") else "in progress"),
               ("G4 epilepsy detection and bounded localization", "NEW",
                ("adult done; pediatric done (" + ", ".join(ANAT[x] for x in d["g4p"]["labels"] if x != "adult") + ")"
                 if d.get("g4p") else "adult done; pediatric in progress")
@@ -174,13 +177,27 @@ def page_index(d):
              "uses simulated events in simulated noise.</li>"
              "<li>Confidence intervals resample cortical parcels or locations of one anatomy; they do not include model "
              "uncertainty, which the sensitivity analyses show instead (one factor at a time, plus a joint noise x gap grid).</li>"
-             "<li>Pediatric results rest on three average templates of one database (12, 18 and 24 months) and two scaled "
-             "copies of the adult: no between-child variability, no age-specific background physiology (only a bounded "
-             "sensitivity), adult conductivities.</li></ul>")
+             "<li>Pediatric results rest on three average templates of one database (12, 18 and 24 months), three individual "
+             "school-aged children of one dataset (7.8-8.7 years; their skull modelled, their fiducials transferred from the "
+             "adult) and two scaled copies of the adult: variability between three children is shown, not estimated; no "
+             "age-specific background physiology (only a bounded sensitivity), adult conductivities.</li></ul>")
     if d.get("g3b"):
         k = next(i for i, x in enumerate(h) if x.startswith('<h2 id="not-shown">'))
         h.insert(k, pediatric_findings(d))
     return "\n".join(h)
+
+
+def sens_sign(sens: dict, kids) -> str:
+    """'positive' if every sensitivity variant leaves the child-minus-adult difference of the median D above 0, else the
+    exceptions (the text must stay true for whatever the results are)."""
+    neg = []
+    for key, v in sens.items():
+        lab, variant = key.split("/")[0], key.split("/")[1]
+        if lab in kids and key.endswith("/opm_dense/combined/intrinsic+brain"):
+            a = sens.get(key.replace(lab + "/", "adult/", 1))
+            if a is not None and v - a <= 0:
+                neg.append(f"{ANAT[lab]}, {variant}")
+    return "positive" if not neg else "positive except " + "; ".join(neg)
 
 
 def pediatric_findings(d):
@@ -198,7 +215,8 @@ def pediatric_findings(d):
         f"detectability relative to Neuromag combined (D, in dB) grows from <strong>{r[kids[0]]['d_adult']['median']:+.2f} dB</strong> "
         "in the adult to " + "; ".join(f"{r[c]['d_child']['median']:+.2f} dB ({ANAT[c]})" for c in kids) + ". Delta = "
         + "; ".join(f"{ci(r[c]['delta'])} ({ANAT[c]})" for c in kids)
-        + " (vertex-wise for the scaled adults; by parcel for the templates). OPM arrays refitted with the adult rules "
+        + " (vertex-wise for the scaled adults; by parcel for the templates and the school-aged children). OPM arrays refitted with "
+        "the adult rules "
         "(nothing shrunk); background, room field and sensor noise unchanged.",
         "The gain comes mainly from the fixed helmet's fit: left at the adult's ear-line position, Delta is "
         + ", ".join(f"{dec[f'{c}/centred_vs_adult_centred/combined']['delta']['median']:+.2f}" for c in kids)
@@ -210,12 +228,12 @@ def pediatric_findings(d):
         + " dB about the laterally centred head (same order). With the background fixed per unit cortical area, both systems' detectability "
         "rises in the smaller heads and the on-scalp OPM's rises more; in a helmet scaled with the head the SQUID, its "
         "gradiometers most, gains as much or slightly more.",
-        f"Delta stays positive for OPM noise 7-30 fT/&radic;Hz, background variance x0.5 or x2, a 1-layer head model and the "
-        f"matched-site OPM array; at 30 fT/&radic;Hz the adult's D is {sens['adult/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f} dB "
-        "and the templates' " + ", ".join(f"{sens[f'{k}/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f}" for k in TEMPLATES
-                                          if f"{k}/opm_asd_30fT/opm_dense/combined/intrinsic+brain" in sens)
-        + " dB (" + ", ".join(ANAT[k] for k in TEMPLATES) + "). A positive Delta is a relative gain for the head-adaptive array, "
-        "not by itself a clinical advantage.",
+        f"The child-minus-adult difference of the median D is {sens_sign(sens, kids)} for OPM noise 7-30 fT/&radic;Hz, background "
+        f"variance x0.5 or x2 and a 1-layer head model; at 30 fT/&radic;Hz the adult's D is "
+        f"{sens['adult/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f} dB and the children's "
+        + ", ".join(f"{sens[f'{k}/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f}" for k in kids
+                    if f"{k}/opm_asd_30fT/opm_dense/combined/intrinsic+brain" in sens)
+        + " dB (same order). A positive Delta is a relative gain for the head-adaptive array, not by itself a clinical advantage.",
     ]
     if g4p:
         cmp_ = g4p["comparison"]
@@ -395,13 +413,14 @@ def page_pediatric(d, out):
             for k, a in A.items()]
     h += [f"<h2 id=\"g3b\">G3B: fixed adult helmet vs head-adaptive OPM {label('NEW')}</h2>",
           "<p>The same Neuromag helmet (sensors, coil types and intrinsic noise unchanged) holds the adult, two size-only controls "
-          "(the adult scaled to school-age and to 2-year head size; every vertex homologous to the adult's) and the 24-, 18- and "
-          "12-month infant templates of O'Reilly et al. (2021) in their native dimensions, at placements chosen from the scalp and helmet geometry only (primary: raised to "
+          "(the adult scaled to school-age and to 2-year head size; every vertex homologous to the adult's), the 24-, 18- and "
+          "12-month infant templates of O'Reilly et al. (2021) in their native dimensions and three school-aged children "
+          "(OpenNeuro ds005234, Fadeev et al. 2024; their own cortex and scalp, a modelled skull, fiducials transferred from the adult), at placements chosen from the scalp and helmet geometry only (primary: raised to "
           "20-mm contact with the top of the helmet). The OPM arrays are refitted to each head with the adult rules (10-mm cell, "
           "17-mm packing, nothing shrunk). Brain-background variance per unit cortical area, room field and intrinsic noise are "
           "the adult's. D = OPM minus Neuromag known-topography detectability in dB; Delta = D<sub>child</sub> - "
           "D<sub>adult</sub> on homologous sources (vertex-wise for the scaled controls; parcels and depth strata for the "
-          "templates). A positive Delta is a relative gain for OPM, not by itself an OPM advantage in the child. Methods: section "
+          "templates and the school-aged children). A positive Delta is a relative gain for OPM, not by itself an OPM advantage in the child. Methods: section "
           "10 of the <a href=\"methods.html\">methods</a>; full tables in the <a href=\"g3b-report.html\">G3B report</a>.</p>",
           sb.table(["Anatomy", "Construction", "Head circumference [mm]", "Breadth x length [mm]", "Targets", "Usable cortex [cm2]",
                     "OPM dense / matched sites", "Neuromag gap centred / top [mm]"], rows,
@@ -538,8 +557,8 @@ def page_epilepsy_pediatric(d, out):
     h = [f"<h2 id=\"pediatric\">Pediatric: the same framework on smaller heads in the fixed helmet {label('NEW')}</h2>",
          "<p>The adult detection and localization studies rerun unchanged (configuration, seeds, detectors, operating points) on "
          "the G3B anatomies with Neuromag at the primary placement (top contact) and the refitted OPM arrays; thresholds are "
-         "calibrated on each anatomy's own null data. The templates are averages and the school-age and 2-year-size heads scaled "
-         "adults; none is a population. Full tables: <code>results/g4/G4_pediatric_report.md</code>.</p>",
+         "calibrated on each anatomy's own null data. The templates are averages, the school-age and 2-year-size heads scaled "
+         "adults and children A-C three individuals of one dataset; none is a population. Full tables: <code>results/g4/G4_pediatric_report.md</code>.</p>",
          sb.table(["Anatomy", "Array", *DEPTH_BANDS], rows, "Strength for 50 % detection [nAm], practical detector at 1 false "
                   "event/min, 95 % interval from a bootstrap over locations"),
          sb.table(["Anatomy", *DEPTH_BANDS], prow, "Dense OPM vs Neuromag combined on identical events: locations favouring OPM / "
