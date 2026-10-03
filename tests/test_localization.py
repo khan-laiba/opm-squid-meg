@@ -55,6 +55,8 @@ class TestLocalization(unittest.TestCase):
         np.testing.assert_array_equal(v["squid_grad"][1], [1, 2, 4])
         self.assertEqual(v["opm"][0], "opm")
         np.testing.assert_array_equal(v["opm"][1], [0, 1, 2])
+        with self.assertRaisesRegex(ValueError, "no Neuromag channels"):
+            localization.channel_views(arrays, ("squid_mag",))
 
     def test_perturb_trans_bounds(self):
         rng = np.random.default_rng(3)

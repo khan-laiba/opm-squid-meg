@@ -284,9 +284,9 @@ def paired(rows, arrays, lc, rng, n_boot=2000, comparators=("squid",)):
                 ev = sorted({r["event"] for r in rows if r["family"] == fam and r["strength_nAm"] == s})
                 res = dict(n=len(ev))
                 for metric in ("dspm_error_mm", "ecd_error_mm", "dspm_mne_error_mm"):
-                    if not np.all(np.isfinite([by[a, e][metric] for e in ev])):
-                        continue
                     diff = np.array([by[a, e][metric] - by[ref, e][metric] for e in ev])
+                    if not np.all(np.isfinite(diff)):  # e.g. dSPM through mne.minimum_norm switched off
+                        continue
                     boot = np.median(diff[rng.integers(0, len(diff), (n_boot, len(diff)))], axis=1)
                     p = float(wilcoxon(diff).pvalue) if np.any(diff != 0) else 1.0
                     res[metric] = dict(median_difference=float(np.median(diff)), ci95=[float(np.percentile(boot, 2.5)), float(np.percentile(boot, 97.5))],

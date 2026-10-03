@@ -43,6 +43,17 @@ class TestPairedNoise(unittest.TestCase):
             np.testing.assert_allclose(np.var(s[k]["intrinsic"], axis=1), nz.intrinsic_var, rtol=0.02)
         self.assertLess(np.abs(s["a"]["intrinsic"] @ s["b"]["intrinsic"].T / n).max(), 0.02)  # independent sensors
 
+    def test_measured_squid_variance(self):
+        import dataclasses
+
+        kinds = np.array(["mag", "grad", "grad", "mag", "grad"])
+        env = dataclasses.replace(self.env, residual_var=np.array([1.0, 4.0, np.nan, 3.0, 6.0]))
+        np.testing.assert_allclose(self.g2.measured_squid_variance(env, kinds), [1.0, 4.0, 5.0, 3.0, 6.0])  # bad: type median
+        with self.assertRaisesRegex(ValueError, "no good mag"):
+            self.g2.measured_squid_variance(dataclasses.replace(env, residual_var=np.array([np.nan, 4.0, 5.0, np.nan, 6.0])), kinds)
+        with self.assertRaisesRegex(ValueError, "refit"):
+            self.g2.measured_squid_variance(self.env, kinds)  # an environment model without the residual
+
     def test_plugin_covariances_estimate_each_condition(self):
         n = 100000
         s = self.g2.paired_noise_samples(self.noises, self.gains, self.areas, 2.0, self.env, n, np.random.default_rng(3))

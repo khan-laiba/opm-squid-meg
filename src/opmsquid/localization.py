@@ -43,12 +43,16 @@ class MNEInverse:
 
 def channel_views(arrays: dict, subsets=()) -> dict:
     """Localization views: every array with all its channels and the Neuromag array ('squid')
-    restricted to each sensor type in ``subsets`` ('squid_mag', 'squid_grad'): name -> (array
-    name, channel indices). The physical arrays come first, in their order."""
+    restricted to each sensor type in ``subsets`` ('mag', 'grad'; the views are named 'squid_mag',
+    'squid_grad'): name -> (array name, channel indices). The physical arrays come first, in their
+    order. A sensor type without channels is an error."""
     views = {name: (name, np.arange(a.n)) for name, a in arrays.items()}
     if "squid" in arrays:
         for k in subsets:
-            views[f"squid_{k}"] = ("squid", np.flatnonzero(np.asarray(arrays["squid"].kinds) == k))
+            idx = np.flatnonzero(np.asarray(arrays["squid"].kinds) == k)
+            if not len(idx):
+                raise ValueError(f"no Neuromag channels of type {k!r} (expected 'mag' or 'grad')")
+            views[f"squid_{k}"] = ("squid", idx)
     return views
 
 

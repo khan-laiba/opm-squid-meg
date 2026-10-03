@@ -318,9 +318,13 @@ def measured_squid_variance(env: environment.EnvironmentModel, kinds: np.ndarray
     variance the 8-term room-field fit leaves (an upper bound on this system's sensor noise in this
     room: it also holds what the room model does not describe); bad channels take their type's
     median."""
+    if env.residual_var is None:
+        raise ValueError("the environment model carries no empty-room residual (fitted before v4): refit it")
     rv = np.array(env.residual_var, float)
     for k in ("mag", "grad"):
         m = kinds == k
+        if m.any() and not np.isfinite(rv[m]).any():
+            raise ValueError(f"no good {k} channel in the empty-room residual")
         rv[m & ~np.isfinite(rv)] = np.nanmedian(rv[m])
     return rv
 

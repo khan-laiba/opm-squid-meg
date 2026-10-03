@@ -72,9 +72,6 @@ def _closest_on_triangle(p, a, b, c):
     return a + ab * vb * denom + ac * vc * denom
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class TestHeadOnScalp(unittest.TestCase):
     """A-BEM-CONFORM: the BEM head surface's vertices moved to the nearest MRI-scalp vertices."""
@@ -119,6 +116,13 @@ class TestHeadOnScalp(unittest.TestCase):
         again, rep2 = anatomy.head_on_scalp(surfs, self._scalp())  # already on the scalp: returned as it is
         self.assertTrue(rep2["identity"])
         self.assertIs(again[0], surfs[0])
+
+    def test_crossing_edges(self):
+        s = self._sphere(2, 0.09, 4)
+        self.assertEqual(anatomy.crossing_edges(s["rr"], s["tris"]), 0)
+        folded = np.array(s["rr"], float)
+        folded[0] = -1.2 * folded[0]  # one vertex pushed through to the far side: its edges cross the surface
+        self.assertGreater(anatomy.crossing_edges(folded, s["tris"]), 0)
 
     def test_refusals(self):
         with self.assertRaisesRegex(ValueError, "one scalp vertex"):  # a scalp coarser than the head surface
@@ -213,3 +217,7 @@ class TestCubeMeshDistance(unittest.TestCase):
             exact = cm.distance(centre, frame, half, sampled)
             self.assertLessEqual(exact, sampled + 1e-12)
             self.assertGreater(exact, sampled - 0.25 * 2 * half / 40)  # within the sampling resolution
+
+
+if __name__ == "__main__":
+    unittest.main()

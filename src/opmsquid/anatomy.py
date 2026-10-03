@@ -152,6 +152,26 @@ def refined_inner_skull(subject: "Subject", times: int = 1, sigma: float = 0.3) 
     return [complete_surface_info(surf, copy=False, verbose=False)]
 
 
+def crossing_edges(rr: np.ndarray, tris: np.ndarray) -> int:
+    """Number of mesh edges that cross a triangle they do not belong to (0 for a surface without
+    self-intersections). Candidates: triangles whose centroid lies within half the edge plus the
+    largest triangle circumradius of the edge's midpoint."""
+    rr, tris = np.asarray(rr, float), np.asarray(tris)
+    tri = rr[tris]
+    cen = tri.mean(axis=1)
+    r_tri = float(np.max(np.linalg.norm(tri - cen[:, None, :], axis=2)))
+    tree = cKDTree(cen)
+    edges = np.unique(np.sort(np.concatenate([tris[:, [0, 1]], tris[:, [1, 2]], tris[:, [2, 0]]]), axis=1), axis=0)
+    n = 0
+    for e in edges:
+        a, b = rr[e[0]], rr[e[1]]
+        cand = np.asarray(tree.query_ball_point(0.5 * (a + b), 0.5 * np.linalg.norm(b - a) + r_tri), int)
+        cand = cand[~np.isin(tris[cand], e).any(axis=1)]
+        if len(cand) and _segments_hit_triangles(a[None], b[None], tri[cand]).any():
+            n += 1
+    return n
+
+
 def head_on_scalp(surfaces: list, scalp: Surface) -> tuple[list, dict]:
     """A-BEM-CONFORM: the BEM surfaces with every vertex of the head surface moved to the nearest
     vertex of the MRI scalp ``scalp`` (same mesh, same triangles; the other surfaces unchanged).
@@ -160,8 +180,9 @@ def head_on_scalp(surfaces: list, scalp: Surface) -> tuple[list, dict]:
     returned as they are. The sample subject's (its own segmentation's outer skin) lies a median
     0.8 mm outside its MRI scalp over the OPM coverage region (up to 2.6 mm), which made the
     whole-cell OPM clearance (A-OPM-CLEAR) move the adult's sensors farther from the scalp than the
-    children's (goal review, 2026-10-02). Refused if two vertices would merge, a triangle would flip
-    or the outer skull would not stay inside. Returns (surfaces, report)."""
+    children's (goal review, 2026-10-02). Refused if two vertices would merge, a triangle would flip,
+    the surface would fold (an edge crossing a triangle) or the outer skull would not stay inside.
+    Returns (surfaces, report)."""
     from mne.surface import _CheckInside, complete_surface_info
 
     k = next(i for i, s in enumerate(surfaces) if s["id"] == FIFF.FIFFV_BEM_SURF_ID_HEAD)
@@ -183,6 +204,8 @@ def head_on_scalp(surfaces: list, scalp: Surface) -> tuple[list, dict]:
 
     if np.any(np.einsum("ij,ij->i", face_normals(old), face_normals(new_rr)) <= 0):
         raise ValueError("A-BEM-CONFORM: a head-surface triangle would flip")
+    if crossing_edges(new_rr, tris):
+        raise ValueError("A-BEM-CONFORM: the head surface would fold (an edge crosses a triangle)")
     new = complete_surface_info(dict(id=head["id"], sigma=head.get("sigma", 1.0), coord_frame=head["coord_frame"], rr=new_rr,
                                      tris=tris.copy(), np=len(new_rr), ntri=len(tris)), copy=False, verbose=False)
     skull = next(s for s in surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_SKULL)

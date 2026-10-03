@@ -262,6 +262,19 @@ def channel_count_control(an: Anatomy, run: dict, com: Common, cfg, counts) -> d
     return out
 
 
+def check_state(state: dict, cfg) -> None:
+    """A stored state must hold every patch radius and placement this configuration asks for: one
+    computed under an older configuration cannot be replotted with it."""
+    radii = sorted(f"{r:g}" for r in cfg["sources"]["patch_radii_mm"])
+    for k, p in state["patches"].items():
+        if sorted(p["area_cm2"]) != radii or "centres_by_radius" not in p:
+            raise SystemExit(f"{STATE} ({k}): patch radii {sorted(p['area_cm2'])}, configuration {radii}; rerun G3B")
+    for k, r in state["runs"].items():
+        missing = [n for n in PLACEMENT_ORDER if n not in r["placements"]]
+        if missing:
+            raise SystemExit(f"{STATE} ({k}) lacks the placements {missing}; rerun G3B")
+
+
 def patch_centres(centres: np.ndarray, cfg) -> dict:
     """Patch centres per radius: every k-th of ``centres`` (``patch_centre_stride``; the larger
     patches on a spread subset, which bounds the number of member vertices)."""
@@ -495,6 +508,7 @@ def main():
     if args.replot:
         with open(STATE, "rb") as fh:
             state = pickle.load(fh)
+        check_state(state, cfg)
     else:
         com = Common(cfg, g2cfg)
         runs = {}
@@ -703,7 +717,7 @@ def summarise(anats, state, cfg) -> dict:
         adult_centred_unweighted_all_targets=float(np.median(ratio_g2)),
         adult_centred_unweighted_cortical=float(np.median(ratio_g2[a.cortical])),
         adult_centred_area_weighted_cortical_dB=P.weighted_median(20 * np.log10(ratio_g2[a.cortical]), a.weights[a.cortical]),
-        note="G2's headline (1.11x, v3 arrays) is the unweighted median over all targets at the measured (= centred) position; G3B "
+        note="G2's headline is the unweighted median over all targets at the measured (= centred) position; G3B "
              "summaries are area-weighted and leave out the medial wall, and its primary placement is top contact")
     out["medial_wall_targets"] = {k: int(np.sum(~an.cortical)) for k, an in anats.items()}
     out["notes"] = [

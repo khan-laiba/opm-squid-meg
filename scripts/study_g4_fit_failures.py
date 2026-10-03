@@ -29,7 +29,10 @@ VOLUME_CM3 = 10.0
 
 
 def read(lab: str) -> list[dict]:
-    return io.read_csv(OUT / f"g4_localization{'' if lab == 'adult' else '_' + lab}_events.csv")
+    """The events of the three primary arrays (the secondary Neuromag views, magnetometers or
+    gradiometers alone, are not counted)."""
+    rows = io.read_csv(OUT / f"g4_localization{'' if lab == 'adult' else '_' + lab}_events.csv")
+    return [r for r in rows if r["array"] in ARRAYS]
 
 
 def summarise(rows: list[dict]) -> dict:
@@ -57,7 +60,7 @@ def report(res: dict) -> str:
          f"Every event has a dipole (`mne.fit_dipole` never failed). Counted here, from the stored per-event tables: dipole (ECD) "
          f"or dSPM-peak errors above {GROSS_MM:g} mm (gross), among all events and among the detected ones, and dipole confidence "
          f"volumes above {VOLUME_CM3:g} cm^3 (unconstrained). The limits are operational choices. Conditions: 24 events each "
-         "(focal and 10-mm patches at 80 and 320 nAm).", "",
+         "(focal and 10-mm patches at 80 and 320 nAm). Neuromag combined only: the secondary single-type views are not counted.", "",
          "| anatomy | array | condition | detected | ECD > 30 mm (all / detected) | dSPM > 30 mm (all / detected) | ECD volume > 10 cm^3 (all / detected) |",
          "|---|---|---|---|---|---|---|"]
     for lab, r in res["anatomies"].items():

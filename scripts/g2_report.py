@@ -201,9 +201,13 @@ def main():
     if skin.exists():
         m = json.loads(skin.read_text())["models"]
         key = "opm_dense/combined/intrinsic+brain"
+        commit = (json.loads(skin.read_text()).get("provenance") or {}).get("commit", "-")
         if "bem3_5120" in m and "bem3_skin20480" in m:
             refine = (f" Refining the head surface from 5,120 to 20,480 triangles changes the dense/combined headline from "
-                      f"{m['bem3_5120']['ratio'][key]:.3f}x to {m['bem3_skin20480']['ratio'][key]:.3f}x (`bem_skin_refinement.json`).")
+                      f"{m['bem3_5120']['ratio'][key]:.3f}x to {m['bem3_skin20480']['ratio'][key]:.3f}x on a 1,000-target subset "
+                      f"(`bem_skin_refinement.json`, computed at {commit}"
+                      + ("" if commit == d.get("provenance", {}).get("commit") else "; this report's G2 results: "
+                         + d.get("provenance", {}).get("commit", "-")) + ").")
     L.append("- Head model: 3-layer BEM, the head surface on the MRI scalp (A-BEM-CONFORM) and refined to 20,480 triangles; the whole "
              f"OPM cell >= 1 mm outside it at the sampled points (exact cube-to-mesh distance: {exact or 'not recorded'})." + refine
              + " The 1-layer model gives nearly the same dense/combined ratio (convergence section).")

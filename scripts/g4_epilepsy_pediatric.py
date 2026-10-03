@@ -129,7 +129,7 @@ def compare(labels) -> dict:
         if s.get("thresholds_heldout"):
             out[f"{lab}/thresholds_heldout"] = s["thresholds_heldout"]
         for k, v in s["paired"].items():
-            out[f"{lab}/localization_paired/{k}"] = {m: v[m] for m in ("dspm_error_mm", "ecd_error_mm")}
+            out[f"{lab}/localization_paired/{k}"] = {m: v.get(m) for m in ("dspm_error_mm", "ecd_error_mm", "dspm_mne_error_mm")}
     return out
 
 

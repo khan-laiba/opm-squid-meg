@@ -9,18 +9,19 @@
 # Resume: a step that completes leaves a stamp (cache/run_all/<step>.done) holding the code
 # commit it ran at. `RESUME=1 scripts/run_all.sh` skips every step stamped at the current commit
 # and runs the rest in order, so an interrupted run continues where it stopped; a step whose
-# commit differs (code changed since) runs again. Nothing is skipped on a dirty tree.
+# commit differs (code changed since) runs again. Nothing is skipped or stamped on a dirty tree;
+# the commit and the tree state are read again before every step.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 PY=.venv/bin/python
 STAMPS=cache/run_all
 mkdir -p "$STAMPS"
-COMMIT=$(git rev-parse --short HEAD)
-DIRTY=$(git status --porcelain -- src scripts configs tests requirements.txt 'legacy/*.py' | wc -l | tr -d ' ')
 
 step() {  # step <name> <command...>
   local name=$1
   shift
+  COMMIT=$(git rev-parse --short HEAD)
+  DIRTY=$(git status --porcelain -- src scripts configs tests requirements.txt 'legacy/*.py' | wc -l | tr -d ' ')
   if [ "${RESUME:-0}" = 1 ] && [ "$DIRTY" = 0 ] && [ -f "$STAMPS/$name.done" ] && [ "$(cat "$STAMPS/$name.done")" = "$COMMIT" ]; then
     echo "[run_all] $name: completed at $COMMIT, skipped"
     return 0
@@ -37,10 +38,11 @@ step g1b $PY scripts/g1b_hunold.py                                       # G1B  
 step g1c $PY scripts/g1c_goldenholz.py                                   # G1C  Goldenholz et al. 2009 (ADAPT)
 step g2 $PY scripts/g2_adult_comparison.py                               # G2   realistic adult OPM vs Neuromag (NEW)
 step g2_bands $PY scripts/g2_band_sensitivity.py                         # G2   frequency band and OPM response
-step g2_report $PY scripts/g2_report.py                                  # G2   per-configuration report
 step bem_sphere $PY scripts/study_bem_sphere_accuracy.py                 # G2   BEM accuracy near a regular surface (exact sphere test)
 step near_mesh $PY scripts/study_opm_near_mesh.py                        # G2   BEM convergence at the OPM cells (head surface 5,120 vs 20,480)
 step bem_skin $PY scripts/study_bem_skin_refinement.py                   # G2   headline vs head-surface refinement and number of layers
+step head_surface $PY scripts/study_head_surface_effect.py               # G2   headline under the v3 and v4 head models (A-BEM-CONFORM)
+step g2_report $PY scripts/g2_report.py                                  # G2   per-configuration report (reads the studies above)
 step g4_adult $PY scripts/g4_epilepsy_adult.py                           # G4   IED detection, adult
 step g4_loc $PY scripts/g4_localization.py                               # G4   bounded localization, adult
 step g4_vs_g2 $PY scripts/study_g4_vs_g2.py                              # G4   detection vs the G2 detectability at the G4 locations
