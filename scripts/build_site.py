@@ -105,7 +105,7 @@ def page_index(d):
                ("adult done; pediatric done (" + ", ".join(ANAT[x] for x in d["g4p"]["labels"] if x != "adult") + ")"
                 if d.get("g4p") else "adult done; pediatric in progress")
                + ("; head motion and OPM slippage: bounded extension done" if d.get("motion") else "")),
-              ("G5 software, reproduction, report", "-", "local report (not deployed); 133 tests; a clean clone of the result commit "
+              ("G5 software, reproduction, report", "-", "local report (not deployed); 148 tests; a clean clone of the result commit "
                "passes them (one skip without the lead-field cache); a fresh-environment smoke test passed on 2026-09-30 at an earlier "
                "commit")]
     h = ["<p>Simulation study comparing on-scalp optically pumped magnetometers (OPM) with the Neuromag SQUID system: "
