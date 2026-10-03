@@ -9,100 +9,222 @@
       "opm_dense/focal/80nAm": {
         "n": 24,
         "n_detected": 9,
-        "ecd_gross": 10,
+        "ecd_gross": 9,
         "ecd_gross_detected": 0,
         "dspm_gross": 10,
+        "dspm_gross_detected": 1,
+        "ecd_unconstrained": 7,
+        "ecd_unconstrained_detected": 0
+      },
+      "opm_dense/focal/320nAm": {
+        "n": 24,
+        "n_detected": 24,
+        "ecd_gross": 3,
+        "ecd_gross_detected": 3,
+        "dspm_gross": 6,
+        "dspm_gross_detected": 6,
+        "ecd_unconstrained": 3,
+        "ecd_unconstrained_detected": 3
+      },
+      "opm_dense/patch/80nAm": {
+        "n": 24,
+        "n_detected": 2,
+        "ecd_gross": 18,
+        "ecd_gross_detected": 1,
+        "dspm_gross": 17,
         "dspm_gross_detected": 0,
-        "ecd_unconstrained": 10,
+        "ecd_unconstrained": 17,
+        "ecd_unconstrained_detected": 1
+      },
+      "opm_dense/patch/320nAm": {
+        "n": 24,
+        "n_detected": 21,
+        "ecd_gross": 5,
+        "ecd_gross_detected": 3,
+        "dspm_gross": 7,
+        "dspm_gross_detected": 4,
+        "ecd_unconstrained": 4,
+        "ecd_unconstrained_detected": 1
+      },
+      "opm_matched/focal/80nAm": {
+        "n": 24,
+        "n_detected": 9,
+        "ecd_gross": 8,
+        "ecd_gross_detected": 0,
+        "dspm_gross": 11,
+        "dspm_gross_detected": 1,
+        "ecd_unconstrained": 14,
+        "ecd_unconstrained_detected": 3
+      },
+      "opm_matched/focal/320nAm": {
+        "n": 24,
+        "n_detected": 23,
+        "ecd_gross": 4,
+        "ecd_gross_detected": 3,
+        "dspm_gross": 3,
+        "dspm_gross_detected": 2,
+        "ecd_unconstrained": 5,
+        "ecd_unconstrained_detected": 4
+      },
+      "opm_matched/patch/80nAm": {
+        "n": 24,
+        "n_detected": 3,
+        "ecd_gross": 18,
+        "ecd_gross_detected": 1,
+        "dspm_gross": 19,
+        "dspm_gross_detected": 1,
+        "ecd_unconstrained": 17,
+        "ecd_unconstrained_detected": 2
+      },
+      "opm_matched/patch/320nAm": {
+        "n": 24,
+        "n_detected": 19,
+        "ecd_gross": 5,
+        "ecd_gross_detected": 1,
+        "dspm_gross": 6,
+        "dspm_gross_detected": 2,
+        "ecd_unconstrained": 5,
+        "ecd_unconstrained_detected": 2
+      },
+      "squid/focal/80nAm": {
+        "n": 24,
+        "n_detected": 7,
+        "ecd_gross": 11,
+        "ecd_gross_detected": 0,
+        "dspm_gross": 12,
+        "dspm_gross_detected": 0,
+        "ecd_unconstrained": 13,
+        "ecd_unconstrained_detected": 0
+      },
+      "squid/focal/320nAm": {
+        "n": 24,
+        "n_detected": 22,
+        "ecd_gross": 4,
+        "ecd_gross_detected": 2,
+        "dspm_gross": 4,
+        "dspm_gross_detected": 2,
+        "ecd_unconstrained": 5,
+        "ecd_unconstrained_detected": 3
+      },
+      "squid/patch/80nAm": {
+        "n": 24,
+        "n_detected": 1,
+        "ecd_gross": 19,
+        "ecd_gross_detected": 0,
+        "dspm_gross": 18,
+        "dspm_gross_detected": 0,
+        "ecd_unconstrained": 21,
+        "ecd_unconstrained_detected": 0
+      },
+      "squid/patch/320nAm": {
+        "n": 24,
+        "n_detected": 20,
+        "ecd_gross": 7,
+        "ecd_gross_detected": 4,
+        "dspm_gross": 11,
+        "dspm_gross_detected": 7,
+        "ecd_unconstrained": 6,
+        "ecd_unconstrained_detected": 2
+      }
+    },
+    "school": {
+      "opm_dense/focal/80nAm": {
+        "n": 24,
+        "n_detected": 10,
+        "ecd_gross": 10,
+        "ecd_gross_detected": 1,
+        "dspm_gross": 11,
+        "dspm_gross_detected": 1,
+        "ecd_unconstrained": 12,
         "ecd_unconstrained_detected": 1
       },
       "opm_dense/focal/320nAm": {
         "n": 24,
         "n_detected": 23,
-        "ecd_gross": 3,
-        "ecd_gross_detected": 2,
-        "dspm_gross": 5,
-        "dspm_gross_detected": 4,
-        "ecd_unconstrained": 2,
-        "ecd_unconstrained_detected": 1
+        "ecd_gross": 5,
+        "ecd_gross_detected": 4,
+        "dspm_gross": 3,
+        "dspm_gross_detected": 3,
+        "ecd_unconstrained": 6,
+        "ecd_unconstrained_detected": 5
       },
       "opm_dense/patch/80nAm": {
         "n": 24,
-        "n_detected": 3,
-        "ecd_gross": 15,
-        "ecd_gross_detected": 0,
-        "dspm_gross": 20,
-        "dspm_gross_detected": 0,
-        "ecd_unconstrained": 13,
-        "ecd_unconstrained_detected": 1
+        "n_detected": 4,
+        "ecd_gross": 16,
+        "ecd_gross_detected": 1,
+        "dspm_gross": 16,
+        "dspm_gross_detected": 1,
+        "ecd_unconstrained": 12,
+        "ecd_unconstrained_detected": 2
       },
       "opm_dense/patch/320nAm": {
         "n": 24,
-        "n_detected": 18,
-        "ecd_gross": 4,
-        "ecd_gross_detected": 0,
-        "dspm_gross": 6,
-        "dspm_gross_detected": 2,
-        "ecd_unconstrained": 3,
-        "ecd_unconstrained_detected": 0
+        "n_detected": 19,
+        "ecd_gross": 6,
+        "ecd_gross_detected": 4,
+        "dspm_gross": 5,
+        "dspm_gross_detected": 1,
+        "ecd_unconstrained": 2,
+        "ecd_unconstrained_detected": 2
       },
       "opm_matched/focal/80nAm": {
         "n": 24,
-        "n_detected": 7,
-        "ecd_gross": 12,
-        "ecd_gross_detected": 0,
-        "dspm_gross": 12,
+        "n_detected": 8,
+        "ecd_gross": 11,
+        "ecd_gross_detected": 1,
+        "dspm_gross": 9,
         "dspm_gross_detected": 0,
-        "ecd_unconstrained": 19,
-        "ecd_unconstrained_detected": 2
+        "ecd_unconstrained": 10,
+        "ecd_unconstrained_detected": 0
       },
       "opm_matched/focal/320nAm": {
         "n": 24,
-        "n_detected": 19,
+        "n_detected": 21,
         "ecd_gross": 4,
-        "ecd_gross_detected": 1,
-        "dspm_gross": 4,
-        "dspm_gross_detected": 1,
-        "ecd_unconstrained": 6,
+        "ecd_gross_detected": 2,
+        "dspm_gross": 3,
+        "dspm_gross_detected": 0,
+        "ecd_unconstrained": 5,
         "ecd_unconstrained_detected": 2
       },
       "opm_matched/patch/80nAm": {
         "n": 24,
         "n_detected": 2,
-        "ecd_gross": 18,
+        "ecd_gross": 17,
         "ecd_gross_detected": 0,
-        "dspm_gross": 17,
+        "dspm_gross": 18,
         "dspm_gross_detected": 0,
-        "ecd_unconstrained": 22,
-        "ecd_unconstrained_detected": 1
+        "ecd_unconstrained": 17,
+        "ecd_unconstrained_detected": 0
       },
       "opm_matched/patch/320nAm": {
         "n": 24,
-        "n_detected": 17,
-        "ecd_gross": 5,
-        "ecd_gross_detected": 0,
-        "dspm_gross": 7,
-        "dspm_gross_detected": 1,
-        "ecd_unconstrained": 6,
-        "ecd_unconstrained_detected": 1
+        "n_detected": 18,
+        "ecd_gross": 4,
+        "ecd_gross_detected": 2,
+        "dspm_gross": 6,
+        "dspm_gross_detected": 2,
+        "ecd_unconstrained": 8,
+        "ecd_unconstrained_detected": 3
       },
       "squid/focal/80nAm": {
         "n": 24,
-        "n_detected": 8,
-        "ecd_gross": 12,
+        "n_detected": 9,
+        "ecd_gross": 10,
         "ecd_gross_detected": 0,
-        "dspm_gross": 12,
-        "dspm_gross_detected": 1,
-        "ecd_unconstrained": 16,
+        "dspm_gross": 16,
+        "dspm_gross_detected": 3,
+        "ecd_unconstrained": 14,
         "ecd_unconstrained_detected": 1
       },
       "squid/focal/320nAm": {
         "n": 24,
-        "n_detected": 23,
+        "n_detected": 21,
         "ecd_gross": 4,
-        "ecd_gross_detected": 3,
-        "dspm_gross": 4,
-        "dspm_gross_detected": 3,
+        "ecd_gross_detected": 2,
+        "dspm_gross": 8,
+        "dspm_gross_detected": 6,
         "ecd_unconstrained": 5,
         "ecd_unconstrained_detected": 4
       },
@@ -111,162 +233,40 @@
         "n_detected": 2,
         "ecd_gross": 18,
         "ecd_gross_detected": 0,
-        "dspm_gross": 20,
+        "dspm_gross": 19,
         "dspm_gross_detected": 1,
-        "ecd_unconstrained": 20,
-        "ecd_unconstrained_detected": 1
+        "ecd_unconstrained": 19,
+        "ecd_unconstrained_detected": 0
       },
       "squid/patch/320nAm": {
         "n": 24,
-        "n_detected": 16,
+        "n_detected": 17,
         "ecd_gross": 5,
-        "ecd_gross_detected": 0,
-        "dspm_gross": 7,
+        "ecd_gross_detected": 2,
+        "dspm_gross": 8,
         "dspm_gross_detected": 2,
-        "ecd_unconstrained": 6,
-        "ecd_unconstrained_detected": 0
+        "ecd_unconstrained": 7,
+        "ecd_unconstrained_detected": 3
       }
     },
-    "school": {
+    "size2yr": {
       "opm_dense/focal/80nAm": {
         "n": 24,
         "n_detected": 11,
-        "ecd_gross": 7,
-        "ecd_gross_detected": 0,
-        "dspm_gross": 12,
+        "ecd_gross": 12,
+        "ecd_gross_detected": 1,
+        "dspm_gross": 14,
         "dspm_gross_detected": 1,
         "ecd_unconstrained": 10,
         "ecd_unconstrained_detected": 2
       },
       "opm_dense/focal/320nAm": {
         "n": 24,
-        "n_detected": 23,
-        "ecd_gross": 5,
-        "ecd_gross_detected": 4,
+        "n_detected": 22,
+        "ecd_gross": 2,
+        "ecd_gross_detected": 2,
         "dspm_gross": 4,
         "dspm_gross_detected": 3,
-        "ecd_unconstrained": 6,
-        "ecd_unconstrained_detected": 5
-      },
-      "opm_dense/patch/80nAm": {
-        "n": 24,
-        "n_detected": 0,
-        "ecd_gross": 17,
-        "ecd_gross_detected": 0,
-        "dspm_gross": 16,
-        "dspm_gross_detected": 0,
-        "ecd_unconstrained": 12,
-        "ecd_unconstrained_detected": 0
-      },
-      "opm_dense/patch/320nAm": {
-        "n": 24,
-        "n_detected": 17,
-        "ecd_gross": 2,
-        "ecd_gross_detected": 0,
-        "dspm_gross": 6,
-        "dspm_gross_detected": 2,
-        "ecd_unconstrained": 5,
-        "ecd_unconstrained_detected": 1
-      },
-      "opm_matched/focal/80nAm": {
-        "n": 24,
-        "n_detected": 10,
-        "ecd_gross": 11,
-        "ecd_gross_detected": 0,
-        "dspm_gross": 12,
-        "dspm_gross_detected": 1,
-        "ecd_unconstrained": 13,
-        "ecd_unconstrained_detected": 2
-      },
-      "opm_matched/focal/320nAm": {
-        "n": 24,
-        "n_detected": 23,
-        "ecd_gross": 4,
-        "ecd_gross_detected": 3,
-        "dspm_gross": 5,
-        "dspm_gross_detected": 4,
-        "ecd_unconstrained": 6,
-        "ecd_unconstrained_detected": 5
-      },
-      "opm_matched/patch/80nAm": {
-        "n": 24,
-        "n_detected": 0,
-        "ecd_gross": 18,
-        "ecd_gross_detected": 0,
-        "dspm_gross": 17,
-        "dspm_gross_detected": 0,
-        "ecd_unconstrained": 22,
-        "ecd_unconstrained_detected": 0
-      },
-      "opm_matched/patch/320nAm": {
-        "n": 24,
-        "n_detected": 17,
-        "ecd_gross": 4,
-        "ecd_gross_detected": 0,
-        "dspm_gross": 3,
-        "dspm_gross_detected": 0,
-        "ecd_unconstrained": 8,
-        "ecd_unconstrained_detected": 2
-      },
-      "squid/focal/80nAm": {
-        "n": 24,
-        "n_detected": 11,
-        "ecd_gross": 9,
-        "ecd_gross_detected": 2,
-        "dspm_gross": 12,
-        "dspm_gross_detected": 4,
-        "ecd_unconstrained": 15,
-        "ecd_unconstrained_detected": 2
-      },
-      "squid/focal/320nAm": {
-        "n": 24,
-        "n_detected": 23,
-        "ecd_gross": 4,
-        "ecd_gross_detected": 3,
-        "dspm_gross": 6,
-        "dspm_gross_detected": 5,
-        "ecd_unconstrained": 6,
-        "ecd_unconstrained_detected": 5
-      },
-      "squid/patch/80nAm": {
-        "n": 24,
-        "n_detected": 1,
-        "ecd_gross": 17,
-        "ecd_gross_detected": 1,
-        "dspm_gross": 22,
-        "dspm_gross_detected": 1,
-        "ecd_unconstrained": 21,
-        "ecd_unconstrained_detected": 1
-      },
-      "squid/patch/320nAm": {
-        "n": 24,
-        "n_detected": 17,
-        "ecd_gross": 6,
-        "ecd_gross_detected": 1,
-        "dspm_gross": 11,
-        "dspm_gross_detected": 4,
-        "ecd_unconstrained": 8,
-        "ecd_unconstrained_detected": 2
-      }
-    },
-    "size2yr": {
-      "opm_dense/focal/80nAm": {
-        "n": 24,
-        "n_detected": 10,
-        "ecd_gross": 14,
-        "ecd_gross_detected": 1,
-        "dspm_gross": 14,
-        "dspm_gross_detected": 1,
-        "ecd_unconstrained": 13,
-        "ecd_unconstrained_detected": 1
-      },
-      "opm_dense/focal/320nAm": {
-        "n": 24,
-        "n_detected": 22,
-        "ecd_gross": 1,
-        "ecd_gross_detected": 1,
-        "dspm_gross": 2,
-        "dspm_gross_detected": 2,
         "ecd_unconstrained": 4,
         "ecd_unconstrained_detected": 2
       },
@@ -274,20 +274,20 @@
         "n": 24,
         "n_detected": 3,
         "ecd_gross": 19,
-        "ecd_gross_detected": 1,
-        "dspm_gross": 19,
+        "ecd_gross_detected": 0,
+        "dspm_gross": 17,
         "dspm_gross_detected": 0,
-        "ecd_unconstrained": 15,
+        "ecd_unconstrained": 12,
         "ecd_unconstrained_detected": 0
       },
       "opm_dense/patch/320nAm": {
         "n": 24,
-        "n_detected": 12,
-        "ecd_gross": 10,
+        "n_detected": 13,
+        "ecd_gross": 7,
         "ecd_gross_detected": 0,
-        "dspm_gross": 8,
-        "dspm_gross_detected": 0,
-        "ecd_unconstrained": 7,
+        "dspm_gross": 9,
+        "dspm_gross_detected": 1,
+        "ecd_unconstrained": 10,
         "ecd_unconstrained_detected": 1
       },
       "opm_matched/focal/80nAm": {
@@ -303,12 +303,12 @@
       "opm_matched/focal/320nAm": {
         "n": 24,
         "n_detected": 21,
-        "ecd_gross": 2,
-        "ecd_gross_detected": 2,
+        "ecd_gross": 1,
+        "ecd_gross_detected": 1,
         "dspm_gross": 5,
         "dspm_gross_detected": 3,
-        "ecd_unconstrained": 4,
-        "ecd_unconstrained_detected": 2
+        "ecd_unconstrained": 3,
+        "ecd_unconstrained_detected": 1
       },
       "opm_matched/patch/80nAm": {
         "n": 24,
@@ -317,23 +317,23 @@
         "ecd_gross_detected": 1,
         "dspm_gross": 20,
         "dspm_gross_detected": 1,
-        "ecd_unconstrained": 17,
+        "ecd_unconstrained": 18,
         "ecd_unconstrained_detected": 1
       },
       "opm_matched/patch/320nAm": {
         "n": 24,
         "n_detected": 13,
-        "ecd_gross": 9,
+        "ecd_gross": 10,
         "ecd_gross_detected": 2,
         "dspm_gross": 10,
         "dspm_gross_detected": 1,
-        "ecd_unconstrained": 11,
+        "ecd_unconstrained": 10,
         "ecd_unconstrained_detected": 1
       },
       "squid/focal/80nAm": {
         "n": 24,
         "n_detected": 8,
-        "ecd_gross": 17,
+        "ecd_gross": 16,
         "ecd_gross_detected": 1,
         "dspm_gross": 13,
         "dspm_gross_detected": 0,
@@ -379,7 +379,7 @@
         "ecd_gross_detected": 0,
         "dspm_gross": 9,
         "dspm_gross_detected": 0,
-        "ecd_unconstrained": 6,
+        "ecd_unconstrained": 7,
         "ecd_unconstrained_detected": 0
       },
       "opm_dense/focal/320nAm": {
@@ -409,8 +409,8 @@
         "ecd_gross_detected": 3,
         "dspm_gross": 2,
         "dspm_gross_detected": 2,
-        "ecd_unconstrained": 2,
-        "ecd_unconstrained_detected": 2
+        "ecd_unconstrained": 1,
+        "ecd_unconstrained_detected": 1
       },
       "opm_matched/focal/80nAm": {
         "n": 24,
@@ -425,12 +425,12 @@
       "opm_matched/focal/320nAm": {
         "n": 24,
         "n_detected": 22,
-        "ecd_gross": 5,
-        "ecd_gross_detected": 4,
+        "ecd_gross": 4,
+        "ecd_gross_detected": 3,
         "dspm_gross": 4,
         "dspm_gross_detected": 3,
-        "ecd_unconstrained": 3,
-        "ecd_unconstrained_detected": 2
+        "ecd_unconstrained": 4,
+        "ecd_unconstrained_detected": 3
       },
       "opm_matched/patch/80nAm": {
         "n": 24,
@@ -607,7 +607,7 @@
       "squid/patch/320nAm": {
         "n": 24,
         "n_detected": 21,
-        "ecd_gross": 2,
+        "ecd_gross": 3,
         "ecd_gross_detected": 1,
         "dspm_gross": 4,
         "dspm_gross_detected": 2,
@@ -643,7 +643,7 @@
         "ecd_gross_detected": 1,
         "dspm_gross": 11,
         "dspm_gross_detected": 1,
-        "ecd_unconstrained": 7,
+        "ecd_unconstrained": 8,
         "ecd_unconstrained_detected": 0
       },
       "opm_dense/patch/320nAm": {
@@ -663,7 +663,7 @@
         "ecd_gross_detected": 0,
         "dspm_gross": 6,
         "dspm_gross_detected": 1,
-        "ecd_unconstrained": 10,
+        "ecd_unconstrained": 11,
         "ecd_unconstrained_detected": 1
       },
       "opm_matched/focal/320nAm": {
@@ -673,8 +673,8 @@
         "ecd_gross_detected": 2,
         "dspm_gross": 1,
         "dspm_gross_detected": 1,
-        "ecd_unconstrained": 1,
-        "ecd_unconstrained_detected": 0
+        "ecd_unconstrained": 2,
+        "ecd_unconstrained_detected": 1
       },
       "opm_matched/patch/80nAm": {
         "n": 24,
@@ -740,25 +740,25 @@
   },
   "totals": {
     "n": 576,
-    "ecd_gross": 205,
+    "ecd_gross": 208,
     "ecd_gross_detected": 24,
-    "dspm_gross": 262,
+    "dspm_gross": 264,
     "dspm_gross_detected": 63,
     "n_matched": 576,
-    "ecd_gross_matched": 199,
-    "ecd_gross_detected_matched": 24,
-    "dspm_gross_matched": 203,
-    "dspm_gross_detected_matched": 28,
+    "ecd_gross_matched": 193,
+    "ecd_gross_detected_matched": 28,
+    "dspm_gross_matched": 201,
+    "dspm_gross_detected_matched": 29,
     "n_dense": 576,
-    "ecd_gross_dense": 177,
-    "ecd_gross_detected_dense": 24,
-    "dspm_gross_dense": 200,
-    "dspm_gross_detected_dense": 29,
-    "gross_undetected_share": 0.8459069020866774,
-    "gross_80nAm_share": 0.7616372391653291
+    "ecd_gross_dense": 182,
+    "ecd_gross_detected_dense": 35,
+    "dspm_gross_dense": 197,
+    "dspm_gross_detected_dense": 36,
+    "gross_undetected_share": 0.8273092369477911,
+    "gross_80nAm_share": 0.7542168674698795
   },
   "provenance": {
-    "commit": "5a981c9",
+    "commit": "9512f1b",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

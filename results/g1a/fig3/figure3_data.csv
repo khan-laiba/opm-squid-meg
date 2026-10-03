@@ -1,3 +1,4 @@
+# REPRO: Jas et al. 2026 Fig. 3, written by the preserved legacy replica (legacy/replicate_figure3.py, 7/7 checks against the published raster) and stamped by scripts/g1a_jas_benchmark.py | commit ed852b2
 depth_mm,signal_OPM_pT,signal_SQUID_pT,SNR_OPM,SNR_SQUID
 15,4.700750481,0.8855026729,4.419097868,2.497339301
 15.8,4.214599534,0.8394761941,3.962075394,2.367533104

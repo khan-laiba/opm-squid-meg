@@ -11,14 +11,14 @@ Static fit was studied first (G2, G3B, G4). This analysis adds what the static m
 | adult | Neuromag combined | down 2 mm | -0.08 | -0.13 | 0.00 | nearest magnetometer 22.0 mm |
 | adult | Neuromag combined | x+2 mm | +0.01 | -0.05 | 0.00 | nearest magnetometer 19.5 mm |
 | adult | Neuromag combined | x-2 mm | -0.00 | -0.06 | 0.00 | nearest magnetometer 20.1 mm |
-| adult | Neuromag combined | y+2 mm | -0.01 | -0.07 | 0.00 | nearest magnetometer 20.6 mm |
+| adult | Neuromag combined | y+2 mm | -0.02 | -0.07 | 0.00 | nearest magnetometer 20.6 mm |
 | adult | Neuromag combined | y-2 mm | +0.02 | -0.04 | 0.00 | nearest magnetometer 19.7 mm |
 | adult | Neuromag combined | down 5 mm | -0.19 | -0.53 | 0.00 | nearest magnetometer 23.0 mm |
 | adult | Neuromag combined | x+5 mm | +0.02 | -0.33 | 0.00 | nearest magnetometer 18.2 mm |
 | adult | Neuromag combined | x-5 mm | -0.00 | -0.38 | 0.00 | nearest magnetometer 19.0 mm |
 | adult | Neuromag combined | y+5 mm | -0.03 | -0.35 | 0.00 | nearest magnetometer 18.9 mm |
 | adult | Neuromag combined | y-5 mm | +0.04 | -0.28 | 0.00 | nearest magnetometer 18.7 mm |
-| adult | Neuromag combined | down 10 mm | -0.38 | -1.65 | 0.05 | nearest magnetometer 23.2 mm |
+| adult | Neuromag combined | down 10 mm | -0.38 | -1.64 | 0.05 | nearest magnetometer 23.2 mm |
 | adult | Neuromag | x+10 mm | infeasible | | | nearest magnetometer 14.0 mm |
 | adult | Neuromag | x-10 mm | infeasible | | | nearest magnetometer 14.5 mm |
 | adult | Neuromag | y+10 mm | infeasible | | | nearest magnetometer 16.6 mm |
@@ -33,20 +33,20 @@ Static fit was studied first (G2, G3B, G4). This analysis adds what the static m
 | adult | Neuromag | pitch -10 deg | infeasible | | | nearest magnetometer 15.6 mm |
 | adult | Neuromag | roll +10 deg | infeasible | | | nearest magnetometer 16.3 mm |
 | adult | Neuromag | roll -10 deg | infeasible | | | nearest magnetometer 12.5 mm |
-| adult | Neuromag combined | yaw +10 deg | -0.00 | -1.20 | 0.15 | nearest magnetometer 19.9 mm |
+| adult | Neuromag combined | yaw +10 deg | -0.00 | -1.21 | 0.15 | nearest magnetometer 19.9 mm |
 | adult | Neuromag combined | yaw -10 deg | +0.01 | -1.19 | 0.14 | nearest magnetometer 18.2 mm |
-| adult | OPM dense | slip x +1 deg | -0.03 | -0.09 | 0.00 | sensors moved 1.9 mm (median); 56 lifted (max 1.0 mm) |
-| adult | OPM dense | slip x -1 deg | -0.00 | -0.06 | 0.00 | sensors moved 1.8 mm (median); 67 lifted (max 1.0 mm) |
-| adult | OPM dense | slip y +1 deg | -0.03 | -0.08 | 0.00 | sensors moved 1.7 mm (median); 70 lifted (max 1.5 mm) |
-| adult | OPM dense | slip y -1 deg | -0.02 | -0.07 | 0.00 | sensors moved 1.7 mm (median); 72 lifted (max 1.5 mm) |
-| adult | OPM dense | slip z +1 deg | -0.01 | -0.03 | 0.00 | sensors moved 1.5 mm (median); 36 lifted (max 1.0 mm) |
-| adult | OPM dense | slip z -1 deg | -0.01 | -0.03 | 0.00 | sensors moved 1.5 mm (median); 35 lifted (max 1.0 mm) |
-| adult | OPM dense | slip x +3 deg | -0.08 | -0.51 | 0.01 | sensors moved 5.7 mm (median); 84 lifted (max 4.5 mm) |
-| adult | OPM dense | slip x -3 deg | -0.02 | -0.38 | 0.01 | sensors moved 5.5 mm (median); 91 lifted (max 3.0 mm) |
-| adult | OPM dense | slip y +3 deg | -0.08 | -0.44 | 0.01 | sensors moved 5.1 mm (median); 90 lifted (max 3.5 mm) |
-| adult | OPM dense | slip y -3 deg | -0.06 | -0.40 | 0.01 | sensors moved 5.1 mm (median); 84 lifted (max 3.5 mm) |
-| adult | OPM dense | slip z +3 deg | -0.02 | -0.20 | 0.00 | sensors moved 4.6 mm (median); 62 lifted (max 2.5 mm) |
-| adult | OPM dense | slip z -3 deg | -0.02 | -0.20 | 0.00 | sensors moved 4.6 mm (median); 60 lifted (max 2.5 mm) |
+| adult | OPM dense | slip x +1 deg | -0.02 | -0.06 | 0.00 | sensors moved 1.9 mm (median); 18 lifted (max 2.5 mm) |
+| adult | OPM dense | slip x -1 deg | +0.00 | -0.05 | 0.00 | sensors moved 1.9 mm (median); 30 lifted (max 1.0 mm) |
+| adult | OPM dense | slip y +1 deg | -0.01 | -0.06 | 0.00 | sensors moved 1.7 mm (median); 34 lifted (max 2.0 mm) |
+| adult | OPM dense | slip y -1 deg | -0.01 | -0.05 | 0.00 | sensors moved 1.7 mm (median); 32 lifted (max 1.5 mm) |
+| adult | OPM dense | slip z +1 deg | -0.00 | -0.03 | 0.00 | sensors moved 1.5 mm (median); 13 lifted (max 2.5 mm) |
+| adult | OPM dense | slip z -1 deg | -0.00 | -0.02 | 0.00 | sensors moved 1.5 mm (median); 15 lifted (max 1.5 mm) |
+| adult | OPM dense | slip x +3 deg | -0.07 | -0.46 | 0.01 | sensors moved 5.6 mm (median); 64 lifted (max 7.5 mm) |
+| adult | OPM dense | slip x -3 deg | -0.02 | -0.40 | 0.01 | sensors moved 5.5 mm (median); 74 lifted (max 3.0 mm) |
+| adult | OPM dense | slip y +3 deg | -0.06 | -0.42 | 0.01 | sensors moved 5.0 mm (median); 84 lifted (max 5.0 mm) |
+| adult | OPM dense | slip y -3 deg | -0.05 | -0.42 | 0.01 | sensors moved 5.0 mm (median); 79 lifted (max 4.0 mm) |
+| adult | OPM dense | slip z +3 deg | -0.02 | -0.23 | 0.00 | sensors moved 4.5 mm (median); 49 lifted (max 6.0 mm) |
+| adult | OPM dense | slip z -3 deg | -0.02 | -0.19 | 0.00 | sensors moved 4.5 mm (median); 43 lifted (max 4.0 mm) |
 | 2-year template | Neuromag combined | down 2 mm | -0.07 | -0.13 | 0.00 | nearest magnetometer 21.6 mm |
 | 2-year template | Neuromag combined | x+2 mm | +0.02 | -0.04 | 0.00 | nearest magnetometer 18.9 mm |
 | 2-year template | Neuromag combined | x-2 mm | -0.02 | -0.08 | 0.00 | nearest magnetometer 21.1 mm |
@@ -134,9 +134,9 @@ Static reference (no motion): OPM detectability change from the correction alone
 
 | anatomy | correction | OPM change [dB] | D [dB] |
 |---|---|---|---|
-| adult | none | +0.00 | +0.85 |
-| adult | homogeneous | -0.15 | +0.65 |
-| adult | homogeneous+gradient | -0.50 | +0.32 |
+| adult | none | +0.00 | +1.00 |
+| adult | homogeneous | -0.04 | +0.87 |
+| adult | homogeneous+gradient | -0.24 | +0.67 |
 | 2-year template | none | +0.00 | +1.84 |
 | 2-year template | homogeneous | -0.08 | +1.57 |
 | 2-year template | homogeneous+gradient | -0.38 | +1.25 |
@@ -148,40 +148,40 @@ In-band artefact per channel (median over channels, then over 32 draws) for 1 de
 
 | anatomy | field | pivot | correction | calibration (tilt, gain) | artefact [fT per deg] | 1 dB | 3 dB | D = 0 | oracle loss at 5 deg [dB] |
 |---|---|---|---|---|---|---|---|---|---|
-| adult | uniform | neck | none | tilt0deg_gain0pct | 1.5e+04 | 0.0224 [0.021-0.024] | 0.0468 [0.0397-0.0526] | 0.0209 [0.0193-0.0221] | -0.08 |
-| adult | gradient | neck | none | tilt0deg_gain0pct | 1.82e+03 | 0.168 [0.15-0.188] | 0.315 [0.29-0.341] | 0.14 [0.131-0.157] | -0.11 |
-| adult | uniform | neck | none | tilt1deg_gain1pct | 1.5e+04 | 0.0224 [0.0209-0.0239] | 0.0466 [0.0395-0.0522] | 0.0209 [0.0191-0.0221] | -0.08 |
-| adult | gradient | neck | none | tilt1deg_gain1pct | 1.82e+03 | 0.166 [0.15-0.187] | 0.313 [0.289-0.34] | 0.14 [0.13-0.157] | -0.10 |
-| adult | uniform | neck | none | tilt3deg_gain3pct | 1.5e+04 | 0.0221 [0.0209-0.0236] | 0.0454 [0.0394-0.0516] | 0.0208 [0.0192-0.022] | -0.06 |
-| adult | gradient | neck | none | tilt3deg_gain3pct | 1.79e+03 | 0.161 [0.148-0.179] | 0.306 [0.285-0.329] | 0.139 [0.13-0.153] | -0.09 |
-| adult | uniform | neck | homogeneous | tilt0deg_gain0pct | 4.61e-12 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
-| adult | gradient | neck | homogeneous | tilt0deg_gain0pct | 1.38e+03 | 0.148 [0.135-0.161] | 0.286 [0.265-0.306] | 0.113 [0.107-0.12] | -0.16 |
-| adult | uniform | neck | homogeneous | tilt1deg_gain1pct | 233 | 0.439 [0.371-0.505] | 0.884 [0.778-0.994] | 0.276 [0.262-0.296] | -0.01 |
-| adult | gradient | neck | homogeneous | tilt1deg_gain1pct | 1.38e+03 | 0.148 [0.134-0.161] | 0.286 [0.264-0.306] | 0.113 [0.107-0.119] | -0.16 |
-| adult | uniform | neck | homogeneous | tilt3deg_gain3pct | 700 | 0.143 [0.131-0.154] | 0.278 [0.258-0.296] | 0.105 [0.1-0.11] | -0.01 |
-| adult | gradient | neck | homogeneous | tilt3deg_gain3pct | 1.4e+03 | 0.146 [0.135-0.157] | 0.282 [0.265-0.299] | 0.112 [0.106-0.118] | -0.14 |
-| adult | gradient | origin | homogeneous | tilt0deg_gain0pct | 1.38e+03 | 0.148 [0.135-0.161] | 0.286 [0.265-0.306] | 0.113 [0.107-0.12] | -0.16 |
-| adult | gradient | origin | homogeneous | tilt1deg_gain1pct | 1.38e+03 | 0.149 [0.135-0.161] | 0.287 [0.265-0.306] | 0.113 [0.107-0.119] | -0.16 |
-| adult | gradient | origin | homogeneous | tilt3deg_gain3pct | 1.39e+03 | 0.147 [0.135-0.158] | 0.284 [0.265-0.3] | 0.112 [0.106-0.118] | -0.14 |
-| adult | uniform | neck | homogeneous+gradient | tilt0deg_gain0pct | 7.15e-12 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
-| adult | gradient | neck | homogeneous+gradient | tilt0deg_gain0pct | 1.08e-12 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
-| adult | uniform | neck | homogeneous+gradient | tilt1deg_gain1pct | 230 | 0.377 [0.335-0.43] | 0.787 [0.717-0.87] | 0.199 [0.173-0.208] | -0.01 |
-| adult | gradient | neck | homogeneous+gradient | tilt1deg_gain1pct | 27.9 | 2.97 [2.63-3.28] | - [> 5-> 5] | 1.35 [1.23-1.49] | -0.02 |
-| adult | uniform | neck | homogeneous+gradient | tilt3deg_gain3pct | 691 | 0.129 [0.121-0.137] | 0.256 [0.241-0.269] | 0.0613 [0.0586-0.0651] | -0.01 |
-| adult | gradient | neck | homogeneous+gradient | tilt3deg_gain3pct | 84.6 | 1.1 [1.02-1.2] | 2.19 [2.02-2.39] | 0.503 [0.431-0.535] | -0.02 |
-| adult | gradient | origin | homogeneous+gradient | tilt0deg_gain0pct | 1.06e-12 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
-| adult | gradient | origin | homogeneous+gradient | tilt1deg_gain1pct | 23.8 | 3.45 [3-3.88] | - [> 5-> 5] | 1.66 [1.47-1.94] | -0.02 |
-| adult | gradient | origin | homogeneous+gradient | tilt3deg_gain3pct | 72.4 | 1.24 [1.14-1.33] | 2.46 [2.27-2.63] | 0.561 [0.527-0.599] | -0.02 |
+| adult | uniform | neck | none | tilt0deg_gain0pct | 1.49e+04 | 0.0168 [0.0129-0.0192] | 0.0314 [0.0255-0.0347] | 0.0158 [0.0123-0.0188] | -0.02 |
+| adult | gradient | neck | none | tilt0deg_gain0pct | 1.76e+03 | 0.139 [0.123-0.158] | 0.272 [0.244-0.301] | 0.131 [0.116-0.148] | -0.05 |
+| adult | uniform | neck | none | tilt1deg_gain1pct | 1.48e+04 | 0.0169 [0.0129-0.0192] | 0.0316 [0.0255-0.0346] | 0.0158 [0.0123-0.0187] | -0.02 |
+| adult | gradient | neck | none | tilt1deg_gain1pct | 1.76e+03 | 0.139 [0.122-0.157] | 0.271 [0.244-0.299] | 0.13 [0.116-0.148] | -0.05 |
+| adult | uniform | neck | none | tilt3deg_gain3pct | 1.49e+04 | 0.0164 [0.0127-0.0189] | 0.031 [0.0252-0.0342] | 0.0156 [0.0122-0.0184] | -0.02 |
+| adult | gradient | neck | none | tilt3deg_gain3pct | 1.76e+03 | 0.138 [0.12-0.155] | 0.27 [0.24-0.296] | 0.129 [0.115-0.147] | -0.04 |
+| adult | uniform | neck | homogeneous | tilt0deg_gain0pct | 7.1e-12 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
+| adult | gradient | neck | homogeneous | tilt0deg_gain0pct | 1.37e+03 | 0.142 [0.134-0.162] | 0.276 [0.264-0.307] | 0.126 [0.119-0.142] | -0.09 |
+| adult | uniform | neck | homogeneous | tilt1deg_gain1pct | 235 | 0.461 [0.419-0.508] | 0.915 [0.853-1.01] | 0.385 [0.355-0.424] | -0.01 |
+| adult | gradient | neck | homogeneous | tilt1deg_gain1pct | 1.38e+03 | 0.142 [0.134-0.161] | 0.276 [0.264-0.305] | 0.126 [0.12-0.141] | -0.09 |
+| adult | uniform | neck | homogeneous | tilt3deg_gain3pct | 701 | 0.153 [0.136-0.169] | 0.293 [0.267-0.316] | 0.133 [0.122-0.142] | -0.01 |
+| adult | gradient | neck | homogeneous | tilt3deg_gain3pct | 1.39e+03 | 0.14 [0.131-0.162] | 0.274 [0.259-0.307] | 0.126 [0.119-0.141] | -0.08 |
+| adult | gradient | origin | homogeneous | tilt0deg_gain0pct | 1.37e+03 | 0.142 [0.134-0.162] | 0.276 [0.264-0.307] | 0.126 [0.119-0.142] | -0.09 |
+| adult | gradient | origin | homogeneous | tilt1deg_gain1pct | 1.38e+03 | 0.142 [0.134-0.162] | 0.276 [0.264-0.306] | 0.126 [0.12-0.141] | -0.09 |
+| adult | gradient | origin | homogeneous | tilt3deg_gain3pct | 1.39e+03 | 0.14 [0.132-0.162] | 0.274 [0.26-0.307] | 0.126 [0.119-0.141] | -0.08 |
+| adult | uniform | neck | homogeneous+gradient | tilt0deg_gain0pct | 7.37e-12 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
+| adult | gradient | neck | homogeneous+gradient | tilt0deg_gain0pct | 9.58e-13 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
+| adult | uniform | neck | homogeneous+gradient | tilt1deg_gain1pct | 232 | 0.418 [0.375-0.475] | 0.852 [0.784-0.936] | 0.286 [0.269-0.303] | -0.01 |
+| adult | gradient | neck | homogeneous+gradient | tilt1deg_gain1pct | 27.8 | 3.17 [2.87-3.57] | - [> 5-> 5] | 2.32 [2.18-2.44] | -0.02 |
+| adult | uniform | neck | homogeneous+gradient | tilt3deg_gain3pct | 691 | 0.141 [0.131-0.152] | 0.275 [0.259-0.293] | 0.108 [0.102-0.114] | -0.01 |
+| adult | gradient | neck | homogeneous+gradient | tilt3deg_gain3pct | 83.4 | 1.15 [1.06-1.27] | 2.29 [2.12-2.52] | 0.795 [0.729-0.912] | -0.02 |
+| adult | gradient | origin | homogeneous+gradient | tilt0deg_gain0pct | 8.59e-13 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
+| adult | gradient | origin | homogeneous+gradient | tilt1deg_gain1pct | 24 | 3.81 [3.38-4.14] | - [> 5-> 5] | 2.62 [2.48-2.77] | -0.02 |
+| adult | gradient | origin | homogeneous+gradient | tilt3deg_gain3pct | 71.2 | 1.3 [1.19-1.42] | 2.57 [2.37-2.77] | 1 [0.896-1.06] | -0.02 |
 | 2-year template | uniform | neck | none | tilt0deg_gain0pct | 1.49e+04 | 0.0213 [0.0177-0.0228] | 0.0412 [0.0327-0.0487] | 0.0264 [0.0229-0.0296] | -0.05 |
 | 2-year template | gradient | neck | none | tilt0deg_gain0pct | 1.56e+03 | 0.202 [0.173-0.211] | 0.364 [0.322-0.404] | 0.243 [0.227-0.257] | -0.09 |
-| 2-year template | uniform | neck | none | tilt1deg_gain1pct | 1.5e+04 | 0.0213 [0.0178-0.0229] | 0.0412 [0.0328-0.0493] | 0.0264 [0.0229-0.0297] | -0.05 |
+| 2-year template | uniform | neck | none | tilt1deg_gain1pct | 1.5e+04 | 0.0213 [0.0178-0.0229] | 0.0412 [0.0328-0.0494] | 0.0264 [0.0229-0.0297] | -0.05 |
 | 2-year template | gradient | neck | none | tilt1deg_gain1pct | 1.55e+03 | 0.202 [0.173-0.211] | 0.363 [0.321-0.402] | 0.243 [0.227-0.257] | -0.09 |
 | 2-year template | uniform | neck | none | tilt3deg_gain3pct | 1.49e+04 | 0.0212 [0.0178-0.0225] | 0.0406 [0.0329-0.0475] | 0.0263 [0.0231-0.0292] | -0.05 |
 | 2-year template | gradient | neck | none | tilt3deg_gain3pct | 1.56e+03 | 0.195 [0.173-0.209] | 0.349 [0.322-0.392] | 0.241 [0.225-0.254] | -0.09 |
 | 2-year template | uniform | neck | homogeneous | tilt0deg_gain0pct | 6.19e-12 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
 | 2-year template | gradient | neck | homogeneous | tilt0deg_gain0pct | 1.2e+03 | 0.198 [0.182-0.208] | 0.354 [0.334-0.391] | 0.231 [0.222-0.244] | -0.14 |
 | 2-year template | uniform | neck | homogeneous | tilt1deg_gain1pct | 236 | 0.443 [0.393-0.504] | 0.89 [0.812-0.992] | 0.545 [0.521-0.57] | -0.02 |
-| 2-year template | gradient | neck | homogeneous | tilt1deg_gain1pct | 1.2e+03 | 0.198 [0.181-0.209] | 0.354 [0.332-0.393] | 0.231 [0.221-0.244] | -0.14 |
+| 2-year template | gradient | neck | homogeneous | tilt1deg_gain1pct | 1.2e+03 | 0.198 [0.181-0.209] | 0.354 [0.332-0.393] | 0.231 [0.221-0.245] | -0.14 |
 | 2-year template | uniform | neck | homogeneous | tilt3deg_gain3pct | 711 | 0.146 [0.132-0.161] | 0.283 [0.261-0.305] | 0.192 [0.166-0.203] | -0.02 |
 | 2-year template | gradient | neck | homogeneous | tilt3deg_gain3pct | 1.19e+03 | 0.194 [0.177-0.206] | 0.348 [0.327-0.381] | 0.229 [0.22-0.242] | -0.13 |
 | 2-year template | gradient | origin | homogeneous | tilt0deg_gain0pct | 1.2e+03 | 0.198 [0.182-0.208] | 0.354 [0.334-0.391] | 0.231 [0.222-0.244] | -0.14 |
@@ -189,13 +189,13 @@ In-band artefact per channel (median over channels, then over 32 draws) for 1 de
 | 2-year template | gradient | origin | homogeneous | tilt3deg_gain3pct | 1.18e+03 | 0.197 [0.179-0.206] | 0.352 [0.33-0.383] | 0.23 [0.222-0.243] | -0.13 |
 | 2-year template | uniform | neck | homogeneous+gradient | tilt0deg_gain0pct | 6.5e-12 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
 | 2-year template | gradient | neck | homogeneous+gradient | tilt0deg_gain0pct | 8.89e-13 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
-| 2-year template | uniform | neck | homogeneous+gradient | tilt1deg_gain1pct | 232 | 0.396 [0.367-0.477] | 0.818 [0.771-0.94] | 0.426 [0.382-0.47] | -0.02 |
+| 2-year template | uniform | neck | homogeneous+gradient | tilt1deg_gain1pct | 232 | 0.396 [0.367-0.478] | 0.818 [0.771-0.94] | 0.426 [0.382-0.47] | -0.02 |
 | 2-year template | gradient | neck | homogeneous+gradient | tilt1deg_gain1pct | 23.3 | 3.9 [3.28-4.56] | - [> 5-> 5] | 3.77 [3.36-4.13] | -0.03 |
 | 2-year template | uniform | neck | homogeneous+gradient | tilt3deg_gain3pct | 691 | 0.134 [0.122-0.148] | 0.263 [0.244-0.286] | 0.143 [0.127-0.152] | -0.02 |
 | 2-year template | gradient | neck | homogeneous+gradient | tilt3deg_gain3pct | 72.9 | 1.27 [1.2-1.44] | 2.53 [2.39-2.79] | 1.25 [1.18-1.35] | -0.03 |
 | 2-year template | gradient | origin | homogeneous+gradient | tilt0deg_gain0pct | 7.47e-13 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
-| 2-year template | gradient | origin | homogeneous+gradient | tilt1deg_gain1pct | 20.2 | - [4.18-> 5] | - [> 5-> 5] | 4.79 [4.3-> 5] | -0.03 |
-| 2-year template | gradient | origin | homogeneous+gradient | tilt3deg_gain3pct | 61.1 | 1.53 [1.39-1.67] | 2.93 [2.72-3.13] | 1.54 [1.39-1.61] | -0.03 |
+| 2-year template | gradient | origin | homogeneous+gradient | tilt1deg_gain1pct | 20.2 | - [4.18-> 5] | - [> 5-> 5] | 4.8 [4.3-> 5] | -0.03 |
+| 2-year template | gradient | origin | homogeneous+gradient | tilt3deg_gain3pct | 61.1 | 1.53 [1.39-1.67] | 2.93 [2.73-3.13] | 1.54 [1.39-1.61] | -0.03 |
 | 12-month template | uniform | neck | none | tilt0deg_gain0pct | 1.51e+04 | 0.0228 [0.0207-0.0242] | 0.0492 [0.0385-0.053] | 0.0334 [0.0274-0.0372] | -0.04 |
 | 12-month template | gradient | neck | none | tilt0deg_gain0pct | 1.54e+03 | 0.21 [0.196-0.223] | 0.4 [0.351-0.463] | 0.286 [0.264-0.311] | -0.09 |
 | 12-month template | uniform | neck | none | tilt1deg_gain1pct | 1.51e+04 | 0.0228 [0.0207-0.0242] | 0.0491 [0.0385-0.0529] | 0.0335 [0.0275-0.037] | -0.04 |
@@ -209,13 +209,13 @@ In-band artefact per channel (median over channels, then over 32 draws) for 1 de
 | 12-month template | uniform | neck | homogeneous | tilt3deg_gain3pct | 709 | 0.139 [0.123-0.152] | 0.272 [0.246-0.293] | 0.205 [0.182-0.213] | -0.02 |
 | 12-month template | gradient | neck | homogeneous | tilt3deg_gain3pct | 1.13e+03 | 0.206 [0.201-0.214] | 0.381 [0.359-0.416] | 0.267 [0.257-0.282] | -0.12 |
 | 12-month template | gradient | origin | homogeneous | tilt0deg_gain0pct | 1.13e+03 | 0.207 [0.202-0.216] | 0.385 [0.365-0.429] | 0.27 [0.259-0.285] | -0.13 |
-| 12-month template | gradient | origin | homogeneous | tilt1deg_gain1pct | 1.13e+03 | 0.207 [0.203-0.215] | 0.384 [0.366-0.424] | 0.269 [0.257-0.285] | -0.13 |
-| 12-month template | gradient | origin | homogeneous | tilt3deg_gain3pct | 1.13e+03 | 0.207 [0.201-0.215] | 0.386 [0.36-0.421] | 0.268 [0.259-0.283] | -0.13 |
+| 12-month template | gradient | origin | homogeneous | tilt1deg_gain1pct | 1.13e+03 | 0.207 [0.203-0.215] | 0.384 [0.366-0.424] | 0.269 [0.258-0.285] | -0.13 |
+| 12-month template | gradient | origin | homogeneous | tilt3deg_gain3pct | 1.13e+03 | 0.207 [0.201-0.215] | 0.386 [0.36-0.421] | 0.269 [0.259-0.283] | -0.13 |
 | 12-month template | uniform | neck | homogeneous+gradient | tilt0deg_gain0pct | 5.33e-12 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
 | 12-month template | gradient | neck | homogeneous+gradient | tilt0deg_gain0pct | 7.48e-13 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
 | 12-month template | uniform | neck | homogeneous+gradient | tilt1deg_gain1pct | 231 | 0.397 [0.336-0.438] | 0.819 [0.718-0.883] | 0.505 [0.432-0.528] | -0.02 |
 | 12-month template | gradient | neck | homogeneous+gradient | tilt1deg_gain1pct | 23.1 | 3.89 [3.28-4.8] | - [> 5-> 5] | 4.41 [3.9-> 5] | -0.03 |
-| 12-month template | uniform | neck | homogeneous+gradient | tilt3deg_gain3pct | 699 | 0.131 [0.117-0.142] | 0.259 [0.234-0.277] | 0.16 [0.139-0.174] | -0.02 |
+| 12-month template | uniform | neck | homogeneous+gradient | tilt3deg_gain3pct | 699 | 0.131 [0.117-0.142] | 0.259 [0.234-0.277] | 0.161 [0.139-0.174] | -0.02 |
 | 12-month template | gradient | neck | homogeneous+gradient | tilt3deg_gain3pct | 69.9 | 1.29 [1.15-1.46] | 2.55 [2.29-2.82] | 1.42 [1.3-1.62] | -0.03 |
 | 12-month template | gradient | origin | homogeneous+gradient | tilt0deg_gain0pct | 6.9e-13 | - [> 5-> 5] | - [> 5-> 5] | - [> 5-> 5] | +0.00 |
 | 12-month template | gradient | origin | homogeneous+gradient | tilt1deg_gain1pct | 19.5 | - [4.13-> 5] | - [> 5-> 5] | - [> 5-> 5] | -0.03 |
@@ -223,13 +223,13 @@ In-band artefact per channel (median over channels, then over 32 draws) for 1 de
 
 ## B'. Exact rigid motion over 60 s (adult)
 
-Slow drift up to 5 deg per axis plus in-band jitter of 0.05 deg RMS per axis (measured: 0.050, 0.050, 0.050 deg), in B0 = 2 nT and G = 5 nT/m, calibration errors [1.0, 0.01] (tilt deg, gain). Peak field change at a sensor (drift included): median 125 pT, maximum 274 pT; this offset moves the sensors' operating point (dynamic range, gain), which is not modelled beyond the calibration errors.
+Slow drift up to 5 deg per axis plus in-band jitter of 0.05 deg RMS per axis (measured: 0.050, 0.050, 0.050 deg), in B0 = 2 nT and G = 5 nT/m, calibration errors [1.0, 0.01] (tilt deg, gain). Peak field change at a sensor (drift included): median 130 pT, maximum 278 pT; this offset moves the sensors' operating point (dynamic range, gain), which is not modelled beyond the calibration errors.
 
 | correction | in-band RMS, exact [fT] | linear prediction [fT] | exact / linear, per channel: median [5th-95th percentile] | largest deviation |
 |---|---|---|---|---|
-| none | 1392.1 | 1392.5 | 1.0003 [0.9996-1.0013] | 0.9 % |
-| homogeneous | 364.5 | 364.3 | 1.0002 [0.9982-1.0021] | 0.6 % |
-| homogeneous+gradient | 21.7 | 21.7 | 1.0003 [0.9998-1.0012] | 0.2 % |
+| none | 1394.9 | 1394.9 | 1.0003 [0.9997-1.0013] | 0.2 % |
+| homogeneous | 334.8 | 335.2 | 1.0002 [0.9980-1.0028] | 2.7 % |
+| homogeneous+gradient | 24.0 | 24.0 | 1.0003 [0.9998-1.0009] | 0.2 % |
 
 ## Notes
 

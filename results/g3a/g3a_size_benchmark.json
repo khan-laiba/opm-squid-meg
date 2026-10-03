@@ -346,9 +346,9 @@
     "results/g3a/Figure_G3A_fig5.pdf",
     "results/g3a/g3a_deq.csv"
   ],
-  "runtime_s": 1.1114721298217773,
+  "runtime_s": 1.1140568256378174,
   "provenance": {
-    "commit": "663eaa1",
+    "commit": "ed852b2",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

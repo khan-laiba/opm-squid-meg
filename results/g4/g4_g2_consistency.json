@@ -3,32 +3,32 @@
   "inputs": {
     "g2_targets": "results/g2/g2_targets.csv",
     "g4_summary": "results/g4/g4_adult_summary.json",
-    "g4_simulated_at_commit": "19a8fd2"
+    "g4_simulated_at_commit": "ed852b2"
   },
   "bands": {
     "depth0": {
       "n_locations": 18,
-      "g2_median_ratio_dense_over_combined": 1.432394599315151,
-      "oracle_s50_ratio_combined_over_dense": 1.541513822687598
+      "g2_median_ratio_dense_over_combined": 1.4544392391960161,
+      "oracle_s50_ratio_combined_over_dense": 1.5513673806267476
     },
     "depth1": {
       "n_locations": 18,
-      "g2_median_ratio_dense_over_combined": 1.1347722476465987,
-      "oracle_s50_ratio_combined_over_dense": 1.1743139669030063
+      "g2_median_ratio_dense_over_combined": 1.1599810934071062,
+      "oracle_s50_ratio_combined_over_dense": 1.292469172331154
     },
     "depth2": {
       "n_locations": 18,
-      "g2_median_ratio_dense_over_combined": 1.0518122496985143,
-      "oracle_s50_ratio_combined_over_dense": 1.0578985879955163
+      "g2_median_ratio_dense_over_combined": 1.0854197987317122,
+      "oracle_s50_ratio_combined_over_dense": 1.0878114914911472
     },
     "depth3": {
       "n_locations": 18,
-      "g2_median_ratio_dense_over_combined": 0.9987549291660582,
-      "oracle_s50_ratio_combined_over_dense": 1.1374526198147268
+      "g2_median_ratio_dense_over_combined": 1.0474736836684246,
+      "oracle_s50_ratio_combined_over_dense": 1.2010412606092444
     }
   },
   "provenance": {
-    "commit": "19a8fd2",
+    "commit": "9512f1b",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

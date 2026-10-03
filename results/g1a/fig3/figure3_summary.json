@@ -33,5 +33,11 @@
     "pdf": "Figure3_replicated.pdf",
     "svg": "Figure3_replicated.svg"
   },
-  "d_eq_paper_caption_mm": 28.0
+  "d_eq_paper_caption_mm": 28.0,
+  "status": "REPRO: Jas et al. 2026 Fig. 3, written by the preserved legacy replica (legacy/replicate_figure3.py, 7/7 checks against the published raster) and stamped by scripts/g1a_jas_benchmark.py",
+  "provenance": {
+    "commit": "ed852b2",
+    "mne_version": "1.13.2",
+    "numpy_version": "2.5.3"
+  }
 }

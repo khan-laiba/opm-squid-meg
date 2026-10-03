@@ -1,3 +1,4 @@
+# REPRO: Jas et al. 2026 Table 1 and Fig. 5 (size-following SQUID shell, paper definitions); NEW: idealised concentric fixed adult shell | commit ed852b2
 head,shell,eta,d_eq_exact_mm,d_eq_grid_mm,normalized_exact_pct,volume_fraction_pct
 Infant (newborn),size-following,1.00,nan,54.520,nan,100.00
 Infant (newborn),size-following,1.10,nan,54.520,nan,100.00

@@ -4,17 +4,17 @@
   "seed": 11,
   "arrays": {
     "opm_matched": {
-      "n_sites": 95,
-      "n_probed_points": 2565,
+      "n_sites": 98,
+      "n_probed_points": 2646,
       "lowest_point_height_mm": {
-        "min": 2.1745181957824764,
-        "median": 2.631473151514254
+        "min": 2.3639822995352993,
+        "median": 3.051395077340299
       },
       "sites_lowest_point_below_mm": {
         "0": 0,
         "1": 0,
         "2": 0,
-        "3": 85
+        "3": 38
       },
       "point_error_by_height": [
         {
@@ -52,124 +52,124 @@
         {
           "lo_mm": 2.0,
           "hi_mm": 2.5,
-          "n_points": 58,
-          "median": 0.00739524885545673,
-          "p95": 0.08465353568806201,
-          "max": 1.7439388759670928
+          "n_points": 3,
+          "median": 0.016096002466727766,
+          "p95": 0.1038872820523298,
+          "max": 1.1989868984698868
         },
         {
           "lo_mm": 2.5,
           "hi_mm": 3.0,
-          "n_points": 260,
-          "median": 0.007704010120060682,
-          "p95": 0.08972190197659911,
-          "max": 3.152990802548396
+          "n_points": 99,
+          "median": 0.006277308745187947,
+          "p95": 0.06245585058039516,
+          "max": 0.7111861160808066
         },
         {
           "lo_mm": 3.0,
           "hi_mm": 4.0,
-          "n_points": 358,
-          "median": 0.006082352430010881,
-          "p95": 0.05986057436170956,
-          "max": 2.9142050326426454
+          "n_points": 743,
+          "median": 0.0035309350414925323,
+          "p95": 0.03372664967690465,
+          "max": 0.7327968244013227
         },
         {
           "lo_mm": 4.0,
           "hi_mm": 6.0,
-          "n_points": 144,
-          "median": 0.004287150942833009,
-          "p95": 0.047915505629272735,
-          "max": 1.3273626360159267
+          "n_points": 24,
+          "median": 0.005297529219603476,
+          "p95": 0.047303706393722784,
+          "max": 0.5645096497538162
         },
         {
           "lo_mm": 6.0,
           "hi_mm": 20.0,
-          "n_points": 1745,
-          "median": 0.00031640412844992187,
-          "p95": 0.003694960910101403,
-          "max": 0.3460876160847329
+          "n_points": 1777,
+          "median": 0.0002967292986764369,
+          "p95": 0.002756773338633581,
+          "max": 0.14484182877395899
         }
       ],
       "centre_error": {
-        "median": 0.0004487207071493469,
-        "p95": 0.004125436448285325,
-        "max": 0.0905014318690145
+        "median": 0.00039122350029402144,
+        "p95": 0.003442870127153708,
+        "max": 0.07068745193694446
       },
       "channel_error_scaled": {
-        "median": 0.00047308675968689304,
-        "p95": 0.004708555751730438,
-        "max": 0.11583970229662738
+        "median": 0.00033429859640262034,
+        "p95": 0.0027566886485663445,
+        "max": 0.06992934274864072
       },
       "channel_error_relative": {
-        "n_channels_above_1pct": 19,
-        "n_channels_above_2pct": 9,
-        "max": 0.04329476540674959
+        "n_channels_above_1pct": 8,
+        "n_channels_above_2pct": 4,
+        "max": 0.03447939485036566
       },
       "worst_channels": [
         {
-          "channel": 90,
-          "lowest_point_height_mm": 3.0892428109399814,
-          "max_relative_error": 0.04329476540674959
-        },
-        {
-          "channel": 93,
-          "lowest_point_height_mm": 2.88528649892849,
-          "max_relative_error": 0.03743311575922803
+          "channel": 97,
+          "lowest_point_height_mm": 2.5582433771279494,
+          "max_relative_error": 0.03447939485036566
         },
         {
           "channel": 50,
-          "lowest_point_height_mm": 2.6453590354064187,
-          "max_relative_error": 0.03582641713044987
+          "lowest_point_height_mm": 2.786886380709562,
+          "max_relative_error": 0.0338282664629489
         },
         {
-          "channel": 60,
-          "lowest_point_height_mm": 2.6511340086939255,
-          "max_relative_error": 0.03542686062707112
+          "channel": 93,
+          "lowest_point_height_mm": 3.238487134623921,
+          "max_relative_error": 0.03106461588388343
         },
         {
-          "channel": 52,
-          "lowest_point_height_mm": 2.7311639916459947,
-          "max_relative_error": 0.03096225200060254
+          "channel": 94,
+          "lowest_point_height_mm": 2.537129502898808,
+          "max_relative_error": 0.029024690700396816
         },
         {
-          "channel": 31,
-          "lowest_point_height_mm": 2.4107277490651438,
-          "max_relative_error": 0.030502156947976755
+          "channel": 81,
+          "lowest_point_height_mm": 2.543052999339909,
+          "max_relative_error": 0.01785199737940535
         },
         {
-          "channel": 75,
-          "lowest_point_height_mm": 2.8530322249947058,
-          "max_relative_error": 0.02447091112442945
+          "channel": 49,
+          "lowest_point_height_mm": 2.671818451377715,
+          "max_relative_error": 0.014592437321929608
         },
         {
-          "channel": 79,
-          "lowest_point_height_mm": 2.278412785860367,
-          "max_relative_error": 0.024302087591920762
+          "channel": 53,
+          "lowest_point_height_mm": 3.006400114080241,
+          "max_relative_error": 0.012586319164816562
         },
         {
-          "channel": 0,
-          "lowest_point_height_mm": 2.778146801976805,
-          "max_relative_error": 0.02299471102050532
+          "channel": 96,
+          "lowest_point_height_mm": 2.9330152843941577,
+          "max_relative_error": 0.011950614686451422
         },
         {
-          "channel": 57,
-          "lowest_point_height_mm": 2.833935152577287,
-          "max_relative_error": 0.01954918839099129
+          "channel": 56,
+          "lowest_point_height_mm": 3.0079064856890954,
+          "max_relative_error": 0.009820872344156628
+        },
+        {
+          "channel": 71,
+          "lowest_point_height_mm": 2.3639822995352993,
+          "max_relative_error": 0.009538799922757635
         }
       ]
     },
     "opm_dense": {
-      "n_sites": 205,
-      "n_probed_points": 5535,
+      "n_sites": 208,
+      "n_probed_points": 5616,
       "lowest_point_height_mm": {
-        "min": 2.1903345492082824,
-        "median": 2.62314092589586
+        "min": 2.3460053196850277,
+        "median": 3.0368016854874584
       },
       "sites_lowest_point_below_mm": {
         "0": 0,
         "1": 0,
         "2": 0,
-        "3": 187
+        "3": 94
       },
       "point_error_by_height": [
         {
@@ -207,116 +207,116 @@
         {
           "lo_mm": 2.0,
           "hi_mm": 2.5,
-          "n_points": 101,
-          "median": 0.008224165974375456,
-          "p95": 0.08484894022374971,
-          "max": 1.259547254547959
+          "n_points": 10,
+          "median": 0.02174569898724467,
+          "p95": 0.1610386081848138,
+          "max": 0.9251878365964364
         },
         {
           "lo_mm": 2.5,
           "hi_mm": 3.0,
-          "n_points": 522,
-          "median": 0.008065759914199418,
-          "p95": 0.0933338390195718,
-          "max": 2.891319761208666
+          "n_points": 201,
+          "median": 0.00602198927127323,
+          "p95": 0.07345396988806989,
+          "max": 1.8703156634942721
         },
         {
           "lo_mm": 3.0,
           "hi_mm": 4.0,
-          "n_points": 791,
-          "median": 0.00618733223227435,
-          "p95": 0.06727577639456661,
-          "max": 1.9485047922181182
+          "n_points": 1526,
+          "median": 0.0038511583008746667,
+          "p95": 0.04118875423230709,
+          "max": 3.224022313469433
         },
         {
           "lo_mm": 4.0,
           "hi_mm": 6.0,
-          "n_points": 347,
-          "median": 0.004593911641492638,
-          "p95": 0.04799556129847576,
-          "max": 0.9740035901875167
+          "n_points": 100,
+          "median": 0.006696532856451854,
+          "p95": 0.09012128317123681,
+          "max": 3.172475316565857
         },
         {
           "lo_mm": 6.0,
           "hi_mm": 20.0,
-          "n_points": 3774,
-          "median": 0.0003471551669690432,
-          "p95": 0.004027141991276128,
-          "max": 0.352069172097455
+          "n_points": 3779,
+          "median": 0.00035612566971560697,
+          "p95": 0.004773170804197374,
+          "max": 2.499842799879583
         }
       ],
       "centre_error": {
-        "median": 0.000507457755557634,
-        "p95": 0.004622708032220343,
-        "max": 0.11880066592197382
+        "median": 0.0004437292252147864,
+        "p95": 0.0059290815986461345,
+        "max": 0.6587844401472598
       },
       "channel_error_scaled": {
-        "median": 0.0004938353773929062,
-        "p95": 0.004492166271528181,
-        "max": 0.12640415955446058
+        "median": 0.0004116330266298265,
+        "p95": 0.005401101363973226,
+        "max": 0.6535254569204066
       },
       "channel_error_relative": {
-        "n_channels_above_1pct": 45,
-        "n_channels_above_2pct": 18,
-        "max": 0.05529660820359261
+        "n_channels_above_1pct": 24,
+        "n_channels_above_2pct": 7,
+        "max": 0.043853146902671614
       },
       "worst_channels": [
         {
-          "channel": 159,
-          "lowest_point_height_mm": 2.7523605683262584,
-          "max_relative_error": 0.05529660820359261
+          "channel": 122,
+          "lowest_point_height_mm": 2.68537124039544,
+          "max_relative_error": 0.043853146902671614
         },
         {
-          "channel": 17,
-          "lowest_point_height_mm": 2.810042505888382,
-          "max_relative_error": 0.04592437503049318
+          "channel": 205,
+          "lowest_point_height_mm": 3.274340757344167,
+          "max_relative_error": 0.04276591108066141
         },
         {
-          "channel": 92,
-          "lowest_point_height_mm": 3.003879167455987,
-          "max_relative_error": 0.04283453002404758
+          "channel": 179,
+          "lowest_point_height_mm": 2.7919041736416457,
+          "max_relative_error": 0.041170087522950594
         },
         {
-          "channel": 141,
-          "lowest_point_height_mm": 2.694944845855446,
-          "max_relative_error": 0.03748080177032875
+          "channel": 152,
+          "lowest_point_height_mm": 2.73622529193815,
+          "max_relative_error": 0.03641495101423908
         },
         {
-          "channel": 42,
-          "lowest_point_height_mm": 2.8538126693812673,
-          "max_relative_error": 0.03738818370787533
+          "channel": 2,
+          "lowest_point_height_mm": 2.3865997413604427,
+          "max_relative_error": 0.03232422889450515
         },
         {
-          "channel": 189,
-          "lowest_point_height_mm": 2.9037309600673495,
-          "max_relative_error": 0.03594389535166964
+          "channel": 113,
+          "lowest_point_height_mm": 2.791723792731333,
+          "max_relative_error": 0.02731453670394335
         },
         {
-          "channel": 22,
-          "lowest_point_height_mm": 2.9850145018145877,
-          "max_relative_error": 0.03309255119598098
+          "channel": 73,
+          "lowest_point_height_mm": 4.236401532407714,
+          "max_relative_error": 0.022641690733876785
         },
         {
-          "channel": 177,
-          "lowest_point_height_mm": 2.960111420823993,
-          "max_relative_error": 0.031592697927057545
+          "channel": 135,
+          "lowest_point_height_mm": 2.460281352399569,
+          "max_relative_error": 0.018301452039697796
         },
         {
-          "channel": 132,
-          "lowest_point_height_mm": 2.719860754893755,
-          "max_relative_error": 0.026066377648539474
+          "channel": 68,
+          "lowest_point_height_mm": 2.644468195924633,
+          "max_relative_error": 0.016960546867128556
         },
         {
-          "channel": 64,
-          "lowest_point_height_mm": 2.6391077401018928,
-          "max_relative_error": 0.025627070373214433
+          "channel": 157,
+          "lowest_point_height_mm": 3.1282642913563627,
+          "max_relative_error": 0.016300302818874846
         }
       ]
     }
   },
-  "runtime_s": 555.0209529399872,
+  "runtime_s": 569.1993160247803,
   "provenance": {
-    "commit": "19a8fd2",
+    "commit": "ed852b2",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

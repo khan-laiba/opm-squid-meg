@@ -6,8 +6,8 @@ Code commit: see `g3b_summary.json` (provenance). Configuration: `configs/g3b_pe
 
 | anatomy | description | OFC [mm] | breadth x length [mm] | targets | usable cortex [cm2] | OPM dense / matched sites |
 |---|---|---|---|---|---|---|
-| adult | MNE sample subject (as G2) | 586 | 171 x 211 | 7661 | 1878 | 205 / 94 |
-| school-age size (scaled adult) | adult x 85/95 (Jas Table 1 child/adult head radius): 0.8947 | 525 | 153 x 189 | 7507 | 1470 | 172 / 89 |
+| adult | MNE sample subject (as G2) | 586 | 171 x 211 | 7661 | 1878 | 208 / 98 |
+| school-age size (scaled adult) | adult x 85/95 (Jas Table 1 child/adult head radius): 0.8947 | 525 | 153 x 189 | 7507 | 1470 | 174 / 89 |
 | 2-year size (scaled adult) | adult x template/adult occipitofrontal circumference: 0.8442 | 495 | 144 x 178 | 7413 | 1290 | 155 / 90 |
 | 2-year template | 2-year template (ANTS2-0Years3T), native dimensions | 495 | 140 x 175 | 8134 | 1062 | 151 / 83 |
 | 18-month template | 18-month template (ANTS18-0Months3T), native dimensions | 491 | 137 x 172 | 7994 | 975 | 157 / 80 |
@@ -60,84 +60,84 @@ Code commit: see `g3b_summary.json` (provenance). Configuration: `configs/g3b_pe
 | 12-month template | counterfactual | 0.0 | 18.1 | 29.5 | True |
 | 12-month template | counterfactual_x-centred | 0.0 | 18.5 | 27.7 | True |
 
-Link to G2: at the adult's measured (= centred) position the dense/combined detectability ratio is 1.111x as an unweighted median over all targets (G2's headline), 1.124x without the medial wall and +1.09 dB area-weighted without it (the G3B convention).
+Link to G2: at the adult's measured (= centred) position the dense/combined detectability ratio is 1.144x as an unweighted median over all targets (G2's headline), 1.148x without the medial wall and +1.27 dB area-weighted without it (the G3B convention).
 
 ## D_child, D_adult and Delta (dense OPM; intrinsic + brain noise; detectability dB)
 
 | child anatomy | comparator | D_child | D_adult | Delta | homology |
 |---|---|---|---|---|---|
-| school-age size (scaled adult) | Neuromag combined | +1.45 dB [+1.23, +1.70] | +0.85 dB [+0.61, +1.04] | +0.59 dB [+0.50, +0.71] | vertex |
-| school-age size (scaled adult) | Neuromag grad | +2.96 dB [+2.62, +3.26] | +2.03 dB [+1.83, +2.23] | +0.80 dB [+0.68, +0.97] | vertex |
-| school-age size (scaled adult) | Neuromag mag | +1.77 dB [+1.50, +2.06] | +1.23 dB [+0.97, +1.47] | +0.56 dB [+0.47, +0.66] | vertex |
-| 2-year size (scaled adult) | Neuromag combined | +2.09 dB [+1.78, +2.39] | +0.85 dB [+0.63, +1.05] | +1.25 dB [+1.11, +1.37] | vertex |
-| 2-year size (scaled adult) | Neuromag grad | +3.80 dB [+3.45, +4.11] | +2.03 dB [+1.80, +2.23] | +1.67 dB [+1.50, +1.85] | vertex |
-| 2-year size (scaled adult) | Neuromag mag | +2.35 dB [+2.03, +2.66] | +1.23 dB [+0.97, +1.47] | +1.15 dB [+1.01, +1.27] | vertex |
-| 2-year template | Neuromag combined | +1.84 dB [+1.52, +2.19] | +0.85 dB [+0.62, +1.05] | +0.88 dB [+0.55, +1.32] | parcel |
-| 2-year template | Neuromag grad | +3.33 dB [+2.90, +3.75] | +2.03 dB [+1.78, +2.24] | +1.28 dB [+0.85, +1.75] | parcel |
-| 2-year template | Neuromag mag | +2.23 dB [+1.91, +2.57] | +1.23 dB [+1.00, +1.48] | +0.93 dB [+0.63, +1.28] | parcel |
-| 18-month template | Neuromag combined | +1.89 dB [+1.61, +2.21] | +0.85 dB [+0.62, +1.05] | +0.99 dB [+0.58, +1.33] | parcel |
-| 18-month template | Neuromag grad | +3.38 dB [+2.93, +3.84] | +2.03 dB [+1.81, +2.24] | +1.42 dB [+0.87, +1.86] | parcel |
-| 18-month template | Neuromag mag | +2.24 dB [+1.93, +2.60] | +1.23 dB [+0.97, +1.46] | +0.73 dB [+0.67, +1.16] | parcel |
-| 12-month template | Neuromag combined | +2.04 dB [+1.64, +2.43] | +0.85 dB [+0.61, +1.06] | +1.23 dB [+0.73, +1.61] | parcel |
-| 12-month template | Neuromag grad | +3.65 dB [+3.21, +4.23] | +2.03 dB [+1.79, +2.24] | +1.31 dB [+1.07, +2.28] | parcel |
-| 12-month template | Neuromag mag | +2.45 dB [+1.99, +2.84] | +1.23 dB [+0.98, +1.45] | +1.21 dB [+0.77, +1.55] | parcel |
+| school-age size (scaled adult) | Neuromag combined | +1.50 dB [+1.28, +1.75] | +1.00 dB [+0.82, +1.17] | +0.44 dB [+0.34, +0.56] | vertex |
+| school-age size (scaled adult) | Neuromag grad | +3.00 dB [+2.68, +3.30] | +2.23 dB [+2.03, +2.45] | +0.65 dB [+0.51, +0.80] | vertex |
+| school-age size (scaled adult) | Neuromag mag | +1.81 dB [+1.55, +2.12] | +1.39 dB [+1.18, +1.61] | +0.41 dB [+0.32, +0.51] | vertex |
+| 2-year size (scaled adult) | Neuromag combined | +2.13 dB [+1.83, +2.44] | +1.00 dB [+0.84, +1.18] | +1.07 dB [+0.91, +1.18] | vertex |
+| 2-year size (scaled adult) | Neuromag grad | +3.83 dB [+3.48, +4.14] | +2.23 dB [+2.02, +2.44] | +1.49 dB [+1.31, +1.67] | vertex |
+| 2-year size (scaled adult) | Neuromag mag | +2.41 dB [+2.07, +2.71] | +1.39 dB [+1.17, +1.60] | +0.96 dB [+0.82, +1.10] | vertex |
+| 2-year template | Neuromag combined | +1.84 dB [+1.52, +2.19] | +1.00 dB [+0.83, +1.18] | +0.73 dB [+0.46, +0.98] | parcel |
+| 2-year template | Neuromag grad | +3.33 dB [+2.90, +3.75] | +2.23 dB [+2.00, +2.45] | +1.13 dB [+0.77, +1.55] | parcel |
+| 2-year template | Neuromag mag | +2.23 dB [+1.91, +2.57] | +1.39 dB [+1.20, +1.61] | +0.82 dB [+0.55, +0.93] | parcel |
+| 18-month template | Neuromag combined | +1.89 dB [+1.61, +2.21] | +1.00 dB [+0.83, +1.18] | +0.88 dB [+0.54, +1.05] | parcel |
+| 18-month template | Neuromag grad | +3.38 dB [+2.93, +3.84] | +2.23 dB [+2.02, +2.45] | +1.26 dB [+0.77, +1.75] | parcel |
+| 18-month template | Neuromag mag | +2.24 dB [+1.93, +2.60] | +1.39 dB [+1.16, +1.61] | +0.72 dB [+0.55, +1.04] | parcel |
+| 12-month template | Neuromag combined | +2.04 dB [+1.64, +2.43] | +1.00 dB [+0.83, +1.18] | +0.96 dB [+0.61, +1.51] | parcel |
+| 12-month template | Neuromag grad | +3.65 dB [+3.21, +4.23] | +2.23 dB [+2.01, +2.45] | +1.33 dB [+0.82, +2.18] | parcel |
+| 12-month template | Neuromag mag | +2.45 dB [+2.00, +2.84] | +1.39 dB [+1.19, +1.59] | +0.98 dB [+0.68, +1.47] | parcel |
 
 Other metrics, dense OPM vs Neuromag combined, intrinsic + brain (peak-channel SNR: the best single channel, where Neuromag is ahead in the adult; mean-power SNR; both in dB):
 
 | child anatomy | metric | D_child | D_adult | Delta |
 |---|---|---|---|---|
-| school-age size (scaled adult) | peak-channel SNR | -0.34 dB | -1.30 dB | +0.84 dB |
-| school-age size (scaled adult) | mean-power SNR | +0.71 dB | +0.57 dB | +0.14 dB |
-| 2-year size (scaled adult) | peak-channel SNR | +0.57 dB | -1.30 dB | +1.83 dB |
-| 2-year size (scaled adult) | mean-power SNR | +1.08 dB | +0.57 dB | +0.53 dB |
-| 2-year template | peak-channel SNR | +0.32 dB | -1.30 dB | +1.72 dB |
-| 2-year template | mean-power SNR | +1.14 dB | +0.57 dB | +0.55 dB |
-| 18-month template | peak-channel SNR | +0.45 dB | -1.30 dB | +1.55 dB |
-| 18-month template | mean-power SNR | +1.33 dB | +0.57 dB | +0.67 dB |
-| 12-month template | peak-channel SNR | +0.79 dB | -1.30 dB | +1.69 dB |
-| 12-month template | mean-power SNR | +1.50 dB | +0.57 dB | +0.86 dB |
+| school-age size (scaled adult) | peak-channel SNR | -0.29 dB | -1.11 dB | +0.69 dB |
+| school-age size (scaled adult) | mean-power SNR | +0.74 dB | +0.34 dB | +0.39 dB |
+| 2-year size (scaled adult) | peak-channel SNR | +0.59 dB | -1.11 dB | +1.66 dB |
+| 2-year size (scaled adult) | mean-power SNR | +1.09 dB | +0.34 dB | +0.74 dB |
+| 2-year template | peak-channel SNR | +0.32 dB | -1.11 dB | +1.52 dB |
+| 2-year template | mean-power SNR | +1.14 dB | +0.34 dB | +0.83 dB |
+| 18-month template | peak-channel SNR | +0.45 dB | -1.11 dB | +1.32 dB |
+| 18-month template | mean-power SNR | +1.33 dB | +0.34 dB | +0.92 dB |
+| 12-month template | peak-channel SNR | +0.79 dB | -1.11 dB | +1.60 dB |
+| 12-month template | mean-power SNR | +1.50 dB | +0.34 dB | +1.08 dB |
 
-OPM standoff per anatomy (median sensing-centre height above the MRI scalp, dense / matched array): adult 7.78 / 7.76 mm; school-age size (scaled adult) 7.00 / 7.00 mm; 2-year size (scaled adult) 7.00 / 7.00 mm; 2-year template 7.00 / 7.00 mm; 18-month template 7.00 / 7.01 mm; 12-month template 7.00 / 7.00 mm. The clearance rule (A-OPM-CLEAR) moves most of the adult's sites outward and almost none of the children's (the adult's BEM head surface lies outside its MRI scalp, the templates' inside), so D_adult carries a larger standoff than D_child; the effect on Delta is bounded in `results/g3b/G3B_standoff_report.md` (`scripts/study_g3b_standoff.py`).
+OPM standoff per anatomy (median sensing-centre height above the MRI scalp, dense / matched array, and the sites the clearance rule moved outward): adult 7.00 / 6.99 mm (26 of 208 / 9 of 98 moved; exact cell clearance >= 1.00 mm); school-age size (scaled adult) 6.99 / 6.99 mm (18 of 174 / 9 of 89 moved; exact cell clearance >= 1.00 mm); 2-year size (scaled adult) 6.99 / 6.99 mm (17 of 155 / 11 of 90 moved; exact cell clearance >= 1.01 mm); 2-year template 7.00 / 7.00 mm (3 of 151 / 3 of 83 moved; exact cell clearance >= 1.00 mm); 18-month template 7.00 / 7.01 mm (5 of 157 / 4 of 80 moved; exact cell clearance >= 1.00 mm); 12-month template 7.00 / 7.00 mm (4 of 144 / 5 of 82 moved; exact cell clearance >= 1.01 mm). Every anatomy's BEM head surface has its vertices on its MRI scalp (A-BEM-CONFORM: the templates' are built so, the adult's stored outer skin, about 1 mm outside its scalp, is conformed at loading), so the clearance rule (A-OPM-CLEAR) moves only the sites the anatomy demands and every array has the same nominal standoff.
 
 Projected condition (room-field subspace removed):
 
 | child anatomy | comparator | D_child | D_adult | Delta |
 |---|---|---|---|---|
-| school-age size (scaled adult) | Neuromag combined | +1.32 dB [+1.04, +1.62] | +0.46 dB [+0.04, +0.76] | +1.10 dB [+0.96, +1.30] |
-| school-age size (scaled adult) | Neuromag grad | +2.46 dB [+2.11, +2.80] | +1.28 dB [+0.88, +1.60] | +1.33 dB [+1.15, +1.53] |
-| school-age size (scaled adult) | Neuromag mag | +1.83 dB [+1.54, +2.10] | +0.94 dB [+0.54, +1.25] | +1.03 dB [+0.91, +1.18] |
-| 2-year size (scaled adult) | Neuromag combined | +2.01 dB [+1.64, +2.35] | +0.46 dB [+0.07, +0.74] | +1.81 dB [+1.69, +1.96] |
-| 2-year size (scaled adult) | Neuromag grad | +3.37 dB [+2.90, +3.74] | +1.28 dB [+0.87, +1.60] | +2.22 dB [+2.05, +2.41] |
-| 2-year size (scaled adult) | Neuromag mag | +2.46 dB [+2.08, +2.78] | +0.94 dB [+0.55, +1.24] | +1.67 dB [+1.57, +1.82] |
-| 2-year template | Neuromag combined | +1.48 dB [+1.04, +1.87] | +0.46 dB [+0.06, +0.75] | +1.00 dB [+0.66, +1.37] |
-| 2-year template | Neuromag grad | +2.68 dB [+2.18, +3.22] | +1.28 dB [+0.88, +1.62] | +1.36 dB [+0.93, +1.70] |
-| 2-year template | Neuromag mag | +2.02 dB [+1.57, +2.44] | +0.94 dB [+0.54, +1.26] | +1.00 dB [+0.74, +1.37] |
-| 18-month template | Neuromag combined | +1.57 dB [+1.20, +1.96] | +0.46 dB [+0.04, +0.75] | +1.16 dB [+0.74, +1.52] |
-| 18-month template | Neuromag grad | +2.79 dB [+2.29, +3.28] | +1.28 dB [+0.84, +1.63] | +1.54 dB [+1.02, +1.83] |
-| 18-month template | Neuromag mag | +2.06 dB [+1.61, +2.47] | +0.94 dB [+0.56, +1.26] | +1.06 dB [+0.65, +1.32] |
-| 12-month template | Neuromag combined | +1.77 dB [+1.29, +2.26] | +0.46 dB [+0.09, +0.74] | +1.46 dB [+0.95, +1.74] |
-| 12-month template | Neuromag grad | +3.13 dB [+2.48, +3.64] | +1.28 dB [+0.88, +1.62] | +1.69 dB [+1.17, +2.23] |
-| 12-month template | Neuromag mag | +2.32 dB [+1.73, +2.79] | +0.94 dB [+0.55, +1.27] | +1.31 dB [+0.89, +1.66] |
+| school-age size (scaled adult) | Neuromag combined | +1.38 dB [+1.08, +1.68] | +0.86 dB [+0.63, +1.08] | +0.44 dB [+0.32, +0.57] |
+| school-age size (scaled adult) | Neuromag grad | +2.54 dB [+2.15, +2.83] | +1.80 dB [+1.56, +2.05] | +0.60 dB [+0.45, +0.76] |
+| school-age size (scaled adult) | Neuromag mag | +1.89 dB [+1.59, +2.16] | +1.46 dB [+1.25, +1.68] | +0.34 dB [+0.23, +0.45] |
+| 2-year size (scaled adult) | Neuromag combined | +2.03 dB [+1.66, +2.38] | +0.86 dB [+0.66, +1.07] | +1.09 dB [+0.93, +1.23] |
+| 2-year size (scaled adult) | Neuromag grad | +3.39 dB [+2.91, +3.78] | +1.80 dB [+1.55, +2.05] | +1.47 dB [+1.26, +1.65] |
+| 2-year size (scaled adult) | Neuromag mag | +2.47 dB [+2.08, +2.81] | +1.46 dB [+1.24, +1.68] | +0.94 dB [+0.76, +1.09] |
+| 2-year template | Neuromag combined | +1.48 dB [+1.04, +1.87] | +0.86 dB [+0.64, +1.07] | +0.42 dB [+0.15, +0.73] |
+| 2-year template | Neuromag grad | +2.68 dB [+2.17, +3.22] | +1.80 dB [+1.55, +2.04] | +0.78 dB [+0.47, +1.17] |
+| 2-year template | Neuromag mag | +2.02 dB [+1.57, +2.44] | +1.46 dB [+1.26, +1.68] | +0.47 dB [+0.08, +0.79] |
+| 18-month template | Neuromag combined | +1.57 dB [+1.20, +1.96] | +0.86 dB [+0.64, +1.07] | +0.57 dB [+0.31, +0.94] |
+| 18-month template | Neuromag grad | +2.79 dB [+2.29, +3.28] | +1.80 dB [+1.54, +2.07] | +1.07 dB [+0.58, +1.60] |
+| 18-month template | Neuromag mag | +2.06 dB [+1.61, +2.47] | +1.46 dB [+1.26, +1.69] | +0.52 dB [+0.29, +0.81] |
+| 12-month template | Neuromag combined | +1.77 dB [+1.29, +2.26] | +0.86 dB [+0.66, +1.07] | +0.83 dB [+0.35, +1.38] |
+| 12-month template | Neuromag grad | +3.13 dB [+2.48, +3.64] | +1.80 dB [+1.55, +2.05] | +1.10 dB [+0.60, +2.01] |
+| 12-month template | Neuromag mag | +2.32 dB [+1.73, +2.79] | +1.46 dB [+1.25, +1.69] | +0.83 dB [+0.47, +1.48] |
 
 Matched-site OPM (coverage control), intrinsic + brain:
 
 | child anatomy | comparator | D_child | D_adult | Delta |
 |---|---|---|---|---|
-| school-age size (scaled adult) | Neuromag combined | +0.37 dB [+0.21, +0.57] | -0.13 dB [-0.22, -0.03] | +0.53 dB [+0.41, +0.71] |
-| school-age size (scaled adult) | Neuromag grad | +1.63 dB [+1.44, +1.89] | +0.74 dB [+0.59, +0.86] | +0.74 dB [+0.58, +0.97] |
-| school-age size (scaled adult) | Neuromag mag | +0.67 dB [+0.47, +0.80] | +0.14 dB [-0.01, +0.29] | +0.47 dB [+0.36, +0.65] |
-| 2-year size (scaled adult) | Neuromag combined | +1.11 dB [+0.83, +1.35] | -0.13 dB [-0.24, -0.02] | +1.30 dB [+1.15, +1.45] |
-| 2-year size (scaled adult) | Neuromag grad | +2.59 dB [+2.25, +2.87] | +0.74 dB [+0.60, +0.87] | +1.71 dB [+1.52, +1.90] |
-| 2-year size (scaled adult) | Neuromag mag | +1.38 dB [+1.11, +1.63] | +0.14 dB [-0.01, +0.28] | +1.20 dB [+1.06, +1.35] |
-| 2-year template | Neuromag combined | +0.54 dB [+0.29, +0.82] | -0.13 dB [-0.22, -0.04] | +0.93 dB [+0.61, +1.21] |
-| 2-year template | Neuromag grad | +1.94 dB [+1.57, +2.38] | +0.74 dB [+0.60, +0.87] | +1.34 dB [+0.88, +1.73] |
-| 2-year template | Neuromag mag | +0.87 dB [+0.58, +1.15] | +0.14 dB [-0.02, +0.30] | +0.86 dB [+0.56, +1.08] |
-| 18-month template | Neuromag combined | +0.56 dB [+0.33, +0.82] | -0.13 dB [-0.26, -0.04] | +0.91 dB [+0.48, +1.19] |
-| 18-month template | Neuromag grad | +1.98 dB [+1.62, +2.33] | +0.74 dB [+0.60, +0.86] | +1.16 dB [+0.92, +1.70] |
-| 18-month template | Neuromag mag | +0.87 dB [+0.61, +1.08] | +0.14 dB [-0.01, +0.30] | +0.83 dB [+0.41, +1.04] |
-| 12-month template | Neuromag combined | +0.72 dB [+0.45, +1.01] | -0.13 dB [-0.25, -0.03] | +1.14 dB [+0.63, +1.54] |
-| 12-month template | Neuromag grad | +2.30 dB [+1.85, +2.84] | +0.74 dB [+0.60, +0.89] | +1.44 dB [+0.96, +2.40] |
-| 12-month template | Neuromag mag | +1.05 dB [+0.74, +1.40] | +0.14 dB [-0.01, +0.28] | +0.93 dB [+0.51, +1.48] |
+| school-age size (scaled adult) | Neuromag combined | +0.40 dB [+0.23, +0.59] | -0.01 dB [-0.08, +0.08] | +0.34 dB [+0.25, +0.49] |
+| school-age size (scaled adult) | Neuromag grad | +1.64 dB [+1.45, +1.91] | +0.97 dB [+0.79, +1.13] | +0.54 dB [+0.39, +0.74] |
+| school-age size (scaled adult) | Neuromag mag | +0.68 dB [+0.49, +0.82] | +0.27 dB [+0.14, +0.41] | +0.31 dB [+0.22, +0.42] |
+| 2-year size (scaled adult) | Neuromag combined | +1.12 dB [+0.85, +1.37] | -0.01 dB [-0.08, +0.10] | +1.10 dB [+0.94, +1.25] |
+| 2-year size (scaled adult) | Neuromag grad | +2.60 dB [+2.26, +2.87] | +0.97 dB [+0.81, +1.15] | +1.49 dB [+1.28, +1.66] |
+| 2-year size (scaled adult) | Neuromag mag | +1.39 dB [+1.13, +1.64] | +0.27 dB [+0.13, +0.40] | +1.00 dB [+0.87, +1.14] |
+| 2-year template | Neuromag combined | +0.54 dB [+0.29, +0.82] | -0.01 dB [-0.08, +0.07] | +0.68 dB [+0.46, +0.84] |
+| 2-year template | Neuromag grad | +1.94 dB [+1.57, +2.38] | +0.97 dB [+0.83, +1.13] | +1.00 dB [+0.53, +1.48] |
+| 2-year template | Neuromag mag | +0.87 dB [+0.58, +1.15] | +0.27 dB [+0.13, +0.41] | +0.68 dB [+0.41, +0.87] |
+| 18-month template | Neuromag combined | +0.56 dB [+0.33, +0.82] | -0.01 dB [-0.09, +0.08] | +0.61 dB [+0.29, +0.99] |
+| 18-month template | Neuromag grad | +1.98 dB [+1.62, +2.33] | +0.97 dB [+0.81, +1.14] | +1.02 dB [+0.49, +1.51] |
+| 18-month template | Neuromag mag | +0.87 dB [+0.61, +1.08] | +0.27 dB [+0.13, +0.42] | +0.60 dB [+0.32, +0.83] |
+| 12-month template | Neuromag combined | +0.72 dB [+0.45, +1.01] | -0.01 dB [-0.09, +0.08] | +0.76 dB [+0.44, +1.16] |
+| 12-month template | Neuromag grad | +2.30 dB [+1.85, +2.84] | +0.97 dB [+0.81, +1.16] | +1.18 dB [+0.77, +2.08] |
+| 12-month template | Neuromag mag | +1.05 dB [+0.74, +1.40] | +0.27 dB [+0.15, +0.40] | +0.66 dB [+0.45, +1.20] |
 
 ## What drives Delta: placement and helmet fit (dense OPM vs Neuromag combined, intrinsic + brain)
 
@@ -145,177 +145,225 @@ Each child placement is compared with the adult at the same rule (the adult's co
 
 | child anatomy | top (primary) | centred | x-centred | top-18mm | back | counterfactual | counterfactual, x-centred |
 |---|---|---|---|---|---|---|---|
-| school-age size (scaled adult) | +0.59 dB [+0.50, +0.71] | +1.29 dB [+1.16, +1.38] | +0.60 dB [+0.50, +0.70] | +0.58 dB [+0.48, +0.70] | +1.03 dB [+0.87, +1.20] | -0.08 dB [-0.11, -0.04] | -0.08 dB [-0.11, -0.04] |
-| 2-year size (scaled adult) | +1.25 dB [+1.11, +1.37] | +1.85 dB [+1.69, +1.98] | +1.24 dB [+1.08, +1.36] | +1.28 dB [+1.13, +1.39] | +1.42 dB [+1.12, +1.65] | -0.20 dB [-0.26, -0.16] | -0.21 dB [-0.26, -0.16] |
-| 2-year template | +0.88 dB [+0.55, +1.32] | +2.06 dB [+1.60, +2.35] | +0.81 dB [+0.52, +0.97] | +0.89 dB [+0.51, +1.17] | +1.54 dB [+1.46, +1.79] | +0.43 dB [+0.19, +0.82] | -0.20 dB [-0.35, +0.17] |
-| 18-month template | +0.99 dB [+0.58, +1.33] | +2.16 dB [+1.87, +2.29] | +0.76 dB [+0.55, +1.16] | +1.01 dB [+0.60, +1.33] | +1.80 dB [+1.27, +2.01] | +0.30 dB [+0.10, +0.73] | -0.12 dB [-0.30, +0.11] |
-| 12-month template | +1.23 dB [+0.73, +1.61] | +2.66 dB [+2.18, +3.01] | +1.21 dB [+0.68, +1.51] | +1.12 dB [+0.59, +1.58] | +2.00 dB [+1.38, +2.37] | +0.24 dB [-0.05, +0.37] | +0.01 dB [-0.26, +0.25] |
+| school-age size (scaled adult) | +0.44 dB [+0.34, +0.56] | +1.14 dB [+1.00, +1.25] | +0.44 dB [+0.33, +0.55] | +0.44 dB [+0.33, +0.56] | +0.85 dB [+0.65, +1.05] | -0.22 dB [-0.25, -0.18] | -0.21 dB [-0.25, -0.17] |
+| 2-year size (scaled adult) | +1.07 dB [+0.91, +1.18] | +1.68 dB [+1.50, +1.82] | +1.06 dB [+0.90, +1.19] | +1.09 dB [+0.96, +1.22] | +1.21 dB [+0.91, +1.47] | -0.37 dB [-0.43, -0.33] | -0.38 dB [-0.43, -0.32] |
+| 2-year template | +0.73 dB [+0.46, +0.98] | +1.83 dB [+1.46, +2.32] | +0.71 dB [+0.52, +0.86] | +0.77 dB [+0.45, +0.90] | +1.39 dB [+1.05, +1.67] | +0.24 dB [+0.13, +0.56] | -0.30 dB [-0.42, +0.02] |
+| 18-month template | +0.88 dB [+0.54, +1.05] | +2.08 dB [+1.71, +2.22] | +0.75 dB [+0.48, +1.08] | +0.85 dB [+0.57, +1.24] | +1.49 dB [+1.17, +1.76] | +0.18 dB [+0.11, +0.47] | -0.16 dB [-0.39, +0.03] |
+| 12-month template | +0.96 dB [+0.61, +1.51] | +2.50 dB [+2.20, +2.97] | +0.91 dB [+0.60, +1.45] | +0.85 dB [+0.54, +1.46] | +1.68 dB [+1.03, +2.26] | -0.02 dB [-0.16, +0.11] | -0.18 dB [-0.37, +0.06] |
 
 Counterfactual Delta by comparator (helmet scaled with the head; the dependence on the comparator points to the SQUID side of the change):
 
 | child anatomy | comparator | counterfactual | counterfactual, x-centred |
 |---|---|---|---|
-| school-age size (scaled adult) | Neuromag combined | -0.08 dB [-0.11, -0.04] | -0.08 dB [-0.11, -0.04] |
-| school-age size (scaled adult) | Neuromag grad | -0.22 dB [-0.26, -0.17] | -0.22 dB [-0.27, -0.16] |
-| school-age size (scaled adult) | Neuromag mag | -0.03 dB [-0.07, +0.01] | -0.03 dB [-0.06, +0.00] |
-| 2-year size (scaled adult) | Neuromag combined | -0.20 dB [-0.26, -0.16] | -0.21 dB [-0.26, -0.16] |
-| 2-year size (scaled adult) | Neuromag grad | -0.42 dB [-0.49, -0.35] | -0.42 dB [-0.49, -0.35] |
-| 2-year size (scaled adult) | Neuromag mag | -0.12 dB [-0.17, -0.08] | -0.13 dB [-0.17, -0.09] |
-| 2-year template | Neuromag combined | +0.43 dB [+0.19, +0.82] | -0.20 dB [-0.35, +0.17] |
-| 2-year template | Neuromag grad | +0.39 dB [+0.15, +0.62] | -0.26 dB [-0.52, -0.06] |
-| 2-year template | Neuromag mag | +0.56 dB [+0.40, +0.83] | +0.00 dB [-0.25, +0.32] |
-| 18-month template | Neuromag combined | +0.30 dB [+0.10, +0.73] | -0.12 dB [-0.30, +0.11] |
-| 18-month template | Neuromag grad | +0.46 dB [+0.22, +0.60] | -0.14 dB [-0.40, +0.11] |
-| 18-month template | Neuromag mag | +0.44 dB [+0.27, +0.69] | -0.07 dB [-0.16, +0.26] |
-| 12-month template | Neuromag combined | +0.24 dB [-0.05, +0.37] | +0.01 dB [-0.26, +0.25] |
-| 12-month template | Neuromag grad | +0.10 dB [-0.25, +0.24] | -0.13 dB [-0.55, +0.07] |
-| 12-month template | Neuromag mag | +0.31 dB [+0.11, +0.49] | +0.12 dB [+0.01, +0.31] |
+| school-age size (scaled adult) | Neuromag combined | -0.22 dB [-0.25, -0.18] | -0.21 dB [-0.25, -0.17] |
+| school-age size (scaled adult) | Neuromag grad | -0.37 dB [-0.42, -0.32] | -0.37 dB [-0.43, -0.31] |
+| school-age size (scaled adult) | Neuromag mag | -0.16 dB [-0.20, -0.13] | -0.16 dB [-0.19, -0.12] |
+| 2-year size (scaled adult) | Neuromag combined | -0.37 dB [-0.43, -0.33] | -0.38 dB [-0.43, -0.32] |
+| 2-year size (scaled adult) | Neuromag grad | -0.60 dB [-0.68, -0.54] | -0.60 dB [-0.68, -0.53] |
+| 2-year size (scaled adult) | Neuromag mag | -0.28 dB [-0.32, -0.24] | -0.28 dB [-0.33, -0.24] |
+| 2-year template | Neuromag combined | +0.24 dB [+0.13, +0.56] | -0.30 dB [-0.42, +0.02] |
+| 2-year template | Neuromag grad | +0.32 dB [+0.01, +0.62] | -0.42 dB [-0.68, -0.28] |
+| 2-year template | Neuromag mag | +0.38 dB [+0.27, +0.46] | -0.14 dB [-0.30, +0.13] |
+| 18-month template | Neuromag combined | +0.18 dB [+0.11, +0.47] | -0.16 dB [-0.39, +0.03] |
+| 18-month template | Neuromag grad | +0.30 dB [+0.03, +0.55] | -0.29 dB [-0.54, -0.15] |
+| 18-month template | Neuromag mag | +0.32 dB [+0.17, +0.48] | -0.07 dB [-0.28, +0.15] |
+| 12-month template | Neuromag combined | -0.02 dB [-0.16, +0.11] | -0.18 dB [-0.37, +0.06] |
+| 12-month template | Neuromag grad | -0.26 dB [-0.45, +0.17] | -0.36 dB [-0.67, -0.00] |
+| 12-month template | Neuromag mag | +0.03 dB [-0.05, +0.18] | -0.12 dB [-0.20, +0.21] |
 
 ## Absolute detectability (median 20 log10 d of a 10-nAm dipole, intrinsic + brain, primary placement)
 
 | anatomy | OPM dense | OPM matched | Neuromag combined | Neuromag grad | Neuromag mag |
 |---|---|---|---|---|---|
-| adult | -1.71 | -2.92 | -2.66 | -3.63 | -3.00 |
-| school-age size (scaled adult) | -0.68 | -1.77 | -2.15 | -3.34 | -2.42 |
-| 2-year size (scaled adult) | -0.23 | -1.22 | -2.27 | -3.66 | -2.52 |
+| adult | -1.60 | -2.71 | -2.67 | -3.62 | -2.99 |
+| school-age size (scaled adult) | -0.61 | -1.75 | -2.15 | -3.35 | -2.44 |
+| 2-year size (scaled adult) | -0.20 | -1.21 | -2.27 | -3.65 | -2.52 |
 | 2-year template | +0.92 | -0.41 | -1.19 | -2.70 | -1.52 |
-| 18-month template | +1.08 | -0.29 | -1.02 | -2.66 | -1.34 |
-| 12-month template | +1.86 | +0.45 | -0.62 | -2.23 | -0.96 |
+| 18-month template | +1.07 | -0.30 | -1.03 | -2.66 | -1.34 |
+| 12-month template | +1.86 | +0.44 | -0.62 | -2.23 | -0.97 |
 
 Vertex-wise change from the adult (scaled controls; same vertex): both systems gain, the OPM more.
 
 | child anatomy | OPM dense | Neuromag combined | Neuromag grad | Neuromag mag |
 |---|---|---|---|---|
-| school-age size (scaled adult) | +1.25 | +0.65 | +0.45 | +0.69 |
-| 2-year size (scaled adult) | +1.83 | +0.54 | +0.10 | +0.64 |
+| school-age size (scaled adult) | +1.10 | +0.65 | +0.45 | +0.69 |
+| 2-year size (scaled adult) | +1.67 | +0.54 | +0.10 | +0.64 |
+
+## Extended sources (geodesic patches, primary placement, intrinsic + brain)
+
+Median D (dense OPM vs Neuromag combined) over the patch centres (cortical, area-weighted) and the focal D at the same centres; the 20-mm patches use every third of the 300 centres. D does not depend on the moment convention.
+
+| anatomy | radius [mm] | centres | median area [cm2] | D patch | D focal, same centres | Delta patch |
+|---|---|---|---|---|---|---|
+| adult | 5 | 300 | 0.69 | +1.03 | +1.03 |  |
+| adult | 10 | 300 | 2.82 | +1.05 | +1.03 |  |
+| adult | 20 | 100 | 11.46 | +0.83 | +1.05 |  |
+| school-age size (scaled adult) | 5 | 300 | 0.70 | +1.62 | +1.53 | +0.58 |
+| school-age size (scaled adult) | 10 | 300 | 2.80 | +1.59 | +1.53 | +0.54 |
+| school-age size (scaled adult) | 20 | 100 | 11.39 | +1.27 | +1.66 | +0.44 |
+| 2-year size (scaled adult) | 5 | 300 | 0.69 | +2.33 | +2.39 | +1.30 |
+| 2-year size (scaled adult) | 10 | 300 | 2.80 | +2.26 | +2.39 | +1.22 |
+| 2-year size (scaled adult) | 20 | 100 | 11.31 | +1.82 | +2.52 | +0.99 |
+| 2-year template | 5 | 300 | 0.69 | +1.59 | +1.65 | +0.56 |
+| 2-year template | 10 | 300 | 2.81 | +1.63 | +1.65 | +0.58 |
+| 2-year template | 20 | 100 | 11.59 | +1.55 | +1.65 | +0.72 |
+| 18-month template | 5 | 300 | 0.69 | +2.09 | +2.00 | +1.05 |
+| 18-month template | 10 | 300 | 2.81 | +1.85 | +2.00 | +0.81 |
+| 18-month template | 20 | 100 | 11.66 | +1.72 | +2.25 | +0.89 |
+| 12-month template | 5 | 300 | 0.69 | +2.08 | +2.07 | +1.05 |
+| 12-month template | 10 | 300 | 2.82 | +2.07 | +2.07 | +1.02 |
+| 12-month template | 20 | 100 | 11.47 | +1.74 | +2.38 | +0.91 |
+
+Absolute detectability at a fixed current density of 0.5 nAm/mm^2 (moment = density x patch area; human neocortex 0.16-0.77 nAm/mm^2, Murakami & Okada 2015): median detectability and the share of patch centres at or above the usefulness threshold (5):
+
+| anatomy | radius [mm] | Neuromag combined | OPM dense | usable, Neuromag / OPM |
+|---|---|---|---|---|
+| adult | 5 | 1.7 | 2.0 | 0% / 8% |
+| adult | 10 | 4.5 | 5.3 | 43% / 54% |
+| adult | 20 | 9.8 | 11.1 | 91% / 92% |
+| school-age size (scaled adult) | 5 | 1.7 | 2.1 | 0% / 8% |
+| school-age size (scaled adult) | 10 | 4.4 | 5.4 | 41% / 53% |
+| school-age size (scaled adult) | 20 | 9.2 | 11.2 | 90% / 95% |
+| 2-year size (scaled adult) | 5 | 1.6 | 2.2 | 0% / 7% |
+| 2-year size (scaled adult) | 10 | 4.1 | 5.4 | 31% / 54% |
+| 2-year size (scaled adult) | 20 | 8.3 | 10.8 | 86% / 94% |
+| 2-year template | 5 | 2.4 | 2.8 | 8% / 27% |
+| 2-year template | 10 | 7.2 | 9.1 | 66% / 76% |
+| 2-year template | 20 | 15.1 | 19.2 | 99% / 100% |
+| 18-month template | 5 | 2.5 | 3.2 | 7% / 27% |
+| 18-month template | 10 | 7.2 | 9.5 | 71% / 80% |
+| 18-month template | 20 | 13.8 | 17.4 | 97% / 100% |
+| 12-month template | 5 | 2.7 | 3.6 | 6% / 32% |
+| 12-month template | 10 | 8.0 | 10.5 | 77% / 85% |
+| 12-month template | 20 | 16.4 | 20.2 | 100% / 100% |
 
 ## Channel count: the adult's dense array subsampled to each child's site count
 
 | child anatomy | sites | D_child | D_adult, subsampled | Delta at equal channel count |
 |---|---|---|---|---|
-| school-age size (scaled adult) | 172 | +1.45 dB [+1.27, +1.68] | +0.63 dB [+0.42, +0.83] | +0.77 dB [+0.63, +0.89] |
-| 2-year size (scaled adult) | 155 | +2.09 dB [+1.77, +2.43] | +0.46 dB [+0.28, +0.61] | +1.56 dB [+1.34, +1.69] |
-| 2-year template | 151 | +1.84 dB [+1.56, +2.19] | +0.41 dB [+0.27, +0.62] | +1.51 dB [+0.96, +1.78] |
-| 18-month template | 157 | +1.89 dB [+1.65, +2.20] | +0.49 dB [+0.33, +0.65] | +1.40 dB [+0.90, +1.76] |
-| 12-month template | 144 | +2.04 dB [+1.67, +2.42] | +0.34 dB [+0.21, +0.50] | +1.61 dB [+1.35, +2.44] |
+| school-age size (scaled adult) | 174 | +1.50 dB [+1.32, +1.75] | +0.73 dB [+0.58, +0.88] | +0.63 dB [+0.50, +0.77] |
+| 2-year size (scaled adult) | 155 | +2.13 dB [+1.81, +2.48] | +0.59 dB [+0.43, +0.72] | +1.41 dB [+1.23, +1.56] |
+| 2-year template | 151 | +1.84 dB [+1.56, +2.19] | +0.54 dB [+0.41, +0.69] | +1.23 dB [+1.01, +1.43] |
+| 18-month template | 157 | +1.89 dB [+1.65, +2.20] | +0.61 dB [+0.48, +0.74] | +1.37 dB [+0.90, +1.45] |
+| 12-month template | 144 | +2.04 dB [+1.67, +2.42] | +0.46 dB [+0.34, +0.60] | +1.43 dB [+0.99, +2.17] |
 
 ## Delta by depth stratum (dense OPM vs Neuromag combined, intrinsic + brain)
 
 | child anatomy | depth [mm] | n child / adult | D_child | D_adult | Delta [95 % CI] |
 |---|---|---|---|---|---|
 | school-age size (scaled adult) | 0-10 | 0 / 0 | sparse | | |
-| school-age size (scaled adult) | 10-15 | 450 / 222 | +3.87 | +3.40 | +0.47 [-0.05, +0.93] |
-| school-age size (scaled adult) | 15-20 | 1604 / 1221 | +2.79 | +2.22 | +0.57 [+0.38, +0.80] |
-| school-age size (scaled adult) | 20-25 | 1604 / 1572 | +1.73 | +1.39 | +0.34 [+0.20, +0.53] |
-| school-age size (scaled adult) | 25-30 | 1144 / 1289 | +1.02 | +0.77 | +0.25 [+0.12, +0.38] |
-| school-age size (scaled adult) | 30-40 | 1399 / 1539 | +0.57 | +0.30 | +0.27 [+0.17, +0.38] |
-| school-age size (scaled adult) | 40-50 | 633 / 913 | +0.41 | +0.06 | +0.35 [+0.24, +0.47] |
-| school-age size (scaled adult) | 50-60 | 115 / 321 | +0.75 | -0.11 | +0.85 [-0.13, +1.01] |
+| school-age size (scaled adult) | 10-15 | 450 / 222 | +3.98 | +3.41 | +0.57 [+0.11, +0.90] |
+| school-age size (scaled adult) | 15-20 | 1604 / 1221 | +2.86 | +2.27 | +0.60 [+0.40, +0.86] |
+| school-age size (scaled adult) | 20-25 | 1604 / 1572 | +1.77 | +1.48 | +0.29 [+0.13, +0.50] |
+| school-age size (scaled adult) | 25-30 | 1144 / 1289 | +1.03 | +0.87 | +0.16 [+0.02, +0.33] |
+| school-age size (scaled adult) | 30-40 | 1399 / 1539 | +0.59 | +0.45 | +0.15 [+0.03, +0.26] |
+| school-age size (scaled adult) | 40-50 | 633 / 913 | +0.41 | +0.30 | +0.11 [-0.04, +0.23] |
+| school-age size (scaled adult) | 50-60 | 115 / 321 | +0.74 | +0.34 | +0.40 [-0.50, +0.54] |
 | school-age size (scaled adult) | 60-90 | 0 / 26 | sparse | | |
 | 2-year size (scaled adult) | 0-10 | 2 / 0 | sparse | | |
-| 2-year size (scaled adult) | 10-15 | 610 / 222 | +4.88 | +3.40 | +1.48 [+1.00, +1.93] |
-| 2-year size (scaled adult) | 15-20 | 1768 / 1221 | +3.44 | +2.22 | +1.22 [+1.01, +1.46] |
-| 2-year size (scaled adult) | 20-25 | 1610 / 1572 | +2.13 | +1.39 | +0.74 [+0.59, +0.93] |
-| 2-year size (scaled adult) | 25-30 | 1055 / 1289 | +1.24 | +0.77 | +0.47 [+0.31, +0.64] |
-| 2-year size (scaled adult) | 30-40 | 1301 / 1539 | +0.74 | +0.30 | +0.44 [+0.33, +0.59] |
-| 2-year size (scaled adult) | 40-50 | 463 / 913 | +0.59 | +0.06 | +0.53 [+0.41, +0.67] |
-| 2-year size (scaled adult) | 50-60 | 46 / 321 | +1.05 | -0.11 | +1.16 [-0.05, +1.28] |
+| 2-year size (scaled adult) | 10-15 | 610 / 222 | +4.92 | +3.41 | +1.52 [+1.09, +1.84] |
+| 2-year size (scaled adult) | 15-20 | 1768 / 1221 | +3.47 | +2.27 | +1.20 [+1.00, +1.46] |
+| 2-year size (scaled adult) | 20-25 | 1610 / 1572 | +2.17 | +1.48 | +0.68 [+0.52, +0.89] |
+| 2-year size (scaled adult) | 25-30 | 1055 / 1289 | +1.27 | +0.87 | +0.40 [+0.21, +0.58] |
+| 2-year size (scaled adult) | 30-40 | 1301 / 1539 | +0.77 | +0.45 | +0.32 [+0.20, +0.49] |
+| 2-year size (scaled adult) | 40-50 | 463 / 913 | +0.63 | +0.30 | +0.33 [+0.15, +0.51] |
+| 2-year size (scaled adult) | 50-60 | 46 / 321 | +1.16 | +0.34 | +0.81 [-0.45, +0.98] |
 | 2-year size (scaled adult) | 60-90 | 0 / 26 | sparse | | |
 | 2-year template | 0-10 | 26 / 0 | sparse | | |
-| 2-year template | 10-15 | 1488 / 222 | +4.08 | +3.40 | +0.67 [+0.13, +1.26] |
-| 2-year template | 15-20 | 1666 / 1221 | +2.63 | +2.22 | +0.42 [+0.07, +0.79] |
-| 2-year template | 20-25 | 1410 / 1572 | +1.65 | +1.39 | +0.27 [+0.05, +0.49] |
-| 2-year template | 25-30 | 980 / 1289 | +1.04 | +0.77 | +0.26 [+0.10, +0.45] |
-| 2-year template | 30-40 | 1175 / 1539 | +0.73 | +0.30 | +0.43 [+0.28, +0.70] |
-| 2-year template | 40-50 | 502 / 913 | +0.54 | +0.06 | +0.49 [+0.38, +0.84] |
-| 2-year template | 50-60 | 229 / 321 | +1.19 | -0.11 | +1.30 [+0.51, +1.60] |
-| 2-year template | 60-90 | 83 / 26 | +2.19 | -0.35 | +2.55 [+2.05, +2.74] |
+| 2-year template | 10-15 | 1488 / 222 | +4.08 | +3.41 | +0.67 [+0.18, +1.14] |
+| 2-year template | 15-20 | 1666 / 1221 | +2.63 | +2.27 | +0.37 [+0.03, +0.75] |
+| 2-year template | 20-25 | 1410 / 1572 | +1.65 | +1.48 | +0.17 [-0.05, +0.41] |
+| 2-year template | 25-30 | 980 / 1289 | +1.04 | +0.87 | +0.17 [-0.01, +0.35] |
+| 2-year template | 30-40 | 1175 / 1539 | +0.73 | +0.45 | +0.29 [+0.12, +0.55] |
+| 2-year template | 40-50 | 502 / 913 | +0.54 | +0.30 | +0.24 [+0.10, +0.60] |
+| 2-year template | 50-60 | 229 / 321 | +1.19 | +0.34 | +0.85 [+0.08, +1.17] |
+| 2-year template | 60-90 | 83 / 26 | +2.19 | +0.58 | +1.62 [+1.44, +1.92] |
 | 18-month template | 0-10 | 32 / 0 | sparse | | |
-| 18-month template | 10-15 | 744 / 222 | +4.21 | +3.40 | +0.81 [+0.22, +1.47] |
-| 18-month template | 15-20 | 1788 / 1221 | +2.94 | +2.22 | +0.72 [+0.34, +1.30] |
-| 18-month template | 20-25 | 1539 / 1572 | +1.92 | +1.39 | +0.54 [+0.21, +0.95] |
-| 18-month template | 25-30 | 1161 / 1289 | +1.31 | +0.77 | +0.54 [+0.31, +0.76] |
-| 18-month template | 30-40 | 1290 / 1539 | +0.85 | +0.30 | +0.55 [+0.38, +0.78] |
-| 18-month template | 40-50 | 523 / 913 | +0.54 | +0.06 | +0.48 [+0.38, +0.79] |
-| 18-month template | 50-60 | 221 / 321 | +1.24 | -0.11 | +1.35 [+0.60, +1.62] |
-| 18-month template | 60-90 | 65 / 26 | +2.10 | -0.35 | +2.45 [+1.96, +2.57] |
+| 18-month template | 10-15 | 744 / 222 | +4.21 | +3.41 | +0.80 [+0.30, +1.38] |
+| 18-month template | 15-20 | 1788 / 1221 | +2.94 | +2.27 | +0.68 [+0.30, +1.25] |
+| 18-month template | 20-25 | 1539 / 1572 | +1.92 | +1.48 | +0.44 [+0.12, +0.87] |
+| 18-month template | 25-30 | 1161 / 1289 | +1.31 | +0.87 | +0.44 [+0.21, +0.67] |
+| 18-month template | 30-40 | 1290 / 1539 | +0.85 | +0.45 | +0.41 [+0.24, +0.63] |
+| 18-month template | 40-50 | 523 / 913 | +0.54 | +0.30 | +0.24 [+0.11, +0.56] |
+| 18-month template | 50-60 | 221 / 321 | +1.24 | +0.34 | +0.90 [+0.14, +1.17] |
+| 18-month template | 60-90 | 65 / 26 | +2.10 | +0.58 | +1.52 [+1.42, +1.83] |
 | 12-month template | 0-10 | 78 / 0 | sparse | | |
-| 12-month template | 10-15 | 1744 / 222 | +4.55 | +3.40 | +1.15 [+0.41, +1.87] |
-| 12-month template | 15-20 | 1768 / 1221 | +2.90 | +2.22 | +0.69 [+0.14, +1.09] |
-| 12-month template | 20-25 | 1452 / 1572 | +1.78 | +1.39 | +0.40 [+0.06, +0.71] |
-| 12-month template | 25-30 | 928 / 1289 | +1.09 | +0.77 | +0.31 [+0.15, +0.52] |
-| 12-month template | 30-40 | 1029 / 1539 | +0.71 | +0.30 | +0.41 [+0.26, +0.60] |
-| 12-month template | 40-50 | 390 / 913 | +0.58 | +0.06 | +0.52 [+0.40, +0.72] |
-| 12-month template | 50-60 | 184 / 321 | +1.12 | -0.11 | +1.23 [+0.70, +1.38] |
-| 12-month template | 60-90 | 19 / 26 | +1.42 | -0.35 | +1.77 [+1.28, +1.90] |
+| 12-month template | 10-15 | 1744 / 222 | +4.55 | +3.41 | +1.15 [+0.45, +1.77] |
+| 12-month template | 15-20 | 1768 / 1221 | +2.90 | +2.27 | +0.64 [+0.11, +1.03] |
+| 12-month template | 20-25 | 1452 / 1572 | +1.78 | +1.48 | +0.30 [-0.03, +0.62] |
+| 12-month template | 25-30 | 928 / 1289 | +1.09 | +0.87 | +0.22 [+0.04, +0.42] |
+| 12-month template | 30-40 | 1029 / 1539 | +0.71 | +0.45 | +0.26 [+0.11, +0.45] |
+| 12-month template | 40-50 | 390 / 913 | +0.58 | +0.30 | +0.28 [+0.11, +0.49] |
+| 12-month template | 50-60 | 184 / 321 | +1.12 | +0.34 | +0.78 [+0.24, +0.95] |
+| 12-month template | 60-90 | 19 / 26 | +1.42 | +0.58 | +0.84 [+0.77, +1.15] |
 
 Scaled controls, vertex-wise (homologous) Delta by the adult's depth:
 
 | child anatomy | adult depth [mm] | n | Delta [95 % CI] |
 |---|---|---|---|
 | school-age size (scaled adult) | 0-10 | 0 | sparse |
-| school-age size (scaled adult) | 10-15 | 175 | +1.00 [+0.65, +1.51] |
-| school-age size (scaled adult) | 15-20 | 1134 | +0.99 [+0.85, +1.19] |
-| school-age size (scaled adult) | 20-25 | 1564 | +0.82 [+0.70, +0.96] |
-| school-age size (scaled adult) | 25-30 | 1284 | +0.60 [+0.52, +0.72] |
-| school-age size (scaled adult) | 30-40 | 1533 | +0.38 [+0.31, +0.46] |
-| school-age size (scaled adult) | 40-50 | 912 | +0.33 [+0.22, +0.49] |
-| school-age size (scaled adult) | 50-60 | 321 | +0.53 [+0.29, +0.78] |
-| school-age size (scaled adult) | 60-90 | 26 | +1.28 [-0.49, +1.51] |
+| school-age size (scaled adult) | 10-15 | 175 | +1.05 [+0.57, +1.28] |
+| school-age size (scaled adult) | 15-20 | 1134 | +0.89 [+0.74, +1.16] |
+| school-age size (scaled adult) | 20-25 | 1564 | +0.76 [+0.62, +0.91] |
+| school-age size (scaled adult) | 25-30 | 1284 | +0.52 [+0.43, +0.65] |
+| school-age size (scaled adult) | 30-40 | 1533 | +0.26 [+0.20, +0.34] |
+| school-age size (scaled adult) | 40-50 | 912 | +0.13 [+0.07, +0.19] |
+| school-age size (scaled adult) | 50-60 | 321 | +0.14 [+0.05, +0.23] |
+| school-age size (scaled adult) | 60-90 | 26 | +0.33 [-0.56, +0.40] |
 | 2-year size (scaled adult) | 0-10 | 0 | sparse |
-| 2-year size (scaled adult) | 10-15 | 152 | +2.45 [+1.94, +2.67] |
-| 2-year size (scaled adult) | 15-20 | 1082 | +2.04 [+1.93, +2.19] |
-| 2-year size (scaled adult) | 20-25 | 1551 | +1.68 [+1.54, +1.81] |
-| 2-year size (scaled adult) | 25-30 | 1283 | +1.23 [+1.11, +1.34] |
-| 2-year size (scaled adult) | 30-40 | 1532 | +0.75 [+0.68, +0.86] |
-| 2-year size (scaled adult) | 40-50 | 909 | +0.54 [+0.42, +0.68] |
-| 2-year size (scaled adult) | 50-60 | 320 | +0.63 [+0.45, +0.93] |
-| 2-year size (scaled adult) | 60-90 | 26 | +1.44 [-0.20, +1.73] |
+| 2-year size (scaled adult) | 10-15 | 152 | +2.40 [+1.78, +2.54] |
+| 2-year size (scaled adult) | 15-20 | 1082 | +1.94 [+1.80, +2.11] |
+| 2-year size (scaled adult) | 20-25 | 1551 | +1.57 [+1.44, +1.66] |
+| 2-year size (scaled adult) | 25-30 | 1283 | +1.13 [+1.03, +1.22] |
+| 2-year size (scaled adult) | 30-40 | 1532 | +0.64 [+0.58, +0.70] |
+| 2-year size (scaled adult) | 40-50 | 909 | +0.35 [+0.29, +0.43] |
+| 2-year size (scaled adult) | 50-60 | 320 | +0.33 [+0.21, +0.46] |
+| 2-year size (scaled adult) | 60-90 | 26 | +0.71 [-0.30, +0.72] |
 
 Templates: the pooled difference of the medians (D_child - D_adult over all targets) and the same with the template's targets reweighted to the adult's area share per depth stratum; then radial (0-30 deg) and tangential (60-90 deg) sources at matched depth (difference of the medians; '-': fewer than 10 targets):
 
 | template | pooled | depth-reweighted | area at 10-20 mm (adult) | median depth [mm] (adult) | radial 0-15 / 15-25 / 25-40 / 40-90 mm | tangential 0-15 / 15-25 / 25-40 / 40-90 mm |
 |---|---|---|---|---|---|---|
-| 2-year template | +1.00 | +0.48 | 42% (21%) | 21.8 (26.2) | +1.00 / +0.94 / +1.03 / +0.80 | +0.50 / +0.35 / +0.19 / +0.78 |
-| 18-month template | +1.05 | +0.68 | 36% (21%) | 23.2 (26.2) | +1.43 / +1.61 / +1.28 / +0.83 | +0.66 / +0.55 / +0.29 / +0.70 |
-| 12-month template | +1.20 | +0.44 | 46% (21%) | 20.6 (26.2) | +1.73 / +0.99 / +1.04 / +0.81 | +0.80 / +0.47 / +0.18 / +0.75 |
+| 2-year template | +0.85 | +0.32 | 42% (21%) | 21.8 (26.2) | +0.76 / +0.65 / +0.63 / +0.08 | +0.22 / +0.30 / +0.11 / +0.61 |
+| 18-month template | +0.90 | +0.53 | 36% (21%) | 23.2 (26.2) | +1.19 / +1.32 / +0.88 / +0.11 | +0.38 / +0.49 / +0.20 / +0.52 |
+| 12-month template | +1.05 | +0.29 | 46% (21%) | 20.6 (26.2) | +1.49 / +0.70 / +0.64 / +0.08 | +0.52 / +0.41 / +0.10 / +0.57 |
 
 ## Delta by orientation stratum (0 deg = radial to the inner skull; dense OPM vs Neuromag combined)
 
 | child anatomy | orientation [deg] | n child / adult | D_child | D_adult | Delta [95 % CI] |
 |---|---|---|---|---|---|
-| school-age size (scaled adult) | 0-30 | 676 / 707 | +1.19 | +0.30 | +0.88 [+0.66, +1.18] |
-| school-age size (scaled adult) | 30-60 | 2297 / 2346 | +1.23 | +0.61 | +0.62 [+0.30, +0.89] |
-| school-age size (scaled adult) | 60-90.1 | 3976 / 4050 | +1.64 | +1.05 | +0.59 [+0.26, +0.94] |
-| 2-year size (scaled adult) | 0-30 | 665 / 707 | +1.69 | +0.30 | +1.39 [+1.05, +1.64] |
-| 2-year size (scaled adult) | 30-60 | 2269 / 2346 | +1.80 | +0.61 | +1.19 [+0.80, +1.55] |
-| 2-year size (scaled adult) | 60-90.1 | 3921 / 4050 | +2.38 | +1.05 | +1.33 [+0.89, +1.71] |
-| 2-year template | 0-30 | 1219 / 707 | +2.78 | +0.30 | +2.48 [+1.82, +3.06] |
-| 2-year template | 30-60 | 2293 / 2346 | +1.76 | +0.61 | +1.15 [+0.76, +1.51] |
-| 2-year template | 60-90.1 | 4047 / 4050 | +1.72 | +1.05 | +0.67 [+0.32, +1.02] |
-| 18-month template | 0-30 | 1026 / 707 | +2.57 | +0.30 | +2.26 [+1.68, +2.73] |
-| 18-month template | 30-60 | 2398 / 2346 | +1.91 | +0.61 | +1.30 [+0.86, +1.69] |
-| 18-month template | 60-90.1 | 3939 / 4050 | +1.77 | +1.05 | +0.72 [+0.41, +1.11] |
-| 12-month template | 0-30 | 1294 / 707 | +3.16 | +0.30 | +2.86 [+1.98, +3.86] |
-| 12-month template | 30-60 | 2461 / 2346 | +1.90 | +0.61 | +1.29 [+0.79, +1.76] |
-| 12-month template | 60-90.1 | 3837 / 4050 | +1.87 | +1.05 | +0.82 [+0.42, +1.24] |
+| school-age size (scaled adult) | 0-30 | 676 / 707 | +1.25 | +0.84 | +0.41 [+0.20, +0.63] |
+| school-age size (scaled adult) | 30-60 | 2297 / 2346 | +1.27 | +0.83 | +0.44 [+0.15, +0.73] |
+| school-age size (scaled adult) | 60-90.1 | 3976 / 4050 | +1.70 | +1.13 | +0.58 [+0.22, +0.91] |
+| 2-year size (scaled adult) | 0-30 | 665 / 707 | +1.77 | +0.84 | +0.93 [+0.70, +1.16] |
+| 2-year size (scaled adult) | 30-60 | 2269 / 2346 | +1.84 | +0.83 | +1.02 [+0.66, +1.38] |
+| 2-year size (scaled adult) | 60-90.1 | 3921 / 4050 | +2.42 | +1.13 | +1.29 [+0.86, +1.64] |
+| 2-year template | 0-30 | 1219 / 707 | +2.78 | +0.84 | +1.94 [+1.33, +2.50] |
+| 2-year template | 30-60 | 2293 / 2346 | +1.76 | +0.83 | +0.93 [+0.57, +1.29] |
+| 2-year template | 60-90.1 | 4047 / 4050 | +1.72 | +1.13 | +0.59 [+0.25, +0.93] |
+| 18-month template | 0-30 | 1026 / 707 | +2.57 | +0.84 | +1.73 [+1.17, +2.19] |
+| 18-month template | 30-60 | 2398 / 2346 | +1.91 | +0.83 | +1.08 [+0.69, +1.46] |
+| 18-month template | 60-90.1 | 3939 / 4050 | +1.77 | +1.13 | +0.65 [+0.34, +1.01] |
+| 12-month template | 0-30 | 1294 / 707 | +3.16 | +0.84 | +2.32 [+1.46, +3.37] |
+| 12-month template | 30-60 | 2461 / 2346 | +1.90 | +0.83 | +1.07 [+0.59, +1.53] |
+| 12-month template | 60-90.1 | 3837 / 4050 | +1.87 | +1.13 | +0.75 [+0.35, +1.16] |
 
 ## Placement, counterfactual helmet and sensitivity (median D, dense OPM vs Neuromag combined, intrinsic + brain)
 
-| anatomy | centred | top | back | x+5mm | x-5mm | y+5mm | y-5mm | pitch+10deg | pitch-10deg | roll+5deg | roll-5deg | x-centred | top-18mm | counterfactual | counterfactual_x-centred |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| adult | +1.09 | +0.85 | +0.98 | +0.96 | +1.12 | +1.09 | +0.83 | +0.80 | +1.25 | +1.10 | +1.00 | +0.87 | +0.72 | +1.09 | +1.11 |
-| school-age size (scaled adult) | +2.43 | +1.45 | +1.94 | +1.44 | +1.49 | +1.52 | +1.41 | +1.45 | +2.48 | +1.42 | +1.65 | +1.46 | +1.32 | +0.90 | +0.91 |
-| 2-year size (scaled adult) | +3.00 | +2.09 | +2.29 | +1.96 | +2.11 | +2.17 | +2.01 | +1.64 | +2.98 | +1.88 | +2.45 | +2.09 | +1.98 | +0.68 | +0.69 |
-| 2-year template | +3.08 | +1.84 | +2.51 | +2.07 | +1.75 | +1.84 | +1.85 | +1.78 | +2.00 | +1.79 | +2.04 | +1.76 | +1.70 | +1.55 | +1.00 |
-| 18-month template | +3.13 | +1.89 | +2.48 | +2.05 | +1.80 | +1.86 | +1.82 | +1.80 | +2.03 | +1.80 | +2.04 | +1.81 | +1.75 | +1.47 | +1.02 |
-| 12-month template | +3.65 | +2.04 | +2.79 | +2.13 | +2.03 | +2.07 | +2.06 | +1.98 | +2.22 | +2.01 | +2.11 | +1.98 | +1.85 | +1.16 | +0.99 |
+| anatomy | centred | top | back | x+5mm | x-5mm | y+5mm | y-5mm | pitch+10deg | pitch-10deg | roll+5deg | roll-5deg | yaw+10deg | yaw-10deg | x-centred | top-18mm | counterfactual | counterfactual_x-centred |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| adult | +1.27 | +1.00 | +1.13 | +1.16 | +1.27 | +1.28 | +0.98 | +1.02 | +1.43 | +1.26 | +1.19 | +1.03 | +1.22 | +1.01 | +0.87 | +1.27 | +1.28 |
+| school-age size (scaled adult) | +2.52 | +1.50 | +2.02 | +1.49 | +1.52 | +1.58 | +1.47 | +1.50 | +2.56 | +1.46 | +1.71 | +1.54 | +1.50 | +1.51 | +1.38 | +0.97 | +0.97 |
+| 2-year size (scaled adult) | +3.05 | +2.13 | +2.34 | +2.00 | +2.15 | +2.23 | +2.05 | +1.69 | +3.04 | +1.93 | +2.50 | +2.26 | +2.20 | +2.13 | +2.03 | +0.73 | +0.73 |
+| 2-year template | +3.08 | +1.84 | +2.51 | +2.07 | +1.75 | +1.84 | +1.85 | +1.78 | +2.00 | +1.79 | +2.04 | +1.90 | +1.78 | +1.76 | +1.70 | +1.55 | +1.00 |
+| 18-month template | +3.13 | +1.89 | +2.48 | +2.05 | +1.80 | +1.86 | +1.82 | +1.80 | +2.03 | +1.80 | +2.04 | +1.90 | +1.81 | +1.81 | +1.75 | +1.47 | +1.02 |
+| 12-month template | +3.65 | +2.04 | +2.79 | +2.13 | +2.03 | +2.07 | +2.06 | +1.98 | +2.22 | +2.01 | +2.11 | +2.07 | +1.99 | +1.98 | +1.85 | +1.16 | +0.99 |
 
 | anatomy | opm_asd_7fT | opm_asd_10fT | opm_asd_15fT | opm_asd_20fT | opm_asd_30fT | background_x0.5 | background_x2 | bem1 |
 |---|---|---|---|---|---|---|---|---|
-| adult | +1.80 | +1.37 | +0.85 | +0.44 | -0.15 | +0.82 | +0.85 | +0.90 |
-| school-age size (scaled adult) | +2.48 | +2.05 | +1.45 | +0.99 | +0.31 | +1.44 | +1.44 | +1.43 |
-| 2-year size (scaled adult) | +3.11 | +2.66 | +2.09 | +1.64 | +0.94 | +2.10 | +2.03 | +2.08 |
+| adult | +2.05 | +1.58 | +1.00 | +0.56 | -0.05 | +0.97 | +1.01 | +0.97 |
+| school-age size (scaled adult) | +2.52 | +2.10 | +1.50 | +1.05 | +0.37 | +1.50 | +1.49 | +1.49 |
+| 2-year size (scaled adult) | +3.15 | +2.71 | +2.13 | +1.68 | +0.97 | +2.15 | +2.08 | +2.10 |
 | 2-year template | +2.81 | +2.40 | +1.84 | +1.38 | +0.61 | +1.86 | +1.79 | +1.80 |
 | 18-month template | +2.98 | +2.53 | +1.89 | +1.39 | +0.61 | +1.86 | +1.90 | +1.81 |
 | 12-month template | +3.06 | +2.64 | +2.04 | +1.54 | +0.77 | +2.05 | +1.98 | +2.03 |
@@ -324,31 +372,31 @@ Difference of these medians, child minus adult, with the same variant applied to
 
 | child anatomy | opm_asd_7fT | opm_asd_10fT | opm_asd_15fT | opm_asd_20fT | opm_asd_30fT | background_x0.5 | background_x2 | bem1 |
 |---|---|---|---|---|---|---|---|---|
-| school-age size (scaled adult) | +0.67 | +0.68 | +0.61 | +0.55 | +0.46 | +0.62 | +0.59 | +0.53 |
-| 2-year size (scaled adult) | +1.31 | +1.29 | +1.24 | +1.20 | +1.09 | +1.28 | +1.18 | +1.17 |
-| 2-year template | +1.01 | +1.03 | +1.00 | +0.94 | +0.76 | +1.04 | +0.94 | +0.90 |
-| 18-month template | +1.18 | +1.16 | +1.05 | +0.95 | +0.76 | +1.04 | +1.05 | +0.91 |
-| 12-month template | +1.26 | +1.27 | +1.20 | +1.10 | +0.92 | +1.23 | +1.13 | +1.13 |
+| school-age size (scaled adult) | +0.48 | +0.52 | +0.51 | +0.49 | +0.42 | +0.53 | +0.48 | +0.51 |
+| 2-year size (scaled adult) | +1.11 | +1.13 | +1.14 | +1.12 | +1.03 | +1.18 | +1.07 | +1.13 |
+| 2-year template | +0.76 | +0.82 | +0.85 | +0.82 | +0.66 | +0.89 | +0.78 | +0.83 |
+| 18-month template | +0.93 | +0.94 | +0.90 | +0.83 | +0.66 | +0.89 | +0.89 | +0.84 |
+| 12-month template | +1.01 | +1.05 | +1.05 | +0.98 | +0.82 | +1.08 | +0.97 | +1.06 |
 
 ## Regions that gain or lose with the placement (median D by lobe, dense OPM vs Neuromag combined, intrinsic + brain)
 
 | anatomy | placement | frontal | parietal | temporal | occipital | cingulate | insula |
 |---|---|---|---|---|---|---|---|
-| adult | centred | +1.71 | +1.05 | +0.92 | +0.65 | +0.13 | +0.31 |
-| adult | top | +1.33 | +0.75 | +0.80 | +0.54 | +0.02 | +0.13 |
-| adult | x-centred | +1.37 | +0.77 | +0.80 | +0.54 | +0.02 | +0.10 |
-| adult | back | +1.85 | +0.85 | +0.78 | +0.30 | +0.11 | +0.22 |
-| adult | counterfactual | +1.71 | +1.05 | +0.92 | +0.65 | +0.13 | +0.31 |
-| school-age size (scaled adult) | centred | +3.06 | +2.53 | +2.38 | +1.98 | +0.87 | +1.24 |
-| school-age size (scaled adult) | top | +1.71 | +1.33 | +1.77 | +1.49 | +0.35 | +0.76 |
-| school-age size (scaled adult) | x-centred | +1.72 | +1.33 | +1.78 | +1.49 | +0.35 | +0.76 |
-| school-age size (scaled adult) | back | +3.36 | +1.86 | +1.86 | +0.72 | +0.74 | +1.06 |
-| school-age size (scaled adult) | counterfactual | +1.33 | +0.90 | +0.81 | +0.59 | +0.28 | +0.44 |
-| 2-year size (scaled adult) | centred | +3.73 | +3.05 | +3.03 | +2.35 | +1.07 | +1.60 |
-| 2-year size (scaled adult) | top | +2.55 | +2.02 | +2.41 | +1.90 | +0.56 | +1.12 |
-| 2-year size (scaled adult) | x-centred | +2.56 | +2.02 | +2.40 | +1.89 | +0.56 | +1.13 |
-| 2-year size (scaled adult) | back | +3.99 | +2.11 | +2.21 | +0.74 | +0.86 | +1.31 |
-| 2-year size (scaled adult) | counterfactual | +1.14 | +0.66 | +0.59 | +0.36 | +0.17 | +0.34 |
+| adult | centred | +1.77 | +1.14 | +1.34 | +0.93 | +0.40 | +0.73 |
+| adult | top | +1.40 | +0.84 | +1.17 | +0.79 | +0.25 | +0.56 |
+| adult | x-centred | +1.43 | +0.87 | +1.19 | +0.80 | +0.25 | +0.52 |
+| adult | back | +1.91 | +0.94 | +1.17 | +0.47 | +0.37 | +0.65 |
+| adult | counterfactual | +1.77 | +1.14 | +1.34 | +0.93 | +0.40 | +0.73 |
+| school-age size (scaled adult) | centred | +3.14 | +2.57 | +2.53 | +1.95 | +0.88 | +1.31 |
+| school-age size (scaled adult) | top | +1.78 | +1.37 | +1.91 | +1.48 | +0.35 | +0.83 |
+| school-age size (scaled adult) | x-centred | +1.79 | +1.37 | +1.90 | +1.48 | +0.35 | +0.81 |
+| school-age size (scaled adult) | back | +3.43 | +1.90 | +1.99 | +0.74 | +0.74 | +1.12 |
+| school-age size (scaled adult) | counterfactual | +1.40 | +0.96 | +0.94 | +0.59 | +0.28 | +0.50 |
+| 2-year size (scaled adult) | centred | +3.77 | +3.06 | +3.14 | +2.39 | +1.10 | +1.62 |
+| 2-year size (scaled adult) | top | +2.58 | +2.03 | +2.50 | +1.93 | +0.59 | +1.20 |
+| 2-year size (scaled adult) | x-centred | +2.58 | +2.03 | +2.48 | +1.92 | +0.59 | +1.19 |
+| 2-year size (scaled adult) | back | +4.02 | +2.12 | +2.32 | +0.76 | +0.91 | +1.36 |
+| 2-year size (scaled adult) | counterfactual | +1.19 | +0.67 | +0.67 | +0.39 | +0.20 | +0.40 |
 | 2-year template | centred | +3.71 | +3.02 | +3.27 | +2.74 | +1.10 | +1.96 |
 | 2-year template | top | +2.02 | +1.39 | +2.63 | +2.08 | +0.61 | +1.34 |
 | 2-year template | x-centred | +1.95 | +1.30 | +2.63 | +2.02 | +0.57 | +1.28 |
@@ -363,18 +411,18 @@ Difference of these medians, child minus adult, with the same variant applied to
 | 12-month template | top | +2.46 | +1.44 | +3.02 | +2.24 | +0.59 | +1.24 |
 | 12-month template | x-centred | +2.42 | +1.37 | +3.01 | +2.26 | +0.57 | +1.19 |
 | 12-month template | back | +4.69 | +2.58 | +2.92 | +1.07 | +1.01 | +1.59 |
-| 12-month template | counterfactual | +2.06 | +0.85 | +1.24 | +0.62 | +0.44 | +0.70 |
+| 12-month template | counterfactual | +2.06 | +0.85 | +1.24 | +0.62 | +0.44 | +0.71 |
 
 ## Source-to-sensor distance (median, mm) by depth below the scalp
 
 | anatomy | sensors | 0-10 | 10-15 | 15-20 | 20-25 | 25-30 | 30-40 | 40-50 | 50-60 | 60-90 |
 |---|---|---|---|---|---|---|---|---|---|---|
 | adult | squid:top | - | 45 | 48 | 52 | 57 | 64 | 74 | 82 | 87 |
-| adult | opm_dense | - | 23 | 27 | 32 | 36 | 44 | 54 | 64 | 69 |
+| adult | opm_dense | - | 22 | 27 | 31 | 36 | 43 | 53 | 63 | 69 |
 | school-age size (scaled adult) | squid:top | - | 48 | 52 | 56 | 61 | 69 | 75 | 78 | - |
-| school-age size (scaled adult) | opm_dense | - | 22 | 26 | 31 | 36 | 43 | 53 | 61 | - |
+| school-age size (scaled adult) | opm_dense | - | 22 | 26 | 31 | 35 | 43 | 52 | 61 | - |
 | 2-year size (scaled adult) | squid:top | 57 | 54 | 57 | 62 | 67 | 75 | 80 | 84 | - |
-| 2-year size (scaled adult) | opm_dense | 18 | 22 | 26 | 31 | 36 | 43 | 53 | 59 | - |
+| 2-year size (scaled adult) | opm_dense | 17 | 22 | 26 | 31 | 36 | 43 | 53 | 59 | - |
 | 2-year template | squid:top | 45 | 47 | 50 | 56 | 60 | 69 | 74 | 83 | 89 |
 | 2-year template | opm_dense | 19 | 21 | 26 | 30 | 35 | 42 | 52 | 61 | 70 |
 | 18-month template | squid:top | 44 | 48 | 51 | 56 | 61 | 70 | 75 | 83 | 90 |
@@ -387,41 +435,41 @@ Difference of these medians, child minus adult, with the same variant applied to
 | anatomy | channels | brain background | intrinsic |
 |---|---|---|---|
 | adult | squid:top/grad | 41.2 | 21.3 |
-| adult | squid:top/mag | 202.6 | 20.7 |
+| adult | squid:top/mag | 202.4 | 20.7 |
 | adult | squid:centred/grad | 37.1 | 21.3 |
 | adult | squid:centred/mag | 192.1 | 20.7 |
-| adult | opm_dense/mag | 490.9 | 88.8 |
-| adult | opm_matched/mag | 505.0 | 88.8 |
+| adult | opm_dense/mag | 494.4 | 88.8 |
+| adult | opm_matched/mag | 505.5 | 88.8 |
 | school-age size (scaled adult) | squid:top/grad | 29.8 | 21.3 |
 | school-age size (scaled adult) | squid:top/mag | 149.8 | 20.7 |
 | school-age size (scaled adult) | squid:centred/grad | 21.4 | 21.3 |
 | school-age size (scaled adult) | squid:centred/mag | 131.0 | 20.7 |
-| school-age size (scaled adult) | opm_dense/mag | 515.7 | 88.8 |
-| school-age size (scaled adult) | opm_matched/mag | 515.0 | 88.8 |
+| school-age size (scaled adult) | opm_dense/mag | 525.0 | 88.8 |
+| school-age size (scaled adult) | opm_matched/mag | 530.6 | 88.8 |
 | 2-year size (scaled adult) | squid:top/grad | 23.4 | 21.3 |
-| 2-year size (scaled adult) | squid:top/mag | 124.9 | 20.7 |
+| 2-year size (scaled adult) | squid:top/mag | 124.8 | 20.7 |
 | 2-year size (scaled adult) | squid:centred/grad | 16.6 | 21.3 |
 | 2-year size (scaled adult) | squid:centred/mag | 108.0 | 20.7 |
-| 2-year size (scaled adult) | opm_dense/mag | 528.3 | 88.8 |
-| 2-year size (scaled adult) | opm_matched/mag | 541.7 | 88.8 |
+| 2-year size (scaled adult) | opm_dense/mag | 537.1 | 88.8 |
+| 2-year size (scaled adult) | opm_matched/mag | 543.8 | 88.8 |
 | 2-year template | squid:top/grad | 23.4 | 21.3 |
-| 2-year template | squid:top/mag | 119.6 | 20.7 |
+| 2-year template | squid:top/mag | 119.7 | 20.7 |
 | 2-year template | squid:centred/grad | 16.4 | 21.3 |
 | 2-year template | squid:centred/mag | 100.1 | 20.7 |
-| 2-year template | opm_dense/mag | 488.4 | 88.8 |
-| 2-year template | opm_matched/mag | 483.8 | 88.8 |
+| 2-year template | opm_dense/mag | 488.5 | 88.8 |
+| 2-year template | opm_matched/mag | 483.9 | 88.8 |
 | 18-month template | squid:top/grad | 21.1 | 21.3 |
-| 18-month template | squid:top/mag | 110.0 | 20.7 |
+| 18-month template | squid:top/mag | 110.1 | 20.7 |
 | 18-month template | squid:centred/grad | 15.7 | 21.3 |
-| 18-month template | squid:centred/mag | 94.2 | 20.7 |
-| 18-month template | opm_dense/mag | 447.5 | 88.8 |
-| 18-month template | opm_matched/mag | 462.6 | 88.8 |
+| 18-month template | squid:centred/mag | 94.3 | 20.7 |
+| 18-month template | opm_dense/mag | 447.6 | 88.8 |
+| 18-month template | opm_matched/mag | 462.7 | 88.8 |
 | 12-month template | squid:top/grad | 18.5 | 21.3 |
 | 12-month template | squid:top/mag | 98.2 | 20.7 |
 | 12-month template | squid:centred/grad | 14.1 | 21.3 |
 | 12-month template | squid:centred/mag | 88.1 | 20.7 |
-| 12-month template | opm_dense/mag | 474.1 | 88.8 |
-| 12-month template | opm_matched/mag | 470.0 | 88.8 |
+| 12-month template | opm_dense/mag | 474.2 | 88.8 |
+| 12-month template | opm_matched/mag | 470.1 | 88.8 |
 
 ## Usefulness (dense OPM vs Neuromag combined, intrinsic + brain): share of usable cortical area
 
@@ -429,18 +477,18 @@ A source counts as usable when its detectability reaches 5 at the reference mome
 
 | anatomy | moment [nAm] | both | OPM only | SQUID only | neither |
 |---|---|---|---|---|---|
-| adult | 20 | 0.00 | 0.03 | 0.00 | 0.97 |
-| adult | 50 | 0.35 | 0.07 | 0.00 | 0.58 |
+| adult | 20 | 0.00 | 0.04 | 0.00 | 0.96 |
+| adult | 50 | 0.35 | 0.07 | 0.00 | 0.57 |
 | adult | 100 | 0.66 | 0.02 | 0.00 | 0.32 |
-| adult | 200 | 0.89 | 0.00 | 0.00 | 0.11 |
-| school-age size (scaled adult) | 20 | 0.00 | 0.06 | 0.00 | 0.94 |
+| adult | 200 | 0.89 | 0.01 | 0.00 | 0.10 |
+| school-age size (scaled adult) | 20 | 0.00 | 0.07 | 0.00 | 0.93 |
 | school-age size (scaled adult) | 50 | 0.37 | 0.10 | 0.00 | 0.53 |
-| school-age size (scaled adult) | 100 | 0.69 | 0.03 | 0.00 | 0.28 |
+| school-age size (scaled adult) | 100 | 0.69 | 0.04 | 0.00 | 0.28 |
 | school-age size (scaled adult) | 200 | 0.91 | 0.02 | 0.00 | 0.07 |
 | 2-year size (scaled adult) | 20 | 0.00 | 0.08 | 0.00 | 0.92 |
 | 2-year size (scaled adult) | 50 | 0.35 | 0.14 | 0.00 | 0.51 |
 | 2-year size (scaled adult) | 100 | 0.69 | 0.05 | 0.00 | 0.26 |
-| 2-year size (scaled adult) | 200 | 0.91 | 0.02 | 0.00 | 0.07 |
+| 2-year size (scaled adult) | 200 | 0.91 | 0.02 | 0.00 | 0.06 |
 | 2-year template | 20 | 0.01 | 0.11 | 0.00 | 0.88 |
 | 2-year template | 50 | 0.42 | 0.12 | 0.00 | 0.46 |
 | 2-year template | 100 | 0.75 | 0.05 | 0.00 | 0.20 |
