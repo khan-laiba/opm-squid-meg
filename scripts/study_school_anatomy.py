@@ -17,6 +17,8 @@
    centroid in MNI305 against the adult's (through each one's talairach.xfm), and the median
    distance of the child's MNI cortex to the adult's, for each child with the file stored in its
    own folder and with its own file where it was downloaded (child A's, in sub-Z209's folder).
+5. The children's thinnest layers: white surface to MRI scalp, modelled inner to outer skull, and
+   outer skull to the BEM head surface (minimum distances).
 
 Output: results/g3b/school_anatomy_checks.json (derived quantities only).
 """
@@ -89,7 +91,7 @@ def main():
                upper_head_definition="inner-skull vertices above their mean height (MRI frame z), as in scripts/study_child_bem.py")
 
     # 1. inner skull below the scalp over the upper head
-    depth = {}
+    depth, thin = {}, {}
     adult = anatomy.load_sample()
     depth["adult"] = upper_depth(brain(adult)["rr"], adult.scalp.rr, adult.scalp.tris)
     for t in cfg["anatomy"]["templates"]:
@@ -102,7 +104,15 @@ def main():
         s = anatomy.load_school(name)
         depth[f"{child['key']}/watershed"] = upper_depth(np.asarray(ico4["rr"], float) / 1e3, s.scalp.rr, s.scalp.tris)
         depth[f"{child['key']}/modelled"] = upper_depth(brain(s)["rr"], s.scalp.rr, s.scalp.tris)
+        whites = np.vstack([fsio.read_geometry(root / name / "surf" / f"{h}.white")[0] for h in ("lh", "rh")]) / 1e3
+        surf = {b["id"]: b for b in s.bem_surfaces}
+        brain_rr, skull_rr = surf[FIFF.FIFFV_BEM_SURF_ID_BRAIN]["rr"], surf[FIFF.FIFFV_BEM_SURF_ID_SKULL]["rr"]
+        thin[child["key"]] = dict(
+            white_to_scalp_min_mm=float(anatomy.MeshDistance(dict(rr=s.scalp.rr, tris=s.scalp.tris)).unsigned(whites).min() * 1e3),
+            inner_to_outer_skull_min_mm=float(anatomy.MeshDistance(surf[FIFF.FIFFV_BEM_SURF_ID_SKULL]).unsigned(brain_rr).min() * 1e3),
+            outer_skull_to_head_min_mm=float(anatomy.MeshDistance(surf[FIFF.FIFFV_BEM_SURF_ID_HEAD]).unsigned(skull_rr).min() * 1e3))
     out["inner_skull_scalp_depth_upper_head"] = depth
+    out["children_thinnest_layers"] = thin
 
     # 2. A-G3-FID on the templates
     adult_cortex, adult_fids = prep.adult_reference()
