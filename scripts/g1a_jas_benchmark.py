@@ -177,16 +177,34 @@ def _deq_with_sigma(sigma_sq: float, eta: float = 3.0) -> float:
     return 0.5 * (lo + hi) * 1e3
 
 
+REPLICA_STATUS = ("REPRO: Jas et al. 2026 Fig. 3, written by the preserved legacy replica (legacy/replicate_figure3.py, "
+                  "7/7 checks against the published raster) and stamped by scripts/g1a_jas_benchmark.py")
+
+
+def stamp_replica(out: Path) -> None:
+    """The legacy replica writes no status or commit of its own: add both to its summary JSON and a
+    status line to its data CSV (the replica's code and numbers are unchanged)."""
+    summary = json.loads((out / "figure3_summary.json").read_text())
+    io.write_json(dict(summary, status=REPLICA_STATUS), out / "figure3_summary.json")
+    data = out / "figure3_data.csv"
+    text = data.read_text()
+    with open(data, "w", newline="") as fh:
+        io.csv_status(fh, REPLICA_STATUS)
+        fh.write(text)
+
+
 def main() -> dict:
     t0 = time.time()
     OUT.mkdir(parents=True, exist_ok=True)
     R.main(["--outdir", str(OUT / "fig3")])  # validated replica (7/7 checks vs the published raster)
+    stamp_replica(OUT / "fig3")
     d, b_opm, b_sq = curves()
     sigma_sq = float(sphere.bmax_radial(0.8 * B, H + XI, Q)[0])
     files = figure4(d, b_opm, b_sq, sigma_sq)
     toy_files, toy = toy_experiment()
     checks = numerical_checks()
     with open(OUT / "g1a_curves.csv", "w", newline="") as fh:
+        io.csv_status(fh, STATUS)
         wr = csv.writer(fh)
         wr.writerow(["depth_mm", "B_OPM_pT", "B_SQUID_pT", "SNR_SQUID"] + [f"SNR_OPM_eta{e:g}" for e in (1.1, 2.5, 3, 4, 6)])
         for i in np.argsort(d):

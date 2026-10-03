@@ -34,6 +34,7 @@ from scipy.spatial import cKDTree  # noqa: E402
 from opmsquid import anatomy, fullres, g2, goldenholz, io, neuromag, noise, paths, plotting  # noqa: E402
 
 OUT = ROOT / "results" / "g1c"
+STATUS = "ADAPT (Goldenholz et al. 2009, MEG part, MNE sample subject); OPM rows NEW"
 CH_SETS = ("mag", "grad", "pooled")
 OPM_ASD_SWEEP = (7e-15, 10e-15, 15e-15, 20e-15, 30e-15)  # A-OPM-NOISE
 OPM_ASD_MAPS = 15e-15
@@ -138,7 +139,7 @@ def main():
     print(f"patches built in {time.time() - t0:.0f} s; median members " +
           ", ".join(f"{r:g} mm: {np.median([len(m) for m in members[r]]):.0f}" for r in members))
 
-    summary = dict(status="ADAPT (Goldenholz et al. 2009, MEG part, MNE sample subject); OPM rows NEW",
+    summary = dict(status=STATUS,
                    config=cfg, n_valid_vertices=int(len(valid_idx)), n_usable_vertices=int(use.sum()),
                    n_noise_sources=int(len(noise_cols)), n_centroids=int(len(centroids)),
                    channels=dict({cs: int(m.sum()) for cs, m in sets.items()}, excluded=[n for n, ok in zip(info.ch_names, good) if not ok]),
@@ -310,6 +311,7 @@ def main():
                         "(pooling unstated) vs EEG. D = SNR_MEG - SNR_EEG is out of scope (no EEG).")
     io.write_json(summary, OUT / "g1c_summary.json")
     with open(OUT / "g1c_oct6_values.csv", "w", newline="") as fh:
+        io.csv_status(fh, STATUS)
         wr = csv.writer(fh)
         keys = [k for k in res if "/" in k and not k.startswith("patch")]
         wr.writerow(["hemi", "vertno"] + [f"{k}_dB" for k in keys])

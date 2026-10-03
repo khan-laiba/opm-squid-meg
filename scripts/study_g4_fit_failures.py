@@ -12,7 +12,6 @@ Output: results/g4/g4_fit_failures.json, results/g4/G4_fit_failures_report.md.
 """
 from __future__ import annotations
 
-import csv
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -30,9 +29,7 @@ VOLUME_CM3 = 10.0
 
 
 def read(lab: str) -> list[dict]:
-    f = OUT / f"g4_localization{'' if lab == 'adult' else '_' + lab}_events.csv"
-    with open(f) as fh:
-        return list(csv.DictReader(fh))
+    return io.read_csv(OUT / f"g4_localization{'' if lab == 'adult' else '_' + lab}_events.csv")
 
 
 def summarise(rows: list[dict]) -> dict:

@@ -397,6 +397,7 @@ def summarise(state):
                 summary["paired"][f"{a}_vs_{b}/{mode}"] = res
     io.write_json(summary, OUT / f"g4_{label}_summary.json")
     with open(OUT / f"g4_{label}_events.csv", "w", newline="") as fh:
+        io.csv_status(fh, summary["status"])
         wr = csv.writer(fh)
         wr.writerow(["location", "family", "strength_nAm", "stretch", "depth_band"] + [f"{k}_{v}" for k in keys for v in ("oracle_z", "event_height")])
         for n, (i, f_, s_, x) in enumerate(events):

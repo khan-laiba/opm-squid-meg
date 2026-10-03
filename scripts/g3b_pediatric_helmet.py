@@ -51,6 +51,8 @@ from opmsquid import (anatomy, background, forward, g2, goldenholz, io, neuromag
                       pediatric as P, plotting)
 
 OUT = ROOT / "results" / "g3b"
+STATUS = ("NEW (G3B: fixed adult Neuromag helmet vs head-adaptive OPM on smaller heads; size-only controls and "
+          "the 12-, 18- and 24-month templates)")
 STATE = ROOT / "cache" / "g3b" / "state.pkl"
 TEMPLATES = {"infant2yr": "ANTS2-0Years3T", "infant18mo": "ANTS18-0Months3T", "infant12mo": "ANTS12-0Months3T"}
 ANATOMIES = ("adult", "school", "size2yr") + tuple(TEMPLATES)
@@ -522,8 +524,7 @@ def summarise(anats, state, cfg) -> dict:
     headline = cfg["conditions"]["headline"]
     conds = cfg["conditions"]["all"]
     rng = np.random.default_rng(7)
-    out = dict(status="NEW (G3B: fixed adult Neuromag helmet vs head-adaptive OPM on smaller heads; size-only controls and "
-                      "the 12-, 18- and 24-month templates)", config=cfg, brain_scale=state["brain_scale"], enbw_hz=state["enbw"])
+    out = dict(status=STATUS, config=cfg, brain_scale=state["brain_scale"], enbw_hz=state["enbw"])
     out["anatomies"] = {k: dict(description=an.subject.description, scale_note=an.scale_note, head_size=an.size,
                                 ofc_ratio_to_adult=an.ofc_ratio, n_targets=an.nt, n_background_grid=int(len(an.src.grid)),
                                 cortical_area_cm2=float(an.cortex.area[an.cortex.usable].sum() * 1e4),
@@ -762,6 +763,7 @@ def write_targets_csv(anats, state, cfg):
         r = state["runs"][k]["res"]
         cols = [(n, cs, cond) for n in (primary, "squid:centred", "squid:counterfactual") + OPMS for (cs, cond) in r[n]]
         with open(OUT / f"g3b_targets_{k}.csv", "w", newline="") as fh:
+            io.csv_status(fh, STATUS)
             wr = csv.writer(fh)
             wr.writerow(["hemi", "vertno", "depth_mm", "orientation_deg", "region", "lobe", "area_mm2"]
                         + [f"detect_{n.replace('squid:', 'squid_')}_{cs}_{cond}" for n, cs, cond in cols])
@@ -823,12 +825,16 @@ def write_report(anats, s, cfg):
             if r:
                 L.append(f"| {LABEL[c]} | {mlabel} | {fmt_ci(r['d_child'])} | {fmt_ci(r['d_adult'])} | {fmt_ci(r['delta'])} |")
     sd = s["sensor_distances"]
-    L += ["", "OPM standoff per anatomy (median sensing-centre height above the MRI scalp, dense / matched array): "
-          + "; ".join(f"{LABEL[k]} {sd[k]['opm_dense']['median_mm']:.2f} / {sd[k]['opm_matched']['median_mm']:.2f} mm" for k in ANATOMIES
-                      if k in sd and "opm_dense" in sd[k])
-          + ". The clearance rule (A-OPM-CLEAR) moves most of the adult's sites outward and almost none of the children's (the adult's "
-          "BEM head surface lies outside its MRI scalp, the templates' inside), so D_adult carries a larger standoff than D_child; the "
-          "effect on Delta is bounded in `results/g3b/G3B_standoff_report.md` (`scripts/study_g3b_standoff.py`).",
+    arr = s["arrays"]
+    L += ["", "OPM standoff per anatomy (median sensing-centre height above the MRI scalp, dense / matched array, and the sites the "
+          "clearance rule moved outward): "
+          + "; ".join(f"{LABEL[k]} {sd[k]['opm_dense']['median_mm']:.2f} / {sd[k]['opm_matched']['median_mm']:.2f} mm "
+                      f"({arr[k]['opm_dense'].get('n_moved_out', '?')} of {arr[k]['opm_dense']['n']} / "
+                      f"{arr[k]['opm_matched'].get('n_moved_out', '?')} of {arr[k]['opm_matched']['n']} moved)"
+                      for k in ANATOMIES if k in sd and "opm_dense" in sd[k])
+          + ". Every anatomy's BEM head surface has its vertices on its MRI scalp (A-BEM-CONFORM: the templates' are built so, the "
+          "adult's stored outer skin, about 1 mm outside its scalp, is conformed at loading), so the clearance rule (A-OPM-CLEAR) moves "
+          "only the sites the anatomy demands and every array has the same nominal standoff.",
           "", "Projected condition (room-field subspace removed):", "", "| child anatomy | comparator | D_child | D_adult | Delta |",
           "|---|---|---|---|---|"]
     for c in CHILDREN:

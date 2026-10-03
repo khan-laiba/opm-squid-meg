@@ -180,13 +180,15 @@ def localize(ctx, cfg, rng):
         if e_idx % 20 == 0:
             log(f"event {e_idx + 1}/{len(events)}")
     tag = "" if ctx.label == "adult" else f"_{ctx.label}"
+    status = (f"NEW (G4 {ctx.label}: bounded localization; 1-layer BEM and 2-mm/2-deg coregistration error in the "
+              f"inverse, {n_draws} draws shared by all arrays)")
     with open(OUT / f"g4_localization{tag}_events.csv", "w", newline="") as fh:
+        io.csv_status(fh, status)
         wr = csv.DictWriter(fh, fieldnames=[k for k in rows[0] if k != "stratum"])
         wr.writeheader()
         for r in rows:
             wr.writerow({k: v for k, v in r.items() if k != "stratum"})
-    summary = dict(status=f"NEW (G4 {ctx.label}: bounded localization; 1-layer BEM and 2-mm/2-deg coregistration error in the "
-                          f"inverse, {n_draws} draws shared by all arrays)", anatomy=ctx.notes,
+    summary = dict(status=status, anatomy=ctx.notes,
                    config=cfg["localization"], n_events=len(events), inverse_grid=int(len(grid)), thresholds_1_per_min=thr,
                    coreg_displacement_mm_median=float(np.median([r["coreg_displacement_mm"] for r in rows])),
                    results=summarise(rows, arrays, lc), paired=paired(rows, arrays, lc, rng))

@@ -70,7 +70,7 @@ class TestArrayComposition(unittest.TestCase):
     def test_channel_counts_and_coil_types(self):
         types = {name: sorted({ch["coil_type"] for ch in a.info["chs"]}) for name, a in self.arrays.items()}
         self.assertEqual({name: a.n for name, a in self.arrays.items()},
-                         {"squid": 306, "opm_matched": 95, "opm204": 204, "opm_dense": 205})
+                         {"squid": 306, "opm_matched": 98, "opm204": 204, "opm_dense": 208})
         self.assertEqual(types["squid"], [3014, 3024])
         self.assertEqual(sum(ch["coil_type"] == 3014 for ch in self.arrays["squid"].info["chs"]), 204)
         for name in ("opm_matched", "opm204", "opm_dense"):
@@ -85,23 +85,50 @@ class TestArrayComposition(unittest.TestCase):
         t = self.subject.trans["trans"]
         fids = opm.fiducials_head(self.dig)
         zmin = self.subject.scalp.rr[:, 2].min()
+        scalp_tree = cKDTree(self.subject.scalp.rr)
         for name in ("opm_matched", "opm204", "opm_dense"):
             pos, axis = self._geometry(self.arrays[name])
             pos_mri = mne.transforms.apply_trans(t, pos)
+            axis_mri = axis @ t[:3, :3].T
             d, i = cKDTree(skin.rr).query(pos_mri)
-            angle = np.degrees(np.arccos(np.clip(np.sum((axis @ t[:3, :3].T) * skin.nn[i], axis=1), -1, 1)))
+            angle = np.degrees(np.arccos(np.clip(np.sum(axis_mri * skin.nn[i], axis=1), -1, 1)))
+            # an independent local normal: the plane fitted to the dense MRI scalp within 15 mm of the site
+            plane = []
+            for k, idx in enumerate(scalp_tree.query_ball_point(pos_mri - 0.007 * axis_mri, 0.015)):
+                n = np.linalg.svd(self.subject.scalp.rr[idx] - self.subject.scalp.rr[idx].mean(0), full_matrices=False)[2][-1]
+                plane.append(np.degrees(np.arccos(abs(n @ axis_mri[k]))))
             ear = np.minimum(np.linalg.norm(pos - fids["lpa"], axis=1), np.linalg.norm(pos - fids["rpa"], axis=1))
             with self.subTest(name=name):
                 self.assertGreaterEqual(opm.min_spacing(pos).min(), 0.017 - 1e-9 if name != "opm_matched" else 0.020)
                 self.assertTrue(np.all(opm.signed_distance(pos_mri, next(
                     s for s in self.subject.bem_surfaces if s["id"] == mne.io.constants.FIFF.FIFFV_BEM_SURF_ID_HEAD)) > 0.004 - 1e-6))
                 self.assertLess(d.max(), 0.012)  # nominal 7 mm + at most 5 mm clearance shift
-                # axis = BEM head-surface normal averaged within 15 mm (A-OPM-AXIS); against the nearest vertex's normal the
-                # matched array stays within 4.4 deg and the dense one within 6.6 deg (a lower occipital site)
-                self.assertLess(angle.max(), 6.0 if name == "opm_matched" else 7.5)
+                # axis = BEM head-surface normal averaged within 15 mm (A-OPM-AXIS), its normals those of its own triangles;
+                # against the scalp plane the median deviation is ~1.2 deg and the 95th percentile 5-7.4 deg; the largest (up to
+                # ~37 deg) are lower occipital sites and sites next to the pinna, where no plane fits the scalp; against the
+                # nearest head-surface vertex normal every site is within ~31 deg (v3's axes, from the stored outer-skin
+                # normals, which are not those of its triangles: median 8-9 deg, 95th percentile 25-26 deg off the plane)
+                self.assertLess(np.median(plane), 2.0)
+                self.assertLess(np.percentile(plane, 95), 9.0)
+                self.assertLess(angle.max(), 35.0)
                 self.assertGreater(ear.min(), 0.019)  # no sensor on the ear
                 self.assertGreater(pos_mri[:, 2].min(), zmin)  # nothing at the MRI field-of-view cut
         self.assertLessEqual(self.arrays["opm_dense"].meta["max_extra_shift_mm"], 5.0 + 1e-9)
+
+    def test_equal_standoff(self):
+        # with the BEM head surface on the MRI scalp (A-BEM-CONFORM) the clearance rule moves only the sites the
+        # anatomy demands: the median sensing-centre height above the MRI scalp is the nominal 7 mm, as on the
+        # templates (G3B); the stored outer skin, ~1 mm off the scalp, had moved 164 of 205 dense sites (7.78 mm)
+        from scipy.spatial import cKDTree
+
+        tree = cKDTree(self.subject.scalp.rr)
+        t = self.subject.trans["trans"]
+        for name in ("opm_matched", "opm_dense"):
+            pos, _ = self._geometry(self.arrays[name])
+            h = tree.query(mne.transforms.apply_trans(t, pos))[0]
+            with self.subTest(name=name):
+                self.assertAlmostEqual(float(np.median(h)), 0.007, delta=0.0001)
+                self.assertLess(np.mean(h > 0.0071), 0.2)
 
     def test_opm_clearance_to_the_mri_scalp(self):
         from scipy.spatial import cKDTree
@@ -197,7 +224,7 @@ class TestArrayComposition(unittest.TestCase):
     def test_opm204_is_a_subset_of_the_dense_array(self):
         dense, _ = self._geometry(self.arrays["opm_dense"])
         sub, _ = self._geometry(self.arrays["opm204"])
-        self.assertEqual(self.arrays["opm204"].meta["subset_of"], 205)
+        self.assertEqual(self.arrays["opm204"].meta["subset_of"], 208)
         self.assertTrue(all(np.any(np.all(np.isclose(dense, p, atol=1e-12), axis=1)) for p in sub))
 
 

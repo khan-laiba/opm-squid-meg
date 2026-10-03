@@ -46,6 +46,20 @@ def git_commit() -> str:
 RUN_COMMIT = git_commit()
 
 
+def csv_status(fh, status: str) -> None:
+    """First line of a result CSV: '# <status> | commit <commit>' (the code this process loaded).
+    Readers skip lines starting with '#' (``read_csv``; pandas: ``comment='#'``)."""
+    fh.write(f"# {' '.join(status.split())} | commit {RUN_COMMIT}\n")
+
+
+def read_csv(path: Path) -> list[dict]:
+    """Rows of a result CSV as dicts (header row first), skipping its '#' status line."""
+    import csv
+
+    with open(path, newline="") as fh:
+        return list(csv.DictReader(line for line in fh if not line.startswith("#")))
+
+
 def write_json(obj: dict, path: Path) -> None:
     import mne
 

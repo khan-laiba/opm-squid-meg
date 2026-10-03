@@ -41,6 +41,7 @@ from opmsquid import (anatomy, background, forward, g2, goldenholz, io, metrics,
                       noisemodel, opm, paths, plotting)
 
 OUT = ROOT / "results" / "g2"
+STATUS = "NEW (realistic adult OPM vs Neuromag comparison, MNE sample subject)"
 STATE = ROOT / "cache" / "g2" / "state.pkl"
 OPMS = ("opm_matched", "opm204", "opm_dense")
 REFS = ("combined", "grad", "mag")
@@ -420,7 +421,7 @@ def main():
     # --- outputs (checkpointed: `--replot` redraws figures and rewrites outputs without recomputing)
     patch_det = patches.pop("_det", None)
     summary = dict(
-        status="NEW (realistic adult OPM vs Neuromag comparison, MNE sample subject)",
+        status=STATUS,
         config=cfg, arrays=geometry, head_positions=head_positions, n_targets=st.nt, n_background_grid=int(len(st.src.grid)),
         enbw_hz=st.enbw, n_estimate_samples=n_est, noise_validation=validation, noise_composition=comp, retained_rank=ranks,
         primary=primary, plugin_over_oracle_median=plugin_loss, amplitude_vs_depth=amp_vs_depth, detectability_vs_depth=snr_vs_depth,
@@ -455,6 +456,7 @@ def outputs(st, state):
     if state.get("patch_det"):
         keys = sorted(k for k in state["patch_det"] if k[4] == "fixed_total")
         with open(OUT / "g2_patch_targets.csv", "w", newline="") as fh:
+            io.csv_status(fh, STATUS)
             wr = csv.writer(fh)
             wr.writerow(["hemi", "vertno", "depth_mm"] + [f"detect_{n}_{cs}_{cond}_{r:g}mm_fixed_total" for n, cs, cond, r, _ in keys])
             for i, v in enumerate(st.src.target):
@@ -692,6 +694,7 @@ def convergence(st, arrays, G_t, G_g, noise_nom, res, brain_scale, target_var, g
 def write_targets_csv(st, res, amp, conds):
     cols = [(n, cs, cond) for n, r in res.items() for (cs, cond) in r]
     with open(OUT / "g2_targets.csv", "w", newline="") as fh:
+        io.csv_status(fh, STATUS)
         wr = csv.writer(fh)
         wr.writerow(["hemi", "vertno", "depth_mm", "orientation_deg", "region", "lobe"] + [f"amp_{k}" for k in amp]
                     + [f"detect_{n}_{cs}_{cond}" for n, cs, cond in cols])

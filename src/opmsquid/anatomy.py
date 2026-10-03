@@ -71,6 +71,7 @@ class Subject:
     parent: "Subject | None" = None  # the subject a scaled control was made from
     scale: float = 1.0  # linear scale factor relative to ``parent``
     description: str = ""
+    head_conform: dict | None = None  # what ``head_on_scalp`` did to the BEM head surface at loading (A-BEM-CONFORM)
 
     @property
     def labels(self) -> Path:
@@ -151,8 +152,51 @@ def refined_inner_skull(subject: "Subject", times: int = 1, sigma: float = 0.3) 
     return [complete_surface_info(surf, copy=False, verbose=False)]
 
 
+def head_on_scalp(surfaces: list, scalp: Surface) -> tuple[list, dict]:
+    """A-BEM-CONFORM: the BEM surfaces with every vertex of the head surface moved to the nearest
+    vertex of the MRI scalp ``scalp`` (same mesh, same triangles; the other surfaces unchanged).
+    The infant templates' head surfaces are built this way (each of their 2,562 vertices is a vertex
+    of the template's MRI head surface), so for them this is the identity and the surfaces are
+    returned as they are. The sample subject's (its own segmentation's outer skin) lies a median
+    0.8 mm outside its MRI scalp over the OPM coverage region (up to 2.6 mm), which made the
+    whole-cell OPM clearance (A-OPM-CLEAR) move the adult's sensors farther from the scalp than the
+    children's (goal review, 2026-10-02). Refused if two vertices would merge, a triangle would flip
+    or the outer skull would not stay inside. Returns (surfaces, report)."""
+    from mne.surface import _CheckInside, complete_surface_info
+
+    k = next(i for i, s in enumerate(surfaces) if s["id"] == FIFF.FIFFV_BEM_SURF_ID_HEAD)
+    head = surfaces[k]
+    old = np.asarray(head["rr"], float)
+    _, idx = cKDTree(scalp.rr).query(old)
+    new_rr = np.asarray(scalp.rr, float)[idx]
+    moved = np.linalg.norm(new_rr - old, axis=1)
+    report = dict(n_vertices=len(old), moved_median_mm=float(np.median(moved) * 1e3), moved_p90_mm=float(np.percentile(moved, 90) * 1e3),
+                  moved_max_mm=float(moved.max() * 1e3))
+    if not np.any(moved > 0):
+        return list(surfaces), dict(report, identity=True)
+    if len(np.unique(idx)) != len(idx):
+        raise ValueError("A-BEM-CONFORM: two head-surface vertices map to one scalp vertex")
+    tris = np.asarray(head["tris"])
+
+    def face_normals(rr):
+        return np.cross(rr[tris[:, 1]] - rr[tris[:, 0]], rr[tris[:, 2]] - rr[tris[:, 0]])
+
+    if np.any(np.einsum("ij,ij->i", face_normals(old), face_normals(new_rr)) <= 0):
+        raise ValueError("A-BEM-CONFORM: a head-surface triangle would flip")
+    new = complete_surface_info(dict(id=head["id"], sigma=head.get("sigma", 1.0), coord_frame=head["coord_frame"], rr=new_rr,
+                                     tris=tris.copy(), np=len(new_rr), ntri=len(tris)), copy=False, verbose=False)
+    skull = next(s for s in surfaces if s["id"] == FIFF.FIFFV_BEM_SURF_ID_SKULL)
+    if not _CheckInside(new)(skull["rr"], verbose=False).all():
+        raise ValueError("A-BEM-CONFORM: the outer skull would leave the head surface")
+    report.update(identity=False, outer_skull_min_mm=float(MeshDistance(new).unsigned(skull["rr"]).min() * 1e3))
+    out = list(surfaces)
+    out[k] = new
+    return out, report
+
+
 def load_sample(spacing: str = "oct6") -> Subject:
-    """The MNE sample subject. ``spacing``: 'oct6' (stored source space, 2 x 4098) or 'all'."""
+    """The MNE sample subject, its BEM head surface on its MRI scalp (``head_on_scalp``).
+    ``spacing``: 'oct6' (stored source space, 2 x 4098) or 'all'."""
     sd = paths.require(paths.SUBJECTS_DIR, "MNE sample subjects directory")
     bem_dir = sd / "sample" / "bem"
     src_file = {"oct6": "sample-oct-6-src.fif", "all": "sample-all-src.fif"}[spacing]
@@ -161,8 +205,10 @@ def load_sample(spacing: str = "oct6") -> Subject:
     head = mne.read_bem_surfaces(bem_dir / "sample-head.fif", verbose=False)[0]
     inner = next(s for s in surfs if s["id"] == FIFF.FIFFV_BEM_SURF_ID_BRAIN)
     trans = mne.read_trans(paths.require(paths.SAMPLE_MEG / "sample_audvis_raw-trans.fif", "sample trans"))
-    return Subject("sample", sd, src, surfs, _outward(head), _outward(inner), trans,
-                   description="MNE sample subject (adult; individual MRI)")
+    scalp = _outward(head)
+    surfs, conform = head_on_scalp(surfs, scalp)
+    return Subject("sample", sd, src, surfs, scalp, _outward(inner), trans,
+                   description="MNE sample subject (adult; individual MRI)", head_conform=conform)
 
 
 def fiducial_info(fiducials: dict) -> mne.Info:
@@ -198,9 +244,11 @@ def load_template(name: str = "ANTS2-0Years3T") -> Subject:
     mri_head = mne.transforms.get_ras_to_neuromag_trans(mri["nasion"], mri["lpa"], mri["rpa"])
     trans = mne.transforms.Transform("head", "mri", np.linalg.inv(mri_head))
     fid_head = {k: mne.transforms.apply_trans(mri_head, v) for k, v in mri.items()}
-    return Subject(name, sd, src, surfs, _outward(head), _outward(inner), trans, label_dir=sd / name / "label",
+    scalp = _outward(head)
+    surfs, conform = head_on_scalp(surfs, scalp)  # the identity: the template's head surface is on its scalp
+    return Subject(name, sd, src, surfs, scalp, _outward(inner), trans, label_dir=sd / name / "label",
                    surface_src=src_file, fiducials=fid_head,
-                   description=f"infant template {name} (O'Reilly et al. 2021; native dimensions)")
+                   description=f"infant template {name} (O'Reilly et al. 2021; native dimensions)", head_conform=conform)
 
 
 def _scaled_surface(surf: dict, s: float) -> dict:

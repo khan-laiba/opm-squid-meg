@@ -71,6 +71,12 @@ class TestTemplate(unittest.TestCase):
         ofc = [size[n]["ofc_mm"] for n in self.NAMES]
         self.assertEqual(ofc, sorted(ofc, reverse=True))  # the older template has the larger head
 
+    def test_head_surface_already_on_the_scalp(self):
+        for n, t in self.t.items():  # A-BEM-CONFORM is the identity for the templates
+            with self.subTest(template=n):
+                self.assertTrue(t.head_conform["identity"])
+                self.assertEqual(t.head_conform["moved_max_mm"], 0.0)
+
     def test_bem_surfaces_nested(self):
         from scipy.spatial import cKDTree
         for n, t in self.t.items():

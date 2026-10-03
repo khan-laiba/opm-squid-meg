@@ -76,6 +76,78 @@ if __name__ == "__main__":
     unittest.main()
 
 
+class TestHeadOnScalp(unittest.TestCase):
+    """A-BEM-CONFORM: the BEM head surface's vertices moved to the nearest MRI-scalp vertices."""
+
+    @staticmethod
+    def _sphere(grade, radius, sid):
+        from mne.io.constants import FIFF
+        from mne.surface import _get_ico_surface
+
+        ico = _get_ico_surface(grade)
+        surf = dict(rr=ico["rr"] * radius, tris=ico["tris"], np=len(ico["rr"]), ntri=len(ico["tris"]),
+                    coord_frame=FIFF.FIFFV_COORD_MRI, id=sid)
+        return mne.surface.complete_surface_info(surf, copy=False, verbose=False)
+
+    def _model(self, skull_r=0.085):
+        from mne.io.constants import FIFF
+
+        return [self._sphere(2, 0.0905, FIFF.FIFFV_BEM_SURF_ID_HEAD), self._sphere(2, skull_r, FIFF.FIFFV_BEM_SURF_ID_SKULL),
+                self._sphere(2, 0.080, FIFF.FIFFV_BEM_SURF_ID_BRAIN)]
+
+    def _scalp(self, grade=4, radius=0.090):
+        s = self._sphere(grade, radius, 4)
+        return anatomy.Surface(s["rr"], s["tris"], s["nn"])
+
+    def test_vertices_move_onto_the_scalp(self):
+        model = self._model()
+        surfs, rep = anatomy.head_on_scalp(model, self._scalp())
+        # the ico-2 directions are ico-4 vertices (MNE's icosahedra are nested; radii 1 to ~5e-5): every head vertex lands
+        # on the scalp vertex in its own direction
+        from scipy.spatial import cKDTree
+
+        scalp = self._scalp()
+        d, i = cKDTree(scalp.rr).query(surfs[0]["rr"])
+        self.assertEqual(d.max(), 0.0)
+        np.testing.assert_array_equal(i, np.arange(len(i)))
+        np.testing.assert_array_equal(surfs[0]["tris"], model[0]["tris"])
+        self.assertAlmostEqual(rep["moved_median_mm"], 0.5, places=4)
+        self.assertFalse(rep["identity"])
+        self.assertGreater(rep["outer_skull_min_mm"], 3.0)
+        self.assertIs(surfs[1], model[1])  # skull and brain untouched
+        self.assertIs(surfs[2], model[2])
+        again, rep2 = anatomy.head_on_scalp(surfs, self._scalp())  # already on the scalp: returned as it is
+        self.assertTrue(rep2["identity"])
+        self.assertIs(again[0], surfs[0])
+
+    def test_refusals(self):
+        with self.assertRaisesRegex(ValueError, "one scalp vertex"):  # a scalp coarser than the head surface
+            anatomy.head_on_scalp(self._model(), self._scalp(grade=1))
+        with self.assertRaisesRegex(ValueError, "outer skull"):  # the skull would stick out of the conformed head
+            anatomy.head_on_scalp(self._model(skull_r=0.0899), self._scalp(radius=0.0895))
+
+
+@unittest.skipUnless(HAVE_SAMPLE, "MNE sample data not available")
+class TestSampleHeadSurface(unittest.TestCase):
+    def test_sample_head_surface_on_its_scalp(self):
+        from mne.io.constants import FIFF
+        from scipy.spatial import cKDTree
+
+        sub = anatomy.load_sample()
+        stored = mne.read_bem_surfaces(sub.subjects_dir / "sample" / "bem" / "sample-5120-5120-5120-bem.fif", verbose=False)
+        for s, f in zip(sub.bem_surfaces, stored):
+            with self.subTest(surface=int(s["id"])):
+                np.testing.assert_array_equal(s["tris"], f["tris"])
+                if s["id"] == FIFF.FIFFV_BEM_SURF_ID_HEAD:  # every vertex a vertex of the MRI scalp (as the templates')
+                    self.assertEqual(cKDTree(sub.scalp.rr).query(s["rr"])[0].max(), 0.0)
+                else:
+                    np.testing.assert_array_equal(s["rr"], f["rr"])
+        rep = sub.head_conform
+        self.assertFalse(rep["identity"])
+        self.assertTrue(0.9 < rep["moved_median_mm"] < 1.2, rep)  # the stored outer skin lay ~1 mm off the scalp
+        self.assertGreater(rep["outer_skull_min_mm"], 2.0)
+
+
 class TestMeshDistance(unittest.TestCase):
     def test_exact_distance_to_a_tetrahedron(self):
         from mne.io.constants import FIFF

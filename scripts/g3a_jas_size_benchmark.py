@@ -150,6 +150,7 @@ def main():
     plt.close(fig)
 
     with open(OUT / "g3a_deq.csv", "w", newline="") as fh:
+        io.csv_status(fh, STATUS)
         wr = csv.writer(fh)
         wr.writerow(["head", "shell", "eta", "d_eq_exact_mm", "d_eq_grid_mm", "normalized_exact_pct", "volume_fraction_pct"])
         for name, (h, b) in HEADS.items():

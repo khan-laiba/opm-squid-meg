@@ -19,6 +19,21 @@ class TestProvenance(unittest.TestCase):
             prov = json.loads(path.read_text())["provenance"]
         self.assertEqual(prov["commit"], "abc1234")
 
+    def test_csv_status_line_round_trip(self):
+        import csv
+
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(io, "RUN_COMMIT", "abc1234"):
+            path = Path(d) / "t.csv"
+            with open(path, "w", newline="") as fh:
+                io.csv_status(fh, "NEW (a test;\n two lines)")
+                wr = csv.writer(fh)
+                wr.writerow(["a", "b"])
+                wr.writerow([1, "x,y"])
+            first = path.read_text().splitlines()[0]
+            rows = io.read_csv(path)
+        self.assertEqual(first, "# NEW (a test; two lines) | commit abc1234")
+        self.assertEqual(rows, [{"a": "1", "b": "x,y"}])
+
     def test_run_commit_format(self):
         self.assertRegex(io.RUN_COMMIT, r"^([0-9a-f]{7,40}(\+dirty)?|unknown)$")
 

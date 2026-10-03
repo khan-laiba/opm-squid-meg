@@ -40,6 +40,7 @@ from scipy import stats  # noqa: E402
 from opmsquid import anatomy, fullres, g2, hunold, io, neuromag, noise, paths, plotting  # noqa: E402
 
 OUT = ROOT / "results" / "g1b"
+STATUS = "ADAPT (MEG part of Hunold et al. 2016 on the MNE sample subject); OPM columns are a NEW extension"
 ARRAYS = ("mag", "grad", "opm")
 NUMERATORS = ("p2p", "peak", "noisy_peak", "noisy_p2p")  # p2p primary
 VARIANTS = ("fig6_calibrated", "as_specified")
@@ -419,6 +420,7 @@ def main():
 
     # per-source table
     with open(OUT / "g1b_sources.csv", "w", newline="") as fh:
+        io.csv_status(fh, STATUS)
         wr = csv.writer(fh)
         wr.writerow(["family", "vertex", "hemi", "depth_mm", "orientation_deg", "area_mm2", "total_nAm"]
                     + [f"SNR_{var}_{k}_{v}" for var in VARIANTS for k in ARRAYS for v in NUMERATORS])
@@ -431,7 +433,7 @@ def main():
                             + [f"{results[(var, fam)][k][vv][i]:.4f}" for var in VARIANTS for k in ARRAYS for vv in NUMERATORS])
 
     summary = dict(
-        status="ADAPT (MEG part of Hunold et al. 2016 on the MNE sample subject); OPM columns are a NEW extension",
+        status=STATUS,
         config=cfg, n_valid_vertices=int(len(valid_idx)), n_usable_vertices=int(len(usable_idx)), n_background_dipoles=int(n_bg),
         dipoles=dict(requested=int(hunold.PAPER_DIPOLE_COUNTS.sum()), achieved=int(achieved.sum()),
                      achieved_per_bin=achieved, shortfall_bins=int(np.sum(achieved < hunold.PAPER_DIPOLE_COUNTS))),

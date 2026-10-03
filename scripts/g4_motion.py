@@ -333,9 +333,10 @@ CORR_COLOR = {"none": "tab:red", "homogeneous": "tab:blue", "homogeneous+gradien
 EXAMPLE_COLUMNS = ("t_s", "raw_pT", "none_pT", "homogeneous_pT", "homogeneous+gradient_pT")
 
 
-def write_example(examples, path):
+def write_example(examples, path, status):
     cols = [examples["t"], examples["raw"] * 1e12] + [examples["filtered"][c] * 1e12 for c in CORRECTIONS]
     with open(path, "w", newline="") as fh:
+        io.csv_status(fh, status)
         wr = csv.writer(fh)
         wr.writerow(EXAMPLE_COLUMNS)
         for row in zip(*cols):
@@ -343,8 +344,7 @@ def write_example(examples, path):
 
 
 def read_example(path) -> dict:
-    with open(path) as fh:
-        rows = list(csv.DictReader(fh))
+    rows = io.read_csv(path)
     col = {k: np.array([float(r[k]) for r in rows]) for k in EXAMPLE_COLUMNS}
     return dict(t=col["t_s"], raw=col["raw_pT"] * 1e-12, filtered={c: col[f"{c}_pT"] * 1e-12 for c in CORRECTIONS})
 
@@ -593,7 +593,7 @@ def main():
             "a particular room or device; results scale linearly with rotation x field."])
     out_dir.mkdir(parents=True, exist_ok=True)
     io.write_json(summary, out_dir / "g4_motion_summary.json")
-    write_example(examples, out_dir / "g4_motion_timecourse_example.csv")
+    write_example(examples, out_dir / "g4_motion_timecourse_example.csv", summary["status"])
     (out_dir / "G4_motion_report.md").write_text(report(summary))
     figure(summary, examples, out_dir / "Figure_G4_motion.png")
     log(f"done in {time.time() - t0:.0f} s -> {out_dir}")

@@ -9,7 +9,6 @@ results/g4/g4_g2_consistency.json.
 """
 from __future__ import annotations
 
-import csv
 import json
 import sys
 from pathlib import Path
@@ -27,8 +26,7 @@ COLS = ("detect_opm_dense_opm_intrinsic+brain+env", "detect_squid_combined_intri
 
 def main():
     g4 = json.loads((RES / "g4" / "g4_adult_summary.json").read_text())
-    with open(RES / "g2" / "g2_targets.csv") as fh:
-        rows = {(int(r["hemi"]), int(r["vertno"])): r for r in csv.DictReader(fh)}
+    rows = {(int(r["hemi"]), int(r["vertno"])): r for r in io.read_csv(RES / "g2" / "g2_targets.csv")}
     by_band = {}
     for loc in g4["locations"]:
         r = rows[(loc["hemi"], loc["vertex"])]
