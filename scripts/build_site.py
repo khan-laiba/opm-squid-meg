@@ -429,7 +429,7 @@ def page_pediatric(d, out):
               "placements in the fixed helmet, the counterfactual helmet scaled with the head (green) and the refitted dense OPM "
               "sites (blue).", "Pediatric geometry")]
     rows = []
-    for c in CHILDREN:
+    for c in [c for c in CHILDREN if f"{c}/opm_dense/combined/intrinsic+brain/detect" in g3b["comparisons"]]:
         for ref in ("combined", "grad", "mag"):
             r = g3b["comparisons"][f"{c}/opm_dense/{ref}/intrinsic+brain/detect"]
 
