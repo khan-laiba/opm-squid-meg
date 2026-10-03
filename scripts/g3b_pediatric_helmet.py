@@ -768,14 +768,16 @@ def summarise(anats, state, cfg) -> dict:
         + ", ".join(LABEL[k] for k in TEMPLATES)
         + ") are not a population: template results are conditional simulations.",
         "Every child array uses the adult's conventions: background moment variance per unit cortical area, room field, "
-        "intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes. Both systems' detectability "
-        "rises in " + ", ".join(LABEL[k] for k in rise) + ", the OPM's more (absolute detectability table), by different routes: "
-        "the on-scalp OPM sees more signal from a cortex that is closer in absolute terms at about the same brain noise, while "
-        "the SQUIDs' brain noise falls (the cortex is farther from the fixed helmet and, with the background fixed per unit "
-        "area, smaller) more than their signal."
-        + (" In " + ", ".join(LABEL[k] for k in other) + " (dense OPM / Neuromag combined, against the adult: "
+        "intrinsic noise, sensor sizes and the 3-layer BEM conductivities; only geometry changes."
+        + (" Both systems' detectability rises in " + ", ".join(LABEL[k] for k in rise) + ", the OPM's more (absolute "
+           "detectability table), by different routes: the on-scalp OPM sees more signal from a cortex that is closer in "
+           "absolute terms at about the same brain noise, while the SQUIDs' brain noise falls (the cortex is farther from the "
+           "fixed helmet and, with the background fixed per unit area, smaller) more than their signal." if rise else "")
+        + (" In " + ", ".join(LABEL[k] for k in other) + " the detectability changes by "
            + ", ".join(f"{gain(k, 'opm_dense/opm'):+.2f} / {gain(k, sq):+.2f} dB" for k in other)
-           + ") the cortex is nearly adult-sized, so the background does not shrink and Neuromag's detectability falls."
+           + " (dense OPM / Neuromag combined, against the adult)"
+           + ("; their cortex is nearly adult-sized, so the background does not shrink and Neuromag's detectability falls."
+              if all(gain(k, sq) <= 0 for k in other) and all(k in SCHOOL for k in other) else ".")
            if other else "")
         + " The templates' averaged white surfaces are smoother than an individual cortex (usable area "
         + ", ".join(f"{out['anatomies'][k]['cortical_area_cm2']:,.0f}" for k in TEMPLATES) + " cm^2 for the "

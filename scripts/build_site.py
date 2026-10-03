@@ -261,7 +261,7 @@ def pediatric_findings(d):
         + " (vertex-wise for the scaled adults; by parcel for the templates and the school-aged children). OPM arrays refitted with "
         "the adult rules "
         "(nothing shrunk); background, room field and sensor noise unchanged.",
-        "The gain comes mainly from the fixed helmet's fit: left at the adult's ear-line position, Delta is "
+        "Placement and helmet fit: left at the adult's ear-line position, Delta is "
         + ", ".join(f"{dec[f'{c}/centred_vs_adult_centred/combined']['delta']['median']:+.2f}" for c in kids)
         + " dB; in a counterfactual helmet scaled with the head it is "
         + ", ".join(f"{dec[f'{c}/counterfactual_vs_adult_counterfactual/combined']['delta']['median']:+.2f}" for c in kids)
