@@ -63,8 +63,10 @@ user account, so a Pages site, if ever enabled, would be public.
    template (`Figure_G3B_maps_infant*.png`, `Figure_G3B_usefulness_infant*.png`,
    `Figure_G3B_geometry.png`, `Figure_G3B_depth.png`, `Figure_G3B_delta.png`,
    `Figure_G3B_placements.png`, `g3b_targets_infant*.csv`), the G3B summary and report
-   (`g3b_summary.json`, `G3B_report.md`), `results/g4/*infant*`, `results/g4/G4_pediatric_report.md`,
-   `results/g4/g4_pediatric_comparison.json`, the motion results (`g4_motion_summary.json`,
+   (`g3b_summary.json`, `G3B_report.md`), `results/g3b/school_anatomy_checks.json` (template checks),
+   `results/g4/*infant*`, `results/g4/G4_pediatric_report.md`, `results/g4/g4_pediatric_comparison.json`,
+   `g4_matched_rate.json`, `G4_matched_rate_report.md`, `g4_fit_failures.json`,
+   `G4_fit_failures_report.md`, the motion results (`g4_motion_summary.json`,
    `G4_motion_report.md`, `g4_motion_timecourse_example.csv`, `Figure_G4_motion.png`), and the
    report pages built from them (pediatric, epilepsy, G3B and motion reports, downloads). Confirm
    redistribution; both papers are cited wherever these appear.

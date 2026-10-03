@@ -342,7 +342,7 @@ Their cortex is nearly adult-sized (1,666-1,869 cm^2 against 1,878 cm^2; scaled 
 so with the background fixed per unit area Neuromag's brain noise stays near the adult's; the size-only
 control, which shrinks the cortex with the head, gains more than the two children of its head size.
 In the counterfactual helmet about the laterally centred head children A and B lose (-0.76 and -0.59
-dB) and child C, whose helmet barely shrinks, is level (+0.04 [-0.20, +0.20] dB), so the earlier
+dB) and child C, whose helmet shrinks least (factor 0.943), is level (+0.04 [-0.20, +0.20] dB), so the earlier
 statement that it reverses the gain in every child holds for A and B but not for C.
 Pediatric G4 (same detectors, seeds and inverse as the other anatomies): at 10-20 mm more locations
 favour the dense OPM in each child (11/4, 12/3 and 14/2; strength ratio 1.27 [0.93-1.63], 1.18
@@ -354,6 +354,11 @@ Localization: dipole errors similar (4.4-6.7 mm for detected 320-nAm focal spike
 2.9-4.7 mm smaller (p = 0.071-0.25; MNE's dSPM 4.9-5.5 mm, p = 0.009-0.020); 13 of the children's 120
 localization comparisons have p < 0.05, all favouring an OPM array, none surviving a correction
 (`docs/methods.md` section 11).
+
+Reproduction: the children's 45 input files are fetched and checked (S3 object versions, SHA-256) by
+`scripts/fetch_school_subjects.py` from `configs/school_subjects_manifest.json`, then prepared, checked
+and run by `scripts/run_all.sh`; 160 tests, of which a clean clone of 8bdeb8b passes 159 (one skip
+without the stored lead fields).
 
 Verdict after this addendum: G3 met with reservations. The school-aged anatomy is native in its cortex
 and scalp, but its skull is modelled and its fiducials transferred; three children of one dataset show

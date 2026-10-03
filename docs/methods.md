@@ -689,9 +689,9 @@ Neuromag combined, matched OPM, dense OPM)
   `results/g3b/school_anatomy_checks.json`), with an outer skull crossing it. The skull is therefore
   modelled (A-BEM-CHILD): the inner skull moved inward to 8 mm below the scalp where it is
   shallower, no vertex closer than 2 mm to a white-surface vertex (the surface between vertices comes
-  within 1.1-1.4 mm of the cortex), the outer skull halfway to the scalp; over the upper head the
-  modelled inner skull lies a median 7.5, 5.7 and 7.8 mm below the scalp (child B's cortex lies close
-  to its scalp). The head surface is the watershed outer skin put on the scalp (A-BEM-CONFORM). On the
+  within 0.9-1.3 mm of the white surface; no white vertex lies outside it), the outer skull halfway to
+  the scalp; over the upper head the modelled inner skull lies a median 7.5, 5.7 and 7.8 mm below the
+  scalp (child B's cortex lies close to its scalp). The head surface is the watershed outer skin put on the scalp (A-BEM-CONFORM). On the
   adult, whose segmented skull is known, the same procedure applied to a degraded inner skull changes
   the G2 headline by at most 0.003 (within 0.01 in every depth band) for depths of 6-10 mm, although
   at 8 mm its inner skull lies a median 1.7 mm from the segmented one (`scripts/study_child_bem.py`).
@@ -699,11 +699,11 @@ Neuromag combined, matched OPM, dense OPM)
   talairach.xfm) are not used: on the adult, whose fiducials are digitised, they land 10-27 mm from
   them (head frame 10.6 deg off), and only child A's own talairach.xfm was obtained (with it child A's
   cortex centroid lies 3.9 mm from the adult's in MNI space; the files stored in the children's own
-  folders, which belong to other subjects, put it 17-27 mm away). Instead the adult's digitised
-  fiducials are transferred by a similarity fit of the cortices and moved to the nearest scalp vertex
-  (A-G3-FID; on the templates this reproduces their own fiducials to 1.6-14.4 mm and their head frame
-  to 3.2-5.9 deg, where the same fit between the scalps misplaces the nasion by 34-45 mm). Prepared by
-  `scripts/prepare_school_subjects.py` in the templates' file layout
+  folders, which belong to other subjects, put the three children's centroids 17-27 mm away). Instead
+  the adult's digitised fiducials are transferred by a similarity fit of the cortices and moved to the
+  nearest scalp vertex (A-G3-FID; on the templates this reproduces their own fiducials to 1.6-14.4 mm
+  and their head frame to 3.2-5.9 deg, where the same fit between the scalps misplaces the nasion by
+  34-45 mm). Prepared by `scripts/prepare_school_subjects.py` in the templates' file layout
   (`results/g3b/school_subjects_preparation.json`); FreeSurfer files are read without nibabel
   (`opmsquid.fsio`, checked against MNE's files of the sample subject). They are individuals, three
   of one dataset, not a population; like the templates they are compared with the adult by parcel and
@@ -777,8 +777,8 @@ Neuromag combined, matched OPM, dense OPM)
 G3B results (`results/g3b/g3b_summary.json`, `G3B_report.md`; computed at 71de176 with all nine anatomies and
 the v4 arrays: equal 7-mm standoff, A-BEM-CONFORM; the six anatomies of the v4 pass, computed at e53bea8 and
 redrawn at 9512f1b, reproduce exactly, 97,048 values; the school-aged children have their own bootstrap
-stream; summaries, report and figures redrawn at 6ebac95 to mark an infeasible placement, every number
-unchanged). For the six, against v3 (19a8fd2) the adult's D rose from +0.85 to +1.00 dB and the scaled
+stream; summaries, report and figures redrawn at 6ebac95 to mark an infeasible placement and the notes
+at ff6e25c, every number unchanged). For the six, against v3 (19a8fd2) the adult's D rose from +0.85 to +1.00 dB and the scaled
 controls' by 0.04-0.05 dB, while the templates, whose head surfaces already lay on their scalps, did not
 change; every Delta fell by 0.11-0.27 dB and the conclusions did not change, below. Dense OPM vs
 Neuromag, intrinsic + brain noise, primary placement unless stated; dB of detectability;
@@ -860,7 +860,7 @@ means the 2-year template; the 18- and 12-month templates are named.
   child C's helmet barely shrinks), about the laterally centred head -0.76 [-0.84, -0.68], -0.59
   [-0.74, -0.42] and +0.04 [-0.20, +0.20] dB (factors 0.897, 0.864 and 0.943). At an equal channel count Delta would be +0.66, +0.78 and +0.43 dB. Top contact
   ranks 4th, 6th and 3rd from the lowest of the 12 source-blind placements (child C: of the 11 feasible;
-  its x-5mm placement brings a magnetometer to 17.0 mm from the scalp, inside the 18-mm Dewar spacing,
+  its x-5mm placement brings a magnetometer to 16.9 mm from the scalp, inside the 18-mm Dewar spacing,
   and is marked infeasible) (D_child 1.25-1.50, 1.40-1.96 and 1.05-1.91
   dB over the others; against the family medians the differences of the medians are 0.12, 0.17 and 0.05
   dB smaller). Sensitivity (difference of the medians): OPM noise 7-30 fT/sqrt(Hz) -0.15 to +0.60, -0.03
@@ -876,8 +876,8 @@ means the 2-year template; the 18- and 12-month templates are named.
   arrays outward by the adult's excess predicted Delta +0.47, +1.12, +0.77, +0.81 and +1.07 dB and a
   counterfactual Delta about the laterally centred head of -0.34 to -0.06 dB; v4 gives +0.44, +1.07, +0.73, +0.88 and +0.96 dB and
   -0.38 to -0.16 dB (school-age size, 2-year size, 24, 18, 12 months): Delta within 0.11 dB of the
-  prediction, and a counterfactual Delta about the laterally centred head that is now negative in every
-  head (the templates' intervals include 0). The adult's D changed through its
+  prediction, and a counterfactual Delta about the laterally centred head that is now negative in each
+  of these five heads (the templates' intervals include 0). The adult's D changed through its
   standoff, its sensitive axes and its lower occipital sites together (section 8).
 * By depth (template vs adult, combined, native depth strata): Delta +0.17 to +0.67 dB down to 30 mm
   (the 10-20 mm intervals exclude 0, the 20-30 mm ones include it), +0.29 [+0.12, +0.55] at 30-40 mm, +0.24 at 40-50 mm, +0.85 at 50-60 mm and
@@ -920,10 +920,11 @@ means the 2-year template; the 18- and 12-month templates are named.
   centred +2.08 and +2.50, top +0.88 and +0.96, laterally centred then top +0.75 and +0.91, 18-mm
   contact +0.85 and +0.85, back +1.49 and +1.68 dB; counterfactual +0.18 [+0.11, +0.47] and -0.02
   [-0.16, +0.11] dB, about the laterally centred head -0.16 [-0.39, +0.03] and -0.18 [-0.37, +0.06]
-  dB. The relative gain of the head-adaptive array in children therefore comes from the fixed
-  helmet's fit; with a helmet that fits as the adult's does, it reverses (about the laterally
-  centred head -0.21 and -0.38 dB for the scaled controls; -0.30, -0.16 and -0.18 dB for the templates,
-  whose intervals include 0).
+  dB. The relative gain of the head-adaptive array in the templates and size controls therefore comes
+  from the fixed helmet's fit; with a helmet that fits as the adult's does, it reverses (about the
+  laterally centred head -0.21 and -0.38 dB for the scaled controls; -0.30, -0.16 and -0.18 dB for the
+  templates, whose intervals include 0; school-aged children A and B -0.76 and -0.59 dB, child C level
+  at +0.04 [-0.20, +0.20] dB).
 * Mechanism (templates and size controls; for the school-aged children, whose cortex is nearly
   adult-sized, see their bullet above). Both systems' detectability rises in these smaller heads, by
   different routes:
@@ -981,7 +982,7 @@ means the 2-year template; the 18- and 12-month templates are named.
   +0.42 to +0.52 (school-age size), +1.03 to +1.14 (2-year size), +0.66 to +0.85 dB (template);
   background variance x0.5 / x2 +0.53 / +0.48, +1.18 / +1.07, +0.89 / +0.78 dB (the variants scale
   the adult too; D_child itself moves by at most 0.06 dB, template 1.86 / 1.79 vs 1.84 dB; in the
-  school-aged children by up to 0.16 dB, child B 1.64 / 1.35 vs 1.52 dB); 1-layer
+  school-aged children by up to 0.16 dB, child B 1.64 / 1.35 vs 1.51 dB); 1-layer
   BEM +0.51, +1.13, +0.83 dB. 18- and 12-month templates: OPM noise +0.66 to +0.94 and +0.82 to
   +1.05 dB, background x0.5 / x2 +0.89 / +0.89 and +1.08 / +0.97 dB, 1-layer BEM +0.84 and +1.06 dB.
   At 30 fT/sqrt(Hz) the adult's D is -0.05 dB (Neuromag slightly ahead) and the children's +0.37, +0.97,

@@ -20,7 +20,7 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G2 realistic adult OPM vs Neuromag | NEW | done, internally reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2`, `adult-baseline-v3` and `adult-baseline-v4` (equal OPM standoff on every head) |
 | G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates, three school-aged children of OpenNeuro ds005234 with a modelled skull, and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`, recomputed with the v3 arrays (`adult-baseline-v3`) and with every head surface on its MRI scalp (`adult-baseline-v4`); the 2-year-template pass internally reviewed (approve with notes; fixes re-verified); the 18- and 12-month templates added on 2026-10-01, the school-aged children on 2026-10-03 (v4 only) |
 | G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates, both size controls and three school-aged children); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts internally reviewed |
-| G5 software, reproduction, report | - | 148 unit tests pass with the v4 results (a clean clone of db3f0dc, data through `OPMSQUID_DATA`, empty cache: 147 pass, 1 skipped without the stored lead fields); `scripts/run_all.sh` (resumable: `RESUME=1`); result CSVs carry a status line; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
+| G5 software, reproduction, report | - | 160 unit tests pass with the v4 results and the school-aged children (a clean clone of 8bdeb8b, data through `OPMSQUID_DATA`, empty cache: 159 pass, 1 skipped without the stored lead fields); `scripts/run_all.sh` (resumable: `RESUME=1`); result CSVs carry a status line; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
 
 "Internally reviewed" means separate review passes by reviewer agents, with fixes re-verified
 (on 2026-10-01 also complete reviews by two other models), not external peer review.
@@ -114,7 +114,8 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   the same median 7.0 mm above its MRI scalp (v4; in v3 the adult's sat 0.8 mm farther out and
   Delta was 0.11-0.27 dB larger). Against the gradiometers or magnetometers alone, after the
   external-field projection (of all 306 channels jointly), for the matched-site OPM array and for
-  extended sources (5-, 10- and 20-mm patches) the sign is the same.
+  extended sources (5-, 10- and 20-mm patches) the sign is the same (for the school-aged children
+  below, except child C after the projection).
 - In the templates and size controls the gain comes from the fixed helmet's fit: left at the adult's
   ear-line position Delta is +1.14 to +2.50 dB; laterally centred or at true 18-mm contact it stays
   +0.44 to +1.09 dB; in a counterfactual helmet scaled with the head, centred laterally, it is -0.21,
@@ -140,7 +141,7 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   the school-aged children): against each head's family median the child-minus-adult differences of
   the medians are 0.14-0.20 dB smaller (school-aged children 0.05-0.17 dB).
 - Native school-aged heads gain less than the infant templates and, at a similar head circumference,
-  less than the size-only control: Delta +0.30 [+0.11, +0.38], +0.41 [+0.28, +0.54] and +0.17 [-0.07,
+  less than the size-only control (children A and C; their intervals overlap or touch the control's): Delta +0.30 [+0.11, +0.38], +0.41 [+0.28, +0.54] and +0.17 [-0.07,
   +0.34] dB for children A, B and C (head circumference 520, 486 and 535 mm; the school-age size
   control, 525 mm, +0.44 [+0.34, +0.56] dB; child B's smaller head gains about as much), after the
   external-field projection +0.03, +0.26 and -0.19 dB. Their cortex is nearly adult-sized
@@ -148,7 +149,7 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   background fixed per unit area Neuromag's brain noise stays near the adult's while the closer OPM
   sees more of it; reweighted to the adult's depth mix their gain is -0.05 to +0.05 dB, and within
   depth strata it is near zero or negative down to 30 mm and positive only deeper. A scaled adult
-  therefore overstates the gain of school-aged heads of its size; the 2-year size control and the
+  therefore likely overstates the gain of school-aged heads of its size (point estimates); the 2-year size control and the
   infant templates, whose cortices are smaller, may too. In a helmet scaled with the head, about the
   laterally centred head, Delta is -0.76, -0.59 and +0.04 dB (centred -0.74, -0.23 and +0.56 dB;
   child C's helmet barely shrinks).
@@ -215,8 +216,8 @@ data or details are unavailable; NEW = new experiment or study choice.
 
 | Path | Content |
 |---|---|
-| `src/opmsquid/` | package: sphere model, sensors (Neuromag, OPM), anatomy (adult, infant template, scaled controls), forward models (cached), noise, metrics, background, environment, paper-specific modules (`hunold`, `goldenholz`), G2 comparison, pediatric helmet placements (`pediatric`) |
-| `scripts/` | one driver per milestone (`g1a_*`, `g1b_*`, `g1c_*`, `g2_*`, `g3a_*`, `g3b_*`, `g4_*`), full-resolution forward jobs, Fig. 6 digitiser, BEM accuracy studies, `run_all.sh` |
+| `src/opmsquid/` | package: sphere model, sensors (Neuromag, OPM), anatomy (adult, infant templates, school-aged children with a modelled skull, scaled controls), FreeSurfer readers without nibabel (`fsio`), forward models (cached), noise, metrics, background, environment, paper-specific modules (`hunold`, `goldenholz`), G2 comparison, pediatric helmet placements (`pediatric`) |
+| `scripts/` | one driver per milestone (`g1a_*`, `g1b_*`, `g1c_*`, `g2_*`, `g3a_*`, `g3b_*`, `g4_*`), full-resolution forward jobs, Fig. 6 digitiser, BEM accuracy studies, the school-aged children's fetch, preparation and checks, `run_all.sh` |
 | `configs/` | paper and study configurations, every value tagged as printed, chosen or digitised |
 | `tests/` | `unittest` suite (physics, units, metrics, geometry, noise, statistics, report builder) |
 | `site/` | templates and style of the local report (`scripts/build_site.py`; output in `site/_build/`, not committed) |
