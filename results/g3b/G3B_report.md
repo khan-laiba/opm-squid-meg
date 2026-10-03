@@ -79,6 +79,7 @@ Code commit: see `g3b_summary.json` (provenance). Configuration: `configs/g3b_pe
 | child C (8.7 y) | centred | 0.0 | 21.6 | 41.3 | True |
 | child C (8.7 y) | top | 21.0 | 20.0 | 32.6 | True |
 | child C (8.7 y) | back | 11.0 | 20.0 | 38.0 | True |
+| child C (8.7 y) | x-5mm | 0.0 | 16.9 | 42.5 | False |
 | child C (8.7 y) | x-centred | 20.5 | 20.2 | 33.1 | True |
 | child C (8.7 y) | top-18mm | 23.0 | 18.1 | 31.9 | True |
 | child C (8.7 y) | counterfactual | 0.0 | 18.5 | 36.8 | True |
@@ -492,7 +493,9 @@ Templates and school-aged children: the pooled difference of the medians (D_chil
 | 12-month template | +3.65 | +2.04 | +2.79 | +2.13 | +2.03 | +2.07 | +2.06 | +1.98 | +2.22 | +2.01 | +2.11 | +2.07 | +1.99 | +1.98 | +1.85 | +1.16 | +0.99 |
 | child A (7.8 y) | +2.07 | +1.34 | +1.40 | +1.42 | +1.40 | +1.39 | +1.33 | +1.25 | +1.50 | +1.45 | +1.42 | +1.40 | +1.31 | +1.34 | +1.24 | +0.62 | +0.62 |
 | child B (8.3 y) | +2.63 | +1.51 | +1.76 | +1.77 | +1.48 | +1.53 | +1.45 | +1.40 | +1.96 | +1.45 | +1.70 | +1.55 | +1.45 | +1.47 | +1.40 | +1.06 | +0.78 |
-| child C (8.7 y) | +2.08 | +1.19 | +1.83 | +1.24 | +2.00 | +1.18 | +1.19 | +1.05 | +1.87 | +1.91 | +1.59 | +1.33 | +1.32 | +1.25 | +1.08 | +1.73 | +1.33 |
+| child C (8.7 y) | +2.08 | +1.19 | +1.83 | +1.24 | +2.00 (infeasible) | +1.18 | +1.19 | +1.05 | +1.87 | +1.91 | +1.59 | +1.33 | +1.32 | +1.25 | +1.08 | +1.73 | +1.33 |
+
+Infeasible: a magnetometer coil centre closer to the scalp than the 18-mm Dewar spacing (not a possible position; its D is listed for completeness and left out of the placement ranges).
 
 | anatomy | opm_asd_7fT | opm_asd_10fT | opm_asd_15fT | opm_asd_20fT | opm_asd_30fT | background_x0.5 | background_x2 | bem1 |
 |---|---|---|---|---|---|---|---|---|

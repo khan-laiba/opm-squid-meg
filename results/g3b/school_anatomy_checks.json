@@ -1,0 +1,202 @@
+{
+  "status": "NEW check: the school-aged children's skull, fiducials and talairach files (D-G3-ANAT, A-BEM-CHILD, A-G3-FID)",
+  "upper_head_definition": "inner-skull vertices above their mean height (MRI frame z), as in scripts/study_child_bem.py",
+  "inner_skull_scalp_depth_upper_head": {
+    "adult": {
+      "n_vertices": 1322,
+      "p10_p50_p90_mm": [
+        8.054769403249447,
+        9.71054515373671,
+        13.68443068610933
+      ]
+    },
+    "ANTS2-0Years3T": {
+      "n_vertices": 1283,
+      "p10_p50_p90_mm": [
+        4.341048120257053,
+        5.615926658643185,
+        7.433878013425767
+      ]
+    },
+    "ANTS18-0Months3T": {
+      "n_vertices": 1286,
+      "p10_p50_p90_mm": [
+        5.987356993401685,
+        8.504006185047151,
+        10.94517544695487
+      ]
+    },
+    "ANTS12-0Months3T": {
+      "n_vertices": 1276,
+      "p10_p50_p90_mm": [
+        4.599294139708678,
+        6.083303005564233,
+        7.6403717160443225
+      ]
+    },
+    "childA/watershed": {
+      "n_vertices": 1278,
+      "p10_p50_p90_mm": [
+        0.6739682314422981,
+        2.0356649888987755,
+        3.9508763601987704
+      ]
+    },
+    "childA/modelled": {
+      "n_vertices": 1315,
+      "p10_p50_p90_mm": [
+        6.12606974664298,
+        7.46835812928766,
+        8.37874530795697
+      ]
+    },
+    "childB/watershed": {
+      "n_vertices": 1249,
+      "p10_p50_p90_mm": [
+        0.12401813471166906,
+        0.7868994717233307,
+        1.856705270825025
+      ]
+    },
+    "childB/modelled": {
+      "n_vertices": 1295,
+      "p10_p50_p90_mm": [
+        3.919286304632451,
+        5.73652331034846,
+        7.439008236065406
+      ]
+    },
+    "childC/watershed": {
+      "n_vertices": 1281,
+      "p10_p50_p90_mm": [
+        0.9503381577770151,
+        2.4520405842551307,
+        4.917316191872577
+      ]
+    },
+    "childC/modelled": {
+      "n_vertices": 1305,
+      "p10_p50_p90_mm": [
+        7.013801109297438,
+        7.8309287152523686,
+        8.462133292906476
+      ]
+    }
+  },
+  "children_thinnest_layers": {
+    "childA": {
+      "white_to_scalp_min_mm": 3.6962033633142957,
+      "inner_to_outer_skull_min_mm": 0.9695440199349782,
+      "outer_skull_to_head_min_mm": 0.9493701544129599
+    },
+    "childB": {
+      "white_to_scalp_min_mm": 3.670906531243472,
+      "inner_to_outer_skull_min_mm": 0.9279905403617397,
+      "outer_skull_to_head_min_mm": 0.17486549217758646
+    },
+    "childC": {
+      "white_to_scalp_min_mm": 5.735953445652387,
+      "inner_to_outer_skull_min_mm": 1.7252201956378315,
+      "outer_skull_to_head_min_mm": 1.8526682844209827
+    }
+  },
+  "fiducial_transfer_on_templates": {
+    "ANTS2-0Years3T": {
+      "distance_mm": {
+        "lpa": 5.022145701617915,
+        "nasion": 7.4062222372243784,
+        "rpa": 3.3768870925996683
+      },
+      "head_frame_rotation_deg": 5.130215159065261,
+      "cortex_fit_median_mm": 2.7850616140630966,
+      "scale": 0.8607874002424066,
+      "scalp_fit": {
+        "distance_mm": {
+          "lpa": 17.253338553230915,
+          "nasion": 44.06554735269933,
+          "rpa": 11.040900489151984
+        },
+        "head_frame_rotation_deg": 19.04782325305208
+      }
+    },
+    "ANTS18-0Months3T": {
+      "distance_mm": {
+        "lpa": 5.768426260903915,
+        "nasion": 14.35427812825897,
+        "rpa": 4.222309999426516
+      },
+      "head_frame_rotation_deg": 5.910274953127201,
+      "cortex_fit_median_mm": 2.77581176174194,
+      "scale": 0.8078752031920526,
+      "scalp_fit": {
+        "distance_mm": {
+          "lpa": 18.489168018243713,
+          "nasion": 44.7493790560237,
+          "rpa": 13.999150305976535
+        },
+        "head_frame_rotation_deg": 17.423475741514597
+      }
+    },
+    "ANTS12-0Months3T": {
+      "distance_mm": {
+        "lpa": 11.09297387856922,
+        "nasion": 1.6436025379516697,
+        "rpa": 5.483395518456342
+      },
+      "head_frame_rotation_deg": 3.2238650926521832,
+      "cortex_fit_median_mm": 2.7056625521259217,
+      "scale": 0.8209864461143264,
+      "scalp_fit": {
+        "distance_mm": {
+          "lpa": 15.990641908230566,
+          "nasion": 34.41463279602604,
+          "rpa": 12.265383243893217
+        },
+        "head_frame_rotation_deg": 12.389886924437697
+      }
+    }
+  },
+  "mni_fiducials_on_adult": {
+    "distance_mm": {
+      "lpa": 23.508465534901415,
+      "nasion": 10.030387523341538,
+      "rpa": 27.356720268479158
+    },
+    "head_frame_rotation_deg": 10.588055986941868
+  },
+  "talairach_files": {
+    "childA/sub-Z209/mri/transforms/talairach.xfm": {
+      "file_owner": "sub-Z213",
+      "own_file": true,
+      "stored_in_own_folder": false,
+      "centroid_offset_from_adult_mm": 3.925579270902981,
+      "median_distance_to_adult_cortex_mm": 2.0598111634415806
+    },
+    "childA/sub-Z213/mri/transforms/talairach.xfm": {
+      "file_owner": "sub-Z214",
+      "own_file": false,
+      "stored_in_own_folder": true,
+      "centroid_offset_from_adult_mm": 26.674192377316906,
+      "median_distance_to_adult_cortex_mm": 4.135271883174887
+    },
+    "childB/sub-Z209/mri/transforms/talairach.xfm": {
+      "file_owner": "sub-Z213",
+      "own_file": false,
+      "stored_in_own_folder": true,
+      "centroid_offset_from_adult_mm": 18.22030201362022,
+      "median_distance_to_adult_cortex_mm": 2.594818466429187
+    },
+    "childC/sub-Z226/mri/transforms/talairach.xfm": {
+      "file_owner": "sub-Z227",
+      "own_file": false,
+      "stored_in_own_folder": true,
+      "centroid_offset_from_adult_mm": 17.266808915016103,
+      "median_distance_to_adult_cortex_mm": 2.50745654510941
+    }
+  },
+  "provenance": {
+    "commit": "c36f718",
+    "mne_version": "1.13.2",
+    "numpy_version": "2.5.3"
+  }
+}

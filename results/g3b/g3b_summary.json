@@ -3458,6 +3458,19 @@
       }
     }
   },
+  "infeasible_placements": {
+    "adult": [],
+    "school": [],
+    "size2yr": [],
+    "infant2yr": [],
+    "infant18mo": [],
+    "infant12mo": [],
+    "childA": [],
+    "childB": [],
+    "childC": [
+      "x-5mm"
+    ]
+  },
   "sensor_distances": {
     "adult": {
       "squid:centred": {
@@ -232679,6 +232692,7 @@
     "Placements are chosen from the scalp and helmet geometry only. Under the adult's measured pose a head with other fiducials need not be centred laterally; 'x-centred' shifts each head along device x to equal left/right median gaps before the top contact (shift: adult -1.5 mm, school-age size (scaled adult) -0.5 mm, 2-year size (scaled adult) -0.5 mm, 2-year template -6.5 mm, 18-month template -5.5 mm, 12-month template -2.5 mm, child A (7.8 y) +0.0 mm, child B (8.3 y) -2.5 mm, child C (8.7 y) +3.5 mm; negative = to the left), and 'counterfactual_x-centred' scales the helmet about that laterally centred head. The counterfactual helmet (scaled with the head) is a mechanistic control, not a pediatric SQUID system.",
     "Targets on the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum and midbrain, not cortex) are left out of every summary; they would otherwise dominate the deepest strata."
   ],
+  "replotted_at_commit": "6ebac95",
   "provenance": {
     "commit": "71de176",
     "mne_version": "1.13.2",
