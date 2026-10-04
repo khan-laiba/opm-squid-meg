@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
-"""G5: build the local static report from the committed result files (never deployed here).
+"""G5: build the static site from the committed result files (this script deploys nothing).
 
-Order as GOAL.md G5 asks: adult reference benchmarks (G1), realistic adult results (G2), pediatric
-extension (G3), epilepsy (G4), then methods, uncertainty, limitations and reproduction. Every
-number is read from results/*/ (nothing is recomputed); figures are the committed PNGs; JSON, CSV
-and the G2 report are copied for download with their size, SHA-256 and the code commit recorded
-in the result file. The G1A Fig. 3 PDF and SVG (licensed font subsets and outlines) are not used.
+The landing page (index.html) is the report, report/report.md: first rendered by Jinja2 with the
+number facts of scripts/report_facts.py as F.<name> (a missing fact or variable fails the build),
+then by the Markdown subset of opmsquid.sitebuild (numbered figures and tables, cross-references,
+a table of contents). The supplementary material follows: S1 adult reference benchmarks (G1),
+S2 realistic adult results (G2), S3 pediatric extension (G3), S4 epilepsy and head motion (G4),
+S5 methods, uncertainty and limitations, S6 parameters and provenance, S7 number provenance (every
+fact the report uses, with its source), S8 reproduction and downloads, and the project summary by
+milestone (summary.html). Every number is read from results/*/ (nothing is recomputed); figures
+are the committed PNGs; JSON, CSV and the generated reports are copied for download with their
+size, SHA-256 and the code commit recorded in the result file. The G1A Fig. 3 PDF and SVG
+(licensed font subsets and outlines) are not used.
 
 Usage: .venv/bin/python scripts/build_site.py [--out DIR]   (default site/_build, git-ignored)
 The build fails if any local link or anchor is broken.
@@ -14,7 +20,9 @@ from __future__ import annotations
 
 import argparse
 import html
+import importlib.util
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -29,9 +37,12 @@ from markupsafe import Markup  # noqa: E402
 from opmsquid import detection, io, sitebuild as sb  # noqa: E402
 
 RES = ROOT / "results"
-NAV = [("index.html", "Overview"), ("benchmarks.html", "Adult benchmarks (G1)"), ("adult.html", "Realistic adult (G2)"),
-       ("pediatric.html", "Pediatric (G3)"), ("epilepsy.html", "Epilepsy (G4)"), ("methods.html", "Methods and limitations"),
-       ("register.html", "Parameters and provenance"), ("reproduce.html", "Reproduce and download")]
+REPORT = ROOT / "report" / "report.md"
+# navigation: "Report" (index.html), then the supplementary material
+SUPPLEMENT = [("benchmarks.html", "S1 Benchmarks"), ("adult.html", "S2 Realistic adult"), ("pediatric.html", "S3 Pediatric"),
+              ("epilepsy.html", "S4 Epilepsy and motion"), ("methods.html", "S5 Methods"),
+              ("register.html", "S6 Parameters and provenance"), ("numbers.html", "S7 Number provenance"),
+              ("reproduce.html", "S8 Reproduce and download"), ("summary.html", "Project summary by milestone")]
 FROZEN_TAG = "adult-baseline-v2"  # the adult baseline frozen before any pediatric outcome was compared
 CURRENT_TAG = "adult-baseline-v4"  # every head-model- and array-dependent result recomputed with equal OPM standoff (adult and pediatric alike)
 MARKER = ".opmsquid_site_build"  # marks an output directory as the builder's own (safe to replace)
@@ -68,19 +79,64 @@ def cmp_str(c):
 
 def fig(out, rel_png, caption_html, alt):
     """Copy a committed PNG into the build and return its <figure>."""
-    src = RES / rel_png
-    dst = out / "figures" / rel_png
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(src, dst)
-    return sb.figure(f"figures/{rel_png}", caption_html, alt)
+    return sb.figure(sb.publish_png(f"results/{rel_png}", RES, out), caption_html, alt)
 
 
 def label(kind):
     return f'<span class="label">{kind}</span>'
 
 
+def load_facts():
+    """The report's facts (scripts/report_facts.py build_facts); while a fact module is missing, the facts
+    available, with a warning (a reference to a missing fact still fails the build)."""
+    spec = importlib.util.spec_from_file_location("report_facts", ROOT / "scripts" / "report_facts.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    try:
+        return mod.build_facts(ROOT)
+    except FileNotFoundError as e:
+        print(f"warning: {e}; building with the facts available (a reference to a missing fact still fails)")
+        return mod.build_facts(ROOT, allow_missing=True)
+
+
 # ------------------------------------------------------------------------------------------ pages
-def page_index(d):
+def page_report(out, facts):
+    """index.html: report/report.md with its facts filled in, then the Markdown subset and a table of contents.
+    The first line is the title ('# Title'). Returns (title, html, names of the facts used)."""
+    text, used = sb.fill_facts(REPORT.read_text(), {k: f["value"] for k, f in facts.items()})
+    lines = text.split("\n")
+    k = next((i for i, x in enumerate(lines) if x.strip()), 0)
+    if not lines[k].startswith("# "):
+        raise ValueError("the report must start with its title ('# Title')")
+    body = "\n" * (k + 1) + "\n".join(lines[k + 1:])  # blank title lines: error messages give the line in the file
+    h = sb.md_to_html(body, image=lambda p: sb.publish_png(p, RES, out))
+    return Markup(sb.inline(lines[k][2:].strip())), sb.toc(h), used
+
+
+def page_numbers(facts, used, out):
+    """S7: every fact the report uses, its value as printed and its source (result files linked to their downloads)."""
+    def source(s):
+        def link(m):
+            rel = m.group(0)[len("results/"):]
+            return f'<a href="data/{rel}">{m.group(0)}</a>' if (out / "data" / rel).is_file() else m.group(0)
+
+        return re.sub(r"results/[\w./-]*\w", link, html.escape(str(s)))
+
+    h = ["<p>Every number in the <a href=\"index.html\">report</a> is a named fact, inserted into the text when the site is "
+         "built. <code>scripts/report_facts.py</code> collects the facts of its modules (<code>scripts/report_facts_*.py</code>), "
+         "which read or derive each value from the committed result files and record its source: the result file and the key "
+         "path in it, or how the value is derived. The report refers to each fact by name; a reference to a missing fact fails "
+         "the build.</p>",
+         f"<p>The report uses {len(used):,} of the {len(facts):,} facts available"
+         + (", listed below in order of first use.</p>" if used else ".</p>")]
+    if used:
+        h.append(sb.table(["Fact", "Value as printed", "Source"],
+                          [[f"<code>{html.escape(n)}</code>", facts[n]["value"], source(facts[n]["source"])] for n in used],
+                          cls="facts", html_cols=(0, 2)))
+    return "\n".join(h)
+
+
+def page_summary(d):
     g2, g4, loc, g1a, g1b, g1c = d["g2"], d["g4"], d["loc"], d["g1a"], d["g1b"], d["g1c"]
     P = g2["primary"]["oracle"]
     dense, matched = P["opm_dense/combined/intrinsic+brain"], P["opm_matched/combined/intrinsic+brain"]
@@ -776,31 +832,41 @@ def main(argv=None):
              g4p=load("g4/g4_pediatric_comparison.json"), motion=load("g4/g4_motion_summary.json"))
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(ROOT / "site" / "templates"), autoescape=True)
     tpl = env.get_template("base.html")
-    head = git("rev-parse", "--short", "HEAD") + ("+dirty" if git("status", "--porcelain", "--", *io.CODE_PATHS, "site") else "")
+    sources = (*io.CODE_PATHS, "site", "report", "results", "docs", "README.md")  # everything the pages are built from
+    head = git("rev-parse", "--short", "HEAD") + ("+dirty" if git("status", "--porcelain", "--", *sources) else "")
     head_date = git("log", "-1", "--format=%cs")
-    nav = [dict(file=f, title=t) for f, t in NAV]
+    supplement = [dict(file=f, title=t) for f, t in SUPPLEMENT]
     manifest = build_manifest(out)
-    methods = sb.md_to_html((ROOT / "docs" / "methods.md").read_text(), heading_offset=1)
+    facts = load_facts()
+    try:
+        title, report, used = page_report(out, facts)
+    except (jinja2.TemplateError, ValueError, FileNotFoundError) as e:
+        raise SystemExit(f"{REPORT}: {e}")
+
+    def md(path):
+        return sb.md_to_html(path.read_text(), heading_offset=1, image=lambda p: sb.publish_png(p, RES, out))
+
     pages = {
-        "index.html": ("OPM vs SQUID MEG: adult baseline and pediatric extension", page_index(d)),
-        "benchmarks.html": ("Adult reference benchmarks (G1)", page_benchmarks(d, out)),
-        "adult.html": ("Realistic adult comparison (G2)", page_adult(d, out)),
-        "g2-report.html": ("G2 report", sb.md_to_html((RES / "g2" / "G2_report.md").read_text(), heading_offset=1)),
-        "pediatric.html": ("Pediatric extension (G3)", page_pediatric(d, out)),
-        "g3b-report.html": ("G3B report", sb.md_to_html((RES / "g3b" / "G3B_report.md").read_text(), heading_offset=1)
+        "index.html": (title, report),
+        "benchmarks.html": ("S1. Adult reference benchmarks (G1)", page_benchmarks(d, out)),
+        "adult.html": ("S2. Realistic adult comparison (G2)", page_adult(d, out)),
+        "g2-report.html": ("G2 report", md(RES / "g2" / "G2_report.md")),
+        "pediatric.html": ("S3. Pediatric extension (G3)", page_pediatric(d, out)),
+        "g3b-report.html": ("G3B report", md(RES / "g3b" / "G3B_report.md")
                             if (RES / "g3b" / "G3B_report.md").exists() else "<p>G3B has not been run yet.</p>"),
-        "epilepsy.html": ("Epilepsy relevance (G4)", page_epilepsy(d, out)),
-        "motion-report.html": ("G4 motion and slippage report", sb.md_to_html((RES / "g4" / "G4_motion_report.md").read_text(), heading_offset=1)
+        "epilepsy.html": ("S4. Epilepsy relevance and head motion (G4)", page_epilepsy(d, out)),
+        "motion-report.html": ("G4 motion and slippage report", md(RES / "g4" / "G4_motion_report.md")
                                if (RES / "g4" / "G4_motion_report.md").exists() else "<p>The motion extension has not been run yet.</p>"),
-        "methods.html": ("Methods, uncertainty and limitations", methods),
-        "register.html": ("Parameters, provenance and assumptions",
-                          sb.md_to_html((ROOT / "docs" / "provenance_register.md").read_text(), heading_offset=1)),
-        "reproduce.html": ("Reproduce and download", page_reproduce(out, manifest)),
+        "methods.html": ("S5. Methods, uncertainty and limitations", md(ROOT / "docs" / "methods.md")),
+        "register.html": ("S6. Parameters, provenance and assumptions", md(ROOT / "docs" / "provenance_register.md")),
+        "numbers.html": ("S7. Number provenance", page_numbers(facts, used, out)),
+        "reproduce.html": ("S8. Reproduce and download", page_reproduce(out, manifest)),
+        "summary.html": ("Project summary by milestone", page_summary(d)),
     }
     for fname, (title, content) in pages.items():
         current = {"g2-report.html": "adult.html", "g3b-report.html": "pediatric.html", "motion-report.html": "epilepsy.html"}.get(fname, fname)
-        (out / fname).write_text(tpl.render(title=title, content=Markup(content), nav=nav, current=current,
-                                            head=head, head_date=head_date))
+        (out / fname).write_text(tpl.render(title=title, content=Markup(content), supplement=supplement, current=current,
+                                            head=head, head_date=head_date, layout="report" if fname == "index.html" else ""))
     problems = sb.check_links(out)
     if problems:
         print("\n".join(problems))

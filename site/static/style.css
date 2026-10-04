@@ -37,9 +37,11 @@ header, main, footer { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
   margin: 12px 0;
   font-size: 0.9rem;
 }
-nav { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 6px 0 10px; border-bottom: 1px solid var(--line); }
+nav { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; padding: 6px 0 10px; border-bottom: 1px solid var(--line); }
 nav a { color: var(--fg); text-decoration: none; padding: 2px 0; }
 nav a[aria-current="page"] { color: var(--accent); font-weight: 600; border-bottom: 2px solid var(--accent); }
+nav .nav-report { font-weight: 600; margin-right: 10px; }
+nav .nav-group { color: var(--muted); font-size: 0.85rem; }
 a { color: var(--accent); }
 h1 { font-size: 1.7rem; margin: 18px 0 8px; }
 h2 { font-size: 1.3rem; margin: 28px 0 8px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
@@ -59,3 +61,21 @@ figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 8px; }
 .finding { background: var(--panel); border-left: 4px solid var(--accent); padding: 8px 12px; margin: 10px 0; }
 .status-blocked { color: #b54708; font-weight: 600; }
 footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); margin-top: 32px; padding-top: 10px; padding-bottom: 24px; }
+
+/* the report (index.html): a reading column of 46rem (46em of body text); figures and wide tables up to the full 1100 px */
+main.report > * { max-width: 46rem; margin-left: auto; margin-right: auto; }
+main.report > figure { max-width: 100%; }
+main.report > .table-wrap { max-width: 100%; width: fit-content; min-width: min(46rem, 100%); }
+main.report > .table-wrap > table { width: 100%; }
+main.report figcaption { max-width: 46rem; margin-left: auto; margin-right: auto; }
+main.report figcaption, main.report caption { color: var(--fg); }
+.figure-images { display: flex; gap: 12px; align-items: flex-start; justify-content: center; }
+.figure-images > a { flex: 1 1 0; min-width: 0; }
+@media (max-width: 640px) { .figure-images { flex-direction: column; } }
+.toc { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 8px 14px; margin-top: 16px; margin-bottom: 16px; }
+.toc summary { font-weight: 600; cursor: pointer; }
+.toc ul { list-style: none; margin: 4px 0; padding-left: 0; }
+.toc ul ul { padding-left: 1.2em; font-size: 0.95em; }
+.toc li { margin: 2px 0; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
