@@ -244,6 +244,10 @@ the local cache, then the analytical G1A benchmark, which needs no data):
 ```
 
 Each driver writes `results/<milestone>/` and records the code commit it ran in its JSON.
+On 2026-10-04 the history was rewritten to correct the recorded author identity (file contents
+and dates did not change, every commit hash did): commit hashes recorded before that date, in
+result files and documents, refer to the original history; `docs/commit_map.tsv` maps each of
+them to the current commit.
 
 The sample data must end up in `data/external/MNE-sample-data` (`src/opmsquid/paths.py`;
 override with `OPMSQUID_DATA`). Caches go to `cache/` (`OPMSQUID_CACHE`).
@@ -277,8 +281,9 @@ release (release-ready and publicly deployed are separate statuses).
   (`cache/`). Results contain only derived quantities of the public datasets.
 - Release preparation (`docs/release_checklist.md`): every figure is set in open fonts (DejaVu
   Sans, STIX); the published Jas et al. Fig. 3 raster used by the legacy verification is CC-BY 4.0
-  and carries its attribution; output summaries no longer record local absolute paths. Still the
-  owner's decisions: a licence (none yet), the author name and institutional e-mail in the commit
-  metadata, the redistribution of template- and fsaverage-derived figures, and two documents that
-  name local folders.
+  and carries its attribution; output summaries no longer record local absolute paths; every
+  commit and tag records Laiba Khan with GitHub's no-reply address, and no file in the history
+  holds an e-mail address. Still the owner's decisions: a licence (none yet), the earlier
+  font-embedding PDFs that remain in the history, the redistribution of template- and
+  fsaverage-derived figures, and two documents that name local folders.
 - The repository is private. No website is deployed; publication needs explicit owner approval.

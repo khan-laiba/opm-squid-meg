@@ -50,13 +50,17 @@ user account, so a Pages site, if ever enabled, would be public.
 
 1. **Licence.** The repository has no licence file; without one the code is not reusable by
    others. Choose a licence (and whether results and figures carry a different one).
-2. **Identifying metadata and history.** All commits carry the author name and institutional e-mail
-   address, and the history (not the current tree) also holds two older text blobs with an e-mail
-   address and the earlier PDFs that embed the licensed artwork fonts (e.g. `git show
-   81168f3:legacy/figure3_output/Figure3_replicated.pdf | pdffonts -`). Publishing the history as it
-   is publishes all of these, so a public release needs a fresh export or a rewritten history
-   (which needs a force-push); the choice is the owner's. No force-push or history rewrite has been
-   done. This is a release blocker, not a defect of the private results.
+2. **Identifying metadata and history.** Identity resolved on 2026-10-04 (owner's decision): the
+   history was rewritten and force-pushed so that every commit and tag records Laiba Khan
+   (`130163037+khan-laiba@users.noreply.github.com`, GitHub's no-reply address) as author,
+   committer and tagger, and the two older text blobs that held an e-mail address were reworded
+   (no file in any commit now holds one). File contents and dates are otherwise unchanged; every
+   commit hash changed, and `docs/commit_map.tsv` maps the original hashes cited in results and
+   documents to the current ones. Still in the history (not the current tree): the earlier PDFs
+   that embed the licensed artwork fonts (e.g. `git show
+   b5f1f0c:legacy/figure3_output/Figure3_replicated.pdf | pdffonts -`). Publishing the history as
+   it is publishes them, so a public release still needs a fresh export or a further rewrite; the
+   choice is the owner's. This is a release blocker, not a defect of the private results.
 3. **Infant-template derivatives.** Figures and tables derived from the O'Reilly et al. (2021)
    templates (LGPL-2.1 repository; built from the Neurodevelopmental MRI Database, Richards et al.
    2016, which has its own terms): every `results/g3b` figure and target table that shows a

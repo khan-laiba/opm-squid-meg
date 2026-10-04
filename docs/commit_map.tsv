@@ -1,0 +1,140 @@
+kind	original	current	subject
+commit	4023b166476019da69ed7d70362dee7eb25b4d3f	6620447d97d286da89b589a12eaa047bfe35e817	G0: study scaffold, legacy work preserved, core modules with tests
+commit	cf7afa26b4ff8d6b0e3e6fe3bb63cec70a506540	c86621eb5b284d66d716bc6b843bb61b2d81c480	G0/G2 infrastructure: matched-site OPM array with clearance checks; provenance register; methods
+commit	2540a1abf93defe6e317475bc62e11220462a7c0	9d0aee06b7fe6e8c5c0a54b978ffbe0fd5220298	G1A: Jas et al. Figs. 3-4 and Fig. 6 toy experiment reproduced with independent checks
+commit	b2e55d4a51dd683f69b412d5179f8119329e4703	183bb4abcc3dccdc06bbc3340bc79acfed16e9af	G2 noise infrastructure: environmental basis (room field through real coils) and cortical background
+commit	ffa3cdcb5f0707b3e0b446a441f8c18c59adb1e6	8da48f397018b62ecc67c2207eb5ae5515f52876	G1B/G1C: Hunold and Goldenholz adaptations (code, configs, tests); full-resolution forwards
+commit	911e77fda660ddfe271bcb9217f1cfd9baa0694e	d7df539a3d75fe09b76b0394a55a324fbdf68d89	G2 infrastructure and provenance: dense OPM arrays with packing rule, noise model, aparc reader
+commit	af78b76834d1b7586cebcd4c1a3993a1bd12283a	ca0a83419165544cd6f14911d9311033ded00edd	G1B: stationary Hunold background, Fig. 6 absolute calibration, p2p primary numerator
+commit	a177da2a4048e6d5fbd4961d66d241d30a7ef036	49c4872a3b1bb6c7fe8cb54bc4c3d47e94f154e8	G1B results: both background levels, three numerators, paper comparison, sensor-noise extension
+commit	567bca94eb03af2bb2e31efcb03cefd73b5707d1	613b2077ef90e071d8ff1c4ed62fd896a4a2b887	G1C fixes before the first run; PLAN status for G0/G1B
+commit	032a149e2b73bddeb98c159df3307028299e8326	1b189770dc53e3cff1c40d5acc9331227633dad2	G1C: soft comparisons with the paper (source SD, Fig. 2 display range, lobe medians, mesial-temporal patch-size effect)
+commit	a7c2beb8cb906af944ca29e6fbaf233e89dcf468	8c4643e068479c248bff6c9d6ae4f661cdbae53c	G1C: p95 skull-conductivity effect; source SD normalised to the paper's ~4000-source grid
+commit	9e1d245a13307502a569eefdd1024c9bc225606f	8378886cecfacd7bb608ff4bbe50dbc5649ab5ab	G1C methods, register (U-GO-grid, D-BADCH) and plan status
+commit	2eeb04db0cfad6438e972a25fa332e9a4a947f8f	abd83ff15bbc931a0e61d8bb8e0859d145f2bc78	G1C results: cortical Eq. 1 SNR maps (modelled and recorded noise, two skull conductivities), OPM extension
+commit	2be85ab1b6f1157f00713fe73724e1d0b9b958c9	87509fbe002cd3cc942765e957989055a742dad9	G2 arrays: opm204 = 204 sites spread over the densest feasible array; full-res jobs for dense arrays
+commit	95d32e396656b46561087d01d645e7aa88334bb9	b742dc669360b87c83eb4716fda0eb72f9c27d51	Dense OPM arrays: no sites on scalp points deep inside the BEM head surface
+commit	bc8ffd2ea4c19013bfbf5e5a985365dc3be253d7	62636d3eb2d1fb35f9767ab8da436c09bcfe5cd4	G2 infrastructure: measured-noise calibration, plug-in detectability, head-position variants
+commit	6aed20d98872c831c23af0dde6507e9a50b330f0	66a2b780bba51a624fa1f918c409bfabd26a14ba	G1A review notes: marker provenance, absolute-scale tests, toy disclosures, methods
+commit	90ca9a3264414781bfa051287939fcb79e26bc2c	4e94c3ba5a0e55419301a364ae53cd38b812bd23	G1A results regenerated at a clean commit (marker provenance, toy disclosures, sigma independence)
+commit	d51307000996a15d0f48c9d314d708abad56815d	8a8c00d52af711838ee90b3e448f5e1bddd4bf0d	G2 driver and config (work in progress, not yet run); BEM solution memo; refined inner skull
+commit	4714e52521e69931f186a571c930fca5aadbc339	a558d35d7c956adb284d29406e37410a544efc1d	G1A results restamped at a clean tree
+commit	716c2a83d85573dfe517bc0aec5ccd3f7c1ccdd2	fb9c14f8801367e9753e32c075b09e0624db090a	io.git_commit: provenance is dirty only for code/config changes, not regenerated outputs
+commit	ff641cb48d8559c115c0368a87df15e7b0ff8aaf	c7f00d3ffcbad1d39ec89ae2cee8fe9863e89aa7	G1A results restamped (clean code provenance)
+commit	d7bbd1c88526c159b5ae4a9aef48b830e78291a1	fee608c6127d22a6b44105196706e1561e33dc56	G1A Fig. 4E: shade the OPM-advantage region; labels clear of curve and axis
+commit	8b3dfd6af8dc6f37deae79e2f0f0bc034f67d19c	f505fdb663370a0da06aee2a8ea21f82cffd9abf	G1A results regenerated; G2 driver: checkpointed outputs, bridge to the sphere benchmark
+commit	852081e61c9b7ff5968afe6eb71c3f7dbfba18ab	54a521308d2f9717ccbc2e11aa69fdd867556346	G1A results restamped at a clean tree
+commit	682663c87a595384650f2f5a0a74c76b8690db22	49824815402b749cbb6189ab8a3eb84c9352d36c	README (status, layout, reproduction, data/privacy); register: G2 assumptions and decisions
+commit	44624ce13574a21982cbfc2ca49798d1cc5e54e1	4ddebf7ac7398105c24ec276f54d081cab5df2bd	Usable cortical sources >= 2 mm from the inner-skull mesh (BEM artefacts); G2 uses them
+commit	a1708aa11a76115fd7c3360b7fdcf50ef6308289	66810b539b1747583ea2ed6c6f815a320832a3da	G2: fix duplicate channels key in the array summary
+commit	1dcb248db9270bd6b6cb8723037785e0a4522a08	e78c0a4e63d78aefe4b495e1774f5c52e6a8464c	G1B review fixes: usable sources, noisy-p2p numerator, calibration range, spike comparison
+commit	1589fa38dd9cb7ee8ead95b6aaf327e2b5313fc1	3f5f2f86adaa249e24f7df55aabb7281b3fb0bb0	G1C review fixes: usable sources, brain-only calibration for the OPM extension, diagnostics
+commit	b47de33c0c7db2bced6ac54cc0ab46aa264bbfed	0a105a9cb12096b4650571570a844b79f906d53c	G1B/G1C results after the review fixes; plan and register updated
+commit	de43d6c5b7f14f792e7d89980ad45b2000e7618c	ecb49e2c6e5da20d3370d4409c47e06926f328c2	Methods: dense OPM arrays, usable sources; register: recorded-noise event choice
+commit	29bea4a070300dda1bd48ef249092a8b45ae343d	36411cd72e3a2354f674830ff9f0b07b73f227a1	G2: magnetometer-calibrated background variant; bridge undefined cases; figure scales and CIs
+commit	eef5c7fb498811b8ddd0495b89ae438616a75126	ce1de40c357e6d20ee9f0340fafbc7868d43e07d	G2 results: realistic adult OPM vs Neuromag comparison (methods section 8, plan)
+commit	d52507ba0eb365e0aa2899f7be731555f8bbc86c	dc2438137452f6e0c8b19020494d6217663b360e	G2 supplement: frequency-band and OPM sensor-response sensitivity; per-configuration report
+commit	692171e5738959d06235f735cca6f9bf78a7814c	6cb807ce5d1be6dd9bff8f546e934b01e4845d34	G4 infrastructure: IED time-series simulation and detectors (oracle, practical scanner)
+commit	78f62de6d9bc0d30a6286e42f12e9ba54176003b	4dde2b84a405ac49df8e898864f86ea872a178c9	G4 adult driver: detection with baseline-whitened data, calibrated and held-out null (not yet run)
+commit	ce0d6624d1651d610f4f9868b7e50859d1d84a4c	07a56f2fcf54fd713e34403701ecb078d0e9f96e	G4: checkpointed simulation, pooled-morphology curves, paired OPM-SQUID tests, full-resolution ROC, S50 bootstrap
+commit	5b4e61431413285539c319a4ab089acd8998dd27	43fa96287956bf8c3342b6b8b0355d866f0bdc27	G4 localization core: MNE/dSPM on whitened lead fields (MNE conventions), peak error, support recovery, bounded coregistration error
+commit	655cc2af15ca0e3c5a9097bce18cada77351f230	615b44dfc3449cb5e5d3317e38ed625470e20724	G4 localization driver and config (bounded subset); register: G4 assumptions
+commit	46bc8210e8f326f365b751477912cd50112464cb	beadd72f6c8e76e4e0803eb43c1d4776b2eaf245	G4 adult detection results (paired OPM-SQUID tests, S50 with location bootstrap, ROC)
+commit	12a90f52b74a8b0737852f9c8afeb57caada61d6	5488777b545feeee281ca0ce4c75ea36f1b5e4f2	G2 review fixes (part 1): 4-mm usable-source rule, OPM axes from the BEM head surface, ear exclusion
+commit	bbd40fafd07f883969ed815105559cecd3439bd7	e27d079f6a068184aff555c63f25ff3cf2326a13	G2 review fixes (part 2): parcel bootstrap, joint noise x gap grid, projection cost, new maps
+commit	5f83ddd024d9ff87976724aa7c8705e56ddc4932	30b31a8202195f38f822a8fef7760a4882236d04	Provenance: record the commit a run loaded (taken at import), not HEAD at write time
+commit	42084b711395e853d8e6d16567d2d0f70d883303	a61111b60bf512d86a911ec2305c990a2cfb3649	G4 localization: shared coregistration draws, analyst-frame dipole error, no whitened-GOF cut
+commit	0ceaef4a45842fff1088e62588307d338b350d91	3ee42f85e047b393ea9523b009db46ecf8e7d379	Dense OPM arrays: no sites on the MRI field-of-view cut, the pinna or the occipito-cervical crease
+commit	86c737ecadd3cc00677e6a0f3d7445cb12026a6f	a9db9569f1145e723643d9a03812ffdbaab1ffdd	G1B: Fig. 6 background calibration from the expected baseline over 20 realizations
+commit	2aa6a2a5f0c036ef15d4def234d3d22b6abab5be	cbb87aa5e7b76a664f5eb03adf58e0570cb3b9c0	G2: headline ratios without the medial-wall targets; parcel column in the per-target table
+commit	6fbb1597d113ec2d1e640a91e8b6bca4d832253d	40cb171c59f29318fde84d53c2bc63072fe4ec6c	G4 detection: S50 bootstrap limits beyond the tested strengths reported explicitly
+commit	8e4c9e9e3abb3efe1fceaa509a5e24e0dfdb3258	4233af1a2d770332c2821a761d7467b2d3d41b29	G4 detection: location-level paired test (events share locations)
+commit	977c57be51c98810141ca152870ab5cd4e47f026	b718c4ae75e634d6706fcb8db3ac936548abd3a8	G2 maps: medial wall shown grey; replot keeps the computation's provenance; 4-mm comments
+commit	02979e220c71a58742f957b1f8ce9b0ed74b9a96	b639a95ca13b660531834a506f38c803b4f23df8	Adult baseline results on the final arrays; methods, register, plan and README updated
+commit	f3b4fa1566bd75c2c1ac4201e975c176bdfe6f7f	2f77b72db1b759ced7b34dfb4c4d4a4d0af480d9	Pre-freeze review notes: hedged findings, documented limitations, doc corrections
+commit	663eaa1d72942fbd7aaf3f12628dfd5e914a24d3	c5d90b2fcba208bc762f0a6203bd44177c8e0003	G3A figure: readable legends (panel C), fixed-shell panel with room for its legend
+commit	7c02c1cd6b5a25b311e0ad8c9b1eac628d9cf41e	59a60fc4d56310424b572e83df32dc845384264d	G3A results: Jas et al. head-size benchmark (REPRO) and a concentric fixed-shell contrast
+commit	271a36d1e943efde619a633cd07e6d722525ec57	5a5ddfaef360955dcd8b9c083a2c881cb4813be3	G5: local static report builder (not deployed)
+commit	7e8be6b143dce27f084d081f2585a5fc47467037	4947ddd7a39a9a8ec69903b249e37a0cfab042e3	v2 (review F2 and follow-ups): refined head surface, cell clearance, checked lead fields
+commit	9553d02c57b2087b09f98bbddd0baa0eb6384a7f	9640b8a34e6f33230f25b8f8652f2e45d52c73ab	v2 docs and report: A-BEM-SKIN, cell clearance, gap variants, localization draws (numbers follow the reruns)
+commit	26985d428376cf50a5c3b793e7e6059d164e2031	92203bd49ff854e472f53311226e7b68b299479c	Keep the v1-array BEM diagnosis files under *_v1_arrays names (the studies will rerun on the v2 arrays)
+commit	509dd576190f21453d7adf5db790e2497059c7ce	6db10b0c6d1f29c984c6bcf6b97da08af43278b6	v2 results: refined head surface and cell clearance; OPM advantage 1.13x (v1 1.21x was a numerical artefact)
+commit	81168f3c7c34c80c862b38bc7549a998b1f4a1f0	b5f1f0c1f430fb1f2d7f958f7c8845192333af65	Review v2 fixes: cell clearance in the forward model's frame with exact distances; report and summary wording
+commit	40e8c0ea53dc5e88cacc706a7292b66e8041aff2	dab6af51f54154f2d82d0e81e66d5fc3ca66fe7a	adult-baseline-v2: every adult result recomputed at the clean commit 81168f3; documentation of the final numbers
+commit	471ff16381c199f03bccfb7b8e06d6aa7dedf2f3	2dee2a7e74128aaa61466b4194d64cf23c99ec08	adult-baseline-v2 review notes (approve with notes): documentation and tooling only
+commit	c4726947887ca2fad938210008e9756d84f161fb	47e42d247d66a2dfbd71b8d71324207016c23fda	g4_g2_consistency.json regenerated at the clean commit 471ff16 (identical numbers)
+commit	225ffc430935f067ae8341f64bd965070696d8aa	d10a0a7bf12d2ae48b24ff77188271da977eb020	G3B: pediatric anatomies, source-blind helmet placements, counterfactual helmet; G4 context refactor
+commit	0cea778c4ef09bebecb0f9376e38d7e0dc979057	984a6a686003c390cad03164e8b35eb18e30c8e8	G3B pass 2: noise composition, source-to-sensor distances, OPM coverage, medial wall left out of the summaries, decomposition tables; pediatric G4 driver; site and docs for G3B
+commit	c4faad24ceda945ebcda597b396ce4c39f06f6a6	a751700a4bf2901d724885fd3fd7d2b5b09a0c41	G3B figures: categorical usefulness maps without averaged category codes (plotting.triangle_mode), Delta maps on their own +-2 dB scale, placement panel as markers, labelled geometry axes
+commit	1b2cb0280ad7d0dfd08ad71453c783b01deddb5b	038c39033f253f6974dcab5eed64fef0408a1975	G3B --replot records the commit that redrew summaries and figures
+commit	2c5735d8847b84daf3fab9779a3ebf0928a65b5d	08ce724c3debba1a40c400565d992848fd6bcfab	G3B results (computed at 0cea778, redrawn at 1b2cb02) and their documentation; site overview with data-driven pediatric findings
+commit	8639db27b4cf3a9a795357902d01c262d3c30738	13425062e33a67ffb18655fc28e3e92c5910b0e8	G4 pediatric results, 2-year template (simulated at 1b2cb02): detection and bounded localization with the adult framework, Neuromag at top contact, refitted OPM arrays
+commit	df4c3765a61d34e716d752fc033528bc4b14c9bc	2fe5f03317968ea3b030754587e8be064b2b68f9	G4 pediatric results, school-age size control (simulated at 2c5735d): detection and bounded localization with the adult framework
+commit	0eada3aecabc9e0f6f2f975bfd8dcb319c01baa1	e8907d1258a8ed3dcc0df7796355ddfc75e1bfe0	Merge branch 'g3b': G3B pediatric fixed-helmet vs head-adaptive OPM comparison and pediatric G4
+commit	987f77e1c82ebe4677311f63d43a86d18b39a286	206887980de877745e11ec53ed292f78aabe33c3	Pediatric results documented: G3B (methods section 10) and pediatric G4 (section 11, comparison report at 0eada3a); README, PLAN and site overview
+commit	8632ec96ec99bcedfcd568761e0f3087df524387	753ece3ce68ab6a4c986a147f1b0357ff85a5cb3	G3B review notes (code): laterally centred placement and its counterfactual helmet, 18-mm true contact, channel-count control, absolute detectability per system, orientation and vertex-wise depth tables, medial wall out of every descriptive summary; tests for the summary helpers
+commit	32951786906c015005f1f9231d9b99ed74f55ddf	1a7df3ae9c5f330502202ae28ff617d541a061fd	Pediatric G4 report: the adult comparator's placement, the number of paired comparisons, and sensitivity at a matched held-out false-event rate
+commit	beeb3c4833896b15b02774c64acb702cd2478b9d	6cca533ead86e42b2566f4bc49519e8b70eafac2	Site overview: the corrected mechanism (both systems gain in smaller heads, the OPM more) and the counterfactual about the laterally centred head
+commit	1870eab4a99ecf07271f50fe66d0d98d562930c4	fef5548b956f0cdccaef06e688b735c6275438a6	G3B and pediatric G4 review notes (results and text): mechanism corrected, template offset resolved, placements, orientation and channel-count results
+commit	a16003251a2601e87bd01acd788897e5bf3e1b68	083e6ceb6dab99b54af649a43bcb7850793e4bfb	Re-check notes: depth apportionment of the template's gain (most of it reflects its shallower cortex), the 18-mm placement, occipital gap, SQUID-only share, G4 location depths, rerun intervals; mechanism stated per system
+commit	e94dad4e06de34a71231e4f26494173267119afc	2c510cb251498ff38d2be2f80825fa022834fa3a	Re-check notes: 21 % (not 22 %), orientation contrast at matched depth, 'among the placements'; G3B summary note states the mechanism per system
+commit	c9509592b9cea24a261b74ef73990a715596f1ee	1da41b5e45de03b75b20ffb5b24de97720a247ae	G3B report notes redrawn at e94dad4 (mechanism per system); README and PLAN status: reviews done, 109 tests, release conditions
+commit	8e505e6f71271ecd480dd17a6a06319726a30550	887429318fe42a6b47a57a590cdfd04f026a959b	G3B and pediatric G4 take the 12-, 18- and 24-month templates; site, run_all and tests generalized
+commit	cb1b8a9c470fc565b3782a11790eb0375f3593b7	a666846f1349d87f70624bd8acbf78a256a16a6a	Forward cache: per-process temporary file, so concurrent runs that compute the same entry cannot collide
+commit	936a8e112365d661521be2ba4d11236a3233ea3e	49c98ca3018b5afc3c0dc61b9536041fa2c8cb8d	G3B with the 12-, 18- and 24-month templates (computed at cb1b8a9); pediatric G4 for the 2-year size control (c950959) and the 18- and 12-month templates (cb1b8a9)
+commit	fd40dfe7088ecb477444a068c659f8da7eb3db53	4fb0060396dde22fdb3bb5ccf5c0f18202b1a6f7	Motion and slippage extension (G4, bounded); G3B template depth checks; open fonts by default for the Fig. 3-style figures
+commit	a70e4c1694468111a549ef38d4bbc1059113f386	7dd94a9d3373ecef6860edab6bc97801484ac364	Pediatric G4 comparison with all five child anatomies (regenerated at fd40dfe)
+commit	5b486023d36fee5c328b29f2ec89ebcbca2734e8	53dec1118d3273ee31d5534eac16500beaa10b97	Provenance watches legacy/*.py (G1A imports the Fig. 3 replica); legacy summaries record outputs relative to themselves, not local absolute paths
+commit	ca2909558f93ff347c4335ffcb956c46a3a890ce	2c2270a6d171bb15cee05d467e4715f8f9c998c1	Release preparation: figures regenerated with open fonts (G1A at 5b48602, legacy outputs); release checklist; register entries for the templates, the motion extension and the release fonts
+commit	1920d4040a72c6ff28783b95cc3e5015ef8f21ef	5225552eb0f36a4d3b15724dbc1d8a1bbf3796b2	G3B summaries redrawn at fd40dfe: template depth checks (pooled vs depth-reweighted difference; radial vs tangential at matched depth) for the three templates; status and notes name all templates
+commit	fa51b50fc5c25945fb53b5648d1b73291f76923a	fbbbb1b658aec77b5306af8cdba183bad8f739e8	Motion extension: readable figure (one displacement panel per anatomy; coupling curves by correction, anatomy and calibration), the time course on its own random stream with its example saved, --replot
+commit	5bfe1c0e981486f6a1eb69b5278692728c06f585	ae607afc8622b9358213c84f0c0121a781acd87b	Site: motion section on the epilepsy page and the motion report; text for three templates; run_all.sh runs the motion extension
+commit	ef6d74715a2e10a142e792534944df6c416cd5e4	53cd85e25d553261548a35e22751b4fa2718a818	Motion and slippage results (computed at 5bfe1c0); methods sections 10-12, README, PLAN and checklist updated for the three templates, the five pediatric G4 anatomies and the motion extension
+commit	3ddd032efa50d28e0343c047e4a84010c794cf22	4758716f0d76deb8b7e5ef7e738d4ab11eaba8d5	Motion extension, review notes: common random numbers (32 field and calibration draws shared by every correction, pivot and anatomy) with per-draw threshold percentiles; per-channel spread of the exact/linear check; exact-removal wording and finite-rotation tests; metric and threshold functions in opmsquid.motion with tests; slipped-cap bookkeeping, figure legend and labels; site shows threshold ranges and the per-channel spread; run_all.sh runtime
+commit	6d4a4d6b589803b1dbe1b8df37098e2badd67d7d	f83ff9fa23a6f966b75490f6f8e860110fb47435	Review notes (documentation): current counterfactual intervals and the moved-interval count; the template ordering of Delta follows depth mix; the 12-month 10-15 mm stratum; which localization comparisons survive a Bonferroni correction (five within anatomy and array, one across all children); the comparison family stated consistently; checklist without the e-mail address, with the full list of template derivatives and the release-ready / deployed statuses; register entries for the motion design
+commit	57a025ed133ef0530eeeb0b0cc926038390b8ae2	de5af3778a41e18de4f4c2636d0ba6044009cf35	Motion results recomputed at 3ddd032 (common random numbers, 32 draws, per-draw threshold percentiles, per-channel time-course spread); methods section 12 and README updated
+commit	f8896f1c521787dca277d60834ae8142a5b8b58c	fa4ec282d5db96bbd56c226afc521cf056453063	Re-check notes: seven pediatric localization comparisons survive a within-anatomy Bonferroni correction (two joint-success tests added; the README no longer claims the 12-month dSPM value does), D = 0 at 0.55-1.5 times the 1-dB thresholds, pivot change after the homogeneous projection below 2 %, per-draw percentile spread stated, 124 tests (also in a clean clone of 57a025e)
+commit	90c18ae92105210cb66b0cf1e3596658bafcfcc6	7b414bee1d6b7a473a8a0a7ea44d39c0ab4d3f0d	Final review (Fable): dense projected ratio in the summaries, model limitations stated, detection at matched held-out false-event rates, review wording, checklist items
+commit	55a116d626c7dfb43af0b871c705b65af2bd20ac	bc479231b551d9d03a5dbb60e8ca90a5f4182cb1	G4 detection at matched held-out false-event rates (computed at 90c18ae from the stored simulations; frozen-threshold values reproduced exactly)
+commit	19a8fd2f981ebee8ec4a3b65e1609fdbe0c5b6a7	7d5749965b2e0d91c619b236e02211e2f2c46a49	Final-review fixes before the v3 rerun (Codex M1-M5, m2, m3, m5, m6)
+commit	0d6b9926e44725344bd8e52882fc5047419e960e	44d6a380283bf00774ad7777da6abd5891c63616	v3 results after the final reviews: every OPM-dependent result recomputed at 19a8fd2
+commit	5a24a3917971bdae06a755ee57a180f489b6950c	635f86e75e32b8327f19b445cf8f2ec72f7eaf62	Codex re-check: censored S50 ratios keep every resample; coil definitions in the fingerprints
+commit	d667a9d7919364a22c0e82a39ecd3a6e98bb2952	1d1f01ed35c4b2fb2fec4d93b4215d9679bb9c97	S50 interval: an end beyond the tested strengths stays open (regression in 5a24a39)
+commit	bf686e6a546bfb365bb236f7aa34d4a32e2246d5	838a1831bc7929e3591f4b91b7f1aa64dc93d1b0	Exact cube-to-mesh distance of the OPM cells; lead-field sidecars record the start-up commit
+commit	6a30cc155fd43ef86b9ac0ae597c6d19cf669ded	5ca6da8c532b06c9e1ddb793dfd992018b62bc5f	Re-check fixes: censored S50 intervals in the G4 results, exact cell clearance and verifier corrections in the documentation
+commit	a4c7840ea7e98d8cdd28a9a387ca5d3ea7e4a04c	d4a1e57747553fe001d9d53656554352f43c5ac1	Exact cell distance: the intersection mask inside the error state; G2 report: v3 clearance and convergence wording
+commit	9771f68a4bd04b32af0a6e3ec35e16a92a0a2b6f	710af0e70c0bdcb5478fda86c8d05b3ccbb312de	Final verification fixes: interval count, provenance wording, clearance qualifier, register and G2 report
+commit	5a981c98ba55d023c57349300573447f6281e43a	1121e784ca9838627343b38be6d3ad7eea3f369f	Goal review (G4/G5): failed fits under declared criteria, data-driven pediatric report strings, report site additions
+commit	34877f5c19ddece6c7f96b72174a67b668efae82	4b4ec56408d136977e01d82671e1e6a9aa145305	Goal review (G0-G3): configuration as the source of truth, G1C diagnostics, standoff sensitivity
+commit	94c092c2af52a50e8f6d4a00dac395ef2b0332a2	5207008885d026efb9a9aa2f9c7ab2b2e5dcb486	Goal review (G2/G3): reporting balance in the generated reports
+commit	e1269fd989adbeae9fe0442dc1c9dfdbc2527c38	c5439c9d15255df323ab7a41819ee220f2e69584	G2 report: the benchmark link reads the eta-keyed values
+commit	7143df5e23453eea3b76678c3d665422b32adccc	a28fe910e58250f395c19e8ae6c3da8de508b069	End-to-end goal review of G0-G5 (docs/goal_review.md) with the fixes it produced
+commit	ed852b2c47accef46325463a24adc274b3c0d75f	ecc9fe8cbe768f3a28c7906b5e4fb9cac68ff72f	Equal OPM standoff: every anatomy's BEM head surface on its MRI scalp (A-BEM-CONFORM)
+commit	e53bea802ff5b69959a1678a6a204a1dd8f03e1c	d6e59c00b88414c6b9357648fe6aaf38ce4c4c57	Pending review items: G1B/G1C variants, paired plug-in, measured SQUID noise, triaxial control, G3B yaw and patches, localization checks, resumable run_all
+commit	236068d63c83fca300c5eb4df25baf1c7ba8e7e1	3890d4f6f7ea8c13b876cc931bcd1f2766162667	Review fixes for the v4 code, and a decomposition of the head-model change
+commit	9512f1b9c657127ffa833a94063a1be0ce4c67dd	a289ffb9b2ba950e3536fa2c34b8fe1d911957f5	Site: the test count of v4 (148)
+commit	f7a33f06edb09f2ccbfde0aeb55eeb29c1f46bbe	151f14ae337292f4d8be5b6f97f206647dd4a0fc	v4 results: every head surface on its MRI scalp (equal OPM standoff)
+commit	db3f0dc1cbbd4351ecdc4d1dda65f8a6801f7cd1	76ca4ccff49a4e6ca32fb77984be2343f15d3afa	v4 documentation: equal OPM standoff and the pending review items
+commit	06fde5c4c5146e70245c4e19c4230644f3db49f4	9781877027bdfc09b56c455658874980739b49e6	Clean-clone check of db3f0dc: 147 of 148 tests pass, one skip
+commit	53cf2954dda65cad9b8e0569fbf6897e331bfe24	d3296a46680e774efa62f4d986194d1660ec3b8c	FreeSurfer readers without nibabel, the modelled child skull (A-BEM-CHILD) and its check on the adult
+commit	71de1766c20283e443e56ea19ecb6ad21026e9a3	39a9ea33fb7f790bb5904bfae5e723b673a8c5a9	School-aged children (OpenNeuro ds005234) in G3B and the pediatric G4 studies
+commit	5d0737a3691f22aac874e08ab8203d3d94fd9948	1ab5b9c9e9c8b19925251ac79c688cda108aad03	Site: the school-aged children (labels, data-driven wording)
+commit	4ae0750af76acea2194c71adfd5931f1799d698a	8635428e9a19536cb7c56a78bc1ca9c2f612a403	Site: tables list only the children with results
+commit	011cec12275dae83c72ac0a2cfb3039159c181c6	e49d4896afc678b4a751d8f69ee566f41dfc5788	G4 cross-reading summaries: the school-aged children included
+commit	71fee1ee0e3deb9067be0a9c9418690da1e8bab7	ff70c4024eaf287a8206201e334b08d3684d8efa	Results: the school-aged children (A-C) in G3B and the pediatric G4 studies
+commit	0d6a9d3b1fc9fbfb865df371d2ee3cd316e876eb	584e3ecd0cec75f7609ef5998b607b0fbe39e8c4	School-aged children: reproducible fetch, anatomy checks, infeasible placements flagged
+commit	6ebac95ef4a4789479f810abccb31b133f81a843	38371232505dde9e6715ed56c879084b9f522bdf	run_all: the school-aged anatomy checks
+commit	c36f7186e85dced67f88bd0fc727c28fa2c0f187	175bbec7ee45bbac596d0a2550c08d2b8f2e9168	School anatomy checks: the children's thinnest layers
+commit	039c1071fcf7939fb19c3efb56e48f7d40673ff6	9a4cd6600d882471573f269459dcb97fb26a6bbb	Results: G3B redrawn at 6ebac95 (child C's infeasible x-5mm placement marked; every number unchanged) and the school-aged anatomy checks (c36f718)
+commit	8bdeb8b57d85200aa57ff263453dbbbea624ff3d	4a01f9605f0dbd7475ec52b9614fcd63f943c7ef	Docs: the school-aged children's G3B and pediatric G4 results; verifier fixes
+commit	ff6e25c0a5100797cbfdbabe4c5676b4a3ff1498	47495ff8bbed08579e48c359c24b491042d9d020	G3B notes follow the results; full-cortex skull checks; site sentence builder
+commit	d59ad98cb5a07bad5f8b22b9aa06f65decd3d5c5	f9df9919c14bf79d54c5217583883640b157c5ee	Results: G3B notes redrawn at ff6e25c (which heads see both systems' detectability rise; per-vertex cortex limit), every number unchanged; anatomy checks with the full cortex
+commit	0b57bbaefe418f44150d2bbb04902874d0e4d05b	10ce6c789b9fc47b9efd4c01583e72b6e3141277	Docs: second verification's fixes (values, scope, test counts, reproduction note)
+commit	d3bb1a928f939feee7c8b6c2357669def91b9db8	eb408c9f5694775ab77f2424110e8b592b9bda88	G3B note and site wording hold for any results
+commit	6dcf9104ebe1bd277285ff1252dd620dd5742e75	6a006a68302cc01c8de71f69e39878d02226d417	Results: G3B notes redrawn at d3bb1a9 (wording guards), every number unchanged
+commit	15c52446500eef9781399d87b12f6bd69b02dacf	479f104cd1189c3159d5844bb44648381af1513b	Docs: redraw commits and the clean clone of 0b57bba (160 tests, 159 pass, 1 skip)
+tag	97652b16095bedc24833622981622d8936df0759	2c5dc49d92fe967d776f9123ded63f01b7c800c9	adult-baseline-v1
+tag	cd21f964f694f7d8951627e09cf12bfddbbc1e23	1f70253b723dc18a4940a403be0734c7aea38f92	adult-baseline-v2
+tag	7c91f9665cd4dbbbaff455d72c87755a394513cf	fd377501a4842cd92cb0c38830a2e20dea3b5150	adult-baseline-v3
+tag	58aef29dd20936210ab92beaa77c81d165919794	2a9d72033c95996b4a8d7fc0c011200b64241b40	adult-baseline-v4
+tag	f6682307952a1b1992bac245c9b6205a6b40c9a0	6ce98300020d8df76836ad0af1b4c27101c9e186	g0
