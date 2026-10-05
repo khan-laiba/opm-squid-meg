@@ -166,7 +166,7 @@ class TestRevisionFacts(unittest.TestCase):
             "rev_qc_infant2yr_outward_mm": "1.6",                                  # -(-1.63892)
             "rev_qc_infant2yr_outward_excess_mm": "3.0",                           # -(-2.98547)
             "rev_qc_child_a_ofc_mri_cm": "52.9",                                   # 528.73 mm
-            "rev_qc_child_b_targets_lt10mm_n": "245",
+            "rev_qc_child_b_targets_lt10mm_n": "247",  # full-precision depths since the re-run at bd70b45
             "rev_qc_child_b_targets_lt10mm_mri_n": "47",
             "rev_qc_child_a_verdict": "usable", "rev_qc_infant2yr_verdict": "outside",
             "rev_qc_n_children_usable": "3",

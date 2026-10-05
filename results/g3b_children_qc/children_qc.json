@@ -591,9 +591,9 @@
       "g3b_targets": {
         "n_targets": 7661,
         "depth": {
-          "p1": 13.56,
-          "p5": 16.06,
-          "p50": 27.86
+          "p1": 13.564080609111567,
+          "p5": 16.057520942192976,
+          "p50": 27.858479964378215
         },
         "below_8mm": {
           "n": 0,
@@ -698,7 +698,7 @@
           "note": "OPM sensing centres sit 7 mm (A-OPM-STANDOFF) outside the surface used, so the 10-mm cell's inner face is 2 mm from it; the Neuromag top contact puts the nearest magnetometer 20 mm from it (A-G3-PLACE; Dewar spacing 18 mm). Both are measured from the surface used; with the MRI boundary further out (positive offset) both sit closer to the head than intended by the offset, and the targets are deeper by the depth change. The child-adult contrasts (Delta) depend on the excess over the adult, whose scalp is offset the same way."
         }
       },
-      "runtime_s": 83.73781991004944
+      "runtime_s": 84.17838501930237
     },
     "infant2yr": {
       "subject": "ANTS2-0Years3T",
@@ -1391,9 +1391,9 @@
       "g3b_targets": {
         "n_targets": 8134,
         "depth": {
-          "p1": 10.4633,
-          "p5": 11.9265,
-          "p50": 22.994999999999997
+          "p1": 10.461973422073989,
+          "p5": 11.925178474608833,
+          "p50": 22.997184198276358
         },
         "below_8mm": {
           "n": 0,
@@ -1497,7 +1497,7 @@
           "note": "OPM sensing centres sit 7 mm (A-OPM-STANDOFF) outside the surface used, so the 10-mm cell's inner face is 2 mm from it; the Neuromag top contact puts the nearest magnetometer 20 mm from it (A-G3-PLACE; Dewar spacing 18 mm). Both are measured from the surface used; with the MRI boundary further out (positive offset) both sit closer to the head than intended by the offset, and the targets are deeper by the depth change. The child-adult contrasts (Delta) depend on the excess over the adult, whose scalp is offset the same way."
         }
       },
-      "runtime_s": 49.146219968795776
+      "runtime_s": 46.213775873184204
     },
     "childA": {
       "subject": "sub-Z213",
@@ -2546,9 +2546,9 @@
       "g3b_targets": {
         "n_targets": 7618,
         "depth": {
-          "p1": 10.5517,
-          "p5": 12.2685,
-          "p50": 22.87
+          "p1": 10.548160945536626,
+          "p5": 12.265629106899963,
+          "p50": 22.872324905585902
         },
         "below_8mm": {
           "n": 3,
@@ -2657,7 +2657,7 @@
           "note": "OPM sensing centres sit 7 mm (A-OPM-STANDOFF) outside the surface used, so the 10-mm cell's inner face is 2 mm from it; the Neuromag top contact puts the nearest magnetometer 20 mm from it (A-G3-PLACE; Dewar spacing 18 mm). Both are measured from the surface used; with the MRI boundary further out (positive offset) both sit closer to the head than intended by the offset, and the targets are deeper by the depth change. The child-adult contrasts (Delta) depend on the excess over the adult, whose scalp is offset the same way."
         }
       },
-      "runtime_s": 75.58807396888733
+      "runtime_s": 73.40979409217834
     },
     "childB": {
       "subject": "sub-Z209",
@@ -3887,17 +3887,17 @@
       "g3b_targets": {
         "n_targets": 7428,
         "depth": {
-          "p1": 8.7754,
-          "p5": 10.6,
-          "p50": 21.575
+          "p1": 8.773495267748222,
+          "p5": 10.60190097807042,
+          "p50": 21.57446279362277
         },
         "below_8mm": {
           "n": 18,
           "area_cm2": 2.7583599999999997
         },
         "below_10mm": {
-          "n": 245,
-          "area_cm2": 46.724740000000004
+          "n": 247,
+          "area_cm2": 47.270480000000006
         },
         "depth_change_to_mri_boundary_mm": {
           "p5": 0.9280190624629606,
@@ -3977,7 +3977,7 @@
             "p95": 1.7730574600240407
           },
           "g3b_targets_below_10mm_used_vs_mri_boundary": [
-            245,
+            247,
             47
           ],
           "g3b_targets_below_8mm_used_vs_mri_boundary": [
@@ -3998,7 +3998,7 @@
           "note": "OPM sensing centres sit 7 mm (A-OPM-STANDOFF) outside the surface used, so the 10-mm cell's inner face is 2 mm from it; the Neuromag top contact puts the nearest magnetometer 20 mm from it (A-G3-PLACE; Dewar spacing 18 mm). Both are measured from the surface used; with the MRI boundary further out (positive offset) both sit closer to the head than intended by the offset, and the targets are deeper by the depth change. The child-adult contrasts (Delta) depend on the excess over the adult, whose scalp is offset the same way."
         }
       },
-      "runtime_s": 63.57723903656006
+      "runtime_s": 64.23523616790771
     },
     "childC": {
       "subject": "sub-Z226",
@@ -4857,9 +4857,9 @@
       "g3b_targets": {
         "n_targets": 7947,
         "depth": {
-          "p1": 11.59,
-          "p5": 13.213000000000001,
-          "p50": 25.02
+          "p1": 11.588669082623396,
+          "p5": 13.213824185475806,
+          "p50": 25.021503496139072
         },
         "below_8mm": {
           "n": 0,
@@ -4968,7 +4968,7 @@
           "note": "OPM sensing centres sit 7 mm (A-OPM-STANDOFF) outside the surface used, so the 10-mm cell's inner face is 2 mm from it; the Neuromag top contact puts the nearest magnetometer 20 mm from it (A-G3-PLACE; Dewar spacing 18 mm). Both are measured from the surface used; with the MRI boundary further out (positive offset) both sit closer to the head than intended by the offset, and the targets are deeper by the depth change. The child-adult contrasts (Delta) depend on the excess over the adult, whose scalp is offset the same way."
         }
       },
-      "runtime_s": 74.99858093261719
+      "runtime_s": 74.66890215873718
     }
   },
   "tests_on_adult": {
@@ -5211,9 +5211,9 @@
       "text": "scalp surface on the MRI head boundary as the adult's is (cap median offset +1.3 mm Otsu edge, +0.4 mm half-maximum; adult +1.3 / +1.1 mm); white surface registered to the T1"
     }
   },
-  "runtime_s": 397.55359292030334,
+  "runtime_s": 392.7773787975311,
   "provenance": {
-    "commit": "10e37b9",
+    "commit": "bd70b45",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

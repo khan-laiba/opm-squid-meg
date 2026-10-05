@@ -1236,6 +1236,315 @@
           "share_opm_better": 0.7543401644693905
         }
       }
+    },
+    "3-70Hz": {
+      "enbw_hz": 60.44875818686485,
+      "simulated_over_predicted_variance": 0.9925734299663141,
+      "brain_rms_grad_fT_cm": 34.898740753082635,
+      "brain_rms_mag_fT_measured": 266.9215669851749,
+      "env_explained": {
+        "mag": 0.9412691726222612,
+        "grad": 0.016721750741166108
+      },
+      "opm_response_gain": 0.9702968079053247,
+      "intrinsic_share_of_variance": {
+        "squid": 0.3369661435487038,
+        "opm_matched": 0.049125227012915676,
+        "opm204": 0.05636022283809236,
+        "opm_dense": 0.05636022283809236
+      },
+      "ideal": {
+        "opm_matched/combined/intrinsic+brain": {
+          "ratio": 1.011499230469878,
+          "ci95": [
+            1.0091168866359224,
+            1.0133927017916418
+          ],
+          "share_opm_better": 0.5618065526693643
+        },
+        "opm_matched/grad/intrinsic+brain": {
+          "ratio": 1.1639871693223134,
+          "ci95": [
+            1.1604552076758377,
+            1.1678693006411636
+          ],
+          "share_opm_better": 0.9503981203498237
+        },
+        "opm_matched/mag/intrinsic+brain": {
+          "ratio": 1.0400757760798895,
+          "ci95": [
+            1.036918454159747,
+            1.0428514997548595
+          ],
+          "share_opm_better": 0.6757603446025323
+        },
+        "opm204/combined/intrinsic+brain": {
+          "ratio": 1.134281485340707,
+          "ci95": [
+            1.1296253694148084,
+            1.1380227153887956
+          ],
+          "share_opm_better": 0.9986946873776269
+        },
+        "opm204/grad/intrinsic+brain": {
+          "ratio": 1.3509335045398603,
+          "ci95": [
+            1.3425309083581665,
+            1.3578337513297294
+          ],
+          "share_opm_better": 1.0
+        },
+        "opm204/mag/intrinsic+brain": {
+          "ratio": 1.1795526113747101,
+          "ci95": [
+            1.1753148557580106,
+            1.1838909557794397
+          ],
+          "share_opm_better": 0.9998694687377627
+        },
+        "opm_dense/combined/intrinsic+brain": {
+          "ratio": 1.1372446644885592,
+          "ci95": [
+            1.1331345884521666,
+            1.1413074092343871
+          ],
+          "share_opm_better": 0.9988252186398643
+        },
+        "opm_dense/grad/intrinsic+brain": {
+          "ratio": 1.3560398845363735,
+          "ci95": [
+            1.3485732411164333,
+            1.3619124452973506
+          ],
+          "share_opm_better": 1.0
+        },
+        "opm_dense/mag/intrinsic+brain": {
+          "ratio": 1.1829003576012773,
+          "ci95": [
+            1.1784796960671626,
+            1.1875922968382773
+          ],
+          "share_opm_better": 0.9998694687377627
+        },
+        "opm_matched/combined/projected": {
+          "ratio": 0.9446498378045812,
+          "ci95": [
+            0.9400983738069403,
+            0.9489402456554397
+          ],
+          "share_opm_better": 0.3673149719357786
+        },
+        "opm_matched/grad/projected": {
+          "ratio": 1.045430967578897,
+          "ci95": [
+            1.0402850860573087,
+            1.0525526379152483
+          ],
+          "share_opm_better": 0.5846495235608928
+        },
+        "opm_matched/mag/projected": {
+          "ratio": 0.9959066703926832,
+          "ci95": [
+            0.990226736358475,
+            0.9998101953939513
+          ],
+          "share_opm_better": 0.4892311708654223
+        },
+        "opm204/combined/projected": {
+          "ratio": 1.1039046432903385,
+          "ci95": [
+            1.0994058798596875,
+            1.1088680153640884
+          ],
+          "share_opm_better": 0.7867119175042423
+        },
+        "opm204/grad/projected": {
+          "ratio": 1.26034716092841,
+          "ci95": [
+            1.2552161967152355,
+            1.2676054095783356
+          ],
+          "share_opm_better": 0.9201148675107689
+        },
+        "opm204/mag/projected": {
+          "ratio": 1.18101445610726,
+          "ci95": [
+            1.1757056702718711,
+            1.1857251573212233
+          ],
+          "share_opm_better": 0.9138493669233781
+        },
+        "opm_dense/combined/projected": {
+          "ratio": 1.1080527627768944,
+          "ci95": [
+            1.1032707487551126,
+            1.1127947708329882
+          ],
+          "share_opm_better": 0.7919331679937345
+        },
+        "opm_dense/grad/projected": {
+          "ratio": 1.2640813415077767,
+          "ci95": [
+            1.25799248763767,
+            1.2729338307548212
+          ],
+          "share_opm_better": 0.9216812426576165
+        },
+        "opm_dense/mag/projected": {
+          "ratio": 1.18441419117762,
+          "ci95": [
+            1.179646900158949,
+            1.1896976611378667
+          ],
+          "share_opm_better": 0.9165905234303616
+        }
+      },
+      "opm_response": {
+        "opm_matched/combined/intrinsic+brain": {
+          "ratio": 1.0079171198039303,
+          "ci95": [
+            1.0059331431083987,
+            1.0101731967299152
+          ],
+          "share_opm_better": 0.5439237697428534
+        },
+        "opm_matched/grad/intrinsic+brain": {
+          "ratio": 1.1587094988045954,
+          "ci95": [
+            1.1547512434995988,
+            1.162203732118378
+          ],
+          "share_opm_better": 0.9483096201540269
+        },
+        "opm_matched/mag/intrinsic+brain": {
+          "ratio": 1.0361321729811106,
+          "ci95": [
+            1.0328216791116138,
+            1.0390038790419835
+          ],
+          "share_opm_better": 0.6582691554627333
+        },
+        "opm204/combined/intrinsic+brain": {
+          "ratio": 1.1269600209199504,
+          "ci95": [
+            1.1230746211266034,
+            1.131134581700434
+          ],
+          "share_opm_better": 0.9980420310664404
+        },
+        "opm204/grad/intrinsic+brain": {
+          "ratio": 1.3423792064582059,
+          "ci95": [
+            1.3357067979743709,
+            1.3484891962828889
+          ],
+          "share_opm_better": 1.0
+        },
+        "opm204/mag/intrinsic+brain": {
+          "ratio": 1.1720824022509753,
+          "ci95": [
+            1.1683989922620353,
+            1.17671287829931
+          ],
+          "share_opm_better": 0.9997389374755253
+        },
+        "opm_dense/combined/intrinsic+brain": {
+          "ratio": 1.1303669899299744,
+          "ci95": [
+            1.1267645566161537,
+            1.1335088690622952
+          ],
+          "share_opm_better": 0.9980420310664404
+        },
+        "opm_dense/grad/intrinsic+brain": {
+          "ratio": 1.3475392356408826,
+          "ci95": [
+            1.340107729976879,
+            1.3529660269744057
+          ],
+          "share_opm_better": 1.0
+        },
+        "opm_dense/mag/intrinsic+brain": {
+          "ratio": 1.1755310355532693,
+          "ci95": [
+            1.1705505565617318,
+            1.1795525953322792
+          ],
+          "share_opm_better": 0.9997389374755253
+        },
+        "opm_matched/combined/projected": {
+          "ratio": 0.9396263079300131,
+          "ci95": [
+            0.9353300050566354,
+            0.9442782508390897
+          ],
+          "share_opm_better": 0.35465343949875994
+        },
+        "opm_matched/grad/projected": {
+          "ratio": 1.040693892891591,
+          "ci95": [
+            1.0340273043286459,
+            1.0475190640432204
+          ],
+          "share_opm_better": 0.5749902101553322
+        },
+        "opm_matched/mag/projected": {
+          "ratio": 0.9903908978465227,
+          "ci95": [
+            0.9851181548530429,
+            0.9954488666112343
+          ],
+          "share_opm_better": 0.47552538833050517
+        },
+        "opm204/combined/projected": {
+          "ratio": 1.0971429307428404,
+          "ci95": [
+            1.0924470666575605,
+            1.10162589132908
+          ],
+          "share_opm_better": 0.7705260409868163
+        },
+        "opm204/grad/projected": {
+          "ratio": 1.252135678228026,
+          "ci95": [
+            1.2448094569289998,
+            1.258851261382041
+          ],
+          "share_opm_better": 0.9142409607100901
+        },
+        "opm204/mag/projected": {
+          "ratio": 1.172867001696675,
+          "ci95": [
+            1.1684446608152048,
+            1.1775680142323899
+          ],
+          "share_opm_better": 0.905234303615716
+        },
+        "opm_dense/combined/projected": {
+          "ratio": 1.1008960751822512,
+          "ci95": [
+            1.096577114250824,
+            1.1062661734517523
+          ],
+          "share_opm_better": 0.7761388852630204
+        },
+        "opm_dense/grad/projected": {
+          "ratio": 1.2555984136626996,
+          "ci95": [
+            1.2494276364797772,
+            1.2633824857862521
+          ],
+          "share_opm_better": 0.9168515859548362
+        },
+        "opm_dense/mag/projected": {
+          "ratio": 1.1768542190789875,
+          "ci95": [
+            1.1728501442188148,
+            1.1825210406853819
+          ],
+          "share_opm_better": 0.9090197102205978
+        }
+      }
     }
   },
   "opm_response": {
@@ -1243,9 +1552,9 @@
     "corner_hz": 100.0,
     "spectrum": "1/f"
   },
-  "runtime_s": 234.1496090888977,
+  "runtime_s": 199.34583020210266,
   "provenance": {
-    "commit": "e53bea8",
+    "commit": "bd70b45",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

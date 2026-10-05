@@ -291,7 +291,7 @@ class TestWriterFacts(unittest.TestCase):
         self.assertEqual(self.F["wr_n_children_below_adult_fitted_words"]["raw"], n)
         self.assertEqual(self.F["wr_n_children_below_adult_fitted_words"]["value"], "two")
 
-    def test_thresholds_shortfall_and_depth_bin_width(self):
+    def test_thresholds_counts_and_depth_bin_width(self):
         loc = json.loads((ROOT / FIGS_SUPP).read_text())["figures"]["Figure_S_localization_effects"]["values"]
         self.assertAlmostEqual(self.F["wr_p_exploratory_threshold"]["raw"],
                                loc["bonferroni_threshold"] * loc["family_per_anatomy_and_array"], places=12)
@@ -302,9 +302,9 @@ class TestWriterFacts(unittest.TestCase):
         self.assertEqual(self.F["wr_qc_near_hi_mm"]["value"], "10")
         g3b = json.loads((ROOT / "results/g3b/g3b_summary.json").read_text())["comparisons"]
         full = g3b["childB/opm_dense/combined/intrinsic+brain/detect"]["delta_by_depth"][0]["n_child"]
-        rounded = qc["anatomies"]["childB"]["g3b_targets"]["below_10mm"]["n"]
-        self.assertEqual(self.F["wr_qc_child_b_targets_lt10mm_shortfall"]["raw"], full - rounded)
-        self.assertEqual(self.F["wr_qc_child_b_targets_lt10mm_shortfall"]["value"], "2")
+        # the check now counts from the full-precision depths (results/g3b/g3b_targets_childB_depth.csv)
+        self.assertEqual(qc["anatomies"]["childB"]["g3b_targets"]["below_10mm"]["n"], full)
+        self.assertNotIn("wr_qc_child_b_targets_lt10mm_shortfall", self.F)
         ns = json.loads((ROOT / "results/g2_noise_sensitivity/noise_sensitivity_summary.json").read_text())
         bins = ns["sweep"]["entries"]["15"]["depth"]["opm_dense/combined/intrinsic+brain"]
         self.assertEqual({b["hi"] - b["lo"] for b in bins}, {self.F["wr_ns_depth_bin_mm"]["raw"]})

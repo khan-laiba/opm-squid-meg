@@ -45,8 +45,6 @@ Read only; nothing is re-run. Every fact is computed from unrounded stored value
   wr_p_exploratory_threshold      the conventional uncorrected threshold of the exploratory tests, recovered from the stored
                                   Bonferroni threshold of the localization figure and its family size
   wr_qc_near_lo_mm, wr_qc_near_hi_mm  the two near-scalp thresholds of the children's MRI check
-  wr_qc_child_b_targets_lt10mm_shortfall  by how many targets the check's rounded count of child B's targets below 10 mm
-                                  falls short of the full-precision count
   wr_ns_depth_bin_mm              the depth-bin width of the noise-sensitivity run's own depth results
 Formats as scripts/report_facts_g12.py (whose helpers are imported): dB signed with 2 decimals, intervals "[lo, hi]",
 U+2212 for negatives, counts with thousands separators.
@@ -537,15 +535,6 @@ def threshold_facts(F: Facts, root: Path) -> None:
         raise ValueError(f"{QC}: parameters.near_mm should hold two increasing thresholds, found {near}")
     F.add("wr_qc_near_lo_mm", f"{near[0]:g}", near[0], f"{QC} :: parameters.near_mm[0] (the lower near-scalp threshold, mm)")
     F.add("wr_qc_near_hi_mm", f"{near[1]:g}", near[1], f"{QC} :: parameters.near_mm[1] (the upper near-scalp threshold, mm)")
-    full = int(json.loads((root / G3B).read_text())["comparisons"]["childB/opm_dense/combined/intrinsic+brain/detect"]
-               ["delta_by_depth"][0]["n_child"])
-    rounded = int(json.loads((root / QC).read_text())["anatomies"]["childB"]["g3b_targets"]["below_10mm"]["n"])
-    if full < rounded:
-        raise ValueError(f"the check's count ({rounded}) exceeds the full-precision count ({full})")
-    F.add("wr_qc_child_b_targets_lt10mm_shortfall", count(full - rounded), full - rounded,
-          f"{G3B} :: comparisons['childB/opm_dense/combined/intrinsic+brain/detect'].delta_by_depth[0].n_child minus "
-          f"{QC} :: anatomies['childB'].g3b_targets.below_10mm.n (derived: the full-precision count less the check's count "
-          "from depths rounded to two decimals)")
     entries = json.loads((root / NOISE_SENS).read_text())["sweep"]["entries"]
     key = next(k for k in entries if float(k) == 15.0)
     bins = entries[key]["depth"]["opm_dense/combined/intrinsic+brain"]
