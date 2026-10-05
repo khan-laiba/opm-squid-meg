@@ -23,7 +23,7 @@ figures and result files CC BY 4.0).
 | 2. Draft the report as one narrative | done | about 8,500 words of main text, 10 figures, 3 tables, 39 references |
 | 3. Internal verification: numbers, claims against evidence, methods completeness, build, tests, links | done | 166 checker issues resolved; supplementary pages cleaned for publication; 197 tests pass |
 | 4. Referee rounds (both referees, same round) | done | round 1: major revisions from both; round 2: minor revisions (Fable 5.1), major revisions (GPT-6 Astra); round 3: minor revisions from both; round 4, on the deployed final version (f167fd3): minor revisions from both |
-| 5. Deploy to GitHub Pages and check the live site | done | f167fd3 deployed (gh-pages af1ef8e) and checked live: 14 pages, 240 internal assets, 139 anchors, 0 failures; the round-4 minor corrections are deployed from the commit that applies them |
+| 5. Deploy to GitHub Pages and check the live site | done | final version: acb4752 (round-4 corrections applied) deployed as gh-pages f8292c3 and checked live: 14 pages, 241 internal assets, 139 anchors, 0 failures |
 
 ## Referee rounds
 
@@ -189,3 +189,10 @@ figures and result files CC BY 4.0).
   the independence of the anatomies and their shared assumptions are stated separately; the equal-rate test is called
   approximate and uncorrected, and the rate matching is to the nominal 1 per minute; the superseded comparison record's
   note lists how it differs from Table 4. Next: tests, deploy, live check.
+- 2026-10-05: final deployment. acb4752 (318 tests pass) deployed as gh-pages f8292c3 and checked live: 14 pages, 241
+  internal assets, 139 anchors, 0 internal failures; 39 external links, 31 load and the same 8 publisher pages refuse
+  scripts. Final referee verdicts: round 4, on the deployed f167fd3, minor revisions from Claude Fable 5.1 (maximum
+  effort) and from GPT-6 Astra (maximum reasoning, Codex CLI), as in round 3 (fabd710); the live version adds only the
+  corrections they requested in round 4, checked by two independent checkers. Open for the author: funding,
+  competing-interests and contributions statements, an archive DOI, print-resolution figure files, Table 4's journal
+  layout, confirming the MNE sample dataset's terms with its providers, and the reference details at proof.
