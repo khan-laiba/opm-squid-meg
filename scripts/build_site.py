@@ -437,9 +437,9 @@ def pediatric_findings(d):
         + ", ".join(f"{dec[f'{c}/counterfactual_x-centred_vs_adult_counterfactual_x-centred/combined']['delta']['median']:+.2f}"
                     for c in kids)
         + " dB about the laterally centred head (same order). " + absolute_change(g3b, kids) + " " + scaled_helmet(dec, kids),
-        f"For OPM noise 7-30 fT/&radic;Hz, background variance x0.5 or x2 and a 1-layer head model the child-minus-adult "
+        f"For OPM noise 7-30 fT/&radic;Hz, background variance x0.5 or x2 and a 1-layer head model the head-minus-adult "
         f"difference of the median D is {sens_sign(sens, kids)}; at 30 fT/&radic;Hz the adult's D is "
-        f"{sens['adult/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f} dB and the children's "
+        f"{sens['adult/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f} dB and the smaller heads' "
         + ", ".join(f"{sens[f'{k}/opm_asd_30fT/opm_dense/combined/intrinsic+brain']:+.2f}" for k in kids
                     if f"{k}/opm_asd_30fT/opm_dense/combined/intrinsic+brain" in sens)
         + " dB (same order). A positive Delta is a relative gain for the head-adaptive array, not by itself a clinical advantage.",
@@ -633,8 +633,9 @@ def page_pediatric(d, out):
           "20-mm contact with the top of the helmet). The OPM arrays are refitted to each head with the adult rules (10-mm cell, "
           "17-mm packing, nothing shrunk). Brain-background variance per unit cortical area, room field and intrinsic noise are "
           "the adult's. D = OPM minus Neuromag known-topography detectability in dB; Delta = D<sub>child</sub> - "
-          "D<sub>adult</sub> on homologous sources (vertex-wise for the scaled controls; parcels and depth strata for the "
-          "templates and the school-aged children). A positive Delta is a relative gain for OPM, not by itself an OPM advantage in the child. Methods: section "
+          "D<sub>adult</sub> on homologous sources (vertex-wise for the scaled controls; for the templates and the school-aged "
+          "children the adult-area-weighted median of parcel differences, and the same within depth strata as a separate estimand; "
+          "the school-aged children are provisional examples, see the report's Section 2.2). A positive Delta is a relative gain for OPM, not by itself an OPM advantage in the child. Methods: section "
           "10 of the <a href=\"methods.html\">methods</a>; full tables in the <a href=\"g3b-report.html\">G3B report</a>.</p>",
           sb.table(["Anatomy", "Construction", "Head circumference [mm]", "Breadth x length [mm]", "Targets (medial wall included)",
                     "Usable cortex [cm2]",
