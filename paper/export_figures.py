@@ -58,12 +58,14 @@ PANEL = re.compile(r"^(?:\(([a-l])\)(?:\s+|$)|([a-l])(?:\s{2,}|$))(.*)$", re.S) 
 # figures drawn without panel letters whose panels the manuscript letters (continuing the figure they are stacked under):
 # letters given to the axes that carry a left title, in reading order
 EXTRA_LETTERS = {"Figure_noise_sensitivity_depth": "ghij"}
+# single-panel figures of the manuscript that the report drew as one panel of a larger figure: that panel letter goes
+DROP_LETTER = {"Figure_R12_geometry": "(d)", "Figure_R11_maps_adult": "(c)"}
 
 # manuscript figure -> drawn figures stacked top to bottom (names as the drawing scripts save them)
-MAIN = {"Figure_1": ["Figure_R15_arrays", "Figure_R12_geometry"], "Figure_2": ["Figure_R3_conditions"],
-        "Figure_3": ["Figure_R17_noise_checks"], "Figure_4": ["Figure_R1_adult_depth", "Figure_R11_maps_adult"],
-        "Figure_5": ["Figure_R4_regions_adult"], "Figure_6": ["Figure_R6_pediatric_D", "Figure_R13_maps_heads"],
-        "Figure_7": ["Figure_constant_gap"], "Figure_8": ["Figure_R16_confirm"]}
+MAIN = {"Figure_1": ["Figure_R15_arrays"], "Figure_2": ["Figure_R12_geometry"], "Figure_3": ["Figure_R3_conditions"],
+        "Figure_4": ["Figure_R17_noise_checks"], "Figure_5": ["Figure_R1_adult_depth"], "Figure_6": ["Figure_R11_maps_adult"],
+        "Figure_7": ["Figure_R4_regions_adult"], "Figure_8": ["Figure_R6_pediatric_D", "Figure_R13_maps_heads"],
+        "Figure_9": ["Figure_helmet_fit"], "Figure_10": ["Figure_R16_confirm"]}
 SUPP = {"Figure_S1": ["Figure_R0_sphere"], "Figure_S2": ["Figure_R2_noise_model"],
         "Figure_S3": ["Figure_covariance_structure"], "Figure_S4": ["Figure_covariance_bands"],
         "Figure_S5": ["Figure_noise_sensitivity", "Figure_noise_sensitivity_depth"], "Figure_S6": ["Figure_S_children_qc"],
@@ -130,7 +132,7 @@ TERMS = {"published model": "primary model", "room interference": "room field", 
          "standard placements": "source-blind placements", "individual child": "school-aged child",
          "Fixed minus fitted helmet, within each head": "Fixed minus other helmet, within each head",
          "D(fixed) − D(fitted)": "D(fixed) − D(other)",
-         ", thresholds frozen for a nominal 1 false event/min;": ";"}
+         ", thresholds frozen for a nominal 1 false event/min;": ";", "confirmatory": "pre-specified"}
 # whole labels replaced as they stand (figure rows and legend entries)
 EXACT = {"+ room field": "Sensor, brain and room noise",
          "+ room field, after the 8-term projection": "Sensor, brain and room noise, room field projected out",
@@ -229,6 +231,15 @@ def savefig(self, fname, *args, **kwargs):
     stem = Path(str(fname)).stem
     if stem in RECOLOR:
         recolor(self, RECOLOR[stem])
+    if stem == "Figure_R16_confirm":
+        plain_p_values(self)
+    if stem in DROP_LETTER:
+        for t in self.findobj(Text):
+            txt = t.get_text() or ""
+            if txt.strip() == DROP_LETTER[stem]:
+                t.set_visible(False)
+            elif txt.startswith(DROP_LETTER[stem] + " "):
+                t.set_text(txt[len(DROP_LETTER[stem]):].lstrip())
     add_letters(self, EXTRA_LETTERS.get(stem, ""))
     relabel(self)
     americanize(self)
@@ -273,7 +284,7 @@ def run_main(name: str, argv: list[str]):
 HEAD_COLORS = {"school": "#332288", "size2yr": "#882255"}
 HEAD_SHORT = {"school": "School-age size", "size2yr": "2-year size"}
 # per figure: colors replaced in every artist ({old: new}, lower-case hex); Fig. 7's fitted helmet as in Fig. 1
-RECOLOR = {"Figure_constant_gap": {"#0072b2": "#d55e00", "#009e73": "#555555"}}
+RECOLOR: dict[str, dict] = {}
 
 
 def recolor(fig: Figure, mapping: dict) -> None:
@@ -313,10 +324,9 @@ def draw_all():
     load("report_figures_confirm").main(["--out-dir", str(EXPORT)])
     run_main("report_figures_qc", [])
     run_main("report_figures_supplement", [])
-    cg = load("study_g3b_constant_gap")
     summary = json.loads((ROOT / "results/g3b_constant_gap/g3b_constant_gap_summary.json").read_text())
     g3b = json.loads((ROOT / "results/g3b/g3b_summary.json").read_text())
-    cg.figure(summary, g3b, EXPORT / "Figure_constant_gap.png")
+    helmet_fit_figure(summary, g3b, EXPORT / "Figure_helmet_fit.png")
     cv = load("study_covariance_validation")
     cvs = json.loads((ROOT / "results/g2_covariance_validation/covariance_validation.json").read_text())
     cv.figure_structure(cvs, EXPORT / "Figure_covariance_structure.png")
@@ -324,6 +334,92 @@ def draw_all():
     ns = load("study_noise_sensitivity")
     nss = json.loads((ROOT / "results/g2_noise_sensitivity/noise_sensitivity_summary.json").read_text())
     ns.figures(nss, EXPORT)
+
+
+def helmet_fit_figure(s: dict, g3b: dict, path: Path) -> None:
+    """The manuscript's helmet-fit figure, drawn from the stored results of the helmet-fit study (the report drew the same
+    quantities in four panels with a third helmet): (a) the Neuromag gap in the fixed adult helmet at top contact and in
+    the helmet fitted at the adult's gap; (b) Delta against the adult placed by the same rule in each helmet, with the
+    fixed helmet's range over its source-blind placements; (c) the interaction, the primary helmet-fit quantity (a
+    head's fixed-minus-fitted contrast minus the adult's), which does not depend on the OPM noise. Dense OPM array
+    against Neuromag's 306 channels, sensor plus brain noise; the children, provisional examples, are set apart."""
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+    style.apply()
+    cond, ref, o = "intrinsic+brain", "combined", "opm_dense"
+    keys = [k for k in style.ANAT_ORDER if k in s["helmets"]]
+    kids = [k for k in keys if k != "adult"]
+    xs = {k: i for i, k in enumerate(keys)}
+    fixed = dict(marker="s", color="#000000", mfc="#000000")
+    fitted = dict(marker="o", color="#D55E00", mfc="#D55E00")
+    fig, axs = plt.subplots(1, 3, figsize=(style.FULL_W, 3.4),
+                            gridspec_kw=dict(wspace=0.45, left=0.075, right=0.99, top=0.9, bottom=0.36))
+
+    def xaxis(ax, ks, zero=True):
+        ax.set_xticks([xs[k] for k in ks], [style.ANAT_SHORT[k] for k in ks], rotation=45, ha="right")
+        ax.set_xlim(min(xs[k] for k in ks) - 0.6, max(xs[k] for k in ks) + 0.6)
+        if zero:
+            ax.axhline(0, color="0.75", lw=0.6, zorder=0)
+        first_child = min((xs[k] for k in ks if style.ANAT_CLASS[k] == "child"), default=None)
+        if first_child is not None:
+            ax.axvline(first_child - 0.5, color="0.55", lw=0.6, ls=":", zorder=0)
+
+    def point(ax, x, e, st, dx):
+        med = e["median"]
+        lo, hi = e.get("ci95") or (med, med)
+        ax.errorbar([x + dx], [med], yerr=[[med - lo], [hi - med]], fmt=st["marker"], color=st["color"], mfc=st["mfc"],
+                    ms=4.2, lw=0.9, capsize=1.6)
+
+    ax = axs[0]
+    for h, st, dx in (("top", fixed, -0.13), ("gap_matched", fitted, 0.13)):
+        for k in keys:
+            v = s["helmets"][k][h]
+            ax.plot([xs[k] + dx], [v["median_mm"]], st["marker"], color=st["color"], mfc=st["mfc"], ms=4.2, ls="none")
+            if h == "gap_matched" and v.get("clearance_binding"):
+                ax.annotate("*", (xs[k] + dx, v["median_mm"]), xytext=(3, 1), textcoords="offset points", fontsize=9,
+                            color=st["color"])
+    target = s["target_gaps"]["gap_matched"]["gap_mm"]
+    ax.axhline(target, color="#D55E00", lw=0.7, ls="--", zorder=0)
+    ax.set_ylabel("median magnetometer-to-scalp gap (mm)")
+    ax.set_title("(a)  Neuromag gap", loc="left")
+    xaxis(ax, keys, zero=False)
+
+    ax = axs[1]
+    band = s.get("placement_band", {})
+    for k in kids:
+        b = band.get(f"{k}/{ref}/{cond}")
+        if b:
+            ax.add_patch(plt.Rectangle((xs[k] - 0.38, b["min"]), 0.76, b["max"] - b["min"], fc="0.88", ec="none", zorder=0))
+    for k in kids:
+        point(ax, xs[k], g3b["comparisons"][f"{k}/{o}/{ref}/{cond}/detect"]["delta"], fixed, -0.13)
+        point(ax, xs[k], s["delta_same_rule"][f"{k}/gap_matched/{o}/{ref}/{cond}"]["delta"], fitted, 0.13)
+    ax.set_ylabel("Δ, smaller head minus adult (dB)")
+    ax.set_title("(b)  Change from the adult", loc="left")
+    xaxis(ax, kids)
+
+    ax = axs[2]
+    for k in kids:
+        point(ax, xs[k], s["interaction"][f"{k}/gap_matched/{ref}/{cond}"]["interaction"], fitted, 0.0)
+    ax.set_ylabel("interaction (dB)")
+    ax.set_title("(c)  Interaction", loc="left")
+    xaxis(ax, kids)
+
+    handles = [Line2D([], [], ls="none", ms=4.5, label="fixed adult helmet, top contact", **fixed),
+               Line2D([], [], ls="none", ms=4.5, label="helmet fitted at the adult's gap", **fitted),
+               Line2D([], [], color="#D55E00", ls="--", lw=0.8, label=f"(a) the adult's gap ({target:.1f} mm)"),
+               Patch(fc="0.88", ec="none", label="(b) fixed helmet over its source-blind placements")]
+    fig.legend(handles=handles, loc="lower center", ncol=2, bbox_to_anchor=(0.5, 0.0), fontsize=7)
+    fig.savefig(path)
+    plt.close(fig)
+
+
+def plain_p_values(fig: Figure) -> None:
+    """Remove the check marks (and the bold) that the report's spike figure puts on significant p values."""
+    for t in fig.findobj(Text):
+        s = t.get_text() or ""
+        if "\u2713" in s:
+            t.set_text(s.replace(" \u2713", "").replace("\u2713", "").rstrip())
+            t.set_fontweight("normal")
 
 
 def stack(parts: list[Path], out: Path):

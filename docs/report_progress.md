@@ -211,10 +211,10 @@ return accept or minor revisions in the same round.
 |---|---|---|
 | 1. Reference papers and Guide for Authors | done | ten NeuroImage papers (PMC Open Data author manuscripts: PDF, XML, text, figures; 102 files, 75.8 MB, checksums verified) and the Guide for Authors (saved by the owner) in `refs/`, which is not committed |
 | 2. Style sheet | done | `paper/style_sheet.md`, one page, from eleven parallel analyses and a synthesis |
-| 3. Figures at print resolution | done | `paper/export_figures.py`: 8 main and 15 supplementary figures as vector PDFs (raster layers at 600 dpi) from the stored results; bold capital panel letters; American spelling; explanatory notes and figure titles moved out of the images into the captions |
-| 4. Manuscript and supplementary material | done | `paper/manuscript.tex.j2` and `paper/supplementary.tex.j2` (+ `paper/supp/`), filled from the facts by `paper/build_paper.py`, which also checks highlights (3-5, at most 85 characters) and the abstract (at most 250 words); 454 facts in the main text, 2,261 in the supplementary material |
+| 3. Figures at print resolution | done | `paper/export_figures.py`: 10 main and 15 supplementary figures as vector PDFs (raster layers at 600 dpi) from the stored results; bold capital panel letters; American spelling; explanatory notes and figure titles moved out of the images into the captions |
+| 4. Manuscript and supplementary material | done | `paper/manuscript.tex.j2` and `paper/supplementary.tex.j2` (+ `paper/supp/`), filled from the facts by `paper/build_paper.py`, which also checks highlights (3-5, at most 85 characters) and the abstract (at most 250 words); 412 facts in the main text, 2,241 in the supplementary material |
 | 5. Internal checks | done | five independent checkers (fidelity to the report, style sheet, mock referee, supplementary material, figures and captions); their findings applied; mean sentence 26.0 words |
-| 6. Referee rounds | in progress | round 1 |
+| 6. Referee rounds | in progress | round 1 (924c2c6): Claude Fable 5.1 major revisions, GPT-6 Astra major revisions; round 2 sent to both referees |
 
 ## Manuscript log
 
@@ -237,3 +237,19 @@ return accept or minor revisions in the same round.
   stated as the testable prediction; tables reordered so that Table 2 (estimands) follows the definitions; captions
   shortened; a wider text block so that figures print near their drawn size; the scaled adults and Fig. 7's helmets
   given colors no array uses; Section S8.3 (literature search and parameter provenance) restored from the report.
+- 2026-10-05: referee round 1 on 924c2c6. Claude Fable 5.1 (maximum effort): major revisions. GPT-6 Astra (maximum
+  reasoning, Codex CLI): major revisions. Both found no mismatched number. Their shared points: lead with what is robust
+  (array design, OPM noise, comparator and metric decide the sign; the break-even noise as the testable prediction; the
+  helmet-fit interaction, independent of the OPM noise), present the measured-Neuromag scenario with the primary
+  result, treat the parcel intervals as descriptive, present the declared spike run as a verification under the model,
+  base the pediatric conclusion on the scaled adults, and move the literature table to the supplement. Requests for new
+  simulations (a clinical triaxial array, spikes under other noise models or in the fitted helmet, repaired anatomies,
+  longer threshold calibration) are outside this rewrite; the claims were narrowed instead and the existing results
+  that bear on them brought into the main text. Round 2 revision: new abstract and highlights, ten main figures (the
+  stacked figures split; a helmet-fit figure that plots the interaction), Table 2 pruned, Section S9 (Table S19), the
+  supplement tightened.
+- 2026-10-05: round 2 revision complete and sent to both referees with a point-by-point response. The supplement was
+  condensed by four parallel writers (Sections S3, S4 and S7 by about a sixth; repeats of tables and of the main text
+  removed; post hoc choices disclosed once, in Section S8.2), with Figs. S3, S5, S14 and S15 enlarged. Every
+  supplementary section, figure and table the main text cites was checked for number and content. The build is clean:
+  main text 29 pages, supplementary material 56 pages, no undefined references or float errors.

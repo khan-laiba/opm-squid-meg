@@ -1,41 +1,5 @@
 {
- "Figure_1": {
-  "width": 518.47,
-  "height": 773.72,
-  "parts": [
-   {
-    "part": "Figure_R15_arrays",
-    "width": 516.669,
-    "height": 366.046,
-    "top": 0.0
-   },
-   {
-    "part": "Figure_R12_geometry",
-    "width": 518.472,
-    "height": 398.18,
-    "top": 375.54
-   }
-  ]
- },
- "Figure_4": {
-  "width": 522.48,
-  "height": 721.37,
-  "parts": [
-   {
-    "part": "Figure_R1_adult_depth",
-    "width": 516.72,
-    "height": 444.72,
-    "top": 0.0
-   },
-   {
-    "part": "Figure_R11_maps_adult",
-    "width": 522.483,
-    "height": 267.152,
-    "top": 454.218
-   }
-  ]
- },
- "Figure_6": {
+ "Figure_8": {
   "width": 522.48,
   "height": 512.43,
   "parts": [
