@@ -1,6 +1,6 @@
 {
  "provenance": {
-  "commit": "ae1631c"
+  "commit": "73fd3c3"
  },
  "figures": {
   "Figure_R17_noise_checks": {
@@ -129,7 +129,7 @@
       ]
      },
      "C": {
-      "label": "C  OPM bears the excess (bound)",
+      "label": "C  OPM bears the excess (pessimistic)",
       "opm_dense": [
        0.7986949012315212,
        0.7598633417144931,
@@ -536,7 +536,7 @@
     }
    },
    "checks": [
-    "docs/methods.md: the covariance check ('in five scenarios, A-E here (S1-S5 in the result file)') defines A 'the model's error common ...'; B 'both cortical backgrounds scaled ...'; C 'a pessimistic bound, Neuromag as measured ...'; D 'Neuromag as measured, the OPM exactly as modelled ...'; E 'Neuromag with its measured empty ...', in this order; A-E are drawn from S1-S5 of the result file in the same order",
+    "docs/methods.md: the covariance check ('in five scenarios, A-E here (S1-S5 in the result file)') defines A 'the model's error common ...'; B 'both cortical backgrounds scaled ...'; C 'the most pessimistic, Neuromag as measured ...'; D 'Neuromag as measured, the OPM exactly as modelled ...'; E 'Neuromag with its measured empty ...', in this order; A-E are drawn from S1-S5 of the result file in the same order",
     "results/g2_covariance_validation/covariance_validation.json: detectability.channels combined = mag + grad (305 = 102 + 203)",
     "results/g2_covariance_validation/covariance_validation.json: plain_summary quotes the plotted measured/model ratio, its interval, the exact-model range and the heart-removed ratio of all three channel sets (3 decimals)",
     "results/g2_covariance_validation/covariance_validation.json: opm_implication.ratios['opm_dense/combined/model_306/intrinsic+brain'].ratio reproduces the published median (results/g2/g2_summary.json primary.oracle) to 0.0e+00 (relative)",
