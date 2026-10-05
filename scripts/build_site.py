@@ -236,6 +236,16 @@ def page_numbers(facts, uses, out):
     return "\n".join(h)
 
 
+MILESTONE_PAGES = ("adult.html", "g2-report.html", "pediatric.html", "g3b-report.html", "epilepsy.html", "motion-report.html",
+                   "summary.html")
+MILESTONE_NOTE = ('<div class="finding"><p><strong>Milestone report.</strong> This page presents the analyses as they were first '
+                  'run and reported. The <a href="index.html">manuscript</a> and its supplementary text '
+                  '(<a href="supplement.html">S1</a>) give the current interpretation, the conditions of each result and the '
+                  'analyses added in the revision (among them the check of the noise model against the measured covariance, the '
+                  'helmet fitted at the adult\'s gap, the school-aged children as provisional examples and the confirmatory '
+                  'spike run), and they take precedence where this page differs.</p></div>')
+
+
 def page_summary(d):
     g2, g4, loc, g1a, g1b, g1c = d["g2"], d["g4"], d["loc"], d["g1a"], d["g1b"], d["g1c"]
     P = g2["primary"]["oracle"]
@@ -289,8 +299,9 @@ def page_summary(d):
     items = [
         f"With modelled brain noise, the dense {n_dense}-site OPM array has <strong>{cmp_str(dense)}</strong> the known-topography "
         f"detectability of the Neuromag system (all 306 channels; median over {g2['n_targets']:,} cortical targets, 95 % CI "
-        f"from a bootstrap over cortical parcels; higher for {100 * dense['share_opm_better']:.0f} % of targets). An OPM array at "
-        f"Neuromag's own sites ({n_matched} of 102 fit) ties it: {cmp_str(matched)}. Conditions: OPM white noise 15 fT/&radic;Hz, "
+        f"from a bootstrap over cortical parcels; higher at all but {g2['n_targets'] - round(dense['share_opm_better'] * g2['n_targets']):,} "
+        f"targets). An OPM array at "
+        f"Neuromag's own sites ({n_matched} of 102 fit) shows no established advantage: {cmp_str(matched)}. Conditions: OPM white noise 15 fT/&radic;Hz, "
         "3-layer BEM, no extra scalp gap, the sample subject's measured head position; the modelled brain noise predicts "
         f"{g2['noise_validation']['model']['brain_mag_model_over_measured']:.2f}x the measured magnetometer level.",
         f"The advantage depends on the assumptions: OPM noise 7 or 30 fT/&radic;Hz gives "
@@ -303,7 +314,8 @@ def page_summary(d):
         f"{x(2 ** g2['log2_ratio_vs_depth']['opm_matched/combined/intrinsic+brain'][0]['median'])} near the scalp to "
         f"{x(2 ** min(r['median'] for r in g2['log2_ratio_vs_depth']['opm_matched/combined/intrinsic+brain'] if r['median'] is not None))} "
         "at its lowest depth bin.",
-        f"Simulated interictal spikes, practical detector at 1 false event per minute: 50 % detection needs "
+        f"Simulated interictal spikes, exploratory run (the confirmatory run is in the report, Section 3.6), practical detector at "
+        f"a nominal 1 false event per minute: 50 % detection needs "
         f"{s50['opm_dense/opm']['practical@1/depth0']['value']:.0f} nAm with the dense OPM array vs "
         f"{s50['squid/combined']['practical@1/depth0']['value']:.0f} nAm with Neuromag at 10-20 mm depth{ratio_txt}. Locations "
         f"with more events detected only by the dense array / only by Neuromag (exact sign-flip p, uncorrected): {bands(pr)}. "
@@ -1004,6 +1016,11 @@ def main(argv=None):
         "reproduce.html": (page_title("reproduce.html"), page_reproduce(out, manifest)),
         "summary.html": (page_title("summary.html"), page_summary(d)),
     })
+    # the milestone pages report the analyses as first run; the manuscript and S1 hold the current interpretation
+    for fname in MILESTONE_PAGES:
+        if fname in pages:
+            title, content = pages[fname]
+            pages[fname] = (title, MILESTONE_NOTE + content)
     # the navigation: every supplementary page that was built (no S1 without report/supplement.md)
     supplement = [dict(file=f, title=f"{n} {t}" if n else t) for f, n, t in SUPPLEMENT if f in pages]
     documents = {doc["page"] for doc in docs.values()}

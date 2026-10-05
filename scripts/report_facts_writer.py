@@ -837,6 +837,82 @@ def round3_facts(F: Facts, root: Path) -> None:
           "configs/g4_epilepsy.toml :: null.calibration_min (derived: 1/sqrt(expected false events), the Poisson relative "
           "standard deviation of a rate estimated from that many events)")
 
+
+def round3b_facts(F: Facts, root: Path) -> None:
+    """Facts added in the third round's second pass: the cortex left out in the scaled adults and templates and the share
+    of the children's near-scalp cortex it includes; the fitted-helmet results that do not depend on the adult's reference
+    placement (the interaction) and those that do (against the adult at top contact); the difference between the
+    template's and the adult's scalp conventions; and the commit the pages are built from."""
+    ex = json.loads((root / "results/g3b/g3b_cortex_exclusion.json").read_text())["anatomies"]
+    src = "results/g3b/g3b_cortex_exclusion.json :: anatomies[{}].{}"
+
+    def left_out(k, part="whole_surface"):
+        w = ex[k][part]
+        return 100 * (float(w["within_4mm_of_inner_skull_share"]) + float(w["outside_inner_skull_share"]))
+
+    for key, tok in (("school", "school"), ("size2yr", "size2yr")):
+        F.add(f"wr_excl_{tok}_pct", f"{left_out(key):.1f}%", left_out(key), src.format(f"'{key}'", "whole_surface "
+              "(outside_inner_skull_share + within_4mm_of_inner_skull_share: the white-surface area that is neither target nor "
+              "background; the adult scaled, the 4-mm rule applied on the scaled meshes)"))
+    for name, keys, what in (("scaled", ("school", "size2yr"), "the two scaled adults"),
+                             ("templates", ("infant2yr", "infant18mo", "infant12mo"), "the three infant templates")):
+        v = [left_out(k) for k in keys]
+        F.add(f"wr_excl_{name}_pct_range", f"{min(v):.1f}% to {max(v):.1f}%", [min(v), max(v)],
+              src.format(", ".join(f"'{k}'" for k in keys), f"whole_surface (derived: min and max over {what})"))
+    near = []
+    for k in ("childA", "childB", "childC"):
+        w = ex[k]["within_8mm_of_scalp"]
+        near.append(100 * (1 - float(w["usable_share"])))
+    F.add("wr_excl_children_lt8mm_pct_range", f"{min(near):.0f}% to {max(near):.0f}%", [min(near), max(near)],
+          src.format("'childA', 'childB', 'childC'", "within_8mm_of_scalp.usable_share (derived: 1 - usable_share, the share "
+                     "of the white-surface area within 8 mm of the scalp used that the source rule leaves out; min and max over "
+                     "the children)"))
+    a10 = ex["adult"]["within_10mm_of_scalp"]
+    a10_out = float(a10["area_cm2"]) * (1 - float(a10["usable_share"]))
+    F.add("wr_excl_adult_lt10mm_cm2", f"{a10_out:.2f}", a10_out, src.format("'adult'", "within_10mm_of_scalp (derived: area_cm2 "
+          "x (1 - usable_share), the adult's left-out cortex within 10 mm of the scalp used, cm^2)"))
+
+    cg = json.loads((root / CGAP).read_text())
+    scaled_templates = ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo")
+    it = [cg["interaction"][f"{h}/gap_matched/combined/intrinsic+brain"]["interaction"] for h in scaled_templates]
+    meds = [float(x["median"]) for x in it]
+    if not all(float(x["ci95"][0]) > 0 for x in it):
+        raise ValueError(f"{CGAP}: an interaction interval of the scaled adults or templates includes zero; the text says "
+                         "every interval lies above zero")
+    F.add("wr_cgap_scaled_templates_interaction_range", f"{signed(min(meds), 2)} to {signed(max(meds), 2)}",
+          [min(meds), max(meds)], f"{CGAP} :: interaction['<head>/gap_matched/combined/intrinsic+brain'].interaction.median "
+          "(derived: min and max over the scaled adults and the infant templates; every ci95 above zero, checked)")
+    top = [cg["delta_vs_adult_top"][f"{h}/gap_matched_top/opm_dense/combined/intrinsic+brain"]["delta"] for h in scaled_templates]
+    tm = [float(x["median"]) for x in top]
+    F.add("wr_cgap_scaled_templates_fittedtop_vs_top_range", f"{signed(min(tm), 2)} to {signed(max(tm), 2)}", [min(tm), max(tm)],
+          f"{CGAP} :: delta_vs_adult_top['<head>/gap_matched_top/opm_dense/combined/intrinsic+brain'].delta.median (derived: "
+          "min and max over the scaled adults and the infant templates; the head fitted at the adult's top-contact gap against "
+          "the adult at top contact in the fixed helmet)")
+    n_above = sum(float(x["ci95"][0]) > 0 for x in top)
+    F.add("wr_cgap_scaled_templates_fittedtop_vs_top_n_ci_above0", f"{n_above} of {len(top)}", n_above,
+          f"{CGAP} :: delta_vs_adult_top['<head>/gap_matched_top/opm_dense/combined/intrinsic+brain'].delta.ci95 (derived: "
+          "the scaled adults and templates whose interval lies above zero, of all of them)")
+
+    q = json.loads((root / QC).read_text())["anatomies"]
+    off = {k: float(q[k]["scalp_vs_mri"]["offsets"]["cap"]["otsu"]["median_mm"]) for k in ("adult", "infant2yr")}
+    conv = off["adult"] - off["infant2yr"]
+    F.add("wr_qc_template_adult_convention_mm", f"{conv:.0f}", conv, f"{QC} :: anatomies['adult' and 'infant2yr'].scalp_vs_mri."
+          "offsets.cap.otsu.median_mm (derived: the adult's offset of the MRI head boundary outside its scalp minus the "
+          "template's, mm; the difference between the two heads' scalp conventions)")
+
+    import subprocess
+    sources = ("src", "scripts", "configs", "tests", "requirements.txt", "legacy", "site", "report", "results", "docs", "README.md")
+    try:
+        head = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
+        dirty = subprocess.run(["git", "status", "--porcelain", "--", *sources], cwd=root, capture_output=True, text=True,
+                               check=True).stdout.strip()
+        commit = head + ("+dirty" if dirty else "")
+    except (OSError, subprocess.CalledProcessError):
+        commit = "(not a git checkout)"
+    F.add("wr_build_commit", commit, commit, "git rev-parse --short HEAD of the repository the pages are built from, "
+          "'+dirty' if its sources have uncommitted changes (as the page header)")
+
+
 def facts(root: Path = ROOT) -> dict:
     """Every writer fact, name -> {"value", "raw", "source"}."""
     root = Path(root)
@@ -871,6 +947,7 @@ def facts(root: Path = ROOT) -> dict:
     confirm_depth_comparison_facts(F, root)
     confirm_exact_p_facts(F, root)
     round3_facts(F, root)
+    round3b_facts(F, root)
     return dict(F)
 
 

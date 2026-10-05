@@ -455,8 +455,8 @@ def panel_d(sf, ns, pub):
          Line2D([], [], color="0.25", lw=1.5, ls=SWEEP_LS[PR], label=f"after the {n_ext(ns)}-term projection"),
          Patch(color="0.5", alpha=0.28, lw=0, label="95 % intervals (bands)"),
          Line2D([], [], color="0.25", lw=1.25, ls=ADVERSE_LS,
-                label=f"most adverse combination: near-skull cortex\n+ {ns['config']['sensitivity']['joint']['corner_hz']:g}-Hz "
-                      "corner (sensor plus brain noise)"),
+                label=f"joint run: near-skull cortex + {ns['config']['sensitivity']['joint']['corner_hz']:g}-Hz\n"
+                      "corner, frequency-resolved (sensor plus brain noise)"),
          Line2D([], [], color="0.25", lw=0, marker="D", ms=4.4, label="break-even level, 95 % interval (filled: sensor\n"
                 "plus brain noise; open: after the projection)"),
          Line2D([], [], color="0.7", lw=0.8, label=f"primary model's level ({prim:g} fT/√Hz)")]

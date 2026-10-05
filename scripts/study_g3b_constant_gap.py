@@ -49,10 +49,11 @@ Configuration: configs/g3b_pediatric.toml and configs/g2_adult.toml (nothing new
 results/g3b/g3b_summary.json (stored placements, the placement band and the reproduction checks).
 Outputs (default results/g3b_constant_gap/; --out for tests): g3b_constant_gap_summary.json,
 targets_<anatomy>.csv, Figure_constant_gap.png. State: cache/g3b_constant_gap/state.pkl (with --out:
-<out>/state.pkl); --replot redoes summaries, files and figure from it.
+<out>/state.pkl); --replot redoes summaries, files and figure from it; --figure-only redraws the figure from the stored
+summary and writes nothing else.
 
 Usage: PYTHONPATH=src .venv/bin/python scripts/study_g3b_constant_gap.py [--anatomies adult school ...]
-       [--out DIR] [--n-boot N] [--replot]
+       [--out DIR] [--n-boot N] [--replot | --figure-only]
 """
 from __future__ import annotations
 
@@ -776,7 +777,7 @@ def figure(s: dict, g3b: dict | None, path: Path) -> dict:
             except KeyError:
                 continue
             point(ax, xs[k], e["median"], e.get("ci95"), st, dx, lab if i == 0 else None)
-    ax.set_ylabel("Δ = D(smaller head) −\nD(adult, same helmet rule) (dB)")
+    ax.set_ylabel("Δ, paired: smaller head minus\nadult, same helmet rule (dB)")
     ax.set_title("(c)  Change from the adult", loc="left")
     if kids:
         xaxis(ax, kids)
@@ -788,8 +789,8 @@ def figure(s: dict, g3b: dict | None, path: Path) -> dict:
         for k in keys:
             e = s["within_head"][f"{k}/{h}/{ref}/{cond}"]
             point(ax, xs[k], e["median"], e["ci95"], st, (j - 0.5) * 0.22)
-    ax.set_ylabel("D(fixed helmet, top contact) −\nD(fitted helmet), same head (dB)")
-    ax.set_title("(d)  Fixed minus fitted helmet in each head", loc="left")
+    ax.set_ylabel("median over targets of the\ntarget-wise D(fixed) − D(fitted) (dB)")
+    ax.set_title("(d)  Fixed minus fitted helmet, within each head", loc="left")
     xaxis(ax, keys)
 
     handles = [Line2D([], [], marker=HSTYLE[h]["marker"], color=HSTYLE[h]["color"], mfc=HSTYLE[h]["mfc"], ls="none", ms=4.5,
@@ -802,6 +803,8 @@ def figure(s: dict, g3b: dict | None, path: Path) -> dict:
     bind = [style.ANAT_SHORT[k] for k in keys if any(s["helmets"][k][r]["clearance_binding"] for r in RULES)]
     foot = ("D: known-topography detectability of a 10-nAm cortical dipole, dense OPM array against Neuromag (306 channels), sensor "
             "plus brain noise; area-weighted median over the cortex; bars: 95 % intervals, parcels resampled within each head. "
+            "Paired estimands: \u0394 in (c) per vertex (scaled adults) or as the median of parcel differences (templates, children); "
+            "(d) the median of the target-wise differences, not the difference of the medians in (b). "
             "Fitted helmet: the adult helmet scaled about the laterally centred head until the median magnetometer-to-scalp gap "
             "equals the adult's, with no magnetometer within 18 mm of the scalp"
             + (f" (* the 18-mm limit is reached first: {', '.join(bind)})" if bind else "") + ". Each head keeps its own OPM arrays. "
@@ -829,6 +832,8 @@ def main():
                     help="bootstrap resamples for every interval (tests only; default: configs/g3b_pediatric.toml strata.n_boot "
                          "for the primary summaries, 200 for the others, as G3B)")
     ap.add_argument("--replot", action="store_true", help="redo summaries, files and figure from the stored state")
+    ap.add_argument("--figure-only", action="store_true",
+                    help="redraw only the figure from the stored summary (g3b_constant_gap_summary.json); nothing else is written")
     args = ap.parse_args()
     t_start = time.time()
     mne.set_log_level("WARNING")
@@ -838,6 +843,12 @@ def main():
     cfg = tomllib.loads((ROOT / "configs" / "g3b_pediatric.toml").read_text())
     g2cfg = tomllib.loads((ROOT / "configs" / "g2_adult.toml").read_text())
     keys = ["adult"] + [k for k in ANATOMIES if k in args.anatomies and k != "adult"]
+    if args.figure_only:
+        stored = json.loads((out_dir / "g3b_constant_gap_summary.json").read_text())
+        g3b = json.loads(G3B_SUMMARY.read_text()) if G3B_SUMMARY.exists() else None
+        figure(stored, g3b, out_dir / "Figure_constant_gap.png")
+        log(f"figure redrawn from the stored summary -> {(out_dir / 'Figure_constant_gap.png').relative_to(ROOT)}")
+        return
     if args.replot:
         with open(state_file, "rb") as fh:
             state = pickle.load(fh)

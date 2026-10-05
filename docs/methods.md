@@ -673,15 +673,15 @@ on new data.
 * Endpoint (fixed before the run): in each of the nine anatomies (adult, the two scaled adults, the
   three templates and children A-C, each with its arrays and helmet placement of the exploratory runs),
   the dense OPM array against Neuromag (all 306 channels), practical detector with its thresholds frozen
-  on the calibration null at 1 false event per minute, focal sources at 10-20 mm depth; two-sided exact
+  on the calibration null at a nominal 1 false event per minute, focal sources at 10-20 mm depth; two-sided exact
   sign-flip test on the per-location differences in detection counts, Holm-corrected over the nine
   anatomies at alpha = 0.05 (with more than 20 non-zero location differences the p-value comes from
   20,000 random sign patterns, IC-SIGNFLIP-MC); effect size: the paired S50 ratio Neuromag / OPM from
   the location-pooled detection curves, with a location bootstrap (censored interval, 1,000 resamples).
 * New data: a new root seed (20261005; one stream per anatomy and purpose, IC-SEED-CONFIRM); 36
   locations in the 10-20 mm band (12 per orientation stratum, twice the exploratory 18), declared before
-  any confirmatory draw after two pilot runs on test seeds had shown single anatomies underpowered with
-  18 (child A: 8/1 and 9/4 locations, p = 0.074 and 0.21), drawn anew, never on the medial wall and
+  any confirmatory draw, prompted by two pilot runs on test seeds with 18 locations (child A: 8/1 and 9/4
+  locations, p = 0.074 and 0.21; recorded in the declaration, not a power estimate; their outputs were not kept), drawn anew, never on the medial wall and
   vertex-disjoint from the exploratory locations where a stratum allows; five independent noise
   replicates of every event, replicate 0 being the confirmatory one (one realization per event, as in
   the exploratory design); the exploratory null durations for whitening, threshold calibration and the
@@ -1503,7 +1503,7 @@ MNE-Python 1.13.2 (DOC-MNE in the register).
 | IC-BOOT-G3B-USEFUL | Smaller heads: moment needed for d = 5, by depth | 200 | scripts/g3b_pediatric_helmet.py:504-505 |
 | IC-BOOT-G4 | Spike detection (exploratory runs and the matched-rate re-analysis, which re-runs the same summary): location resamples of every S50, paired S50 ratio and paired median statistic difference | 1000 | scripts/g4_epilepsy_adult.py:327, 368, 375 |
 | IC-BOOT-LOC | Localization: event resamples of every paired median error difference | 2000 | scripts/g4_localization.py:273 |
-| IC-BOOT-CGAP | Gap-matched counterfactual helmet (revision): resamples outside its primary comparisons (the dense array in the fixed helmet and in the primary gap-matched helmet use `strata.n_boot`) | 200 | scripts/study_g3b_constant_gap.py:539-541, 850 |
+| IC-BOOT-CGAP | Gap-matched counterfactual helmet (revision): resamples outside its primary comparisons (the dense array in the fixed helmet and in the primary gap-matched helmet use `strata.n_boot`) | 200 | scripts/study_g3b_constant_gap.py:540-542, 861 |
 | IC-BOOT-COVVAL | Covariance validation (revision): parcel-bootstrap resamples, the command-line default (the output records the number used) | 1000 | scripts/study_covariance_validation.py:439, 799 |
 | IC-SIGNFLIP-EXACT | Location-level sign-flip test: exact over all sign patterns up to this many non-zero location differences | 20 | src/opmsquid/detection.py:169 |
 | IC-SIGNFLIP-MC | ... beyond it, Monte Carlo over this many random sign patterns (seed 0) | 20000 | src/opmsquid/detection.py:162, 172 |

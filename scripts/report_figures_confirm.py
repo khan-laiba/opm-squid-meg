@@ -268,9 +268,9 @@ def figure(results_dir: Path, out_dir: Path) -> dict:
     # layout
     pos = slots(labs, gap=0.45)
     span = max(pos.values()) + 1.25  # rows in axis units
-    h_a, h_b = 0.46 * span, 0.32 * span  # inches
+    h_a, h_b = 0.36 * span, 0.235 * span  # inches (the whole figure fits a journal page at full width)
     top_in = 1.0 + (0.2 if reasons else 0.0)  # banner, legend, panel title and column headers
-    gap_in, bottom_in = 0.9, 1.3  # (a)'s axis label and (b, c)'s titles; (b, c)'s axis labels and the footnote
+    gap_in, bottom_in = 0.8, 1.2  # (a)'s axis label and (b, c)'s titles; (b, c)'s axis labels and the footnote
     H = top_in + h_a + gap_in + h_b + bottom_in
     fig = plt.figure(figsize=(style.FULL_W, H))
     gs = fig.add_gridspec(2, 1, height_ratios=[h_a, h_b], hspace=gap_in / ((h_a + h_b) / 2), left=0.255, right=0.995,
@@ -341,7 +341,7 @@ def figure(results_dir: Path, out_dir: Path) -> dict:
                    "open: censored estimate (a bound)", "(b, c): endpoint ratio of (a)"],
                loc="upper center", ncol=2, bbox_to_anchor=(0.55, 1 - (0.04 + (0.2 if reasons else 0.0)) / H), handlelength=1.0,
                columnspacing=1.4, fontsize=7,
-               title=f"Dense OPM array vs Neuromag ({n_squid} channels), thresholds frozen at {rt} false event/min; paired on "
+               title=f"Dense OPM array vs Neuromag ({n_squid} channels), thresholds frozen for a nominal {rt} false event/min; paired on "
                      "identical simulated spikes",
                title_fontsize=7)
     if reasons:
@@ -353,7 +353,7 @@ def figure(results_dir: Path, out_dir: Path) -> dict:
         "marker with dashed arrow: censored point estimate. p: two-sided sign-flip test on the per-location differences in "
         f"detection counts ({method}), Holm-adjusted over the anatomies within each panel's family; ✓ and bold: below "
         f"{alpha:g}. (b) known topography, waveform and time, per-trial false-positive probability {o_alpha}; (c) {mismatch}, "
-        f"thresholds recalibrated to {rt} per minute. Exploratory run: {n_loc_x} locations per anatomy. The adult at its measured head "
+        f"thresholds recalibrated to the same nominal {rt} per minute. Exploratory run: {n_loc_x} locations per anatomy. The adult at its measured head "
         "position, the other heads at top contact in the fixed adult helmet.", 150), ha="left", va="top", fontsize=6.5, color="0.3")
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / f"{NAME}.png"
@@ -419,7 +419,7 @@ def provenance(v: dict, results_dir: Path) -> dict:
                        f"for focal spikes {v['band']} mm below the scalp, paired on identical simulated spikes at {v['n_loc']} "
                        f"newly drawn locations per anatomy (> 1: the OPM detects at a lower strength); lines: 95 % location-"
                        "bootstrap intervals; arrows: open ends; open markers: censored estimates. (a) The endpoint declared before "
-                       f"the run (practical scanning detector, thresholds frozen at {v['rate']:g} false event per minute, first "
+                       f"the run (practical scanning detector, thresholds frozen for a nominal {v['rate']:g} false event per minute, first "
                        f"noise realization): ratios {c_rng}; the two-sided location sign-flip test, Holm-adjusted over the "
                        f"anatomies, is below {alpha:g} in {len(p_c)} of {len(labs)}. Light: the exploratory run "
                        f"({v['n_loc_exploratory']} locations per anatomy, endpoint chosen after the analyses), ratios {x_rng}. "
