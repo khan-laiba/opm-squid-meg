@@ -4,31 +4,31 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>G4 motion and slippage report · OPM vs SQUID MEG</title>
+<title>S5. Head motion and OPM slippage: generated report · OPM vs SQUID MEG</title>
 <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
 <header>
-  <p class="banner">Simulation study, built from commit <code>f59f76e</code> (2026-10-04) of the project repository.
-  Every number is read from its result files (see <a href="numbers.html">Number provenance</a>).
-  No author of the reproduced studies has reviewed or endorsed it.</p>
+  <p class="banner">Simulation study, built from commit <code>f167fd3</code> (2026-10-05) of the project repository.
+  Every number is read from its result files (see <a href="numbers.html">Number provenance</a>).</p>
   <nav aria-label="Sections">
     <a class="nav-report" href="index.html">Report</a>
     <span class="nav-group">Supplementary material:</span>
-    <a href="benchmarks.html">S1 Benchmarks</a>
-    <a href="adult.html">S2 Realistic adult</a>
-    <a href="pediatric.html">S3 Pediatric</a>
-    <a href="epilepsy.html" aria-current="page">S4 Epilepsy and motion</a>
-    <a href="methods.html">S5 Methods</a>
-    <a href="register.html">S6 Parameters and provenance</a>
-    <a href="numbers.html">S7 Number provenance</a>
-    <a href="reproduce.html">S8 Reproduce and download</a>
+    <a href="supplement.html">S1 Supplementary text</a>
+    <a href="benchmarks.html">S2 Adult reference benchmarks</a>
+    <a href="adult.html">S3 Realistic adult comparison</a>
+    <a href="pediatric.html">S4 Smaller heads</a>
+    <a href="epilepsy.html" aria-current="page">S5 Simulated interictal spikes and head motion</a>
+    <a href="methods.html">S6 Methods, uncertainty and limitations</a>
+    <a href="register.html">S7 Parameters, provenance and assumptions</a>
+    <a href="numbers.html">S8 Number provenance</a>
+    <a href="reproduce.html">S9 Reproduce and download</a>
     <a href="summary.html">Project summary by milestone</a>
   </nav>
 </header>
 <main>
-<h1>G4 motion and slippage report</h1>
-<p><strong>Data sources.</strong> Infant templates: O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database (Richards et al. 2016).</p>
+<h1>S5. Head motion and OPM slippage: generated report</h1>
+<div class="finding"><p><strong>Milestone report.</strong> This page presents the analyses as they were first run and reported. The <a href="index.html">manuscript</a> and its supplementary text (<a href="supplement.html">S1</a>) give the current interpretation, the conditions of each result and the analyses added in the revision (among them the check of the noise model against the measured covariance, the helmet fitted at the adult's gap, the school-aged children as provisional examples and the confirmatory spike run), and they take precedence where this page differs.</p></div><p><strong>Data sources.</strong> Infant templates: O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database (Richards et al. 2016).</p>
 <h2 id="g4-extension-head-motion-and-opm-slippage-new-bounded-secondary-analysis">G4 extension: head motion and OPM slippage (NEW, bounded secondary analysis)</h2>
 <p>Static fit was studied first (G2, G3B, G4). This analysis adds what the static maps cannot show, on the G3B arrays and noise conventions (Neuromag at top contact; the refitted dense OPM array; intrinsic + brain noise, the G3B primary condition; 10-nAm cortical-normal dipoles; area-weighted medians over cortical targets). It bounds two mechanisms; it does not establish motion robustness. Configuration: <code>configs/g4_motion.toml</code>; code: <code>scripts/g4_motion.py</code>, <code>src/opmsquid/motion.py</code>.</p>
 <h3 id="a-sustained-displacement-the-head-in-the-fixed-helmet-neuromag-vs-a-slipped-cap-dense-opm">A. Sustained displacement: the head in the fixed helmet (Neuromag) vs a slipped cap (dense OPM)</h3>
@@ -47,7 +47,7 @@
 <ul><li>A head-mounted array moving rigidly with the head keeps its sensor-to-head geometry, so sustained head displacement changes only the SQUID geometry; the OPM's geometry changes only if the cap slips. The 'known' rows are the ideal limit of movement compensation (continuous head-position tracking for the SQUID, a measured slip for the OPM).</li><li>In a perfectly calibrated array any rigid motion changes the readings by a uniform field plus a symmetric traceless gradient in the head frame, which the 8-term projection removes exactly; in a uniform field the change is uniform and the homogeneous projection removes it exactly; translation in a gradient is uniform, rotation in a gradient is not (tests/test_motion.py, finite rotations included). Calibration errors leave residuals proportional to the field change.</li><li>D compares the OPM after its correction with Neuromag without any projection or SSS (none is charged to it), which is conservative for the OPM. The gradient is defined about x_ref = r0 of G2 (0, 0, 40 mm, head frame), which sets the uniform part of a translated gradient.</li><li>A slipped rigid cap must lift where the head is in its way: sensors that would enter the scalp are moved out along their axes without the 5-mm limit of A-OPM-CLEAR (a flexible cap or sliding holders), so the slip rows include the lifts (count and largest lift per row in the table).</li><li>The static room field is treated as in G2 for both systems (removed exactly by the projection in the projected condition); the same calibration errors would also leave part of it, for both systems, which is not modelled here.</li><li>Not modelled: sensor dynamic range, gain change with the operating field and cross-axis projection beyond the declared calibration errors; head-motion statistics of real children; specific movement-compensation algorithms; field changes from moving magnetic material.</li><li>Field strengths, motion amplitudes, pivot and calibration errors are declared sweeps (A-MOT-*), not measurements of a particular room or device; results scale linearly with rotation x field.</li></ul>
 </main>
 <footer>
-  <p>Report: Laiba Khan.</p>
+  <p>Report: Laiba Khan. Text, figures and result files: CC BY 4.0; code: MIT licence (<a href="https://github.com/khan-laiba/opm-squid-meg">repository</a>).</p>
   <p>Generated by <code>scripts/build_site.py</code> from the committed result files; every number on this page is read from them.
   Result files record the code commit that produced them (see <a href="reproduce.html#downloads">Reproduce and download</a>).</p>
 </footer>

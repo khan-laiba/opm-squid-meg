@@ -1,0 +1,4929 @@
+{
+  "status": "DERIVED (exact p of the confirmatory run's sign-flip tests, from the stored location differences; nothing simulated again)",
+  "method": "two-sided sign-flip test on the per-location differences in detection counts (zeros dropped): p = P(|sum s_i d_i| >= |sum d_i|) over all 2^n equiprobable sign patterns, the distribution of the signed sum computed exactly by convolution (integer counts); the statistic and two-sided rule of opmsquid.detection.sign_flip_p, which enumerates up to 20 non-zero differences and draws 20,000 random patterns beyond. Holm over the anatomies of each family, as the combine step.",
+  "alpha": 0.05,
+  "comparisons": {
+    "opm_dense/opm_vs_squid/combined/oracle/replicate0": {
+      "adult": {
+        "p_exact": 1.1846423149108887e-06,
+        "p_exact_fraction": "159/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 1.1641532182693481e-10,
+        "p_exact_fraction": "1/8589934592",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 4.656612873077393e-10,
+        "p_exact_fraction": "1/2147483648",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.2351741790771484e-08,
+        "p_exact_fraction": "3/134217728",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.1641532182693481e-10,
+        "p_exact_fraction": "1/8589934592",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 1.050066202878952e-07,
+        "p_exact_fraction": "451/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.00013832002878189087,
+        "p_exact_fraction": "18565/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.00020456314086914062,
+        "p_exact_fraction": "429/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 3.8079451769590378e-06,
+        "p_exact_fraction": "16355/4294967296",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/oracle/replicate1": {
+      "adult": {
+        "p_exact": 4.842877388000488e-08,
+        "p_exact_fraction": "13/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 4.284083843231201e-08,
+        "p_exact_fraction": "23/536870912",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 2.3283064365386963e-10,
+        "p_exact_fraction": "1/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 1.4901161193847656e-08,
+        "p_exact_fraction": "1/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.3283064365386963e-10,
+        "p_exact_fraction": "1/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 2.4959444999694824e-07,
+        "p_exact_fraction": "67/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.0011782348155975342,
+        "p_exact_fraction": "39535/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.00075,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 2.5331974029541016e-07,
+        "p_exact_fraction": "17/67108864",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 9.313225746154785e-09,
+        "p_exact_fraction": "5/536870912",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/oracle/replicate2": {
+      "adult": {
+        "p_exact": 3.725290298461914e-09,
+        "p_exact_fraction": "1/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 9.313225746154785e-10,
+        "p_exact_fraction": "1/1073741824",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 7.450580596923828e-09,
+        "p_exact_fraction": "1/134217728",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 4.842877388000488e-08,
+        "p_exact_fraction": "13/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.561137080192566e-09,
+        "p_exact_fraction": "11/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.00041610002517700195,
+        "p_exact_fraction": "6981/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.00035,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.0002923011779785156,
+        "p_exact_fraction": "613/2097152",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 9.685754776000977e-08,
+        "p_exact_fraction": "13/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/oracle/replicate3": {
+      "adult": {
+        "p_exact": 3.2782554626464844e-07,
+        "p_exact_fraction": "11/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 5.587935447692871e-08,
+        "p_exact_fraction": "15/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.4901161193847656e-08,
+        "p_exact_fraction": "1/67108864",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.60770320892334e-08,
+        "p_exact_fraction": "7/268435456",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.1175870895385742e-08,
+        "p_exact_fraction": "3/268435456",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 4.656612873077393e-10,
+        "p_exact_fraction": "1/2147483648",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.0002459883689880371,
+        "p_exact_fraction": "4127/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0002,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.0002453327178955078,
+        "p_exact_fraction": "1029/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 2.421438694000244e-08,
+        "p_exact_fraction": "13/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/oracle/replicate4": {
+      "adult": {
+        "p_exact": 3.756582736968994e-05,
+        "p_exact_fraction": "2521/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 7.450580596923828e-09,
+        "p_exact_fraction": "1/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 1.2293457984924316e-07,
+        "p_exact_fraction": "33/268435456",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.60770320892334e-08,
+        "p_exact_fraction": "7/268435456",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 4.880130290985107e-07,
+        "p_exact_fraction": "131/268435456",
+        "n_nonzero": 30,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.0003734380006790161,
+        "p_exact_fraction": "25061/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0006,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 4.190951585769653e-09,
+        "p_exact_fraction": "9/2147483648",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 1.6763806343078613e-07,
+        "p_exact_fraction": "45/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/oracle/pooled": {
+      "adult": {
+        "p_exact": 5.238689482212067e-10,
+        "p_exact_fraction": "9/17179869184",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 5.820766091346741e-11,
+        "p_exact_fraction": "1/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 2.9103830456733704e-11,
+        "p_exact_fraction": "1/34359738368",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 1.1641532182693481e-10,
+        "p_exact_fraction": "1/8589934592",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.9103830456733704e-11,
+        "p_exact_fraction": "1/34359738368",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 5.820766091346741e-11,
+        "p_exact_fraction": "1/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 7.0532551035285e-06,
+        "p_exact_fraction": "60587/8589934592",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 3.0617229640483856e-08,
+        "p_exact_fraction": "263/8589934592",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 9.604264050722122e-10,
+        "p_exact_fraction": "33/34359738368",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1/replicate0": {
+      "adult": {
+        "p_exact": 1.1920928955078125e-07,
+        "p_exact_fraction": "1/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 2.980232238769531e-07,
+        "p_exact_fraction": "5/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.1175870895385742e-07,
+        "p_exact_fraction": "15/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 1.6205012798309326e-07,
+        "p_exact_fraction": "87/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.210719347000122e-08,
+        "p_exact_fraction": "13/1073741824",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 3.3527612686157227e-08,
+        "p_exact_fraction": "9/268435456",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.0102996826171875,
+        "p_exact_fraction": "675/65536",
+        "n_nonzero": 17,
+        "p_monte_carlo": 0.0102996826171875,
+        "monte_carlo": false
+      },
+      "childB": {
+        "p_exact": 1.1205673217773438e-05,
+        "p_exact_fraction": "47/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 2.175569534301758e-06,
+        "p_exact_fraction": "73/33554432",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1/replicate1": {
+      "adult": {
+        "p_exact": 6.4373016357421875e-06,
+        "p_exact_fraction": "27/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 1.4901161193847656e-08,
+        "p_exact_fraction": "1/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 2.9802322387695312e-08,
+        "p_exact_fraction": "1/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.384185791015625e-07,
+        "p_exact_fraction": "1/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 1.1920928955078125e-06,
+        "p_exact_fraction": "5/4194304",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.030551910400390625,
+        "p_exact_fraction": "8009/262144",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.030551910400390625,
+        "monte_carlo": false
+      },
+      "childB": {
+        "p_exact": 5.7220458984375e-06,
+        "p_exact_fraction": "3/524288",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.00010752677917480469,
+        "p_exact_fraction": "451/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1/replicate2": {
+      "adult": {
+        "p_exact": 2.86102294921875e-06,
+        "p_exact_fraction": "3/1048576",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 2.4586915969848633e-07,
+        "p_exact_fraction": "33/134217728",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 4.76837158203125e-07,
+        "p_exact_fraction": "1/2097152",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 9.313225746154785e-10,
+        "p_exact_fraction": "1/1073741824",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 2.86102294921875e-06,
+        "p_exact_fraction": "3/1048576",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.0281064510345459,
+        "p_exact_fraction": "117887/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0261,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.00027000904083251953,
+        "p_exact_fraction": "2265/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.00035,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 2.6464462280273438e-05,
+        "p_exact_fraction": "111/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1/replicate3": {
+      "adult": {
+        "p_exact": 1.9073486328125e-06,
+        "p_exact_fraction": "1/524288",
+        "n_nonzero": 20,
+        "p_monte_carlo": 1.9073486328125e-06,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 9.685754776000977e-08,
+        "p_exact_fraction": "13/134217728",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 9.685754776000977e-08,
+        "p_exact_fraction": "13/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 4.589557647705078e-06,
+        "p_exact_fraction": "77/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 4.177913069725037e-06,
+        "p_exact_fraction": "2243/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.005505561828613281,
+        "p_exact_fraction": "5773/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.0059,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.0010620355606079102,
+        "p_exact_fraction": "8909/8388608",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0015,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 2.3990869522094727e-06,
+        "p_exact_fraction": "161/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1/replicate4": {
+      "adult": {
+        "p_exact": 2.9802322387695312e-08,
+        "p_exact_fraction": "1/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 7.450580596923828e-09,
+        "p_exact_fraction": "1/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 4.470348358154297e-07,
+        "p_exact_fraction": "15/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 3.129243850708008e-07,
+        "p_exact_fraction": "21/67108864",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 4.284083843231201e-07,
+        "p_exact_fraction": "115/268435456",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.011705636978149414,
+        "p_exact_fraction": "49097/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0114,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.0011272430419921875,
+        "p_exact_fraction": "591/524288",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.001,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 3.814697265625e-06,
+        "p_exact_fraction": "1/262144",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1/pooled": {
+      "adult": {
+        "p_exact": 2.3283064365386963e-10,
+        "p_exact_fraction": "1/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 5.820766091346741e-11,
+        "p_exact_fraction": "1/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.7462298274040222e-10,
+        "p_exact_fraction": "3/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.3283064365386963e-10,
+        "p_exact_fraction": "1/4294967296",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 5.820766091346741e-11,
+        "p_exact_fraction": "1/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 6.2282197177410126e-09,
+        "p_exact_fraction": "107/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.0013246068265289068,
+        "p_exact_fraction": "5689143/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0015,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 6.613321602344513e-06,
+        "p_exact_fraction": "7101/1073741824",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 5.21540641784668e-08,
+        "p_exact_fraction": "7/134217728",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched/replicate0": {
+      "adult": {
+        "p_exact": 1.1920928955078125e-07,
+        "p_exact_fraction": "1/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 8.195638656616211e-08,
+        "p_exact_fraction": "11/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 2.086162567138672e-07,
+        "p_exact_fraction": "7/33554432",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 1.8440186977386475e-07,
+        "p_exact_fraction": "99/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 4.284083843231201e-08,
+        "p_exact_fraction": "23/536870912",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 2.7939677238464355e-08,
+        "p_exact_fraction": "15/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.0102996826171875,
+        "p_exact_fraction": "675/65536",
+        "n_nonzero": 17,
+        "p_monte_carlo": 0.0102996826171875,
+        "monte_carlo": false
+      },
+      "childB": {
+        "p_exact": 7.915496826171875e-05,
+        "p_exact_fraction": "83/1048576",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 5.6684017181396484e-05,
+        "p_exact_fraction": "951/16777216",
+        "n_nonzero": 27,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched/replicate1": {
+      "adult": {
+        "p_exact": 2.384185791015625e-06,
+        "p_exact_fraction": "5/2097152",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 2.9802322387695312e-08,
+        "p_exact_fraction": "1/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.8312206268310547e-07,
+        "p_exact_fraction": "19/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 4.470348358154297e-08,
+        "p_exact_fraction": "3/67108864",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 5.960464477539062e-07,
+        "p_exact_fraction": "5/8388608",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.033782958984375,
+        "p_exact_fraction": "1107/32768",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.033782958984375,
+        "monte_carlo": false
+      },
+      "childB": {
+        "p_exact": 0.000518798828125,
+        "p_exact_fraction": "17/32768",
+        "n_nonzero": 18,
+        "p_monte_carlo": 0.000518798828125,
+        "monte_carlo": false
+      },
+      "childC": {
+        "p_exact": 0.0004477500915527344,
+        "p_exact_fraction": "939/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.00035,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched/replicate2": {
+      "adult": {
+        "p_exact": 2.86102294921875e-06,
+        "p_exact_fraction": "3/1048576",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 4.656612873077393e-10,
+        "p_exact_fraction": "1/2147483648",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 2.738088369369507e-07,
+        "p_exact_fraction": "147/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.9802322387695312e-08,
+        "p_exact_fraction": "1/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 9.313225746154785e-10,
+        "p_exact_fraction": "1/1073741824",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 1.430511474609375e-06,
+        "p_exact_fraction": "3/2097152",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.09890937805175781,
+        "p_exact_fraction": "51857/524288",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.0944,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.0044040679931640625,
+        "p_exact_fraction": "2309/524288",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.0039,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.00011038780212402344,
+        "p_exact_fraction": "463/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched/replicate3": {
+      "adult": {
+        "p_exact": 9.5367431640625e-07,
+        "p_exact_fraction": "1/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 1.3969838619232178e-08,
+        "p_exact_fraction": "15/1073741824",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.6391277313232422e-07,
+        "p_exact_fraction": "11/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 5.125999450683594e-06,
+        "p_exact_fraction": "43/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.2351741790771484e-08,
+        "p_exact_fraction": "3/134217728",
+        "n_nonzero": 30,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 1.4379620552062988e-06,
+        "p_exact_fraction": "193/134217728",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.0081329345703125,
+        "p_exact_fraction": "533/65536",
+        "n_nonzero": 20,
+        "p_monte_carlo": 0.0081329345703125,
+        "monte_carlo": false
+      },
+      "childB": {
+        "p_exact": 0.011416308581829071,
+        "p_exact_fraction": "1532271/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.01175,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 2.16066837310791e-06,
+        "p_exact_fraction": "145/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched/replicate4": {
+      "adult": {
+        "p_exact": 2.9802322387695312e-08,
+        "p_exact_fraction": "1/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 7.450580596923828e-09,
+        "p_exact_fraction": "1/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 4.76837158203125e-07,
+        "p_exact_fraction": "1/2097152",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 3.7997961044311523e-07,
+        "p_exact_fraction": "51/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 2.812594175338745e-07,
+        "p_exact_fraction": "151/536870912",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.02019643783569336,
+        "p_exact_fraction": "42355/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.0202,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.008434295654296875,
+        "p_exact_fraction": "2211/262144",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.008434295654296875,
+        "monte_carlo": false
+      },
+      "childC": {
+        "p_exact": 1.239776611328125e-05,
+        "p_exact_fraction": "13/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched/pooled": {
+      "adult": {
+        "p_exact": 2.3283064365386963e-10,
+        "p_exact_fraction": "1/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 5.820766091346741e-11,
+        "p_exact_fraction": "1/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.7462298274040222e-10,
+        "p_exact_fraction": "3/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.3283064365386963e-10,
+        "p_exact_fraction": "1/4294967296",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.7462298274040222e-10,
+        "p_exact_fraction": "3/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 3.812601789832115e-09,
+        "p_exact_fraction": "131/34359738368",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.0025308788754045963,
+        "p_exact_fraction": "5435021/2147483648",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0024,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.0001447657123208046,
+        "p_exact_fraction": "155441/1073741824",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.00025,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 3.9837323129177094e-07,
+        "p_exact_fraction": "1711/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1/replicate0": {
+      "adult": {
+        "p_exact": 1.4901161193847656e-08,
+        "p_exact_fraction": "1/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 2.775341272354126e-07,
+        "p_exact_fraction": "149/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 3.725290298461914e-09,
+        "p_exact_fraction": "1/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 3.725290298461914e-09,
+        "p_exact_fraction": "1/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 4.0978193283081055e-08,
+        "p_exact_fraction": "11/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 2.682209014892578e-07,
+        "p_exact_fraction": "9/33554432",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.025970458984375,
+        "p_exact_fraction": "851/32768",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.025970458984375,
+        "monte_carlo": false
+      },
+      "childB": {
+        "p_exact": 0.004426032304763794,
+        "p_exact_fraction": "148513/33554432",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.00365,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 8.340924978256226e-06,
+        "p_exact_fraction": "2239/268435456",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1/replicate1": {
+      "adult": {
+        "p_exact": 2.384185791015625e-07,
+        "p_exact_fraction": "1/4194304",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 5.438923835754395e-07,
+        "p_exact_fraction": "73/134217728",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.475214958190918e-05,
+        "p_exact_fraction": "495/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 1.5497207641601562e-06,
+        "p_exact_fraction": "13/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 4.842877388000488e-08,
+        "p_exact_fraction": "13/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 8.307397365570068e-06,
+        "p_exact_fraction": "1115/134217728",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.03142261505126953,
+        "p_exact_fraction": "32949/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.0301,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 6.377696990966797e-05,
+        "p_exact_fraction": "535/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 2.6464462280273438e-05,
+        "p_exact_fraction": "111/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1/replicate2": {
+      "adult": {
+        "p_exact": 3.2186508178710938e-06,
+        "p_exact_fraction": "27/8388608",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 5.960464477539063e-08,
+        "p_exact_fraction": "1/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.996755599975586e-06,
+        "p_exact_fraction": "67/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 3.8743019104003906e-07,
+        "p_exact_fraction": "13/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.3283064365386963e-10,
+        "p_exact_fraction": "1/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 2.3655593395233154e-07,
+        "p_exact_fraction": "127/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.05289626121520996,
+        "p_exact_fraction": "221863/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0524,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.000560760498046875,
+        "p_exact_fraction": "147/262144",
+        "n_nonzero": 20,
+        "p_monte_carlo": 0.000560760498046875,
+        "monte_carlo": false
+      },
+      "childC": {
+        "p_exact": 0.00023353099822998047,
+        "p_exact_fraction": "1959/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0003,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1/replicate3": {
+      "adult": {
+        "p_exact": 2.384185791015625e-07,
+        "p_exact_fraction": "1/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 3.3248215913772583e-07,
+        "p_exact_fraction": "357/1073741824",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 5.960464477539063e-08,
+        "p_exact_fraction": "1/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 1.7695128917694092e-08,
+        "p_exact_fraction": "19/1073741824",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.0489096641540527e-08,
+        "p_exact_fraction": "11/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 1.210719347000122e-08,
+        "p_exact_fraction": "13/1073741824",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.002137899398803711,
+        "p_exact_fraction": "8967/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.00205,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.004637956619262695,
+        "p_exact_fraction": "19453/4194304",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.00495,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 1.0229647159576416e-05,
+        "p_exact_fraction": "1373/134217728",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1/replicate4": {
+      "adult": {
+        "p_exact": 2.164393663406372e-06,
+        "p_exact_fraction": "581/268435456",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 3.725290298461914e-09,
+        "p_exact_fraction": "1/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 5.960464477539063e-08,
+        "p_exact_fraction": "1/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.1457672119140625e-06,
+        "p_exact_fraction": "9/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 9.98377799987793e-07,
+        "p_exact_fraction": "67/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.07866382598876953,
+        "p_exact_fraction": "82485/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.07915,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.0002485513687133789,
+        "p_exact_fraction": "2085/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0005,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 1.9073486328125e-06,
+        "p_exact_fraction": "1/524288",
+        "n_nonzero": 20,
+        "p_monte_carlo": 1.9073486328125e-06,
+        "monte_carlo": false
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1/pooled": {
+      "adult": {
+        "p_exact": 1.1641532182693481e-10,
+        "p_exact_fraction": "1/8589934592",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 5.820766091346741e-10,
+        "p_exact_fraction": "5/8589934592",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 2.3283064365386963e-10,
+        "p_exact_fraction": "1/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.9103830456733704e-11,
+        "p_exact_fraction": "1/34359738368",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 5.820766091346741e-11,
+        "p_exact_fraction": "1/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 1.0477378964424133e-09,
+        "p_exact_fraction": "9/8589934592",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.002441604679916054,
+        "p_exact_fraction": "41946449/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.00255,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 2.9394403100013733e-05,
+        "p_exact_fraction": "15781/536870912",
+        "n_nonzero": 33,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 2.2863969206809998e-07,
+        "p_exact_fraction": "491/2147483648",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate0": {
+      "adult": {
+        "p_exact": 4.76837158203125e-07,
+        "p_exact_fraction": "1/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 1.2479722499847412e-07,
+        "p_exact_fraction": "67/536870912",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 7.450580596923828e-09,
+        "p_exact_fraction": "1/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.6391277313232422e-07,
+        "p_exact_fraction": "11/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 2.4028122425079346e-07,
+        "p_exact_fraction": "129/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.005068302154541016,
+        "p_exact_fraction": "10629/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.00475,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.07219691574573517,
+        "p_exact_fraction": "4845053/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.07045,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 6.4373016357421875e-06,
+        "p_exact_fraction": "27/4194304",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate1": {
+      "adult": {
+        "p_exact": 5.245208740234375e-06,
+        "p_exact_fraction": "11/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 4.880130290985107e-07,
+        "p_exact_fraction": "131/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.2546777725219727e-05,
+        "p_exact_fraction": "421/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.86102294921875e-06,
+        "p_exact_fraction": "3/1048576",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.4586915969848633e-07,
+        "p_exact_fraction": "33/134217728",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 4.3213367462158203e-07,
+        "p_exact_fraction": "29/67108864",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.00815892219543457,
+        "p_exact_fraction": "34221/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0086,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.0004677772521972656,
+        "p_exact_fraction": "981/2097152",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0004,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 4.0531158447265625e-05,
+        "p_exact_fraction": "85/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate2": {
+      "adult": {
+        "p_exact": 6.407499313354492e-06,
+        "p_exact_fraction": "215/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 1.4901161193847656e-08,
+        "p_exact_fraction": "1/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.996755599975586e-06,
+        "p_exact_fraction": "67/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 3.8743019104003906e-07,
+        "p_exact_fraction": "13/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 2.9802322387695312e-08,
+        "p_exact_fraction": "1/33554432",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.013668656349182129,
+        "p_exact_fraction": "114661/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0123,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.005039215087890625,
+        "p_exact_fraction": "1321/262144",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.005039215087890625,
+        "monte_carlo": false
+      },
+      "childC": {
+        "p_exact": 0.00036787986755371094,
+        "p_exact_fraction": "1543/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.00045,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate3": {
+      "adult": {
+        "p_exact": 3.337860107421875e-06,
+        "p_exact_fraction": "7/2097152",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 3.2316893339157104e-07,
+        "p_exact_fraction": "347/1073741824",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 5.960464477539063e-08,
+        "p_exact_fraction": "1/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.2444874048233032e-07,
+        "p_exact_fraction": "241/1073741824",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 3.725290298461914e-08,
+        "p_exact_fraction": "5/134217728",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 1.210719347000122e-08,
+        "p_exact_fraction": "13/1073741824",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 5.8650970458984375e-05,
+        "p_exact_fraction": "123/2097152",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.05495023727416992,
+        "p_exact_fraction": "115239/2097152",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0571,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 3.6507844924926758e-06,
+        "p_exact_fraction": "245/67108864",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate4": {
+      "adult": {
+        "p_exact": 2.4996697902679443e-06,
+        "p_exact_fraction": "671/268435456",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 2.9802322387695312e-08,
+        "p_exact_fraction": "1/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.1457672119140625e-06,
+        "p_exact_fraction": "9/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.862645149230957e-09,
+        "p_exact_fraction": "1/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 9.685754776000977e-07,
+        "p_exact_fraction": "65/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.01584458351135254,
+        "p_exact_fraction": "66457/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0148,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.004064321517944336,
+        "p_exact_fraction": "17047/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0044,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 3.7670135498046875e-05,
+        "p_exact_fraction": "79/2097152",
+        "n_nonzero": 23,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      }
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched/pooled": {
+      "adult": {
+        "p_exact": 2.9103830456733704e-09,
+        "p_exact_fraction": "25/8589934592",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 4.656612873077393e-10,
+        "p_exact_fraction": "1/2147483648",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.1641532182693481e-10,
+        "p_exact_fraction": "1/8589934592",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 2.9103830456733704e-11,
+        "p_exact_fraction": "1/34359738368",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.1641532182693481e-10,
+        "p_exact_fraction": "1/8589934592",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 3.4924596548080444e-10,
+        "p_exact_fraction": "3/8589934592",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.00014684675261378288,
+        "p_exact_fraction": "315351/2147483648",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.001395141240209341,
+        "p_exact_fraction": "2996043/2147483648",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.00115,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 5.709007382392883e-07,
+        "p_exact_fraction": "613/1073741824",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/oracle/replicate0": {
+      "adult": {
+        "p_exact": 0.05840599536895752,
+        "p_exact_fraction": "489945/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0582,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 2.0906329154968262e-05,
+        "p_exact_fraction": "1403/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.6734004020690918e-05,
+        "p_exact_fraction": "1123/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.013173341751098633,
+        "p_exact_fraction": "55253/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.01245,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.637505531311035e-06,
+        "p_exact_fraction": "177/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0017530769109725952,
+        "p_exact_fraction": "117647/67108864",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0018,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 1.0,
+        "p_exact_fraction": "1/1",
+        "n_nonzero": 25,
+        "p_monte_carlo": 1.0,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.9125421047210693,
+        "p_exact_fraction": "3827479/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.91215,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.18441903591156006,
+        "p_exact_fraction": "1547019/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.185,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/oracle/replicate1": {
+      "adult": {
+        "p_exact": 0.15681087970733643,
+        "p_exact_fraction": "1315425/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.1587,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.006809711456298828,
+        "p_exact_fraction": "14281/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.00695,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.024430930614471436,
+        "p_exact_fraction": "409883/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0237,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.009757250547409058,
+        "p_exact_fraction": "327399/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.01065,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 0.000221937894821167,
+        "p_exact_fraction": "7447/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.00048279762268066406,
+        "p_exact_fraction": "2025/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.00055,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.7284147143363953,
+        "p_exact_fraction": "12220771/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.728,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.2072763442993164,
+        "p_exact_fraction": "217345/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.20935,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.02819494903087616,
+        "p_exact_fraction": "1892131/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.02795,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/oracle/replicate2": {
+      "adult": {
+        "p_exact": 0.0014142990112304688,
+        "p_exact_fraction": "1483/1048576",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.00135,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.012127518653869629,
+        "p_exact_fraction": "101733/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0119,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.913309097290039e-05,
+        "p_exact_fraction": "321/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.0006050616502761841,
+        "p_exact_fraction": "40605/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.00085,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 0.00040268898010253906,
+        "p_exact_fraction": "1689/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0001780986785888672,
+        "p_exact_fraction": "747/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.71221923828125,
+        "p_exact_fraction": "11669/16384",
+        "n_nonzero": 16,
+        "p_monte_carlo": 0.71221923828125,
+        "monte_carlo": false
+      },
+      "childB": {
+        "p_exact": 0.9064869284629822,
+        "p_exact_fraction": "15208327/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.90685,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.02118968963623047,
+        "p_exact_fraction": "22219/1048576",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.02015,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/oracle/replicate3": {
+      "adult": {
+        "p_exact": 0.042090415954589844,
+        "p_exact_fraction": "44135/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.04095,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.006501823663711548,
+        "p_exact_fraction": "218165/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.00645,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.0008993148803710938,
+        "p_exact_fraction": "943/1048576",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0008,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.01771702617406845,
+        "p_exact_fraction": "2377939/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0175,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.4781951904296875e-05,
+        "p_exact_fraction": "31/2097152",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 3.8431957364082336e-05,
+        "p_exact_fraction": "20633/536870912",
+        "n_nonzero": 31,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.5938778575509787,
+        "p_exact_fraction": "318835747/536870912",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.5892,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.3884401321411133,
+        "p_exact_fraction": "407309/1048576",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.3903,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.018921375274658203,
+        "p_exact_fraction": "39681/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.01835,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/oracle/replicate4": {
+      "adult": {
+        "p_exact": 1.0,
+        "p_exact_fraction": "1/1",
+        "n_nonzero": 25,
+        "p_monte_carlo": 1.0,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.003935337066650391,
+        "p_exact_fraction": "8253/2097152",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.00395,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.000194549560546875,
+        "p_exact_fraction": "51/262144",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0002,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.0020805299282073975,
+        "p_exact_fraction": "69811/33554432",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.00225,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 4.267692565917969e-05,
+        "p_exact_fraction": "179/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 4.100799560546875e-05,
+        "p_exact_fraction": "43/1048576",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.812598705291748,
+        "p_exact_fraction": "1704143/2097152",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.8125,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.784759521484375,
+        "p_exact_fraction": "25715/32768",
+        "n_nonzero": 17,
+        "p_monte_carlo": 0.784759521484375,
+        "monte_carlo": false
+      },
+      "childC": {
+        "p_exact": 0.018727004528045654,
+        "p_exact_fraction": "314187/16777216",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0196,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/oracle/pooled": {
+      "adult": {
+        "p_exact": 0.013522477820515633,
+        "p_exact_fraction": "7259825/536870912",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0146,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 2.6382505893707275e-05,
+        "p_exact_fraction": "3541/134217728",
+        "n_nonzero": 31,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 7.032067514955997e-07,
+        "p_exact_fraction": "12081/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.0005784692475572228,
+        "p_exact_fraction": "4969013/8589934592",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0005,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.1175870895385742e-08,
+        "p_exact_fraction": "3/268435456",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 5.660578608512878e-06,
+        "p_exact_fraction": "3039/536870912",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.6246659787138924,
+        "p_exact_fraction": "5365839899/8589934592",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.6243,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.9500296330079436,
+        "p_exact_fraction": "1020086551/1073741824",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.95075,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.004352766030933708,
+        "p_exact_fraction": "74779951/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.00375,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1/replicate0": {
+      "adult": {
+        "p_exact": 0.00585174560546875,
+        "p_exact_fraction": "767/131072",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.00575,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.009586527943611145,
+        "p_exact_fraction": "643341/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.00965,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.000385284423828125,
+        "p_exact_fraction": "101/262144",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.0004,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.01673269271850586,
+        "p_exact_fraction": "35091/2097152",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0167,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 5.7220458984375e-06,
+        "p_exact_fraction": "3/524288",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0011943578720092773,
+        "p_exact_fraction": "10019/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.00115,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 1.0,
+        "p_exact_fraction": "1/1",
+        "n_nonzero": 16,
+        "p_monte_carlo": 1.0,
+        "monte_carlo": false
+      },
+      "childB": {
+        "p_exact": 0.6939544677734375,
+        "p_exact_fraction": "45479/65536",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.6939544677734375,
+        "monte_carlo": false
+      },
+      "childC": {
+        "p_exact": 0.05050182342529297,
+        "p_exact_fraction": "52955/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.0502,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1/replicate1": {
+      "adult": {
+        "p_exact": 0.005776643753051758,
+        "p_exact_fraction": "24229/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0054,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.016817092895507812,
+        "p_exact_fraction": "8817/524288",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.015,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.0026761293411254883,
+        "p_exact_fraction": "22449/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0026,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.014630258083343506,
+        "p_exact_fraction": "245455/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0152,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.4349818229675293e-05,
+        "p_exact_fraction": "963/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0003056526184082031,
+        "p_exact_fraction": "641/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.0004,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.7905247807502747,
+        "p_exact_fraction": "13262805/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.79065,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.03128805756568909,
+        "p_exact_fraction": "1049853/33554432",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.02995,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.0865132212638855,
+        "p_exact_fraction": "1451451/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.08435,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1/replicate2": {
+      "adult": {
+        "p_exact": 0.0253143310546875,
+        "p_exact_fraction": "1659/65536",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.02395,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.0005788803100585938,
+        "p_exact_fraction": "607/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.00055,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.00035774707794189453,
+        "p_exact_fraction": "3001/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.00035,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.0014742016792297363,
+        "p_exact_fraction": "24733/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.00095,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.384185791015625e-07,
+        "p_exact_fraction": "1/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.00125885009765625,
+        "p_exact_fraction": "165/131072",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.00125,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.5533220767974854,
+        "p_exact_fraction": "2320801/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.55,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.13758790493011475,
+        "p_exact_fraction": "1154171/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.138,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.0670175552368164,
+        "p_exact_fraction": "70273/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.0642,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1/replicate3": {
+      "adult": {
+        "p_exact": 0.0033111572265625,
+        "p_exact_fraction": "217/65536",
+        "n_nonzero": 18,
+        "p_monte_carlo": 0.0033111572265625,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 0.0017710328102111816,
+        "p_exact_fraction": "29713/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0016,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.007611274719238281,
+        "p_exact_fraction": "7981/1048576",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.0077,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.028707027435302734,
+        "p_exact_fraction": "60203/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.0303,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 3.337860107421875e-06,
+        "p_exact_fraction": "7/2097152",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0018175244331359863,
+        "p_exact_fraction": "30493/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0015,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.11240863800048828,
+        "p_exact_fraction": "117869/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.11255,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.7285423278808594,
+        "p_exact_fraction": "190983/262144",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.7323,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.04661679267883301,
+        "p_exact_fraction": "195525/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.04595,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1/replicate4": {
+      "adult": {
+        "p_exact": 0.0002117156982421875,
+        "p_exact_fraction": "111/524288",
+        "n_nonzero": 20,
+        "p_monte_carlo": 0.0002117156982421875,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 0.003269881010055542,
+        "p_exact_fraction": "109719/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.00325,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.8537044525146484e-05,
+        "p_exact_fraction": "311/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.006672501564025879,
+        "p_exact_fraction": "55973/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0069,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.1920928955078125e-06,
+        "p_exact_fraction": "5/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0011033713817596436,
+        "p_exact_fraction": "37023/33554432",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.00075,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.3162360191345215,
+        "p_exact_fraction": "663195/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.31835,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.13140010833740234,
+        "p_exact_fraction": "137783/1048576",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.13145,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.0232011079788208,
+        "p_exact_fraction": "194625/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.02225,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1/pooled": {
+      "adult": {
+        "p_exact": 0.00011029653251171112,
+        "p_exact_fraction": "59215/536870912",
+        "n_nonzero": 30,
+        "p_monte_carlo": 0.0002,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.00029555358923971653,
+        "p_exact_fraction": "1269393/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0003,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 7.751514203846455e-06,
+        "p_exact_fraction": "66585/8589934592",
+        "n_nonzero": 34,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.00134988222271204,
+        "p_exact_fraction": "1449425/1073741824",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0013,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.1641532182693481e-09,
+        "p_exact_fraction": "5/4294967296",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 8.819258073344827e-05,
+        "p_exact_fraction": "1515137/17179869184",
+        "n_nonzero": 36,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.3883445335086435,
+        "p_exact_fraction": "1667927071/4294967296",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.39115,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.12097828020341694,
+        "p_exact_fraction": "519597757/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.1184,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.012557773967273533,
+        "p_exact_fraction": "107870457/8589934592",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.013,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched/replicate0": {
+      "adult": {
+        "p_exact": 0.0028276443481445312,
+        "p_exact_fraction": "2965/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.0027,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.0013448596000671387,
+        "p_exact_fraction": "22563/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.00125,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.001209259033203125,
+        "p_exact_fraction": "317/262144",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.001209259033203125,
+        "monte_carlo": false
+      },
+      "infant2yr": {
+        "p_exact": 0.02531522512435913,
+        "p_exact_fraction": "424719/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.024,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.7000904083251953e-05,
+        "p_exact_fraction": "453/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.003454267978668213,
+        "p_exact_fraction": "57953/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.00385,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 1.0,
+        "p_exact_fraction": "1/1",
+        "n_nonzero": 16,
+        "p_monte_carlo": 1.0,
+        "monte_carlo": false
+      },
+      "childB": {
+        "p_exact": 1.0,
+        "p_exact_fraction": "1/1",
+        "n_nonzero": 20,
+        "p_monte_carlo": 1.0,
+        "monte_carlo": false
+      },
+      "childC": {
+        "p_exact": 0.03430938720703125,
+        "p_exact_fraction": "4497/131072",
+        "n_nonzero": 20,
+        "p_monte_carlo": 0.03430938720703125,
+        "monte_carlo": false
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched/replicate1": {
+      "adult": {
+        "p_exact": 0.009845733642578125,
+        "p_exact_fraction": "2581/262144",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0101,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.0022087693214416504,
+        "p_exact_fraction": "37057/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0019,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.01815652847290039,
+        "p_exact_fraction": "38077/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.01835,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.010228708386421204,
+        "p_exact_fraction": "686437/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.00945,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 0.0003623664379119873,
+        "p_exact_fraction": "12159/33554432",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0003,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0002503395080566406,
+        "p_exact_fraction": "525/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.0004,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 1.0,
+        "p_exact_fraction": "1/1",
+        "n_nonzero": 26,
+        "p_monte_carlo": 1.0,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.12763214111328125,
+        "p_exact_fraction": "16729/131072",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.12555,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.030895709991455078,
+        "p_exact_fraction": "64793/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.03145,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched/replicate2": {
+      "adult": {
+        "p_exact": 0.0253143310546875,
+        "p_exact_fraction": "1659/65536",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.02395,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 8.0108642578125e-05,
+        "p_exact_fraction": "21/262144",
+        "n_nonzero": 20,
+        "p_monte_carlo": 8.0108642578125e-05,
+        "monte_carlo": false
+      },
+      "size2yr": {
+        "p_exact": 0.0046672821044921875,
+        "p_exact_fraction": "2447/524288",
+        "n_nonzero": 20,
+        "p_monte_carlo": 0.0046672821044921875,
+        "monte_carlo": false
+      },
+      "infant2yr": {
+        "p_exact": 0.001140594482421875,
+        "p_exact_fraction": "299/262144",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.001,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 6.67572021484375e-06,
+        "p_exact_fraction": "7/1048576",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.00362396240234375,
+        "p_exact_fraction": "475/131072",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.00362396240234375,
+        "monte_carlo": false
+      },
+      "childA": {
+        "p_exact": 0.9059505462646484,
+        "p_exact_fraction": "474979/524288",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.9106,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.3458022475242615,
+        "p_exact_fraction": "5801599/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.34555,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.03394746780395508,
+        "p_exact_fraction": "71193/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.03695,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched/replicate3": {
+      "adult": {
+        "p_exact": 0.002166748046875,
+        "p_exact_fraction": "71/32768",
+        "n_nonzero": 16,
+        "p_monte_carlo": 0.002166748046875,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 0.00018519163131713867,
+        "p_exact_fraction": "3107/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.01815652847290039,
+        "p_exact_fraction": "38077/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.01935,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.006195545196533203,
+        "p_exact_fraction": "12993/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.00685,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 0.00013637542724609375,
+        "p_exact_fraction": "143/1048576",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0028707385063171387,
+        "p_exact_fraction": "48163/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0026,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.1889820098876953,
+        "p_exact_fraction": "99081/524288",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.1885,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 1.0,
+        "p_exact_fraction": "1/1",
+        "n_nonzero": 22,
+        "p_monte_carlo": 1.0,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.01872137188911438,
+        "p_exact_fraction": "628185/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0176,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched/replicate4": {
+      "adult": {
+        "p_exact": 0.000370025634765625,
+        "p_exact_fraction": "97/262144",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.000370025634765625,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 0.0005386471748352051,
+        "p_exact_fraction": "9037/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0005,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 2.4884939193725586e-05,
+        "p_exact_fraction": "835/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.009161442518234253,
+        "p_exact_fraction": "307407/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0078,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.1444091796875e-05,
+        "p_exact_fraction": "3/262144",
+        "n_nonzero": 21,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.001624763011932373,
+        "p_exact_fraction": "27259/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0016,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.8071537017822266,
+        "p_exact_fraction": "423181/524288",
+        "n_nonzero": 20,
+        "p_monte_carlo": 0.8071537017822266,
+        "monte_carlo": false
+      },
+      "childB": {
+        "p_exact": 0.37125635147094727,
+        "p_exact_fraction": "778581/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.37335,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.0019290298223495483,
+        "p_exact_fraction": "129455/67108864",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0016,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched/pooled": {
+      "adult": {
+        "p_exact": 0.000139724463224411,
+        "p_exact_fraction": "37507/268435456",
+        "n_nonzero": 29,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 2.390751615166664e-05,
+        "p_exact_fraction": "51341/2147483648",
+        "n_nonzero": 32,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 5.6803226470947266e-05,
+        "p_exact_fraction": "953/16777216",
+        "n_nonzero": 33,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.000958872027695179,
+        "p_exact_fraction": "1029581/1073741824",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.00115,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 3.0366936698555946e-07,
+        "p_exact_fraction": "5217/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0002075888914987445,
+        "p_exact_fraction": "1783175/8589934592",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0003,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.7140844473615289,
+        "p_exact_fraction": "766742337/1073741824",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.71285,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.44630342605523765,
+        "p_exact_fraction": "1916858619/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.439,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.002795961918309331,
+        "p_exact_fraction": "12008565/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.00305,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1/replicate0": {
+      "adult": {
+        "p_exact": 0.000640869140625,
+        "p_exact_fraction": "21/32768",
+        "n_nonzero": 18,
+        "p_monte_carlo": 0.000640869140625,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 0.0004673004150390625,
+        "p_exact_fraction": "245/524288",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.0004,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.0001068115234375,
+        "p_exact_fraction": "7/65536",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.000690072774887085,
+        "p_exact_fraction": "23155/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0004,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 5.960464477539063e-08,
+        "p_exact_fraction": "1/16777216",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0018832683563232422,
+        "p_exact_fraction": "7899/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.00275,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 1.0,
+        "p_exact_fraction": "1/1",
+        "n_nonzero": 19,
+        "p_monte_carlo": 1.0,
+        "monte_carlo": false
+      },
+      "childB": {
+        "p_exact": 0.7877241373062134,
+        "p_exact_fraction": "6607909/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.79035,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.07611715793609619,
+        "p_exact_fraction": "638517/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0762,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1/replicate1": {
+      "adult": {
+        "p_exact": 0.00579833984375,
+        "p_exact_fraction": "95/16384",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.00579833984375,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 0.003922700881958008,
+        "p_exact_fraction": "16453/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.00375,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.013442456722259521,
+        "p_exact_fraction": "225527/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.013,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.0010151863098144531,
+        "p_exact_fraction": "2129/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.0008,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 3.149360418319702e-05,
+        "p_exact_fraction": "4227/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0009878873825073242,
+        "p_exact_fraction": "8287/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.00085,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.7914001941680908,
+        "p_exact_fraction": "3319373/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.78795,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.0674738883972168,
+        "p_exact_fraction": "141503/2097152",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.06645,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.1672515869140625,
+        "p_exact_fraction": "10961/65536",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.1672515869140625,
+        "monte_carlo": false
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1/replicate2": {
+      "adult": {
+        "p_exact": 0.004013657569885254,
+        "p_exact_fraction": "33669/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.00405,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.00760650634765625,
+        "p_exact_fraction": "997/131072",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.00760650634765625,
+        "monte_carlo": false
+      },
+      "size2yr": {
+        "p_exact": 9.1552734375e-05,
+        "p_exact_fraction": "3/32768",
+        "n_nonzero": 18,
+        "p_monte_carlo": 9.1552734375e-05,
+        "monte_carlo": false
+      },
+      "infant2yr": {
+        "p_exact": 0.003680706024169922,
+        "p_exact_fraction": "7719/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.00385,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.9206275939941406e-06,
+        "p_exact_fraction": "49/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.00022885948419570923,
+        "p_exact_fraction": "30717/134217728",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0003,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.3298473358154297,
+        "p_exact_fraction": "172935/524288",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.33145,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.4246354103088379,
+        "p_exact_fraction": "890525/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.4231,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.032698631286621094,
+        "p_exact_fraction": "34287/1048576",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.03035,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1/replicate3": {
+      "adult": {
+        "p_exact": 0.000732421875,
+        "p_exact_fraction": "3/4096",
+        "n_nonzero": 18,
+        "p_monte_carlo": 0.000732421875,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 0.004564635455608368,
+        "p_exact_fraction": "612655/134217728",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0046,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.005127549171447754,
+        "p_exact_fraction": "43013/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.00495,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.011677265167236328,
+        "p_exact_fraction": "24489/2097152",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.01205,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 3.3676624298095703e-06,
+        "p_exact_fraction": "113/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.00021860003471374512,
+        "p_exact_fraction": "7335/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.00025,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.11514079570770264,
+        "p_exact_fraction": "965871/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.117,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.8099284172058105,
+        "p_exact_fraction": "1698543/2097152",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.8095,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.05207699537277222,
+        "p_exact_fraction": "873707/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.04965,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1/replicate4": {
+      "adult": {
+        "p_exact": 0.0018296241760253906,
+        "p_exact_fraction": "3837/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.002,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.0039272308349609375,
+        "p_exact_fraction": "2059/524288",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.00405,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.0012516975402832031,
+        "p_exact_fraction": "2625/2097152",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.00135,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.0017392635345458984,
+        "p_exact_fraction": "7295/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.00135,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 2.0697712898254395e-05,
+        "p_exact_fraction": "1389/67108864",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.001257389783859253,
+        "p_exact_fraction": "42191/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.001,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.47726571559906006,
+        "p_exact_fraction": "4003595/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.47655,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.26806068420410156,
+        "p_exact_fraction": "140541/524288",
+        "n_nonzero": 20,
+        "p_monte_carlo": 0.26806068420410156,
+        "monte_carlo": false
+      },
+      "childC": {
+        "p_exact": 0.19725078344345093,
+        "p_exact_fraction": "3309319/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.19335,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1/pooled": {
+      "adult": {
+        "p_exact": 9.980576578527689e-06,
+        "p_exact_fraction": "171465/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.0001662557478994131,
+        "p_exact_fraction": "714063/4294967296",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.00025,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.6124453395605087e-05,
+        "p_exact_fraction": "34627/2147483648",
+        "n_nonzero": 32,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.00015306545537896454,
+        "p_exact_fraction": "5259289/34359738368",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.2922100722789764e-08,
+        "p_exact_fraction": "111/8589934592",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 3.852177178487182e-05,
+        "p_exact_fraction": "661799/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.9284207376767881,
+        "p_exact_fraction": "15950146821/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.92945,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.24793185642920434,
+        "p_exact_fraction": "1064859215/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.2444,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.027920024702325463,
+        "p_exact_fraction": "119915593/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.02995,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate0": {
+      "adult": {
+        "p_exact": 0.003662109375,
+        "p_exact_fraction": "15/4096",
+        "n_nonzero": 15,
+        "p_monte_carlo": 0.003662109375,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 0.00028133392333984375,
+        "p_exact_fraction": "295/1048576",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 1.33514404296875e-05,
+        "p_exact_fraction": "7/524288",
+        "n_nonzero": 21,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.000690072774887085,
+        "p_exact_fraction": "23155/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0004,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.436471939086914e-05,
+        "p_exact_fraction": "241/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.003070831298828125,
+        "p_exact_fraction": "805/262144",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.0039,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.7208747863769531,
+        "p_exact_fraction": "188973/262144",
+        "n_nonzero": 20,
+        "p_monte_carlo": 0.7208747863769531,
+        "monte_carlo": false
+      },
+      "childB": {
+        "p_exact": 1.0,
+        "p_exact_fraction": "1/1",
+        "n_nonzero": 22,
+        "p_monte_carlo": 1.0,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.030511856079101562,
+        "p_exact_fraction": "15997/524288",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.03075,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate1": {
+      "adult": {
+        "p_exact": 0.041290283203125,
+        "p_exact_fraction": "1353/32768",
+        "n_nonzero": 18,
+        "p_monte_carlo": 0.041290283203125,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 0.005692005157470703,
+        "p_exact_fraction": "11937/2097152",
+        "n_nonzero": 22,
+        "p_monte_carlo": 0.00705,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.013442456722259521,
+        "p_exact_fraction": "225527/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.013,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.0016031265258789062,
+        "p_exact_fraction": "1681/1048576",
+        "n_nonzero": 21,
+        "p_monte_carlo": 0.00125,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 0.00010864436626434326,
+        "p_exact_fraction": "7291/67108864",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.00046896934509277344,
+        "p_exact_fraction": "1967/4194304",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.00055,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 1.0,
+        "p_exact_fraction": "1/1",
+        "n_nonzero": 23,
+        "p_monte_carlo": 1.0,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.08655834197998047,
+        "p_exact_fraction": "90763/1048576",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.08655,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.08848190307617188,
+        "p_exact_fraction": "23195/262144",
+        "n_nonzero": 19,
+        "p_monte_carlo": 0.08848190307617188,
+        "monte_carlo": false
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate2": {
+      "adult": {
+        "p_exact": 0.017612457275390625,
+        "p_exact_fraction": "4617/262144",
+        "n_nonzero": 20,
+        "p_monte_carlo": 0.017612457275390625,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 0.00433349609375,
+        "p_exact_fraction": "71/16384",
+        "n_nonzero": 18,
+        "p_monte_carlo": 0.00433349609375,
+        "monte_carlo": false
+      },
+      "size2yr": {
+        "p_exact": 9.1552734375e-05,
+        "p_exact_fraction": "3/32768",
+        "n_nonzero": 18,
+        "p_monte_carlo": 9.1552734375e-05,
+        "monte_carlo": false
+      },
+      "infant2yr": {
+        "p_exact": 0.010139703750610352,
+        "p_exact_fraction": "42529/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.01015,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 0.0001309514045715332,
+        "p_exact_fraction": "2197/16777216",
+        "n_nonzero": 25,
+        "p_monte_carlo": 5e-05,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.00023315846920013428,
+        "p_exact_fraction": "15647/67108864",
+        "n_nonzero": 28,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.40495872497558594,
+        "p_exact_fraction": "212315/524288",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.4077,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.5834887027740479,
+        "p_exact_fraction": "2447329/4194304",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.5847,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.03365635871887207,
+        "p_exact_fraction": "141165/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.03425,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate3": {
+      "adult": {
+        "p_exact": 0.0362548828125,
+        "p_exact_fraction": "297/8192",
+        "n_nonzero": 17,
+        "p_monte_carlo": 0.0362548828125,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 0.0040538012981414795,
+        "p_exact_fraction": "136023/33554432",
+        "n_nonzero": 29,
+        "p_monte_carlo": 0.0042,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 0.005127549171447754,
+        "p_exact_fraction": "43013/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.00495,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.02968013286590576,
+        "p_exact_fraction": "248975/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.0318,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 0.0001417398452758789,
+        "p_exact_fraction": "1189/8388608",
+        "n_nonzero": 25,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0004576742649078369,
+        "p_exact_fraction": "15357/33554432",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.0004,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.012883901596069336,
+        "p_exact_fraction": "54039/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.013,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.9021748304367065,
+        "p_exact_fraction": "7567991/8388608",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.8983,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.04877448081970215,
+        "p_exact_fraction": "204575/4194304",
+        "n_nonzero": 24,
+        "p_monte_carlo": 0.04815,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate4": {
+      "adult": {
+        "p_exact": 0.0140380859375,
+        "p_exact_fraction": "115/8192",
+        "n_nonzero": 20,
+        "p_monte_carlo": 0.0140380859375,
+        "monte_carlo": false
+      },
+      "school": {
+        "p_exact": 0.00237274169921875,
+        "p_exact_fraction": "311/131072",
+        "n_nonzero": 20,
+        "p_monte_carlo": 0.00237274169921875,
+        "monte_carlo": false
+      },
+      "size2yr": {
+        "p_exact": 0.0004699230194091797,
+        "p_exact_fraction": "1971/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.0005,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.0017392635345458984,
+        "p_exact_fraction": "7295/4194304",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.00135,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 8.83340835571289e-05,
+        "p_exact_fraction": "741/8388608",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0001,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 0.0022521913051605225,
+        "p_exact_fraction": "75571/33554432",
+        "n_nonzero": 27,
+        "p_monte_carlo": 0.0021,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.7135257720947266,
+        "p_exact_fraction": "374093/524288",
+        "n_nonzero": 23,
+        "p_monte_carlo": 0.7132,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.3151283264160156,
+        "p_exact_fraction": "82609/262144",
+        "n_nonzero": 20,
+        "p_monte_carlo": 0.3151283264160156,
+        "monte_carlo": false
+      },
+      "childC": {
+        "p_exact": 0.19725078344345093,
+        "p_exact_fraction": "3309319/16777216",
+        "n_nonzero": 26,
+        "p_monte_carlo": 0.197,
+        "monte_carlo": true
+      }
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched/pooled": {
+      "adult": {
+        "p_exact": 0.000814675004221499,
+        "p_exact_fraction": "6998005/8589934592",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.0012,
+        "monte_carlo": true
+      },
+      "school": {
+        "p_exact": 0.00011906336294487119,
+        "p_exact_fraction": "2045493/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.00035,
+        "monte_carlo": true
+      },
+      "size2yr": {
+        "p_exact": 7.740920409560204e-06,
+        "p_exact_fraction": "33247/4294967296",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant2yr": {
+        "p_exact": 0.00028457544976845384,
+        "p_exact_fraction": "4888969/17179869184",
+        "n_nonzero": 35,
+        "p_monte_carlo": 0.00015,
+        "monte_carlo": true
+      },
+      "infant18mo": {
+        "p_exact": 1.0484945960342884e-06,
+        "p_exact_fraction": "18013/17179869184",
+        "n_nonzero": 36,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "infant12mo": {
+        "p_exact": 5.762232467532158e-05,
+        "p_exact_fraction": "123743/2147483648",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.0,
+        "monte_carlo": true
+      },
+      "childA": {
+        "p_exact": 0.7335461911279708,
+        "p_exact_fraction": "3150556901/4294967296",
+        "n_nonzero": 34,
+        "p_monte_carlo": 0.7318,
+        "monte_carlo": true
+      },
+      "childB": {
+        "p_exact": 0.3397222822532058,
+        "p_exact_fraction": "364774023/1073741824",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.3353,
+        "monte_carlo": true
+      },
+      "childC": {
+        "p_exact": 0.02098475582897663,
+        "p_exact_fraction": "11266105/536870912",
+        "n_nonzero": 33,
+        "p_monte_carlo": 0.02115,
+        "monte_carlo": true
+      }
+    }
+  },
+  "families": {
+    "endpoint": {
+      "comparison": "opm_dense/opm_vs_squid/combined/practical@1/replicate0",
+      "p": {
+        "adult": 1.1920928955078125e-07,
+        "school": 2.980232238769531e-07,
+        "size2yr": 1.1175870895385742e-07,
+        "infant2yr": 1.6205012798309326e-07,
+        "infant18mo": 1.210719347000122e-08,
+        "infant12mo": 3.3527612686157227e-08,
+        "childA": 0.0102996826171875,
+        "childB": 1.1205673217773438e-05,
+        "childC": 2.175569534301758e-06
+      },
+      "holm_p": {
+        "infant18mo": 1.0896474123001099e-07,
+        "infant12mo": 2.682209014892578e-07,
+        "size2yr": 7.82310962677002e-07,
+        "adult": 7.82310962677002e-07,
+        "infant2yr": 8.102506399154663e-07,
+        "school": 1.1920928955078125e-06,
+        "childC": 6.5267086029052734e-06,
+        "childB": 2.2411346435546875e-05,
+        "childA": 0.0102996826171875
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childB": 0.0,
+        "childC": 0.0,
+        "childA": 0.0102996826171875
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "secondary/opm_dense/opm_vs_squid/combined/practical@1/pooled": {
+      "comparison": "opm_dense/opm_vs_squid/combined/practical@1/pooled",
+      "p": {
+        "adult": 2.3283064365386963e-10,
+        "school": 5.820766091346741e-11,
+        "size2yr": 1.7462298274040222e-10,
+        "infant2yr": 2.3283064365386963e-10,
+        "infant18mo": 5.820766091346741e-11,
+        "infant12mo": 6.2282197177410126e-09,
+        "childA": 0.0013246068265289068,
+        "childB": 6.613321602344513e-06,
+        "childC": 5.21540641784668e-08
+      },
+      "holm_p": {
+        "school": 5.238689482212067e-10,
+        "infant18mo": 5.238689482212067e-10,
+        "size2yr": 1.2223608791828156e-09,
+        "adult": 1.3969838619232178e-09,
+        "infant2yr": 1.3969838619232178e-09,
+        "infant12mo": 2.491287887096405e-08,
+        "childC": 1.564621925354004e-07,
+        "childB": 1.3226643204689026e-05,
+        "childA": 0.0013246068265289068
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childB": 0.0,
+        "childC": 0.0,
+        "childA": 0.0015
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "secondary/opm_dense/opm_vs_squid/combined/practical@1_matched/replicate0": {
+      "comparison": "opm_dense/opm_vs_squid/combined/practical@1_matched/replicate0",
+      "p": {
+        "adult": 1.1920928955078125e-07,
+        "school": 8.195638656616211e-08,
+        "size2yr": 2.086162567138672e-07,
+        "infant2yr": 1.8440186977386475e-07,
+        "infant18mo": 4.284083843231201e-08,
+        "infant12mo": 2.7939677238464355e-08,
+        "childA": 0.0102996826171875,
+        "childB": 7.915496826171875e-05,
+        "childC": 5.6684017181396484e-05
+      },
+      "holm_p": {
+        "infant12mo": 2.514570951461792e-07,
+        "infant18mo": 3.427267074584961e-07,
+        "school": 5.736947059631348e-07,
+        "adult": 7.152557373046875e-07,
+        "infant2yr": 9.220093488693237e-07,
+        "size2yr": 9.220093488693237e-07,
+        "childC": 0.00017005205154418945,
+        "childB": 0.00017005205154418945,
+        "childA": 0.0102996826171875
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childB": 0.0,
+        "childC": 0.0001,
+        "childA": 0.0102996826171875
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "secondary/opm_dense/opm_vs_squid/combined/practical@1_matched/pooled": {
+      "comparison": "opm_dense/opm_vs_squid/combined/practical@1_matched/pooled",
+      "p": {
+        "adult": 2.3283064365386963e-10,
+        "school": 5.820766091346741e-11,
+        "size2yr": 1.7462298274040222e-10,
+        "infant2yr": 2.3283064365386963e-10,
+        "infant18mo": 1.7462298274040222e-10,
+        "infant12mo": 3.812601789832115e-09,
+        "childA": 0.0025308788754045963,
+        "childB": 0.0001447657123208046,
+        "childC": 3.9837323129177094e-07
+      },
+      "holm_p": {
+        "school": 5.238689482212067e-10,
+        "size2yr": 1.3969838619232178e-09,
+        "infant18mo": 1.3969838619232178e-09,
+        "adult": 1.3969838619232178e-09,
+        "infant2yr": 1.3969838619232178e-09,
+        "infant12mo": 1.525040715932846e-08,
+        "childC": 1.1951196938753128e-06,
+        "childB": 0.0002895314246416092,
+        "childA": 0.0025308788754045963
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childC": 0.0,
+        "childB": 0.0005,
+        "childA": 0.0024
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "secondary/opm_dense/opm_vs_squid/combined/oracle/replicate0": {
+      "comparison": "opm_dense/opm_vs_squid/combined/oracle/replicate0",
+      "p": {
+        "adult": 1.1846423149108887e-06,
+        "school": 1.1641532182693481e-10,
+        "size2yr": 4.656612873077393e-10,
+        "infant2yr": 2.2351741790771484e-08,
+        "infant18mo": 1.1641532182693481e-10,
+        "infant12mo": 1.050066202878952e-07,
+        "childA": 0.00013832002878189087,
+        "childB": 0.00020456314086914062,
+        "childC": 3.8079451769590378e-06
+      },
+      "holm_p": {
+        "school": 1.0477378964424133e-09,
+        "infant18mo": 1.0477378964424133e-09,
+        "size2yr": 3.259629011154175e-09,
+        "infant2yr": 1.341104507446289e-07,
+        "infant12mo": 5.25033101439476e-07,
+        "adult": 4.738569259643555e-06,
+        "childC": 1.1423835530877113e-05,
+        "childA": 0.00027664005756378174,
+        "childB": 0.00027664005756378174
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childC": 0.0,
+        "childB": 0.0001,
+        "childA": 0.00015
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "secondary/opm_dense/opm_vs_squid/combined/oracle/pooled": {
+      "comparison": "opm_dense/opm_vs_squid/combined/oracle/pooled",
+      "p": {
+        "adult": 5.238689482212067e-10,
+        "school": 5.820766091346741e-11,
+        "size2yr": 2.9103830456733704e-11,
+        "infant2yr": 1.1641532182693481e-10,
+        "infant18mo": 2.9103830456733704e-11,
+        "infant12mo": 5.820766091346741e-11,
+        "childA": 7.0532551035285e-06,
+        "childB": 3.0617229640483856e-08,
+        "childC": 9.604264050722122e-10
+      },
+      "holm_p": {
+        "size2yr": 2.6193447411060333e-10,
+        "infant18mo": 2.6193447411060333e-10,
+        "school": 4.0745362639427185e-10,
+        "infant12mo": 4.0745362639427185e-10,
+        "infant2yr": 5.820766091346741e-10,
+        "adult": 2.0954757928848267e-09,
+        "childC": 2.8812792152166367e-09,
+        "childB": 6.123445928096771e-08,
+        "childA": 7.0532551035285e-06
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childA": 0.0,
+        "childB": 0.0,
+        "childC": 0.0
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "secondary/opm_dense/opm_vs_squid/combined/mismatch@1/replicate0": {
+      "comparison": "opm_dense/opm_vs_squid/combined/mismatch@1/replicate0",
+      "p": {
+        "adult": 1.4901161193847656e-08,
+        "school": 2.775341272354126e-07,
+        "size2yr": 3.725290298461914e-09,
+        "infant2yr": 3.725290298461914e-09,
+        "infant18mo": 4.0978193283081055e-08,
+        "infant12mo": 2.682209014892578e-07,
+        "childA": 0.025970458984375,
+        "childB": 0.004426032304763794,
+        "childC": 8.340924978256226e-06
+      },
+      "holm_p": {
+        "size2yr": 3.3527612686157227e-08,
+        "infant2yr": 3.3527612686157227e-08,
+        "adult": 1.043081283569336e-07,
+        "infant18mo": 2.4586915969848633e-07,
+        "infant12mo": 1.341104507446289e-06,
+        "school": 1.341104507446289e-06,
+        "childC": 2.5022774934768677e-05,
+        "childB": 0.008852064609527588,
+        "childA": 0.025970458984375
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childC": 0.0,
+        "childB": 0.0073,
+        "childA": 0.025970458984375
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "secondary/opm_dense/opm_vs_squid/combined/mismatch@1/pooled": {
+      "comparison": "opm_dense/opm_vs_squid/combined/mismatch@1/pooled",
+      "p": {
+        "adult": 1.1641532182693481e-10,
+        "school": 5.820766091346741e-10,
+        "size2yr": 2.3283064365386963e-10,
+        "infant2yr": 2.9103830456733704e-11,
+        "infant18mo": 5.820766091346741e-11,
+        "infant12mo": 1.0477378964424133e-09,
+        "childA": 0.002441604679916054,
+        "childB": 2.9394403100013733e-05,
+        "childC": 2.2863969206809998e-07
+      },
+      "holm_p": {
+        "infant2yr": 2.6193447411060333e-10,
+        "infant18mo": 4.656612873077393e-10,
+        "adult": 8.149072527885437e-10,
+        "size2yr": 1.3969838619232178e-09,
+        "school": 2.9103830456733704e-09,
+        "infant12mo": 4.190951585769653e-09,
+        "childC": 6.859190762042999e-07,
+        "childB": 5.8788806200027466e-05,
+        "childA": 0.002441604679916054
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childC": 0.0,
+        "childB": 0.0001,
+        "childA": 0.00255
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "secondary/opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate0": {
+      "comparison": "opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate0",
+      "p": {
+        "adult": 4.76837158203125e-07,
+        "school": 1.2479722499847412e-07,
+        "size2yr": 1.862645149230957e-09,
+        "infant2yr": 7.450580596923828e-09,
+        "infant18mo": 1.6391277313232422e-07,
+        "infant12mo": 2.4028122425079346e-07,
+        "childA": 0.005068302154541016,
+        "childB": 0.07219691574573517,
+        "childC": 6.4373016357421875e-06
+      },
+      "holm_p": {
+        "size2yr": 1.6763806343078613e-08,
+        "infant2yr": 5.960464477539063e-08,
+        "school": 8.735805749893188e-07,
+        "infant18mo": 9.834766387939453e-07,
+        "infant12mo": 1.2014061212539673e-06,
+        "adult": 1.9073486328125e-06,
+        "childC": 1.9311904907226562e-05,
+        "childA": 0.010136604309082031,
+        "childB": 0.07219691574573517
+      },
+      "n_pass": 8,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childC": 0.0,
+        "childA": 0.0095,
+        "childB": 0.07045
+      },
+      "n_pass_monte_carlo": 8,
+      "same_decisions": true
+    },
+    "secondary/opm_dense/opm_vs_squid/combined/mismatch@1_matched/pooled": {
+      "comparison": "opm_dense/opm_vs_squid/combined/mismatch@1_matched/pooled",
+      "p": {
+        "adult": 2.9103830456733704e-09,
+        "school": 4.656612873077393e-10,
+        "size2yr": 1.1641532182693481e-10,
+        "infant2yr": 2.9103830456733704e-11,
+        "infant18mo": 1.1641532182693481e-10,
+        "infant12mo": 3.4924596548080444e-10,
+        "childA": 0.00014684675261378288,
+        "childB": 0.001395141240209341,
+        "childC": 5.709007382392883e-07
+      },
+      "holm_p": {
+        "infant2yr": 2.6193447411060333e-10,
+        "size2yr": 9.313225746154785e-10,
+        "infant18mo": 9.313225746154785e-10,
+        "infant12mo": 2.0954757928848267e-09,
+        "school": 2.3283064365386963e-09,
+        "adult": 1.1641532182693481e-08,
+        "childC": 1.712702214717865e-06,
+        "childA": 0.00029369350522756577,
+        "childB": 0.001395141240209341
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childC": 0.0,
+        "childA": 0.0002,
+        "childB": 0.00115
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "secondary/opm_matched/opm_vs_squid/combined/practical@1/replicate0": {
+      "comparison": "opm_matched/opm_vs_squid/combined/practical@1/replicate0",
+      "p": {
+        "adult": 0.00585174560546875,
+        "school": 0.009586527943611145,
+        "size2yr": 0.000385284423828125,
+        "infant2yr": 0.01673269271850586,
+        "infant18mo": 5.7220458984375e-06,
+        "infant12mo": 0.0011943578720092773,
+        "childA": 1.0,
+        "childB": 0.6939544677734375,
+        "childC": 0.05050182342529297
+      },
+      "holm_p": {
+        "infant18mo": 5.14984130859375e-05,
+        "size2yr": 0.003082275390625,
+        "infant12mo": 0.008360505104064941,
+        "adult": 0.0351104736328125,
+        "school": 0.047932639718055725,
+        "infant2yr": 0.06693077087402344,
+        "childC": 0.1515054702758789,
+        "childB": 1.0,
+        "childA": 1.0
+      },
+      "n_pass": 5,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "infant18mo": 0.0,
+        "size2yr": 0.0032,
+        "infant12mo": 0.00805,
+        "adult": 0.0345,
+        "school": 0.04825,
+        "infant2yr": 0.0668,
+        "childC": 0.1506,
+        "childB": 1.0,
+        "childA": 1.0
+      },
+      "n_pass_monte_carlo": 5,
+      "same_decisions": true
+    },
+    "secondary/opm_matched/opm_vs_squid/combined/practical@1/pooled": {
+      "comparison": "opm_matched/opm_vs_squid/combined/practical@1/pooled",
+      "p": {
+        "adult": 0.00011029653251171112,
+        "school": 0.00029555358923971653,
+        "size2yr": 7.751514203846455e-06,
+        "infant2yr": 0.00134988222271204,
+        "infant18mo": 1.1641532182693481e-09,
+        "infant12mo": 8.819258073344827e-05,
+        "childA": 0.3883445335086435,
+        "childB": 0.12097828020341694,
+        "childC": 0.012557773967273533
+      },
+      "holm_p": {
+        "infant18mo": 1.0477378964424133e-08,
+        "size2yr": 6.201211363077164e-05,
+        "infant12mo": 0.0006173480651341379,
+        "adult": 0.0006617791950702667,
+        "school": 0.0014777679461985826,
+        "infant2yr": 0.00539952889084816,
+        "childC": 0.0376733219018206,
+        "childB": 0.2419565604068339,
+        "childA": 0.3883445335086435
+      },
+      "n_pass": 7,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "infant18mo": 0.0,
+        "size2yr": 0.0004,
+        "infant12mo": 0.0004,
+        "adult": 0.0012000000000000001,
+        "school": 0.0014999999999999998,
+        "infant2yr": 0.0052,
+        "childC": 0.039,
+        "childB": 0.2368,
+        "childA": 0.39115
+      },
+      "n_pass_monte_carlo": 7,
+      "same_decisions": true
+    },
+    "secondary/opm_matched/opm_vs_squid/combined/practical@1_matched/replicate0": {
+      "comparison": "opm_matched/opm_vs_squid/combined/practical@1_matched/replicate0",
+      "p": {
+        "adult": 0.0028276443481445312,
+        "school": 0.0013448596000671387,
+        "size2yr": 0.001209259033203125,
+        "infant2yr": 0.02531522512435913,
+        "infant18mo": 2.7000904083251953e-05,
+        "infant12mo": 0.003454267978668213,
+        "childA": 1.0,
+        "childB": 1.0,
+        "childC": 0.03430938720703125
+      },
+      "holm_p": {
+        "infant18mo": 0.00024300813674926758,
+        "size2yr": 0.009674072265625,
+        "school": 0.009674072265625,
+        "adult": 0.016965866088867188,
+        "infant12mo": 0.017271339893341064,
+        "infant2yr": 0.10126090049743652,
+        "childC": 0.10292816162109375,
+        "childA": 1.0,
+        "childB": 1.0
+      },
+      "n_pass": 5,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "infant18mo": 0.0,
+        "size2yr": 0.009674072265625,
+        "school": 0.009674072265625,
+        "adult": 0.0162,
+        "infant12mo": 0.01925,
+        "infant2yr": 0.096,
+        "childC": 0.10292816162109375,
+        "childA": 1.0,
+        "childB": 1.0
+      },
+      "n_pass_monte_carlo": 5,
+      "same_decisions": true
+    },
+    "secondary/opm_matched/opm_vs_squid/combined/practical@1_matched/pooled": {
+      "comparison": "opm_matched/opm_vs_squid/combined/practical@1_matched/pooled",
+      "p": {
+        "adult": 0.000139724463224411,
+        "school": 2.390751615166664e-05,
+        "size2yr": 5.6803226470947266e-05,
+        "infant2yr": 0.000958872027695179,
+        "infant18mo": 3.0366936698555946e-07,
+        "infant12mo": 0.0002075888914987445,
+        "childA": 0.7140844473615289,
+        "childB": 0.44630342605523765,
+        "childC": 0.002795961918309331
+      },
+      "holm_p": {
+        "infant18mo": 2.733024302870035e-06,
+        "school": 0.00019126012921333313,
+        "size2yr": 0.00039762258529663086,
+        "adult": 0.0008383467793464661,
+        "infant12mo": 0.0010379444574937224,
+        "infant2yr": 0.003835488110780716,
+        "childC": 0.008387885754927993,
+        "childB": 0.8926068521104753,
+        "childA": 0.8926068521104753
+      },
+      "n_pass": 7,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "infant18mo": 0.0,
+        "adult": 0.0004,
+        "school": 0.0004,
+        "size2yr": 0.0004,
+        "infant12mo": 0.0014999999999999998,
+        "infant2yr": 0.0046,
+        "childC": 0.00915,
+        "childB": 0.878,
+        "childA": 0.878
+      },
+      "n_pass_monte_carlo": 7,
+      "same_decisions": true
+    },
+    "secondary/opm_matched/opm_vs_squid/combined/oracle/replicate0": {
+      "comparison": "opm_matched/opm_vs_squid/combined/oracle/replicate0",
+      "p": {
+        "adult": 0.05840599536895752,
+        "school": 2.0906329154968262e-05,
+        "size2yr": 1.6734004020690918e-05,
+        "infant2yr": 0.013173341751098633,
+        "infant18mo": 2.637505531311035e-06,
+        "infant12mo": 0.0017530769109725952,
+        "childA": 1.0,
+        "childB": 0.9125421047210693,
+        "childC": 0.18441903591156006
+      },
+      "holm_p": {
+        "infant18mo": 2.3737549781799316e-05,
+        "size2yr": 0.00013387203216552734,
+        "school": 0.00014634430408477783,
+        "infant12mo": 0.010518461465835571,
+        "infant2yr": 0.06586670875549316,
+        "adult": 0.23362398147583008,
+        "childC": 0.5532571077346802,
+        "childB": 1.0,
+        "childA": 1.0
+      },
+      "n_pass": 4,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant18mo": 0.00035,
+        "infant12mo": 0.0108,
+        "infant2yr": 0.06225,
+        "adult": 0.2328,
+        "childC": 0.5549999999999999,
+        "childB": 1.0,
+        "childA": 1.0
+      },
+      "n_pass_monte_carlo": 4,
+      "same_decisions": true
+    },
+    "secondary/opm_matched/opm_vs_squid/combined/oracle/pooled": {
+      "comparison": "opm_matched/opm_vs_squid/combined/oracle/pooled",
+      "p": {
+        "adult": 0.013522477820515633,
+        "school": 2.6382505893707275e-05,
+        "size2yr": 7.032067514955997e-07,
+        "infant2yr": 0.0005784692475572228,
+        "infant18mo": 1.1175870895385742e-08,
+        "infant12mo": 5.660578608512878e-06,
+        "childA": 0.6246659787138924,
+        "childB": 0.9500296330079436,
+        "childC": 0.004352766030933708
+      },
+      "holm_p": {
+        "infant18mo": 1.0058283805847168e-07,
+        "size2yr": 5.625654011964798e-06,
+        "infant12mo": 3.962405025959015e-05,
+        "school": 0.00015829503536224365,
+        "infant2yr": 0.002892346237786114,
+        "childC": 0.017411064123734832,
+        "adult": 0.0405674334615469,
+        "childA": 1.0,
+        "childB": 1.0
+      },
+      "n_pass": 7,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "size2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "school": 0.0006000000000000001,
+        "infant2yr": 0.0025,
+        "childC": 0.015,
+        "adult": 0.0438,
+        "childA": 1.0,
+        "childB": 1.0
+      },
+      "n_pass_monte_carlo": 7,
+      "same_decisions": true
+    },
+    "secondary/opm_matched/opm_vs_squid/combined/mismatch@1/replicate0": {
+      "comparison": "opm_matched/opm_vs_squid/combined/mismatch@1/replicate0",
+      "p": {
+        "adult": 0.000640869140625,
+        "school": 0.0004673004150390625,
+        "size2yr": 0.0001068115234375,
+        "infant2yr": 0.000690072774887085,
+        "infant18mo": 5.960464477539063e-08,
+        "infant12mo": 0.0018832683563232422,
+        "childA": 1.0,
+        "childB": 0.7877241373062134,
+        "childC": 0.07611715793609619
+      },
+      "holm_p": {
+        "infant18mo": 5.364418029785156e-07,
+        "size2yr": 0.0008544921875,
+        "school": 0.0032711029052734375,
+        "adult": 0.00384521484375,
+        "infant2yr": 0.00384521484375,
+        "infant12mo": 0.007533073425292969,
+        "childC": 0.22835147380828857,
+        "childB": 1.0,
+        "childA": 1.0
+      },
+      "n_pass": 6,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "infant18mo": 0.0,
+        "size2yr": 0.0012,
+        "school": 0.0028,
+        "infant2yr": 0.0028,
+        "adult": 0.003204345703125,
+        "infant12mo": 0.011,
+        "childC": 0.22860000000000003,
+        "childB": 1.0,
+        "childA": 1.0
+      },
+      "n_pass_monte_carlo": 6,
+      "same_decisions": true
+    },
+    "secondary/opm_matched/opm_vs_squid/combined/mismatch@1/pooled": {
+      "comparison": "opm_matched/opm_vs_squid/combined/mismatch@1/pooled",
+      "p": {
+        "adult": 9.980576578527689e-06,
+        "school": 0.0001662557478994131,
+        "size2yr": 1.6124453395605087e-05,
+        "infant2yr": 0.00015306545537896454,
+        "infant18mo": 1.2922100722789764e-08,
+        "infant12mo": 3.852177178487182e-05,
+        "childA": 0.9284207376767881,
+        "childB": 0.24793185642920434,
+        "childC": 0.027920024702325463
+      },
+      "holm_p": {
+        "infant18mo": 1.1629890650510788e-07,
+        "adult": 7.984461262822151e-05,
+        "size2yr": 0.00011287117376923561,
+        "infant12mo": 0.0002311306307092309,
+        "infant2yr": 0.0007653272768948227,
+        "school": 0.0007653272768948227,
+        "childC": 0.08376007410697639,
+        "childB": 0.4958637128584087,
+        "childA": 0.9284207376767881
+      },
+      "n_pass": 6,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "size2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "adult": 0.0006000000000000001,
+        "infant2yr": 0.0007499999999999999,
+        "school": 0.001,
+        "childC": 0.08985,
+        "childB": 0.4888,
+        "childA": 0.92945
+      },
+      "n_pass_monte_carlo": 6,
+      "same_decisions": true
+    },
+    "secondary/opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate0": {
+      "comparison": "opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate0",
+      "p": {
+        "adult": 0.003662109375,
+        "school": 0.00028133392333984375,
+        "size2yr": 1.33514404296875e-05,
+        "infant2yr": 0.000690072774887085,
+        "infant18mo": 1.436471939086914e-05,
+        "infant12mo": 0.003070831298828125,
+        "childA": 0.7208747863769531,
+        "childB": 1.0,
+        "childC": 0.030511856079101562
+      },
+      "holm_p": {
+        "size2yr": 0.0001201629638671875,
+        "infant18mo": 0.0001201629638671875,
+        "school": 0.0019693374633789062,
+        "infant2yr": 0.00414043664932251,
+        "infant12mo": 0.015354156494140625,
+        "adult": 0.015354156494140625,
+        "childC": 0.09153556823730469,
+        "childA": 1.0,
+        "childB": 1.0
+      },
+      "n_pass": 6,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "infant18mo": 0.0,
+        "size2yr": 0.0004,
+        "school": 0.00105,
+        "infant2yr": 0.0024000000000000002,
+        "adult": 0.018310546875,
+        "infant12mo": 0.018310546875,
+        "childC": 0.09225,
+        "childA": 1.0,
+        "childB": 1.0
+      },
+      "n_pass_monte_carlo": 6,
+      "same_decisions": true
+    },
+    "secondary/opm_matched/opm_vs_squid/combined/mismatch@1_matched/pooled": {
+      "comparison": "opm_matched/opm_vs_squid/combined/mismatch@1_matched/pooled",
+      "p": {
+        "adult": 0.000814675004221499,
+        "school": 0.00011906336294487119,
+        "size2yr": 7.740920409560204e-06,
+        "infant2yr": 0.00028457544976845384,
+        "infant18mo": 1.0484945960342884e-06,
+        "infant12mo": 5.762232467532158e-05,
+        "childA": 0.7335461911279708,
+        "childB": 0.3397222822532058,
+        "childC": 0.02098475582897663
+      },
+      "holm_p": {
+        "infant18mo": 9.436451364308596e-06,
+        "size2yr": 6.192736327648163e-05,
+        "infant12mo": 0.00040335627272725105,
+        "school": 0.0007143801776692271,
+        "infant2yr": 0.0014228772488422692,
+        "adult": 0.003258700016885996,
+        "childC": 0.0629542674869299,
+        "childB": 0.6794445645064116,
+        "childA": 0.7335461911279708
+      },
+      "n_pass": 6,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "size2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "infant2yr": 0.0009,
+        "school": 0.00175,
+        "adult": 0.0048,
+        "childC": 0.06344999999999999,
+        "childB": 0.6706,
+        "childA": 0.7318
+      },
+      "n_pass_monte_carlo": 6,
+      "same_decisions": true
+    }
+  },
+  "monte_carlo": {
+    "replicate0": {
+      "comparison": "opm_dense/opm_vs_squid/combined/practical@1/replicate0",
+      "p": {
+        "adult": 1.1920928955078125e-07,
+        "school": 2.980232238769531e-07,
+        "size2yr": 1.1175870895385742e-07,
+        "infant2yr": 1.6205012798309326e-07,
+        "infant18mo": 1.210719347000122e-08,
+        "infant12mo": 3.3527612686157227e-08,
+        "childA": 0.0102996826171875,
+        "childB": 1.1205673217773438e-05,
+        "childC": 2.175569534301758e-06
+      },
+      "holm_p": {
+        "infant18mo": 1.0896474123001099e-07,
+        "infant12mo": 2.682209014892578e-07,
+        "size2yr": 7.82310962677002e-07,
+        "adult": 7.82310962677002e-07,
+        "infant2yr": 8.102506399154663e-07,
+        "school": 1.1920928955078125e-06,
+        "childC": 6.5267086029052734e-06,
+        "childB": 2.2411346435546875e-05,
+        "childA": 0.0102996826171875
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childB": 0.0,
+        "childC": 0.0,
+        "childA": 0.0102996826171875
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "replicate1": {
+      "comparison": "opm_dense/opm_vs_squid/combined/practical@1/replicate1",
+      "p": {
+        "adult": 6.4373016357421875e-06,
+        "school": 1.4901161193847656e-08,
+        "size2yr": 2.9802322387695312e-08,
+        "infant2yr": 2.384185791015625e-07,
+        "infant18mo": 1.862645149230957e-09,
+        "infant12mo": 1.1920928955078125e-06,
+        "childA": 0.030551910400390625,
+        "childB": 5.7220458984375e-06,
+        "childC": 0.00010752677917480469
+      },
+      "holm_p": {
+        "infant18mo": 1.6763806343078613e-08,
+        "school": 1.1920928955078125e-07,
+        "size2yr": 2.086162567138672e-07,
+        "infant2yr": 1.430511474609375e-06,
+        "infant12mo": 5.9604644775390625e-06,
+        "childB": 2.288818359375e-05,
+        "adult": 2.288818359375e-05,
+        "childC": 0.00021505355834960938,
+        "childA": 0.030551910400390625
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childB": 0.0,
+        "childC": 0.0002,
+        "childA": 0.030551910400390625
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "replicate2": {
+      "comparison": "opm_dense/opm_vs_squid/combined/practical@1/replicate2",
+      "p": {
+        "adult": 2.86102294921875e-06,
+        "school": 1.862645149230957e-09,
+        "size2yr": 2.4586915969848633e-07,
+        "infant2yr": 4.76837158203125e-07,
+        "infant18mo": 9.313225746154785e-10,
+        "infant12mo": 2.86102294921875e-06,
+        "childA": 0.0281064510345459,
+        "childB": 0.00027000904083251953,
+        "childC": 2.6464462280273438e-05
+      },
+      "holm_p": {
+        "infant18mo": 8.381903171539307e-09,
+        "school": 1.4901161193847656e-08,
+        "size2yr": 1.7210841178894043e-06,
+        "infant2yr": 2.86102294921875e-06,
+        "adult": 1.430511474609375e-05,
+        "infant12mo": 1.430511474609375e-05,
+        "childC": 7.939338684082031e-05,
+        "childB": 0.0005400180816650391,
+        "childA": 0.0281064510345459
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childC": 0.00045,
+        "childB": 0.0007,
+        "childA": 0.0261
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "replicate3": {
+      "comparison": "opm_dense/opm_vs_squid/combined/practical@1/replicate3",
+      "p": {
+        "adult": 1.9073486328125e-06,
+        "school": 9.685754776000977e-08,
+        "size2yr": 9.685754776000977e-08,
+        "infant2yr": 4.589557647705078e-06,
+        "infant18mo": 1.862645149230957e-09,
+        "infant12mo": 4.177913069725037e-06,
+        "childA": 0.005505561828613281,
+        "childB": 0.0010620355606079102,
+        "childC": 2.3990869522094727e-06
+      },
+      "holm_p": {
+        "infant18mo": 1.6763806343078613e-08,
+        "school": 7.748603820800781e-07,
+        "size2yr": 7.748603820800781e-07,
+        "adult": 1.1444091796875e-05,
+        "childC": 1.1995434761047363e-05,
+        "infant12mo": 1.6711652278900146e-05,
+        "infant2yr": 1.6711652278900146e-05,
+        "childB": 0.0021240711212158203,
+        "childA": 0.005505561828613281
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "childC": 0.0,
+        "adult": 7.62939453125e-06,
+        "infant12mo": 0.00015000000000000001,
+        "childB": 0.003,
+        "childA": 0.0059
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    },
+    "replicate4": {
+      "comparison": "opm_dense/opm_vs_squid/combined/practical@1/replicate4",
+      "p": {
+        "adult": 2.9802322387695312e-08,
+        "school": 7.450580596923828e-09,
+        "size2yr": 4.470348358154297e-07,
+        "infant2yr": 3.129243850708008e-07,
+        "infant18mo": 1.862645149230957e-09,
+        "infant12mo": 4.284083843231201e-07,
+        "childA": 0.011705636978149414,
+        "childB": 0.0011272430419921875,
+        "childC": 3.814697265625e-06
+      },
+      "holm_p": {
+        "infant18mo": 1.6763806343078613e-08,
+        "school": 5.960464477539063e-08,
+        "adult": 2.086162567138672e-07,
+        "infant2yr": 1.8775463104248047e-06,
+        "infant12mo": 2.1420419216156006e-06,
+        "size2yr": 2.1420419216156006e-06,
+        "childC": 1.1444091796875e-05,
+        "childB": 0.002254486083984375,
+        "childA": 0.011705636978149414
+      },
+      "n_pass": 9,
+      "n": 9,
+      "holm_p_monte_carlo": {
+        "adult": 0.0,
+        "school": 0.0,
+        "size2yr": 0.0,
+        "infant2yr": 0.0,
+        "infant18mo": 0.0,
+        "infant12mo": 0.0,
+        "childC": 0.0,
+        "childB": 0.002,
+        "childA": 0.0114
+      },
+      "n_pass_monte_carlo": 9,
+      "same_decisions": true
+    }
+  },
+  "agreement": {
+    "n_cells": 540,
+    "n_cells_monte_carlo": 493,
+    "n_cells_enumerated_by_the_run": 47,
+    "max_abs_p_difference": 0.0073034260552376495,
+    "n_cells_monte_carlo_zero": 230,
+    "max_exact_p_where_monte_carlo_zero": 7.915496826171875e-05,
+    "max_exact_holm_p_where_monte_carlo_holm_zero": 0.00040335627272725105,
+    "n_families": 25,
+    "n_families_same_decisions": 25,
+    "endpoint_n_pass_exact": 9,
+    "endpoint_max_holm_p_exact": 0.0102996826171875
+  },
+  "provenance": {
+    "commit": "e3212c3",
+    "mne_version": "1.13.2",
+    "numpy_version": "2.5.3"
+  }
+}

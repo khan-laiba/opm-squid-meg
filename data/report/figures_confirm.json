@@ -1,0 +1,729 @@
+{
+ "provenance": {
+  "commit": "6aacac3",
+  "results_dir": "results/g4_confirm",
+  "confirmatory": true
+ },
+ "figures": {
+  "Figure_R16_confirm": {
+   "inputs": [
+    "results/g4_confirm/g4_confirm_summary.json",
+    "results/g4_confirm/g4c_adult_summary.json",
+    "results/g4_confirm/g4c_school_summary.json",
+    "results/g4_confirm/g4c_size2yr_summary.json",
+    "results/g4_confirm/g4c_infant2yr_summary.json",
+    "results/g4_confirm/g4c_infant18mo_summary.json",
+    "results/g4_confirm/g4c_infant12mo_summary.json",
+    "results/g4_confirm/g4c_childA_summary.json",
+    "results/g4_confirm/g4c_childB_summary.json",
+    "results/g4_confirm/g4c_childC_summary.json",
+    "results/g4/g4_pediatric_comparison.json",
+    "results/g2/g2_summary.json :: arrays.squid.channels (the legend's Neuromag channel count)"
+   ],
+   "description": "Run status: confirmatory (all nine anatomies, one commit, declared settings); commits ae458a9. (a) g4_confirm_summary.json anatomy[<anatomy>].endpoint.s50_ratio_squid_over_opm (value, value_bounds, value_censored, ci95), dark, and results/g4/g4_pediatric_comparison.json comparison['<anatomy>/paired/opm_dense/opm_vs_squid/combined/practical@1/depth0'].s50_ratio_squid_over_opm, light (checked equal to anatomy[<anatomy>].exploratory). Text: locations_favouring_opm : locations_favouring_squid; Holm p from families['endpoint'].holm_p (dark) and anatomy[<anatomy>].exploratory.holm_p_over_present_anatomies (light). (b) anatomy[<anatomy>].oracle and (c) anatomy[<anatomy>].mismatch (.s50_ratio_squid_over_opm), with families['secondary/opm_dense/opm_vs_squid/combined/oracle/replicate0'] and ['.../mismatch@1/replicate0'].holm_p; grey bars: the endpoint's point estimate. A tick and bold: Holm-adjusted p below the declared alpha (0.05). Shared logarithmic x axis 0.7\u20132 (display choice: the drawn values and finite interval ends with a margin); open interval ends are arrows to the axis edge. Anatomies in the order of scripts/report_style.py ANAT_ORDER with its labels, classes separated by hairlines. Drawn as: value.",
+   "alt": "Three forest plots of the S50 ratio Neuromag over OPM on a log axis with a line at 1, one row per anatomy (9). In the confirmatory run the dense array's ratio is 1.27\u20131.47, against 1.18\u20131.65 in the exploratory run; the declared test passes after Holm correction in 9 of 9 anatomies (Adult, School size, 2-y size, 24 mo, 18 mo, 12 mo, Child A, Child B, Child C), and the interval includes 1 for none. The oracle detector's ratio is 1.27\u20131.62 (Holm p below 0.05: Adult, School size, 2-y size, 24 mo, 18 mo, 12 mo, Child A, Child B, Child C); the mismatched detector's 1.23\u20131.50 (Holm p below 0.05: Adult, School size, 2-y size, 24 mo, 18 mo, 12 mo, Child A, Child B, Child C).",
+   "caption_draft": "Figure R16. Confirmatory spike run. Strength for 50 % detection, Neuromag (306 channels) over the dense OPM array, for focal spikes 10\u201320 mm below the scalp, paired on identical simulated spikes at 36 newly drawn locations per anatomy (> 1: the OPM detects at a lower strength); lines: 95 % location-bootstrap intervals; arrows: open ends; open markers: censored estimates. (a) The endpoint declared before the run (practical scanning detector, thresholds frozen for a nominal 1 false event per minute, first noise realization): ratios 1.27\u20131.47; the two-sided location sign-flip test, Holm-adjusted over the anatomies, is below 0.05 in 9 of 9. Light: the exploratory run (18 locations per anatomy, endpoint chosen after the analyses), ratios 1.18\u20131.65. (b) Oracle detector (known topography, waveform and time): ratios 1.27\u20131.62. (c) Mismatched detector (templates between the simulated morphologies and candidate fields from a 1-layer model with a 2-mm / 2-deg coregistration error), thresholds recalibrated to the same rate: ratios 1.23\u20131.50. Panels (b) and (c) are secondary analyses, each Holm-adjusted within its own family; grey bars mark the endpoint's ratio. The adult at its measured head position, the other heads at top contact in the fixed adult helmet.",
+   "values": {
+    "status": "confirmatory (all nine anatomies, one commit, declared settings)",
+    "commits": [
+     "ae458a9"
+    ],
+    "alpha": 0.05,
+    "false_events_per_min": 1.0,
+    "band_mm": "10\u201320",
+    "n_locations": "36",
+    "n_events_per_replicate": "648",
+    "bootstrap_resamples": "1,000",
+    "sign_flip_test": "exact, over all sign patterns; the run's 20,000-pattern Monte Carlo estimates give the same decisions in 25 of 25 families",
+    "oracle_alpha": "0.001",
+    "exploratory_n_locations": "18",
+    "mismatch_variant": "templates between the simulated morphologies and candidate fields from a 1-layer model with a 2-mm / 2-deg coregistration error",
+    "x_limits": [
+     0.7,
+     2.0
+    ],
+    "order": [
+     "adult",
+     "school",
+     "size2yr",
+     "infant2yr",
+     "infant18mo",
+     "infant12mo",
+     "childA",
+     "childB",
+     "childC"
+    ],
+    "rows": {
+     "adult": {
+      "confirmatory": {
+       "value": 1.450594381234725,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2069940973958986,
+        1.6766971398066528
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 24,
+       "locations_favouring_squid": 0,
+       "location_sign_flip_p": 1.1920928955078125e-07,
+       "p_holm": 7.82310962677002e-07
+      },
+      "exploratory": {
+       "value": 1.3642996381439392,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.1015905593265327,
+        1.575613822435137
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 11,
+       "locations_favouring_squid": 1,
+       "location_sign_flip_p": 0.00390625,
+       "p_holm_over_present_anatomies": 0.014892578125
+      },
+      "oracle": {
+       "value": 1.38929397174573,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2229325435365197,
+        1.5460333372669797
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 26,
+       "locations_favouring_squid": 2,
+       "location_sign_flip_p": 1.1846423149108887e-06,
+       "p_holm": 4.738569259643555e-06
+      },
+      "mismatch": {
+       "value": 1.499647391343041,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2968395546510094,
+        1.6683023897930704
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 27,
+       "locations_favouring_squid": 0,
+       "location_sign_flip_p": 1.4901161193847656e-08,
+       "p_holm": 1.043081283569336e-07
+      }
+     },
+     "school": {
+      "confirmatory": {
+       "value": 1.4426443975486887,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.264034226073542,
+        1.5836833374796946
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 25,
+       "locations_favouring_squid": 1,
+       "location_sign_flip_p": 2.980232238769531e-07,
+       "p_holm": 1.1920928955078125e-06
+      },
+      "exploratory": {
+       "value": 1.6041601528584555,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.305428832963159,
+        1.866065983073615
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 13,
+       "locations_favouring_squid": 0,
+       "location_sign_flip_p": 0.000244140625,
+       "p_holm_over_present_anatomies": 0.001708984375
+      },
+      "oracle": {
+       "value": 1.61112694847939,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.461195405819868,
+        1.761632477822081
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 34,
+       "locations_favouring_squid": 0,
+       "location_sign_flip_p": 1.1641532182693481e-10,
+       "p_holm": 1.0477378964424133e-09
+      },
+      "mismatch": {
+       "value": 1.392712288970469,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2298713939300059,
+        1.516638438553145
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 28,
+       "locations_favouring_squid": 2,
+       "location_sign_flip_p": 2.775341272354126e-07,
+       "p_holm": 1.341104507446289e-06
+      }
+     },
+     "size2yr": {
+      "confirmatory": {
+       "value": 1.4675593036634682,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2390791033364004,
+        1.624295896883613
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 27,
+       "locations_favouring_squid": 1,
+       "location_sign_flip_p": 1.1175870895385742e-07,
+       "p_holm": 7.82310962677002e-07
+      },
+      "exploratory": {
+       "value": 1.6529006363084227,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.4077452113742759,
+        1.866065983073615
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 17,
+       "locations_favouring_squid": 0,
+       "location_sign_flip_p": 1.52587890625e-05,
+       "p_holm_over_present_anatomies": 0.0001373291015625
+      },
+      "oracle": {
+       "value": 1.617625394674566,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.4028610232104943,
+        1.7798866227924934
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 32,
+       "locations_favouring_squid": 0,
+       "location_sign_flip_p": 4.656612873077393e-10,
+       "p_holm": 3.259629011154175e-09
+      },
+      "mismatch": {
+       "value": 1.4884968919343788,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2591748515313843,
+        1.674029231457385
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 29,
+       "locations_favouring_squid": 0,
+       "location_sign_flip_p": 3.725290298461914e-09,
+       "p_holm": 3.3527612686157227e-08
+      }
+     },
+     "infant2yr": {
+      "confirmatory": {
+       "value": 1.2819267405874748,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.175462765404934,
+        1.4504915484951544
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 28,
+       "locations_favouring_squid": 2,
+       "location_sign_flip_p": 1.6205012798309326e-07,
+       "p_holm": 8.102506399154663e-07
+      },
+      "exploratory": {
+       "value": 1.4368164942227504,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2009815990454917,
+        1.645755478153965
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 14,
+       "locations_favouring_squid": 2,
+       "location_sign_flip_p": 0.00152587890625,
+       "p_holm_over_present_anatomies": 0.00762939453125
+      },
+      "oracle": {
+       "value": 1.5090253285429978,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.3102719625164794,
+        1.839471407448738
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.005,
+       "locations_favouring_opm": 29,
+       "locations_favouring_squid": 1,
+       "location_sign_flip_p": 2.2351741790771484e-08,
+       "p_holm": 1.341104507446289e-07
+      },
+      "mismatch": {
+       "value": 1.4179528137975959,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2560519229410267,
+        1.679314382033311
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 29,
+       "locations_favouring_squid": 0,
+       "location_sign_flip_p": 3.725290298461914e-09,
+       "p_holm": 3.3527612686157227e-08
+      }
+     },
+     "infant18mo": {
+      "confirmatory": {
+       "value": 1.4251357671225688,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2644022229402188,
+        1.6138161029641716
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 30,
+       "locations_favouring_squid": 1,
+       "location_sign_flip_p": 1.210719347000122e-08,
+       "p_holm": 1.0896474123001099e-07
+      },
+      "exploratory": {
+       "value": 1.330640833953098,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.1557194352236895,
+        1.6245047927124714
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 16,
+       "locations_favouring_squid": 0,
+       "location_sign_flip_p": 3.0517578125e-05,
+       "p_holm_over_present_anatomies": 0.000244140625
+      },
+      "oracle": {
+       "value": 1.615766081634564,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.4139432467481008,
+        1.9029070964427184
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.01,
+       "locations_favouring_opm": 34,
+       "locations_favouring_squid": 0,
+       "location_sign_flip_p": 1.1641532182693481e-10,
+       "p_holm": 1.0477378964424133e-09
+      },
+      "mismatch": {
+       "value": 1.4371278430501646,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2501622847172782,
+        1.6506124216771938
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 28,
+       "locations_favouring_squid": 1,
+       "location_sign_flip_p": 4.0978193283081055e-08,
+       "p_holm": 2.4586915969848633e-07
+      }
+     },
+     "infant12mo": {
+      "confirmatory": {
+       "value": 1.394171440376581,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2490104931999253,
+        1.560431783055003
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 29,
+       "locations_favouring_squid": 1,
+       "location_sign_flip_p": 3.3527612686157227e-08,
+       "p_holm": 2.682209014892578e-07
+      },
+      "exploratory": {
+       "value": 1.463866052926606,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2117926474405265,
+        1.8376067411758858
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 14,
+       "locations_favouring_squid": 1,
+       "location_sign_flip_p": 0.00048828125,
+       "p_holm_over_present_anatomies": 0.0029296875
+      },
+      "oracle": {
+       "value": 1.4820227227359108,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2997238493021872,
+        1.8405777966671317
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.022,
+       "locations_favouring_opm": 30,
+       "locations_favouring_squid": 3,
+       "location_sign_flip_p": 1.050066202878952e-07,
+       "p_holm": 5.25033101439476e-07
+      },
+      "mismatch": {
+       "value": 1.4269148669992129,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.2539941451294698,
+        1.6019597420055571
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 28,
+       "locations_favouring_squid": 2,
+       "location_sign_flip_p": 2.682209014892578e-07,
+       "p_holm": 1.341104507446289e-06
+      }
+     },
+     "childA": {
+      "confirmatory": {
+       "value": 1.2676050067484605,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.0745370072333622,
+        1.3808996336088641
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 14,
+       "locations_favouring_squid": 3,
+       "location_sign_flip_p": 0.0102996826171875,
+       "p_holm": 0.0102996826171875
+      },
+      "exploratory": {
+       "value": 1.2745606273192618,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        0.9330329915368073,
+        1.6311419669655496
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 11,
+       "locations_favouring_squid": 4,
+       "location_sign_flip_p": 0.0224609375,
+       "p_holm_over_present_anatomies": 0.0224609375
+      },
+      "oracle": {
+       "value": 1.2856689444491674,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.0936333392939521,
+        1.5187276760589323
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 23,
+       "locations_favouring_squid": 5,
+       "location_sign_flip_p": 0.00013832002878189087,
+       "p_holm": 0.00027664005756378174
+      },
+      "mismatch": {
+       "value": 1.2264610334180532,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.0624609253221236,
+        1.4129410726770166
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 15,
+       "locations_favouring_squid": 4,
+       "location_sign_flip_p": 0.025970458984375,
+       "p_holm": 0.025970458984375
+      }
+     },
+     "childB": {
+      "confirmatory": {
+       "value": 1.3459001926323553,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.1462881083127725,
+        1.5552401086863643
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 21,
+       "locations_favouring_squid": 2,
+       "location_sign_flip_p": 1.1205673217773438e-05,
+       "p_holm": 2.2411346435546875e-05
+      },
+      "exploratory": {
+       "value": 1.1787998978689838,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.0199410405415288,
+        1.512255229001337
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 12,
+       "locations_favouring_squid": 3,
+       "location_sign_flip_p": 0.008544921875,
+       "p_holm_over_present_anatomies": 0.01708984375
+      },
+      "oracle": {
+       "value": 1.26764206181251,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.1106226780595256,
+        1.520100455149115
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 19,
+       "locations_favouring_squid": 3,
+       "location_sign_flip_p": 0.00020456314086914062,
+       "p_holm": 0.00027664005756378174
+      },
+      "mismatch": {
+       "value": 1.2299345624117508,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.023083454623633,
+        1.4769833499261416
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 20,
+       "locations_favouring_squid": 7,
+       "location_sign_flip_p": 0.004426032304763794,
+       "p_holm": 0.008852064609527588
+      }
+     },
+     "childC": {
+      "confirmatory": {
+       "value": 1.2968395546510094,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.1514706331774738,
+        1.4312159587211128
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 25,
+       "locations_favouring_squid": 2,
+       "location_sign_flip_p": 2.175569534301758e-06,
+       "p_holm": 6.5267086029052734e-06
+      },
+      "exploratory": {
+       "value": 1.4349286683690985,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.0615147381836287,
+        1.6239501972948296
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 14,
+       "locations_favouring_squid": 2,
+       "location_sign_flip_p": 0.00372314453125,
+       "p_holm_over_present_anatomies": 0.014892578125
+      },
+      "oracle": {
+       "value": 1.3416461240725206,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.1736094403051562,
+        1.5465272542339117
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 29,
+       "locations_favouring_squid": 5,
+       "location_sign_flip_p": 3.8079451769590378e-06,
+       "p_holm": 1.1423835530877113e-05
+      },
+      "mismatch": {
+       "value": 1.3370485739182054,
+       "value_censored": null,
+       "value_bounds": null,
+       "ci95": [
+        1.1802324565086975,
+        1.4996084551772297
+       ],
+       "share_resamples_neither_reached": 0.0,
+       "share_resamples_opm_not_reached": 0.0,
+       "share_resamples_squid_not_reached": 0.0,
+       "share_resamples_reached_at_weakest": 0.0,
+       "locations_favouring_opm": 26,
+       "locations_favouring_squid": 4,
+       "location_sign_flip_p": 8.340924978256226e-06,
+       "p_holm": 2.5022774934768677e-05
+      }
+     }
+    },
+    "drawn_as": {
+     "adult/confirmatory": "value",
+     "adult/exploratory": "value",
+     "school/confirmatory": "value",
+     "school/exploratory": "value",
+     "size2yr/confirmatory": "value",
+     "size2yr/exploratory": "value",
+     "infant2yr/confirmatory": "value",
+     "infant2yr/exploratory": "value",
+     "infant18mo/confirmatory": "value",
+     "infant18mo/exploratory": "value",
+     "infant12mo/confirmatory": "value",
+     "infant12mo/exploratory": "value",
+     "childA/confirmatory": "value",
+     "childA/exploratory": "value",
+     "childB/confirmatory": "value",
+     "childB/exploratory": "value",
+     "childC/confirmatory": "value",
+     "childC/exploratory": "value",
+     "adult/oracle": "value",
+     "school/oracle": "value",
+     "size2yr/oracle": "value",
+     "infant2yr/oracle": "value",
+     "infant18mo/oracle": "value",
+     "infant12mo/oracle": "value",
+     "childA/oracle": "value",
+     "childB/oracle": "value",
+     "childC/oracle": "value",
+     "adult/mismatch": "value",
+     "school/mismatch": "value",
+     "size2yr/mismatch": "value",
+     "infant2yr/mismatch": "value",
+     "infant18mo/mismatch": "value",
+     "infant12mo/mismatch": "value",
+     "childA/mismatch": "value",
+     "childB/mismatch": "value",
+     "childC/mismatch": "value"
+    }
+   }
+  }
+ }
+}

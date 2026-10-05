@@ -1,11 +1,11 @@
 # G2 report: realistic adult OPM vs Neuromag comparison (NEW)
 
-Generated from `results/g2/g2_summary.json` (code commit e53bea8; band supplement `g2_band_sensitivity.json` at e53bea8; MNE 1.13.2). Methods: `docs/methods.md` section 8; assumptions in `docs/provenance_register.md`. This is a proposed study; no author of the reproduced papers has reviewed it.
+Generated from `results/g2/g2_summary.json` (code commit e53bea8; band supplement `g2_band_sensitivity.json` at bd70b45; MNE 1.13.2). Methods: `docs/methods.md` section 8; assumptions in `docs/provenance_register.md`. No author of the reproduced papers has reviewed it.
 
 ## Common setup
 
 - Anatomy: MNE sample subject, measured head position; 7661 target dipoles (10 nAm, cortical normal, usable oct-6 vertices); background grid of 1755 area-weighted sources.
-- Neuromag geometry: the sample recording's Vectorview sensor positions and transforms with MRN T3 coil types (3024 magnetometers, 3014 planar gradiometers), a representative Neuromag system, not one installation; the manufacturer's typical noise values (MEGIN TRIUX; not verified against the specification sheet).
+- Neuromag geometry: the sample recording's Vectorview sensor positions and transforms with MRN T3 coil types (3024 magnetometers, 3014 planar gradiometers), a representative Neuromag system, not one installation; the manufacturer's typical noise values (TRIUX datasheet, document NM23083B-A; U-HW1).
 - Band 1-40 Hz (ENBW 35.1 Hz). Intrinsic noise: SQUID magnetometers 20.7 fT, gradiometers 21.3 fT/cm; OPM at 15 fT/sqrt(Hz) 89 fT (RMS in band).
 - Brain noise calibrated on good gradiometers to 37.1 fT/cm (task baseline minus empty room); predicted magnetometer level 192 fT vs 262 fT measured.
 - Room field: explains 94 % (magnetometers) and 1.6 % (gradiometers) of the empty-room variance; model vs measured empty room 115 vs 115 fT, 21.4 vs 20.2 fT/cm.
@@ -106,7 +106,7 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 - Sensitivity, one factor at a time (vs combined, intrinsic+brain): opm asd 7fT 1.08x; opm asd 10fT 1.05x; opm asd 15fT 1.01x; opm asd 20fT 0.98x; opm asd 30fT 0.93x; background corr 5mm 1.01x; background corr 10mm 1.02x; background mag calibrated 1.01x; squid measured spectrum 1.02x; head x+5mm 1.00x; head x-5mm 1.01x; head y+5mm 1.01x; head y-5mm 1.00x; head z+5mm 0.99x; head z-5mm 1.02x; head pitch+5deg 1.00x; head pitch-5deg 1.01x; head well fitted 0.99x; gap 3mm 0.99x; gap 6mm 0.96x.
 - By lobe (vs combined, intrinsic+brain): frontal 1.04x, parietal 1.04x, temporal 0.99x, occipital 1.02x, cingulate 0.99x, insula 0.95x.
 - Without the 558 medial-wall targets (7.3 %; FreeSurfer 'unknown', not cortex), vs combined: intrinsic+brain 1.02x, projected 0.96x.
-- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.01x, 1-10Hz 1.00x, 8-30Hz 1.01x, 30-80Hz 0.99x.
+- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.01x, 1-10Hz 1.00x, 8-30Hz 1.01x, 30-80Hz 0.99x, 3-70Hz 1.01x.
 
 ## OPM channel-budget control (204)
 
@@ -143,7 +143,7 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 - Sensitivity, one factor at a time (vs combined, intrinsic+brain): opm asd 7fT 1.29x; opm asd 10fT 1.22x; opm asd 15fT 1.14x; opm asd 20fT 1.08x; opm asd 30fT 1.01x; background corr 5mm 1.15x; background corr 10mm 1.17x; background mag calibrated 1.14x; squid measured spectrum 1.16x; head x+5mm 1.13x; head x-5mm 1.14x; head y+5mm 1.15x; head y-5mm 1.12x; head z+5mm 1.11x; head z-5mm 1.17x; head pitch+5deg 1.13x; head pitch-5deg 1.15x; head well fitted 1.10x; gap 3mm 1.09x; gap 6mm 1.04x.
 - By lobe (vs combined, intrinsic+brain): frontal 1.21x, parietal 1.14x, temporal 1.15x, occipital 1.11x, cingulate 1.05x, insula 1.08x.
 - Without the 558 medial-wall targets (7.3 %; FreeSurfer 'unknown', not cortex), vs combined: intrinsic+brain 1.14x, projected 1.12x.
-- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.14x, 1-10Hz 1.14x, 8-30Hz 1.14x, 30-80Hz 1.10x.
+- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.14x, 1-10Hz 1.14x, 8-30Hz 1.14x, 30-80Hz 1.10x, 3-70Hz 1.13x.
 
 ## OPM dense array (full system)
 
@@ -181,7 +181,7 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 - Sensitivity, one factor at a time (vs combined, intrinsic+brain): opm asd 7fT 1.30x; opm asd 10fT 1.23x; opm asd 15fT 1.14x; opm asd 20fT 1.08x; opm asd 30fT 1.01x; background corr 5mm 1.15x; background corr 10mm 1.17x; background mag calibrated 1.15x; squid measured spectrum 1.17x; head x+5mm 1.13x; head x-5mm 1.14x; head y+5mm 1.16x; head y-5mm 1.13x; head z+5mm 1.11x; head z-5mm 1.18x; head pitch+5deg 1.13x; head pitch-5deg 1.15x; head well fitted 1.10x; gap 3mm 1.09x; gap 6mm 1.04x.
 - By lobe (vs combined, intrinsic+brain): frontal 1.22x, parietal 1.14x, temporal 1.16x, occipital 1.12x, cingulate 1.05x, insula 1.09x.
 - Without the 558 medial-wall targets (7.3 %; FreeSurfer 'unknown', not cortex), vs combined: intrinsic+brain 1.15x, projected 1.13x.
-- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.14x, 1-10Hz 1.15x, 8-30Hz 1.14x, 30-80Hz 1.11x.
+- Frequency bands (vs combined, intrinsic+brain; noise recalibrated per band): 1-40Hz 1.14x, 1-10Hz 1.15x, 8-30Hz 1.14x, 30-80Hz 1.11x, 3-70Hz 1.14x.
 
 ## Channel-count control: a triaxial OPM at the matched sites (A-OPM-TRIAX)
 
@@ -196,7 +196,7 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 
 ## Neuromag sensor noise from the measured spectrum
 
-- Per channel, the in-band empty-room variance the 8-term room fit leaves (an upper bound on the sensor noise in this room): median 25.9 fT (magnetometers) and 20.0 fT/cm (gradiometers), vs the brochure 20.7 fT and 21.3 fT/cm in the band. Dense / matched vs combined: intrinsic+brain 1.17x / 1.02x, projected 1.13x / 0.96x.
+- Per channel, the in-band empty-room variance the 8-term room fit leaves (an upper bound on the sensor noise in this room): median 25.9 fT (magnetometers) and 20.0 fT/cm (gradiometers), vs the TRIUX datasheet's 20.7 fT and 21.3 fT/cm in the band. Dense / matched vs combined: intrinsic+brain 1.17x / 1.02x, projected 1.13x / 0.96x.
 
 ## Link to the analytical benchmark (G1A)
 
