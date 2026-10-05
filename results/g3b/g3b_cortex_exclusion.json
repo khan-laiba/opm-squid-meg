@@ -1,5 +1,9 @@
 {
-  "status": "DERIVED (the cortex left out by the source rule A-BEM-DIST in each native head; surfaces loaded as the pediatric analyses load them; nothing simulated)",
+  "status": "DERIVED (the cortex left out by the source rule A-BEM-DIST in each head of the pediatric analyses; surfaces loaded or scaled as those analyses do; nothing simulated)",
+  "scale_factors": {
+    "school": 0.8947368421052632,
+    "size2yr": 0.8441768203796746
+  },
   "rule": "usable: inside the inner-skull BEM surface and at least 4 mm from its 5120-triangle mesh (opmsquid.anatomy.FullResCortex.usable)",
   "near_scalp": "vertices whose distance to the scalp used (the dense MRI scalp of each head; point-to-surface, as the children's MRI check measures it) is below the threshold",
   "anatomies": {
@@ -28,6 +32,60 @@
         "outside_inner_skull_share": 0.0,
         "within_4mm_of_inner_skull_share": 1.0,
         "n_usable_vertices": 0
+      }
+    },
+    "school": {
+      "subject": "sample_x0.8947",
+      "whole_surface": {
+        "n_vertices": 312273,
+        "area_cm2": 1620.6213493562088,
+        "usable_share": 0.9067852757445308,
+        "outside_inner_skull_share": 0.0007009142087354835,
+        "within_4mm_of_inner_skull_share": 0.09251381004673352,
+        "n_usable_vertices": 277561
+      },
+      "within_8mm_of_scalp": {
+        "n_vertices": 0,
+        "area_cm2": 0.0,
+        "usable_share": null,
+        "outside_inner_skull_share": null,
+        "within_4mm_of_inner_skull_share": null,
+        "n_usable_vertices": 0
+      },
+      "within_10mm_of_scalp": {
+        "n_vertices": 570,
+        "area_cm2": 1.789910403900031,
+        "usable_share": 0.027311506284352173,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.972688493715648,
+        "n_usable_vertices": 11
+      }
+    },
+    "size2yr": {
+      "subject": "sample_x0.8442",
+      "whole_surface": {
+        "n_vertices": 312273,
+        "area_cm2": 1442.6393067805488,
+        "usable_share": 0.894071187005623,
+        "outside_inner_skull_share": 0.0007009142087354836,
+        "within_4mm_of_inner_skull_share": 0.10522789878564145,
+        "n_usable_vertices": 273259
+      },
+      "within_8mm_of_scalp": {
+        "n_vertices": 0,
+        "area_cm2": 0.0,
+        "usable_share": null,
+        "outside_inner_skull_share": null,
+        "within_4mm_of_inner_skull_share": null,
+        "n_usable_vertices": 0
+      },
+      "within_10mm_of_scalp": {
+        "n_vertices": 1397,
+        "area_cm2": 4.299849218156833,
+        "usable_share": 0.04754791650996432,
+        "outside_inner_skull_share": 0.000785865898269565,
+        "within_4mm_of_inner_skull_share": 0.9516662175917661,
+        "n_usable_vertices": 54
       }
     },
     "infant2yr": {
@@ -194,7 +252,7 @@
     }
   },
   "provenance": {
-    "commit": "92c19ac",
+    "commit": "ae1631c",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

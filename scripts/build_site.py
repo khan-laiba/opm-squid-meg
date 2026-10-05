@@ -636,7 +636,8 @@ def page_pediatric(d, out):
           "D<sub>adult</sub> on homologous sources (vertex-wise for the scaled controls; parcels and depth strata for the "
           "templates and the school-aged children). A positive Delta is a relative gain for OPM, not by itself an OPM advantage in the child. Methods: section "
           "10 of the <a href=\"methods.html\">methods</a>; full tables in the <a href=\"g3b-report.html\">G3B report</a>.</p>",
-          sb.table(["Anatomy", "Construction", "Head circumference [mm]", "Breadth x length [mm]", "Targets", "Usable cortex [cm2]",
+          sb.table(["Anatomy", "Construction", "Head circumference [mm]", "Breadth x length [mm]", "Targets (medial wall included)",
+                    "Usable cortex [cm2]",
                     "OPM dense / matched sites", "Neuromag gap centred / top [mm]"], rows,
                    with_credits("Anatomies and arrays (gap: median magnetometer coil centre to scalp).", A, link=False)),
           fig(out, "g3b/Figure_G3B_geometry.png", with_credits(
@@ -693,8 +694,10 @@ def page_epilepsy(d, out):
     h = [f"<p>{label('NEW')} Interictal-spike-like events (Hunold's spike-wave waveform, three morphologies, 10-320 nAm focal "
          "dipoles and 10-mm patches) in the G2 noise model in the time domain, identical in every array. An oracle knows source "
          "and time; the practical detector scans time and a cortical dictionary with thresholds frozen on independent null data. "
-         "Methods: section 9 of the <a href=\"methods.html\">methods</a>.</p>",
-         "<h2 id=\"detection\">Detection</h2>",
+         "Methods: section 9 of the <a href=\"methods.html\">methods</a>. Every spike result on this page is from the "
+         "exploratory run (18 locations per depth band, endpoint chosen after the analyses); the confirmatory run, with new "
+         "locations, seeds and null data, is in the report (Section 3.6, Table 3) and S1, section G.5.</p>",
+         "<h2 id=\"detection\">Detection (exploratory run)</h2>",
          fig(out, "g4/Figure_G4_detection.png", "Detection probability vs strength per depth band (focal, three morphologies pooled; "
              "Wilson bands are event-level and descriptive).", "Detection curves"),
          sb.table(["Detector", "Array", *DEPTH_BANDS], rows,
@@ -772,7 +775,7 @@ def page_epilepsy_pediatric(d, out):
             cells.append(f"{r['locations_favouring_opm']}/{r['locations_favouring_squid']} (p {r['location_sign_flip_p']:.2g}); "
                          f"ratio {detection.format_s50_ratio(r['s50_ratio_squid_over_opm'])}")
         prow.append([ANAT[lab], *cells])
-    h = [f"<h2 id=\"pediatric\">Pediatric: the same framework on smaller heads in the fixed helmet {label('NEW')}</h2>",
+    h = [f"<h2 id=\"pediatric\">Pediatric, exploratory run: the same framework on smaller heads in the fixed helmet {label('NEW')}</h2>",
          "<p>The adult detection and localization studies rerun unchanged (configuration, seeds, detectors, operating points) on "
          "the G3B anatomies with Neuromag at the primary placement (top contact) and the refitted OPM arrays; thresholds are "
          "calibrated on each anatomy's own null data. The templates are averages, the school-age and 2-year-size heads scaled "

@@ -49,14 +49,14 @@ def main():
     if bands:
         prov += f"; band supplement `g2_band_sensitivity.json` at {bands.get('provenance', {}).get('commit', '-')}"
     L.append(f"Generated from `results/g2/g2_summary.json` ({prov}; MNE {d['provenance']['mne_version']}). "
-             "Methods: `docs/methods.md` section 8; assumptions in `docs/provenance_register.md`. This is a proposed study; "
-             "no author of the reproduced papers has reviewed it.\n")
+             "Methods: `docs/methods.md` section 8; assumptions in `docs/provenance_register.md`. No author of the reproduced "
+             "papers has reviewed it.\n")
     L.append("## Common setup\n")
     L.append(f"- Anatomy: MNE sample subject, measured head position; {d['n_targets']} target dipoles (10 nAm, cortical normal, "
              f"usable oct-6 vertices); background grid of {d['n_background_grid']} area-weighted sources.")
     L.append("- Neuromag geometry: the sample recording's Vectorview sensor positions and transforms with MRN T3 coil types "
              "(3024 magnetometers, 3014 planar gradiometers), a representative Neuromag system, not one installation; the "
-             "manufacturer's typical noise values (MEGIN TRIUX; not verified against the specification sheet).")
+             "manufacturer's typical noise values (TRIUX datasheet, document NM23083B-A; U-HW1).")
     L.append(f"- Band 1-40 Hz (ENBW {d['enbw_hz']:.1f} Hz). Intrinsic noise: SQUID magnetometers "
              f"{v['model']['intrinsic_rms_mag_fT']:.1f} fT, gradiometers {v['model']['intrinsic_rms_grad_fT_cm']:.1f} fT/cm; OPM at "
              "15 fT/sqrt(Hz) " + f"{v['model']['intrinsic_rms_opm_fT']['15']:.0f} fT (RMS in band).")
