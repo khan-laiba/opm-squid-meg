@@ -196,7 +196,7 @@ OPM / Neuromag, median detectability ratio (95 % CI from a bootstrap over cortic
 
 ## Neuromag sensor noise from the measured spectrum
 
-- Per channel, the in-band empty-room variance the 8-term room fit leaves (an upper bound on the sensor noise in this room): median 25.9 fT (magnetometers) and 20.0 fT/cm (gradiometers), vs the brochure 20.7 fT and 21.3 fT/cm in the band. Dense / matched vs combined: intrinsic+brain 1.17x / 1.02x, projected 1.13x / 0.96x.
+- Per channel, the in-band empty-room variance the 8-term room fit leaves (an upper bound on the sensor noise in this room): median 25.9 fT (magnetometers) and 20.0 fT/cm (gradiometers), vs the TRIUX datasheet's 20.7 fT and 21.3 fT/cm in the band. Dense / matched vs combined: intrinsic+brain 1.17x / 1.02x, projected 1.13x / 0.96x.
 
 ## Link to the analytical benchmark (G1A)
 

@@ -77142,7 +77142,7 @@
     "Equal site count: the adult's dense array subsampled by farthest-point sampling to the child's dense site count (G3B channel-count control), with the adult in the same helmet rule.",
     "Interaction = within-head contrast of the child minus that of the adult (same estimator as Delta; fit_child, fit_adult and interaction take the places of D_child, D_adult and Delta, interaction_by_* its strata, 'parcels' its parcel table). At every vertex of a scaled adult it equals Delta(fixed helmet) - Delta(fitted helmet); the area-weighted medians are not additive (additivity_residual = Delta(fixed) - Delta(fitted) - interaction, medians).",
     "Placement band: Delta over the 12 source-blind placements of the fixed helmet (top and back contact, +-5 mm x/y, pitch +-10 deg, roll +-5 deg, yaw +-10 deg), each head against the adult in the same placement, as the difference of the stored area-weighted medians of D (dense OPM); placements infeasible for either head left out. 'crossed' pairs any feasible placement of the child with any of the adult.",
-    "A mechanistic control, not a pediatric SQUID system: a scaled helmet keeps the adult coils' sizes, orientations, integration points and noise."
+    "A geometric control, not a pediatric SQUID system: a scaled helmet keeps the adult coils' sizes, orientations, integration points and noise."
   ],
   "runtime": {
     "compute_s": 2160.7974388599396,
@@ -77339,5 +77339,6 @@
     "commit": "10e37b9",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
-  }
+  },
+  "metadata_revised_at_commit": "a7e2423"
 }
