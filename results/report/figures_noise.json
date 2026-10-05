@@ -1,0 +1,636 @@
+{
+ "provenance": {
+  "commit": "ec735ff+dirty"
+ },
+ "figures": {
+  "Figure_R17_noise_checks": {
+   "inputs": [
+    "results/g2_covariance_validation/covariance_validation.json :: detectability.comparisons['measured_corrected_over_model/<combined|mag|grad>'] (ratio, ci95, n, ci_method)",
+    "results/g2_covariance_validation/covariance_validation.json :: detectability.comparisons['without_heart_corrected_over_model/<combined|mag|grad>'] (ratio, ci95)",
+    "results/g2_covariance_validation/covariance_validation.json :: detectability.surrogate_medians['null_corrected/<combined|mag|grad>'] (2.5th, 50th, 97.5th percentile)",
+    "results/g2_covariance_validation/covariance_validation.json :: detectability.channels; declared_choices.n_surrogates, n_parcel_bootstrap",
+    "results/g2_covariance_validation/covariance_validation.json :: opm_implication.ratios['<array>/combined/<S1_same_relative_change|S2_same_variance_excess_both_modelled|S3_neuromag_measured_opm_variance_excess|S4_neuromag_measured_opm_as_modelled|S5_neuromag_measured_empty_room>'] (ratio, ci95) = scenarios A-E",
+    "results/g2_covariance_validation/covariance_validation.json :: opm_implication.ratios['<array>/combined/model_305'], ['<array>/combined/model_306/intrinsic+brain'] (checks)",
+    "results/g2_covariance_validation/covariance_validation.json :: opm_implication.assumptions, opm_implication.checks.magnetometer_variance_excess_k, model.magnetometer_calibration_scale_ratio",
+    "results/g2_covariance_validation/covariance_validation.json :: plain_summary (checks)",
+    "results/g2/g2_summary.json :: primary.oracle['<array>/combined/intrinsic+brain'] (median_log2, ci95) = the published model",
+    "results/g2/g2_summary.json :: arrays.<array>.n_sites, arrays.squid.channels",
+    "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: sweep.levels_fT, sweep.entries['<level>'].comparisons['<array>/combined/<intrinsic+brain|projected>'] (ratio, ci95_ratio, stored_g2)",
+    "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: sweep.break_even.entries['<array>/combined/<intrinsic+brain|projected>'] (break_even_fT, ci95_fT, bound, resamples_outside_grid), sweep.break_even.grid_fT, sweep.break_even.method",
+    "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: near_skull.primary.floor_2mm.<background.comparisons|targets.all|both.all>['<array>/combined/intrinsic+brain']",
+    "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: coloured.results['frequency_resolved/flat/15fT/<0|1|3|10>Hz'].comparisons['<array>/combined/intrinsic+brain']",
+    "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: far_field.results['cardiac+ocular/<room_field|magnetometer_shortfall>/added'].comparisons['<array>/combined/intrinsic+brain'], far_field.level_values_fT",
+    "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: joint.results['<joint_without_far_field|joint>/<level>fT'].comparisons['<array>/combined/intrinsic+brain'], joint.most_adverse, joint.definition",
+    "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: headline (every plotted row; checks)",
+    "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: config.adult.sensors.<opm_asd_fT_per_rtHz|opm_asd_primary_fT_per_rtHz>, config.sensitivity.<near_skull|joint>, setup.arrays.squid, setup.n_boot, conventions (projection terms)",
+    "docs/methods.md :: section 8, the covariance check's scenarios A-E (lettering; checked)"
+   ],
+   "description": "How far the adult noise model (MNE sample subject, 7,661 cortical targets, 1-40 Hz) can be trusted. Ratios are medians over the targets of a paired ratio of known-topography detectability (oracle covariance) with 95 % parcel-bootstrap intervals (1,000 resamples in the covariance check, 1,000 in the sensitivity run; 70 labels: the Desikan-Killiany parcels and the medial-wall labels); every ratio axis is logarithmic with a line at 1 and carries the same ratio in dB (20 log10 of the ratio; for an OPM/Neuromag detectability ratio this is D) on its top or right-hand axis. (a) Neuromag's detectability with the sample covariance of the measured noise (the task recording's pre-stimulus windows; MEG 2443 left out) over that with the modelled covariance, divided per target by the finite-sample bias of a covariance estimated from that many samples (detectability.comparisons['measured_corrected_over_model/<set>']), for the good channels, the magnetometers and the gradiometers; orange: the same with the heart's field (cardiac-locked average) removed (without_heart_corrected_over_model); grey: the 2.5th-97.5th percentile of the medians that an exact model gives when 'measured' the same way (40 surrogates recoloured to the model and corrected as the data; surrogate_medians['null_corrected/<set>']), so a value outside the grey range is a real departure of the measured noise from the model. (b) The OPM/Neuromag ratio of the dense and site-matched arrays that this implies (sensor, brain and room noise, like for like with the measured covariance, which holds the room field; Neuromag's 305 good channels), in the five scenarios of the covariance check (opm_implication.ratios; the result file's S1-S5 are the methods' A-E): A, the model's error common to both systems (the OPM's real covariance changes its detectability by the same factor as Neuromag's; identical to the model's own ratio); B, both systems' cortical backgrounds scaled by the measured magnetometer variance excess k = 1.86; C, a pessimistic bound, Neuromag with its measured covariance and the OPM bearing that whole excess as cortical noise; D, Neuromag as measured, the OPM exactly as modelled; E, Neuromag with its measured empty room and the modelled brain noise, the OPM as modelled. Top row (grey): the published model, sensor plus brain noise against all 306 channels (results/g2/g2_summary.json primary.oracle), also drawn as a line per array with its interval shaded in (b) and (c). (c) The ratio at the primary OPM white level (15 fT/sqrt(Hz)) with sensor plus brain noise when what the model leaves out is added (the near-skull and coloured-noise variants recalibrate the cortical background on the measured gradiometer brain noise, as the published model does): the cortex 2-4 mm from the inner skull (the valid vertices closer than 4 mm to it, left out of the published model; below 2 mm the lead fields are not converged) in the background, as additional targets or both (near_skull.primary.floor_2mm); coloured OPM noise with a 1/f corner at 1, 3 and 10 Hz under the frequency-resolved detector (coloured.results 'frequency_resolved/flat'), whose white-noise value (corner 'none') is its reference and lies below the published band-variance ratio; heart and eye sources (a cardiac current dipole 250 mm below the head and current dipoles at the two eyes, each half the far-field variance) added on top of the published cortical background at the room field's level (113 fT at the median magnetometer) or filling the magnetometer brain-noise shortfall (178 fT; far_field.results['cardiac+ocular/<level>/added'], the mode adverse to the OPM); and the joint runs (frequency-resolved): the near-skull background with the 10-Hz corner (joint_without_far_field, which the result file names the most adverse combination) and the same with the heart and eyes at the shortfall level (joint). (d) The ratio against the OPM white level (7, 10, 15, 20, 30 fT/sqrt(Hz); sweep.entries) with sensor plus brain noise (solid, markers) and after the 8-term projection (dotted), the stored 95 % intervals as bands; the break-even level, the white level at which the median ratio is 1 (sweep.break_even: crossing by log-linear interpolation on 33 log-spaced levels from 4 to 60 fT/sqrt(Hz), interval from the same parcel resamples applied to the whole curve), drawn as a diamond on the ratio of 1 with its interval (filled and 0.13 dB above the line: sensor plus brain noise; open and 0.13 dB below: after the projection; the offsets only keep the intervals apart); dashed: the most adverse combination (joint_without_far_field, sensor plus brain noise, frequency-resolved); grey vertical line: the published model's level. The joint run with the heart and eyes added (joint) lies, for the site-matched array, below it at every level (0.965 against 0.980 at 15 fT/sqrt(Hz); panel c) and, for the dense array, above it except at 30 fT/sqrt(Hz). No OPM noise was measured: (a) checks the model for Neuromag only, and (b) bounds the OPM side under stated assumptions rather than estimating it.",
+   "alt": "Four panels. (a) A small forest plot for Neuromag: with its measured noise, detectability is 1.14 times the modelled for all good channels, 1.06 for the magnetometers and 1.12 for the gradiometers, with intervals above 1, while an exact model would give a narrow grey range at 1; removing the heart's field changes little. (b) Forest plot of the implied OPM/Neuromag ratio for the dense and site-matched arrays: the published model 1.14 / 1.01, scenarios A, B and E about the same (1.14 / 1.01, 1.14 / 1.00, 1.13 / 1.00), D lower (1.03 / 0.89) and C, the pessimistic bound, lowest (0.80 / 0.68). (c) Forest plot of the ratios at 15 fT/sqrt(Hz) with each omission of the noise model added: near-skull cortex, coloured OPM noise, heart and eye fields and the joint runs move the dense ratio between 1.08 and 1.15 and the site-matched between 0.97 and 1.01. (d) Line chart of the ratio against the OPM white noise level from 7 to 30 fT/sqrt(Hz): the dense ratio falls from 1.30 to 1.01 and reaches 1 at 31.5 fT/sqrt(Hz), the site-matched from 1.08 to 0.93, reaching 1 at 16.7; after the projection both are lower, and the most adverse combination (dashed) lies below the sensor plus brain noise curves. All ratio axes also carry a dB scale.",
+   "caption_draft": "Figure R17. How far the noise model can be trusted. (a) Neuromag's detectability with its measured noise over that with the modelled noise (median over the 7,661 targets, finite-sample corrected): 1.14 [1.08, 1.20] (+1.15 dB) for its 305 good channels, 1.06 [1.00, 1.12] for the 102 magnetometers and 1.12 [1.07, 1.18] for the 203 gradiometers; 1.15, 1.07 and 1.13 with the heart's field removed, where an exact model measured the same way would give 0.995-1.006 (grey). The measured noise is more favourable to Neuromag than the model, by about as much as the dense array's modelled advantage (+1.17 dB). (b) The OPM/Neuromag ratio this implies (dense / site-matched; sensor, brain and room noise) depends on how the OPM's real noise departs from its model, which no measurement here constrains: A, the model's error common to both systems, 1.14 / 1.01 (the model's own ratio); B, both cortical backgrounds scaled by the magnetometer variance excess (\u00d7 1.86), 1.14 / 1.00; C, the pessimistic bound, Neuromag as measured and the OPM bearing the whole excess, 0.80 [0.76, 0.84] / 0.68 [0.65, 0.70]; D, Neuromag as measured and the OPM as modelled, 1.03 [0.99, 1.08] / 0.89 [0.86, 0.92]; E, Neuromag's measured empty room with the modelled brain noise, 1.13 / 1.00; the published model (sensor plus brain noise, grey row and vertical lines) 1.14 [1.12, 1.17] / 1.01 [0.99, 1.03]. (c) At 15 fT/\u221aHz with sensor plus brain noise, what the model leaves out moves the ratios by at most 6 % against the published model (dense \u22125.6 to +0.7 %, site-matched \u22124.3 to +0.1 %; the frequency-resolved detector alone, with white noise, gives \u22121.5 and \u22120.4 %): the cortex 2-4 mm from the inner skull as noise, as targets or both 1.137, 1.152 and 1.144 (site-matched 1.008-1.009); coloured OPM noise with a 1/f corner at 1, 3 and 10 Hz 1.122, 1.111, 1.083 against 1.127 with white noise under the same frequency-resolved detector (site-matched 1.002, 0.997, 0.980 against 1.005); heart and eye fields added at the room field's level or filling the magnetometer shortfall 1.143 / 1.000 and 1.144 / 0.996; jointly, the near-skull cortex with a 10-Hz corner 1.080 / 0.980, with the heart and eyes added 1.091 / 0.965. (d) Against the OPM white-noise level (solid: sensor plus brain noise; dotted: after the 8-term projection) the dense ratio falls from 1.30 at 7 fT/\u221aHz to 1.01 at 30 fT/\u221aHz (0.97 after the projection) and the site-matched from 1.08 to 0.93; the ratio reaches 1 (diamonds) at 31.5 [28.5, 34.9] fT/\u221aHz for the dense array (26.0 [22.3, 29.5] after the projection) and 16.7 [14.0, 19.4] for the site-matched (8.9 [5.6, 12.4]); in the most adverse combination (dashed) the dense ratio is 1.26, 1.08 and 0.93 at 7, 15 and 30 fT/\u221aHz. Medians over the targets with 95 % parcel-bootstrap intervals (lines and bands) within this one anatomy; top and right-hand axes: the same ratios in dB (D for the OPM/Neuromag ratios); dense OPM array 208 sites, site-matched 98, Neuromag 306 channels. No OPM noise was measured: the model is checked against measured noise for Neuromag only.",
+   "values": {
+    "a_neuromag_measured_over_model": {
+     "combined": {
+      "label": "305 good channels",
+      "measured": [
+       1.1417318732664505,
+       1.0835171492569593,
+       1.20221505198819
+      ],
+      "heart_removed": [
+       1.1469399844579218,
+       1.0909777455862042,
+       1.207928957978308
+      ],
+      "exact_model_range": [
+       0.99688817236857,
+       1.005818102315042
+      ],
+      "exact_model_median": 1.00125752089922,
+      "ci_method": "parcels (70)"
+     },
+     "mag": {
+      "label": "102 magnetometers",
+      "measured": [
+       1.0589592184911558,
+       1.003177378147542,
+       1.119022163062822
+      ],
+      "heart_removed": [
+       1.0660405240597817,
+       1.0087331556644978,
+       1.133526934587254
+      ],
+      "exact_model_range": [
+       0.9949454887709893,
+       1.0046910373274855
+      ],
+      "exact_model_median": 0.9993287342439783,
+      "ci_method": "parcels (70)"
+     },
+     "grad": {
+      "label": "203 gradiometers",
+      "measured": [
+       1.1224870134348064,
+       1.066430832316858,
+       1.1835475276446352
+      ],
+      "heart_removed": [
+       1.13323172658797,
+       1.0812930304380186,
+       1.1823016669507262
+      ],
+      "exact_model_range": [
+       0.9961626752677103,
+       1.0052179279815032
+      ],
+      "exact_model_median": 1.001061408824813,
+      "ci_method": "parcels (70)"
+     }
+    },
+    "b_scenarios": {
+     "published": {
+      "label": "Published model (sensor plus brain noise)",
+      "opm_dense": [
+       1.1439074860636071,
+       1.121351612537934,
+       1.167620770877181
+      ],
+      "opm_matched": [
+       1.008887172394946,
+       0.9937406406811512,
+       1.0269757464835159
+      ]
+     },
+     "A": {
+      "label": "A  the model's error common to both systems",
+      "opm_dense": [
+       1.1406818172925106,
+       1.1170108285654663,
+       1.1682916279727449
+      ],
+      "opm_matched": [
+       1.0072397033511917,
+       0.9844683450714816,
+       1.0275503778940773
+      ]
+     },
+     "B": {
+      "label": "B  both cortical backgrounds \u00d7 1.86 (magnetometer excess)",
+      "opm_dense": [
+       1.1423546711300867,
+       1.1180235285713418,
+       1.1669202887836023
+      ],
+      "opm_matched": [
+       1.0025244507049165,
+       0.9834926257331437,
+       1.0169351253505232
+      ]
+     },
+     "C": {
+      "label": "C  Neuromag as measured; OPM bears the whole excess (bound)",
+      "opm_dense": [
+       0.7986949012315212,
+       0.7598633417144931,
+       0.8419788921208146
+      ],
+      "opm_matched": [
+       0.6754830726653163,
+       0.6474979994014428,
+       0.7033364332168291
+      ]
+     },
+     "D": {
+      "label": "D  Neuromag as measured; OPM as modelled",
+      "opm_dense": [
+       1.0338461910231258,
+       0.9862671678860623,
+       1.0828852124339572
+      ],
+      "opm_matched": [
+       0.8877053860776791,
+       0.8552646772859327,
+       0.9208780984011551
+      ]
+     },
+     "E": {
+      "label": "E  Neuromag's measured empty room, modelled brain noise",
+      "opm_dense": [
+       1.1298886892956668,
+       1.1033293487141593,
+       1.1564074355498108
+      ],
+      "opm_matched": [
+       1.0003145509760623,
+       0.9789247686790647,
+       1.019552581002898
+      ]
+     },
+     "k_magnetometer_variance_excess": 1.8621491060704498
+    },
+    "c_omissions": {
+     "Cortex 2\u20134 mm from the inner skull / as noise": {
+      "source": "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: near_skull.primary.floor_2mm.background.comparisons['<array>/combined/intrinsic+brain']",
+      "headline": "near-skull cortex (>= 2 mm) in the background",
+      "opm_dense": [
+       1.1366431474533443,
+       1.1168135536316537,
+       1.1599049512426924
+      ],
+      "opm_matched": [
+       1.0082268927168974,
+       0.992882570091869,
+       1.0246776882671753
+      ]
+     },
+     "Cortex 2\u20134 mm from the inner skull / as targets": {
+      "source": "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: near_skull.primary.floor_2mm.targets.all['<array>/combined/intrinsic+brain']",
+      "headline": "near-skull cortex (>= 2 mm) as additional targets",
+      "opm_dense": [
+       1.1515271661276836,
+       1.1272520143814178,
+       1.180546488498023
+      ],
+      "opm_matched": [
+       1.00945623535233,
+       0.9930073108156471,
+       1.0290954195569635
+      ]
+     },
+     "Cortex 2\u20134 mm from the inner skull / as noise and targets": {
+      "source": "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: near_skull.primary.floor_2mm.both.all['<array>/combined/intrinsic+brain']",
+      "headline": "near-skull cortex (>= 2 mm) in the background and as targets",
+      "opm_dense": [
+       1.1441762094929395,
+       1.1205428872614045,
+       1.1707628591496975
+      ],
+      "opm_matched": [
+       1.008739946070758,
+       0.9927846019163695,
+       1.0255507244172302
+      ]
+     },
+     "Coloured OPM noise: 1/f corner / none, frequency-resolved": {
+      "source": "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: coloured.results['frequency_resolved/flat/15fT/0Hz'].comparisons['<array>/combined/intrinsic+brain']",
+      "headline": "OPM 1/f corner 0 Hz, frequency-resolved (flat signal)",
+      "opm_dense": [
+       1.1271244255886812,
+       1.1003617571444815,
+       1.157495472867742
+      ],
+      "opm_matched": [
+       1.0048532335889042,
+       0.9838019095959067,
+       1.025508970635544
+      ]
+     },
+     "Coloured OPM noise: 1/f corner / 1 Hz": {
+      "source": "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: coloured.results['frequency_resolved/flat/15fT/1Hz'].comparisons['<array>/combined/intrinsic+brain']",
+      "headline": "OPM 1/f corner 1 Hz, frequency-resolved (flat signal)",
+      "opm_dense": [
+       1.1217455708465074,
+       1.0959735505965433,
+       1.1495265827403909
+      ],
+      "opm_matched": [
+       1.0020141912633447,
+       0.9827134764617941,
+       1.0218149068428306
+      ]
+     },
+     "Coloured OPM noise: 1/f corner / 3 Hz": {
+      "source": "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: coloured.results['frequency_resolved/flat/15fT/3Hz'].comparisons['<array>/combined/intrinsic+brain']",
+      "headline": "OPM 1/f corner 3 Hz, frequency-resolved (flat signal)",
+      "opm_dense": [
+       1.1114769334855394,
+       1.0847997698690517,
+       1.139787536348078
+      ],
+      "opm_matched": [
+       0.9968393201631133,
+       0.9786611739095196,
+       1.0154919443830694
+      ]
+     },
+     "Coloured OPM noise: 1/f corner / 10 Hz": {
+      "source": "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: coloured.results['frequency_resolved/flat/15fT/10Hz'].comparisons['<array>/combined/intrinsic+brain']",
+      "headline": "OPM 1/f corner 10 Hz, frequency-resolved (flat signal)",
+      "opm_dense": [
+       1.0831276758787411,
+       1.0574738944360302,
+       1.1087027218990175
+      ],
+      "opm_matched": [
+       0.9804125579677826,
+       0.9626848964132773,
+       0.9974653766439382
+      ]
+     },
+     "Heart and eyes added to the noise / at the room field's level": {
+      "source": "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: far_field.results['cardiac+ocular/room_field/added'].comparisons['<array>/combined/intrinsic+brain']",
+      "headline": "heart + eyes, room field level, added",
+      "opm_dense": [
+       1.1431765534597231,
+       1.1179582843102798,
+       1.1723800539596023
+      ],
+      "opm_matched": [
+       1.0002152543544265,
+       0.978815109490227,
+       1.0201770296494677
+      ]
+     },
+     "Heart and eyes added to the noise / at the magnetometer shortfall": {
+      "source": "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: far_field.results['cardiac+ocular/magnetometer_shortfall/added'].comparisons['<array>/combined/intrinsic+brain']",
+      "headline": "heart + eyes, magnetometer shortfall level, added",
+      "opm_dense": [
+       1.1438952657598322,
+       1.1150962552751185,
+       1.1751446956275453
+      ],
+      "opm_matched": [
+       0.9958233271669898,
+       0.971708217736608,
+       1.0168861153694597
+      ]
+     },
+     "Joint, frequency-resolved / near-skull cortex + 10-Hz corner": {
+      "source": "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: joint.results['joint_without_far_field/15fT'].comparisons['<array>/combined/intrinsic+brain']",
+      "headline": "near-skull cortex + 1/f corner (most adverse combination), OPM white 15 fT/sqrt(Hz)",
+      "opm_dense": [
+       1.0804082489653288,
+       1.0575716949545053,
+       1.1064357773895395
+      ],
+      "opm_matched": [
+       0.9801499906205804,
+       0.9629364488115594,
+       0.9955831690792197
+      ]
+     },
+     "Joint, frequency-resolved / the same + heart and eyes": {
+      "source": "results/g2_noise_sensitivity/noise_sensitivity_summary.json :: joint.results['joint/15fT'].comparisons['<array>/combined/intrinsic+brain']",
+      "headline": "all alternatives together (far field filling the magnetometer shortfall), OPM white 15 fT/sqrt(Hz)",
+      "opm_dense": [
+       1.0908150254287166,
+       1.0641655948964015,
+       1.1220038667211893
+      ],
+      "opm_matched": [
+       0.9653129937047373,
+       0.9425454728608798,
+       0.9850780573679704
+      ]
+     }
+    },
+    "d_white_level": {
+     "levels_fT": [
+      7.0,
+      10.0,
+      15.0,
+      20.0,
+      30.0
+     ],
+     "sweep": {
+      "opm_dense/combined/intrinsic+brain": [
+       [
+        1.2982964429527044,
+        1.271068118221141,
+        1.324737926165873
+       ],
+       [
+        1.2269996340780496,
+        1.2023957579526448,
+        1.252758895104684
+       ],
+       [
+        1.1439074860636071,
+        1.1235596514803932,
+        1.1672998338781668
+       ],
+       [
+        1.0834153062505196,
+        1.0611507265308688,
+        1.1062407827383838
+       ],
+       [
+        1.0080986105987622,
+        0.9925062413087603,
+        1.0262437468918784
+       ]
+      ],
+      "opm_dense/combined/projected": [
+       [
+        1.2792906504272183,
+        1.2485816266010843,
+        1.3108431946914247
+       ],
+       [
+        1.201113947741852,
+        1.1727494826168647,
+        1.2319361438218355
+       ],
+       [
+        1.1151866669879527,
+        1.0828738113374088,
+        1.1459907368782287
+       ],
+       [
+        1.054489432552556,
+        1.019709207471529,
+        1.0878972697039133
+       ],
+       [
+        0.9706932315802802,
+        0.9409656386997935,
+        0.9962461294362173
+       ]
+      ],
+      "opm_matched/combined/intrinsic+brain": [
+       [
+        1.0839275941756814,
+        1.0671608407937399,
+        1.101763203040571
+       ],
+       [
+        1.0493781541126987,
+        1.0325272940786399,
+        1.0687143913663186
+       ],
+       [
+        1.008887172394946,
+        0.9932106150600171,
+        1.0291202355875084
+       ],
+       [
+        0.9833256620675912,
+        0.9648879400019731,
+        0.9974590586725652
+       ],
+       [
+        0.9330869628088535,
+        0.9079891970249081,
+        0.9492966515955179
+       ]
+      ],
+      "opm_matched/combined/projected": [
+       [
+        1.0185969902457004,
+        0.9808792435617626,
+        1.0454142341601185
+       ],
+       [
+        0.9905799346431453,
+        0.9483971309232666,
+        1.0228866403669725
+       ],
+       [
+        0.947959255058722,
+        0.9006199963859259,
+        0.9789288719816336
+       ],
+       [
+        0.9075061449082256,
+        0.8624474063006835,
+        0.939058383624922
+       ],
+       [
+        0.8333905480796321,
+        0.7853858592991149,
+        0.8680819477172589
+       ]
+      ]
+     },
+     "most_adverse": {
+      "opm_dense": [
+       [
+        1.261953144244999,
+        1.23032107030809,
+        1.2900171730676149
+       ],
+       [
+        1.1764100810078595,
+        1.1486365262533524,
+        1.2100964665825622
+       ],
+       [
+        1.0804082489653288,
+        1.0575716949545053,
+        1.1064357773895395
+       ],
+       [
+        1.0160486648694325,
+        0.9973378002405594,
+        1.0354479578912017
+       ],
+       [
+        0.9347640002985689,
+        0.9197688631246584,
+        0.9476414588593479
+       ]
+      ],
+      "opm_matched": [
+       [
+        1.0915550087488701,
+        1.06738132507002,
+        1.1170040538351218
+       ],
+       [
+        1.039249710629664,
+        1.0153849813045743,
+        1.064803533008739
+       ],
+       [
+        0.9801499906205804,
+        0.9629364488115594,
+        0.9955831690792197
+       ],
+       [
+        0.9327480521890152,
+        0.9103020385331384,
+        0.9474255606133045
+       ],
+       [
+        0.8381273880585479,
+        0.8155567637753234,
+        0.8577843789840753
+       ]
+      ]
+     },
+     "break_even": {
+      "opm_dense/combined/intrinsic+brain": [
+       31.51566946867282,
+       28.47142010984491,
+       34.94071036882069
+      ],
+      "opm_dense/combined/projected": [
+       26.032059757252288,
+       22.2748809594637,
+       29.469892534053173
+      ],
+      "opm_matched/combined/intrinsic+brain": [
+       16.674976365167723,
+       13.957770009660015,
+       19.363090117992094
+      ],
+      "opm_matched/combined/projected": [
+       8.880921086266415,
+       5.587128237663319,
+       12.438909472715835
+      ]
+     }
+    },
+    "published_model": {
+     "opm_dense": [
+      1.1439074860636071,
+      1.121351612537934,
+      1.167620770877181
+     ],
+     "opm_matched": [
+      1.008887172394946,
+      0.9937406406811512,
+      1.0269757464835159
+     ]
+    }
+   },
+   "checks": [
+    "docs/methods.md: the covariance check ('in five scenarios, A-E here (S1-S5 in the result file)') defines A 'the model's error common ...'; B 'both cortical backgrounds scaled ...'; C 'a pessimistic bound, Neuromag as measured ...'; D 'Neuromag as measured, the OPM exactly as modelled ...'; E 'Neuromag with its measured empty ...', in this order; A-E are drawn from S1-S5 of the result file in the same order",
+    "results/g2_covariance_validation/covariance_validation.json: detectability.channels combined = mag + grad (305 = 102 + 203)",
+    "results/g2_covariance_validation/covariance_validation.json: plain_summary quotes the plotted measured/model ratio, its interval, the exact-model range and the heart-removed ratio of all three channel sets (3 decimals)",
+    "results/g2_covariance_validation/covariance_validation.json: opm_implication.ratios['opm_dense/combined/model_306/intrinsic+brain'].ratio reproduces the published median (results/g2/g2_summary.json primary.oracle) to 0.0e+00 (relative)",
+    "results/g2_covariance_validation/covariance_validation.json: opm_implication.ratios['opm_matched/combined/model_306/intrinsic+brain'].ratio reproduces the published median (results/g2/g2_summary.json primary.oracle) to 0.0e+00 (relative)",
+    "results/g2_covariance_validation/covariance_validation.json: scenario A (S1_same_relative_change) is identical to model_305, the model's own ratio, for both arrays",
+    "results/g2_covariance_validation/covariance_validation.json: opm_implication.checks.magnetometer_variance_excess_k = model.magnetometer_calibration_scale_ratio = 1.8621",
+    "results/g2_covariance_validation/covariance_validation.json: plain_summary quotes every plotted scenario value with its interval (3 decimals)",
+    "results/g2_noise_sensitivity/noise_sensitivity_summary.json: sweep.entries['15'] (= headline 'published model, OPM white 15 fT/sqrt(Hz)') reproduces the published medians of results/g2/g2_summary.json exactly",
+    "results/g2_noise_sensitivity/noise_sensitivity_summary.json: every plotted row of (c) equals its headline row (ratio and interval) for both arrays",
+    "results/g2_noise_sensitivity/noise_sensitivity_summary.json: joint.most_adverse names joint_without_far_field; config.sensitivity.joint: near-skull floor 2 mm, corner 10 Hz, far field at the magnetometer_shortfall level",
+    "results/g2_noise_sensitivity/noise_sensitivity_summary.json: sweep.levels_fT = config.adult.sensors.opm_asd_fT_per_rtHz; every plotted sweep and most-adverse value equals its headline row; every break-even level lies where the plotted sweep median crosses 1, unbounded and with no resample outside its grid"
+   ],
+   "db_axes": [
+    {
+     "axis": "top",
+     "ticks_dB": [
+      0.0,
+      0.5,
+      1.0,
+      1.5
+     ],
+     "at_ratio": [
+      1.0,
+      1.0593,
+      1.122,
+      1.1885
+     ]
+    },
+    {
+     "axis": "top",
+     "ticks_dB": [
+      -4.0,
+      -3.0,
+      -2.0,
+      -1.0,
+      0.0,
+      1.0
+     ],
+     "at_ratio": [
+      0.631,
+      0.7079,
+      0.7943,
+      0.8913,
+      1.0,
+      1.122
+     ]
+    },
+    {
+     "axis": "top",
+     "ticks_dB": [
+      -0.5,
+      0.0,
+      0.5,
+      1.0,
+      1.5
+     ],
+     "at_ratio": [
+      0.9441,
+      1.0,
+      1.0593,
+      1.122,
+      1.1885
+     ]
+    },
+    {
+     "axis": "right",
+     "ticks_dB": [
+      -2.0,
+      -1.0,
+      0.0,
+      1.0,
+      2.0
+     ],
+     "at_ratio": [
+      0.7943,
+      0.8913,
+      1.0,
+      1.122,
+      1.2589
+     ]
+    }
+   ],
+   "size": {
+    "page_width_mm": 175.0,
+    "saved_mm": [
+     174.9,
+     194.7
+    ],
+    "saved_px": [
+     1377,
+     1533
+    ],
+    "dpi": 200
+   }
+  }
+ }
+}

@@ -536,10 +536,14 @@ intrinsic + brain noise, OPM 15 fT/sqrt(Hz) unless stated; parcel-bootstrap 95 %
   dipole 200-300 mm below the head; 4.6-7.4 % for a magnetic dipole at 250 mm) and 10-23 % of the
   eyes' (Neuromag's 306 channels jointly, the matched and the dense array); with these sources in the
   noise the dense ratio is 1.125-1.162 (one source at a time) and 1.143-1.144 (heart and eyes
-  together), the matched 0.995-1.006. In this model they do not act against the OPM.
-* Most adverse combination (near-skull background and a 10-Hz corner, frequency-resolved): dense
-  1.262, 1.176, 1.080, 1.016 and 0.935 at 7, 10, 15, 20 and 30 fT/sqrt(Hz), matched 1.092, 1.039,
-  0.980, 0.933 and 0.838.
+  together), the matched 0.995-1.006. In this model they move the dense ratio little in either
+  direction and lower the matched ratio slightly.
+* Joint runs (frequency-resolved): with the near-skull background and a 10-Hz corner (the result file's
+  "most adverse combination") dense 1.262, 1.176, 1.080, 1.016 and 0.935 at 7, 10, 15, 20 and 30
+  fT/sqrt(Hz), matched 1.092, 1.039, 0.980, 0.933 and 0.838. Adding the heart and eyes at the level that
+  fills the magnetometer shortfall gives dense 1.272, 1.188, 1.091, 1.022 and 0.930, matched 1.076, 1.028,
+  0.965, 0.911 and 0.820: lower for the matched array at every level and for the dense array at 30
+  fT/sqrt(Hz), so for the matched array that run, not the file's "most adverse" one, is the lowest.
 * Covariance check (`covariance_validation.json`, "plain_summary"; Neuromag 305 channels, the bad one
   left out): the model predicts the magnetometers' median brain-noise amplitude at 0.73 of the measured
   (an exact model, measured the same way, would give 0.98-1.03); the heart (cardiac-locked average of
