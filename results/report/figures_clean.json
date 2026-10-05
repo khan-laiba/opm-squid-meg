@@ -1,0 +1,274 @@
+{
+ "provenance": {
+  "commit": "10e37b9+dirty"
+ },
+ "figures": {
+  "Figure_R0_sphere": {
+   "inputs": [
+    "results/g1a/g1a_curves.csv :: depth_mm, B_OPM_pT, B_SQUID_pT (peak radial fields on the preprint's grid)",
+    "results/g1a/g1a_benchmark.json :: d_eq_mm (exact roots of the preprint's Eq. 3), eta_range_with_crossing, printed_vs_exact['Fig. 3 d_eq (eta 3)'], parameters (h_mm, b_mm, Q_nAm, xi_opm_mm, xi_squid_mm)",
+    "results/g2/g2_summary.json :: bridge_to_sphere.sphere_d_eq_mm.realistic_standoffs, bridge_to_sphere.<array>_d_eq_mm, bridge_to_sphere.<array>_eta_opm_ahead_at_all_depths, bridge_to_sphere.<array>_eta_squid_ahead_at_all_depths, bridge_to_sphere.<array>_ratio_vs_depth (bin edges), bridge_to_sphere.sensor_distance_mm (opm_matched.median, squid.median), arrays.<array>.n_sites, config.sources.focal_nAm"
+   ],
+   "description": "Adapted from Jas et al. (2026), CC BY 4.0 (bioRxiv 2026.08.17.744953; the preprint's Fig. 4E, redrawn from our reimplementation of its spherical model). (a) Sphere of the preprint: head radius 95 mm, brain radius 80 mm, 30-nAm tangential dipole, OPM on the scalp (standoff 0 mm), SQUID 18 mm above it, single-channel SNR = peak radial field / noise. SNR_OPM = SNR_SQUID where B_OPM / B_SQUID = eta, so the curve is the depth at which the stored field ratio of results/g1a/g1a_curves.csv equals eta (log-linear interpolation between its 100 grid depths, 15-94.2 mm), from the sphere centre (eta0 = 1.6829, depth 95 mm) to the brain surface (eta1 = 5.3086, depth 15 mm); dots: the stored exact roots of Eq. 3 at eta 1.7, 2, 2.5, 3, 4, 5 (curve within 0.0053 mm of them). Shaded: depths where the OPM's SNR is higher (every depth for eta < eta0); dotted line: the brain surface. Open diamond: the equal-SNR depth the preprint prints for eta = 3 (28 mm, with its Fig. 3; drawn there at 27.53 mm; exact root 27.67 mm). (b) Realistic adult head (MNE sample subject, 3-layer BEM, 10-nAm cortical-normal dipoles), the G2 bridge: per target the peak |B| of the OPM array over that of the best Neuromag magnetometer; medians over targets in 5-mm bins of depth below the scalp (distance to the nearest MRI scalp point); d_eq(eta) = the depth where that median falls below eta, linearly interpolated between bin centres (sensor white noise only, peak-channel SNR, magnetometers as the comparator, as in the sphere); eta grid 1-6 in steps of 0.25. Points are drawn where a crossing exists: OPM matched eta 2.5-4.75: 13.4-41.9 mm; OPM dense eta 2.5-5.25: 13.3-45.1 mm; the OPM leads in every depth bin for eta 1-2.25 (both arrays) and Neuromag already in the shallowest bin for eta >= 5 (matched) and >= 5.5 (dense). Dashed: the sphere of (a) with the real median standoffs (OPM matched array 6.99 mm, Neuromag magnetometer coils 29.83 mm from the scalp). Depth axis inverted (deeper down) and shared by both panels.",
+   "alt": "Two line charts of the equal-SNR depth below the scalp (vertical axis inverted, deeper down) against the noise ratio eta from 1 to 6. Left, the sphere: the depth falls from the sphere centre at eta 1.68 to the brain surface at eta 5.31; above the curve the OPM's SNR is higher; an open diamond marks the preprint's printed 28 mm at eta 3, next to the exact 27.7 mm. Right, the realistic adult head: the matched and dense OPM arrays cross between 13 and 45 mm for eta 2.5 to 5.25, close to the dashed sphere with the real standoffs.",
+   "caption_draft": "The spherical benchmark and the realistic head. (a) Depth below the scalp at which an OPM on the scalp and a SQUID 18 mm above it have equal single-channel SNR, against their noise ratio eta, in the adult sphere of Jas et al. (2026) (head radius 95 mm, brain radius 80 mm, 30-nAm tangential dipole; our reimplementation; dots: exact roots; shaded: OPM SNR higher). A crossing exists only for eta between 1.68 and 5.31; the diamond marks the 28 mm printed in the preprint at eta = 3 (exact 27.7 mm). (b) The same quantity on the realistic adult head: depth at which the median over targets of the peak field of the OPM array over that of the best Neuromag magnetometer equals eta (sensor noise only), for the matched (98 sites) and dense (208 sites) arrays, and the sphere of (a) with the real median standoffs (7.0 and 29.8 mm). Adapted from Jas et al. (2026), CC BY 4.0.",
+   "values": {
+    "sphere_exact_roots_mm": {
+     "1.7": 84.77805394282089,
+     "2.0": 52.936827234521665,
+     "2.5": 35.671437051926276,
+     "3.0": 27.665024519081108,
+     "4.0": 19.815588574200365,
+     "5.0": 15.861157705780515
+    },
+    "sphere_eta_range_with_crossing": [
+     1.6829240414054523,
+     5.308567315180439
+    ],
+    "sphere_curve_max_abs_err_vs_exact_mm": 0.005331337754824972,
+    "printed_eta3_mm": 28,
+    "exact_eta3_mm": 27.665024519081108,
+    "brain_surface_depth_mm": 15.0,
+    "sphere_real_standoffs_d_eq_mm": {
+     "2.0": 64.43455201452659,
+     "2.25": 48.849997949388715,
+     "2.5": 39.69588015200404,
+     "2.75": 33.48624608557375,
+     "3.0": 28.952745163193967,
+     "3.25": 25.479401477962014,
+     "3.5": 22.723774175831803,
+     "3.75": 20.478452491136203,
+     "4.0": 18.609849556835076,
+     "4.25": 17.027784351410553,
+     "4.5": 15.669053967550754
+    },
+    "real_standoffs_mm": {
+     "opm": 6.990057146917956,
+     "squid_mag": 29.825027689705387
+    },
+    "arrays_d_eq_mm": {
+     "opm_matched": {
+      "2.5": 41.884493692678866,
+      "2.75": 34.85121470340513,
+      "3.0": 29.565563041448716,
+      "3.25": 25.59924265329174,
+      "3.5": 22.255025055174315,
+      "3.75": 20.1356991837195,
+      "4.0": 18.016373312264683,
+      "4.25": 16.36707046379214,
+      "4.5": 14.869180296765789,
+      "4.75": 13.371290129739439
+     },
+     "opm_dense": {
+      "2.5": 45.143453781287015,
+      "2.75": 37.12106188307613,
+      "3.0": 31.819239178842178,
+      "3.25": 27.87512980497863,
+      "3.5": 24.760491671480303,
+      "3.75": 22.044542268118843,
+      "4.0": 20.246699460719274,
+      "4.25": 18.448856653319705,
+      "4.5": 16.92707536356401,
+      "4.75": 15.713830092308905,
+      "5.0": 14.500584821053797,
+      "5.25": 13.28733954979869
+     }
+    },
+    "eta_opm_ahead_at_all_depths": {
+     "opm_matched": [
+      1.0,
+      1.25,
+      1.5,
+      1.75,
+      2.0,
+      2.25
+     ],
+     "opm_dense": [
+      1.0,
+      1.25,
+      1.5,
+      1.75,
+      2.0,
+      2.25
+     ]
+    },
+    "eta_squid_ahead_at_all_depths": {
+     "opm_matched": [
+      5.0,
+      5.25,
+      5.5,
+      5.75,
+      6.0
+     ],
+     "opm_dense": [
+      5.5,
+      5.75,
+      6.0
+     ]
+    },
+    "n_sites": {
+     "opm_matched": 98,
+     "opm_dense": 208
+    }
+   }
+  },
+  "Figure_R11_maps_adult": {
+   "inputs": [
+    "results/g2/g2_targets.csv :: hemi, vertno, region, detect_opm_dense_opm_intrinsic+brain, detect_opm_matched_opm_intrinsic+brain, detect_squid_combined_intrinsic+brain",
+    "results/g2/g2_summary.json :: primary.oracle['<array>/combined/intrinsic+brain'].median_log2 (check), arrays.<array>.n_sites, arrays.squid.channels, config.sources.focal_nAm",
+    "results/g3b/g3b_summary.json :: placement_D['adult/centred/combined/intrinsic+brain'].median (the adult under the pediatric convention)",
+    "results/g3b/g3b_targets_adult.csv :: detect_opm_dense_opm_intrinsic+brain, detect_squid_centred_combined_intrinsic+brain (check against G2)",
+    "MNE-sample-data/subjects/sample: bem/sample-oct-6-src.fif, surf/?h.inflated, surf/?h.sulc (drawing only)"
+   ],
+   "description": "D = 20 log10(detect_<array>_opm / detect_squid_combined) per cortical target of the adult G2 run (MNE sample subject at its measured head position, 7,661 targets, 10-nAm cortical-normal dipoles, sensor white noise + cortical background, oracle covariance), drawn at the target's vertex of the oct-6 source space on the inflated white surface. The median over all targets is 1.168 dB (dense) and 0.077 dB (matched), equal to the stored median log2 ratios times 20 log10 2 (1.168 and 0.077 dB; checked). Under the pediatric convention (area-weighted median, medial wall excluded) the dense array's D at the same pose is 1.274 dB (results/g3b/g3b_summary.json placement_D['adult/centred/combined/intrinsic+brain']; that run's per-target D at this pose agrees with G2's within 0.0092 dB). Light grey: medial wall (targets in FreeSurfer's 'unknown' region: the cut through the corpus callosum and midbrain, not cortex); dark grey: source-space vertices that are not targets, i.e. within 4 mm of the 5,120-triangle inner-skull mesh or outside it (A-BEM-DIST; the shallowest cortex, which the noise model also leaves out of the brain background). A triangle takes the category of at least two of its vertices. Diverging colour scale (red: OPM higher), -6 to +6 dB, shared by R11 and R13 (display choice); values beyond it take the end colour (colour bar extension: 'max'). Views: orthographic, left lateral, left medial, right medial, right lateral, with sulcal shading (opmsquid.plotting); each hemisphere fills its panel (not to scale). Medial wall: 558 targets; not targets: 535 of 8,196 source-space vertices.",
+   "alt": "Inflated left and right cortical hemispheres in lateral and medial views, two rows. Top, the dense OPM array against Neuromag's 306 channels: red almost everywhere (99.9% of targets above 0 dB), strongest on lateral convexities, paler on medial and ventral surfaces. Bottom, the matched array: a mix of pale red and blue (55% above 0 dB), blue on the ventral and polar temporal and frontal surfaces. Grey: medial wall (light) and scattered vertices near the inner skull (dark).",
+   "caption_draft": "D on the adult's inflated cortex (MNE sample subject at its measured head position; sensor plus brain noise; 10-nAm dipoles). (a) Dense array (208 sites) and (b) matched array (98 sites) against Neuromag's 306 channels; red: the OPM's detectability is higher. Median D +1.17 dB (dense) and +0.08 dB (matched) over all 7,661 targets (dense array, area-weighted without the medial wall: +1.27 dB). Light grey: medial wall; dark grey: cortex within 4 mm of the inner skull, which is not simulated as a target and is also left out of the brain background. The colour scale is that of Figure R13.",
+   "values": {
+    "opm_dense": {
+     "median_all_targets_dB": 1.1675357851066235,
+     "stored_median_dB": 1.1678180430431184,
+     "median_without_medial_wall_dB": 1.199541855596495,
+     "share_positive": 0.9993473436888135,
+     "min_dB": -0.3927551353552532,
+     "max_dB": 8.128828010388565,
+     "share_above_limit": 0.003393812818169952,
+     "share_below_minus_limit": 0.0,
+     "g3b_area_weighted_without_medial_wall_measured_pose_dB": 1.2742586377548848,
+     "g3b_measured_pose_max_abs_diff_per_target_dB": 0.00915943802353869
+    },
+    "opm_matched": {
+     "median_all_targets_dB": 0.07699782116387524,
+     "stored_median_dB": 0.076852003704949,
+     "median_without_medial_wall_dB": 0.1424921575289186,
+     "share_positive": 0.5548883957707871,
+     "min_dB": -4.96289369688741,
+     "max_dB": 6.508658699841568,
+     "share_above_limit": 0.00013053126223730585,
+     "share_below_minus_limit": 0.0
+    },
+    "targets": {
+     "n": 7661,
+     "medial_wall": 558,
+     "source_space_vertices": 8196,
+     "not_targets": 535
+    },
+    "colour_limit_dB": 6.0,
+    "extend": "max"
+   }
+  },
+  "Figure_R12_geometry": {
+   "inputs": [
+    "cache/g3b/state.pkl (stored state of the G3B run; read only) :: runs[<head>].placements['top'|'counterfactual_x-centred'] (trans: device-to-head, k), runs[<head>].opm_pos['opm_dense'] (head frame), provenance.commit",
+    "results/g3b/g3b_summary.json :: placements[<head>]['top'|'counterfactual_x-centred'|'x-centred'] (moved_mm, k, k_nominal, shift_x_mm, min/median/max_dist_mm: checks and labels), arrays[<head>].opm_dense (n_sites, standoff_mm), anatomies[<head>].head_size.ofc_mm, config.placement (clearance_mm, dewar_spacing_mm), provenance.commit",
+    "MNE-sample-data/MEG/sample/sample_audvis_raw.fif (opmsquid.neuromag.load_info('T3'): magnetometer coil centres, device frame)",
+    "MRI scalps and white surfaces via opmsquid.anatomy (load_sample, load_template('ANTS12-0Months3T'), load_school('sub-Z209')): sample-head.fif, ANTS12-0Months3T-head.fif, sub-Z209-head.fif and the full white surfaces held by each subject's oct-6 source space; head frames from each subject's head-to-MRI transform"
+   ],
+   "description": "Head-frame sections (Neuromag convention of each head's own fiducials; x right, y anterior, z up; mm) through the head origin: sagittal x = 0 and coronal y = 0. Lines: the exact intersection of the MRI scalp mesh (black) and, in the coronal sections, of the white-matter surfaces (grey; the cortical sources lie on them) with the plane (the midsagittal plane passes between the hemispheres, so the sagittal sections show the scalp only); the sections are cropped below z = -68 mm (face and neck). Markers: sensors within 20 mm of the plane, projected onto it (as in the G3B geometry figure). Filled black squares: the 102 Neuromag magnetometer coil centres of the fixed adult helmet (VectorView geometry of the sample recording) with the head at top contact (the adult's measured pose, then raised along device +z until the nearest coil is 20 mm from the scalp; moved adult 5.5 mm, 12-month template 33.5 mm, child B 26.5 mm). Open vermillion squares: the counterfactual helmet scaled with the head and laterally centred ('counterfactual_x-centred': coil centres scaled by k about the head origin with the head at the measured pose shifted along device x to equal left/right median gaps, before any top contact; k = head-circumference ratio, raised in steps of 0.005 (opmsquid.pediatric.counterfactual_helmet) until no coil is closer than 18 mm to the scalp): k = 1.0000, 0.8409, 0.8644 (nominal 1.0000, 0.8009, 0.8294), x shift -1.5 mm, -2.5 mm, -2.5 mm. Open blue circles: the dense OPM sites (sensing centres, 7 mm from the scalp) refitted to each head (208, 144, 153 sites). Order: adult, 12-month template (ANTS12-0Months3T), child B (sub-Z209, OpenNeuro ds005234). Median magnetometer-to-scalp gap (nearest MRI scalp vertex, all 102 coils), stored and recomputed from the drawn geometry (equal to 1e-6 mm): fixed helmet at top contact 28.38, 40.42, 38.40 mm; scaled, laterally centred helmet 29.55, 27.72, 27.98 mm. The helmet transforms and OPM sites come from the stored G3B state (not in results/), which reproduces every stored gap, move, scale factor and site count; the coil centres are drawn, not the Dewar surface. Infant template: O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database (Richards et al., 2016); child B: OpenNeuro ds005234 (Fadeev et al., 2024, 2025).",
+   "alt": "Six panels: sagittal (top) and coronal (bottom) sections of three heads, adult, 12-month template and child B, drawn at the same scale. Each shows the scalp outline (the coronal ones with the folded white-matter outline inside), open blue circles of the dense OPM sites hugging the scalp, filled black squares of the fixed adult helmet and open vermillion squares of the helmet scaled with the head. Around the adult the two helmets nearly coincide; around the two smaller heads the fixed helmet touches at the top and leaves a wide gap at the sides, front and back (median 40 and 38 mm against the adult's 28 mm), while the scaled helmet follows the head (28 and 28 mm).",
+   "caption_draft": "Helmet geometry. Sagittal (top) and coronal (bottom) sections through the head origin of the adult, the 12-month template and child B, at the same scale: scalp (black) and, in the coronal sections, white-matter surface (grey); filled squares, the Neuromag magnetometers of the fixed adult helmet with the head at top contact; open squares, the helmet scaled with the head and laterally centred (scale factor above each column); circles, the dense OPM sites; only sensors within 20 mm of the section are drawn. Median magnetometer-to-scalp gap in the fixed helmet 28.4, 40.4, 38.4 mm and in the scaled helmet 29.6, 27.7, 28.0 mm (adult, 12-month template, child B).",
+   "values": {
+    "adult": {
+     "top": {
+      "moved_mm": 5.5,
+      "median_gap_mm": 28.379512987573392,
+      "min_gap_mm": 20.391196313677757,
+      "max_gap_mm": 40.09065971733728
+     },
+     "scaled_laterally_centred": {
+      "k": 1.0,
+      "k_nominal": 1.0,
+      "median_gap_mm": 29.55016691912663,
+      "min_gap_mm": 22.51595366500968,
+      "max_gap_mm": 37.495385533285145,
+      "shift_x_mm": -1.499999999999984
+     },
+     "opm_dense_sites": 208,
+     "head_circumference_cm": 58.60968275996705
+    },
+    "infant12mo": {
+     "top": {
+      "moved_mm": 33.5,
+      "median_gap_mm": 40.421812672185766,
+      "min_gap_mm": 20.195222415132868,
+      "max_gap_mm": 59.42572681920796
+     },
+     "scaled_laterally_centred": {
+      "k": 0.8409196427461285,
+      "k_nominal": 0.8009196427461285,
+      "median_gap_mm": 27.71731119694387,
+      "min_gap_mm": 18.472938060094453,
+      "max_gap_mm": 38.802521154373295,
+      "shift_x_mm": -2.499999999999985
+     },
+     "opm_dense_sites": 144,
+     "head_circumference_cm": 46.941646177576736
+    },
+    "childB": {
+     "top": {
+      "moved_mm": 26.5,
+      "median_gap_mm": 38.40007274626074,
+      "min_gap_mm": 20.09984787924787,
+      "max_gap_mm": 54.20195686105839
+     },
+     "scaled_laterally_centred": {
+      "k": 0.8644384612043382,
+      "k_nominal": 0.8294384612043382,
+      "median_gap_mm": 27.983349879024622,
+      "min_gap_mm": 18.127959406061695,
+      "max_gap_mm": 36.33625766255689,
+      "shift_x_mm": -2.499999999999985
+     },
+     "opm_dense_sites": 153,
+     "head_circumference_cm": 48.6131250801015
+    }
+   }
+  },
+  "Figure_R13_maps_heads": {
+   "inputs": [
+    "results/g3b/g3b_targets_infant2yr.csv :: hemi, vertno, region, area_mm2, detect_opm_dense_opm_intrinsic+brain, detect_squid_top_combined_intrinsic+brain",
+    "results/g3b/g3b_targets_infant12mo.csv :: hemi, vertno, region, area_mm2, detect_opm_dense_opm_intrinsic+brain, detect_squid_top_combined_intrinsic+brain",
+    "results/g3b/g3b_summary.json :: placement_D['<template>/top/combined/intrinsic+brain'].median (check), placement_D['adult/top/combined/intrinsic+brain'].median (comparison), arrays.<template>.opm_dense.n_sites, arrays.<template>['squid:top'].n, config.placement.clearance_mm",
+    "infant_subjects/ANTS2-0Years3T: bem/ANTS2-0Years3T-oct-6-src.fif, surf/?h.inflated, surf/?h.sulc (drawing only)",
+    "infant_subjects/ANTS12-0Months3T: bem/ANTS12-0Months3T-oct-6-src.fif, surf/?h.inflated, surf/?h.sulc (drawing only)"
+   ],
+   "description": "D = 20 log10(detect_opm_dense_opm / detect_squid_top_combined) per cortical target of the G3B run for the 24-month (ANTS2-0Years3T) and 12-month (ANTS12-0Months3T) infant templates in their native dimensions, the dense OPM array refitted to each head, Neuromag's 306 channels with the head at top contact in the fixed adult helmet (the adult's measured pose, then raised until the nearest magnetometer coil is 20 mm from the scalp), sensor + brain noise, 10-nAm cortical-normal dipoles, drawn on each template's own inflated cortex (no vertex correspondence with the adult). Area-weighted median D without the medial wall (opmsquid.pediatric.weighted_median, weights area_mm2): 1.844 dB (24 months) and 2.043 dB (12 months), equal to the stored values (1.844 and 2.043 dB; checked); the adult at top contact: 0.997 dB (placement_D['adult/top/combined/intrinsic+brain']). Light grey: medial wall (targets in FreeSurfer's 'unknown' region: the cut through the corpus callosum and midbrain, not cortex); dark grey: source-space vertices that are not targets, i.e. within 4 mm of the 5,120-triangle inner-skull mesh or outside it (A-BEM-DIST; the shallowest cortex, which the noise model also leaves out of the brain background). A triangle takes the category of at least two of its vertices. Diverging colour scale (red: OPM higher), -6 to +6 dB, shared by R11 and R13 (display choice); values beyond it take the end colour (colour bar extension: 'max'). Views: orthographic, left lateral, left medial, right medial, right lateral, with sulcal shading (opmsquid.plotting); each hemisphere fills its panel (not to scale). Targets above +6 dB: 3.1% (24 months), 5.7% (12 months). Infant templates: O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database (Richards et al., 2016).",
+   "alt": "Inflated cortical hemispheres of two infant templates in lateral and medial views, one row each (24 and 12 months). Both are red almost everywhere (D positive on 98% and 99% of the cortical area), darkest on the lateral convexities, where 3% and 6% of the targets lie beyond the end of the colour scale, and paler on the medial surfaces.",
+   "caption_draft": "D on the inflated cortex of the (a) 24-month and (b) 12-month infant templates (O'Reilly et al., 2021; Richards et al., 2016): dense OPM array (151 and 144 sites) against Neuromag's 306 channels with the head at top contact in the adult helmet; sensor plus brain noise; 10-nAm dipoles. Area-weighted median D +1.84 and +2.04 dB (medial wall excluded; the adult at top contact +1.00 dB). Colour scale and greys as in Figure R11.",
+   "values": {
+    "infant2yr": {
+     "template": "ANTS2-0Years3T",
+     "n_sites": 151,
+     "n_squid_channels": 306,
+     "area_weighted_median_without_medial_wall_dB": 1.8438717624463448,
+     "stored_D_dB": 1.8437807673344777,
+     "share_positive_area": 0.9795523035343111,
+     "min_dB": -2.4560193861489674,
+     "max_dB": 12.130736908239914,
+     "share_above_limit": 0.030612244897959183,
+     "n_targets": 8134,
+     "medial_wall": 575,
+     "source_space_vertices": 8196,
+     "not_targets": 62
+    },
+    "infant12mo": {
+     "template": "ANTS12-0Months3T",
+     "n_sites": 144,
+     "n_squid_channels": 306,
+     "area_weighted_median_without_medial_wall_dB": 2.042808774570596,
+     "stored_D_dB": 2.0428414922571516,
+     "share_positive_area": 0.9873150608581137,
+     "min_dB": -1.5281104418751803,
+     "max_dB": 12.424383680941977,
+     "share_above_limit": 0.05749258160237389,
+     "n_targets": 8088,
+     "medial_wall": 496,
+     "source_space_vertices": 8196,
+     "not_targets": 108
+    },
+    "adult_top_contact_D_dB": 0.9973868767700383,
+    "colour_limit_dB": 6.0,
+    "extend": "max"
+   }
+  }
+ }
+}

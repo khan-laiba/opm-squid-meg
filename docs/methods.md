@@ -1253,3 +1253,59 @@ dB of detectability, dense OPM or Neuromag combined, intrinsic + brain noise)
   whose removal depends on calibration (or on modelling it from the data or from measured motion).
   These are bounds on two mechanisms in declared conditions, not an estimate of motion robustness
   in children.
+
+## 13. Implementation constants
+
+Values that are set in the code rather than in a configuration file, with the file and line where
+each is set (lines at commit 10e37b9; for every stored result the value is the same at the commit
+that produced it). The report's facts cite these rows by ID (`scripts/report_facts_methods.py`), and
+`tests/test_report_facts_methods.py` checks each numeric value against the line it cites. Formulas
+use the notation of section 8: `asd` a channel's white-noise amplitude spectral density, `ENBW` the
+equivalent noise bandwidth of the analysis filter, `L_bg` an array's lead fields of the background
+sources, `a_i` their areas, `s^2` the brain scale, `E` the array's responses to the external-field
+terms and `S_e` the covariance of their coefficients. MNE-Python rows refer to the installed
+MNE-Python 1.13.2 (DOC-MNE in the register).
+
+| ID | Constant | Value | Set in |
+|---|---|---|---|
+| IC-BG-GRID-MM | Cortical background grid (G2, G3B, G4): a greedy Poisson-disk subset of the usable white-surface vertices (A-BEM-DIST), visited in random order, a vertex being kept when no kept vertex lies within this 3-D Euclidean distance (mm; written as 0.007 m in the code, the value of `background.grid_spacing_mm` in `configs/g2_adult.toml`) | 7 | src/opmsquid/g2.py:184; src/opmsquid/goldenholz.py:43-70 |
+| IC-BG-AREA | Area `a_i` of background source i: the usable vertex areas summed over its Voronoi cell (the usable vertices nearest to it, Euclidean), so the cells partition the usable cortex | formula | src/opmsquid/noisemodel.py:55-61; src/opmsquid/g2.py:185 |
+| IC-BG-VAR | Moment variance of background source i (independent model): `s^2 a_i`, with `s^2` fitted once so that the median modelled in-band variance of the good gradiometers equals their median measured brain-noise variance (task baseline minus empty room) | formula | src/opmsquid/background.py:28-35, 60-62; scripts/g2_adult_comparison.py:212-213 |
+| IC-COV | Oracle covariance of an array (closed form, no sampling): `diag(asd^2 ENBW)`, plus `s^2 L_bg diag(a) L_bg^T` with brain noise, plus `E S_e E^T` with the room field; projected condition `P C P^T`, the topographies `P s` | formula | src/opmsquid/noisemodel.py:31-52; src/opmsquid/g2.py:367-381 |
+| IC-PROJ | External-field projection: `P = I - E (E^T W E)^-1 E^T W`, `W = diag(1 / (asd^2 ENBW))`, the same rule for every array; for Neuromag over all 306 channels at once | formula | src/opmsquid/noisemodel.py:42-49 |
+| IC-ENV-UNIFORM | External-field basis about r0: homogeneous-field components (1 T each), through each channel's 'accurate' coil integration points | 3 | src/opmsquid/environment.py:40-50 |
+| IC-ENV-GRADIENT | External-field basis about r0: components of a symmetric, traceless linear gradient (1 T/m each) | 5 | src/opmsquid/environment.py:23-30 |
+| IC-ENV-TRIM-S | Room-field fit: weighted least squares (weights 1 / the per-type median RMS; bad channels left out) on the band-filtered empty-room recording, with this many seconds trimmed at each end; `S_e` is the covariance of the fitted coefficients | 2 | src/opmsquid/environment.py:66-93 |
+| IC-WHITEN-TOL | Rank-aware whitening: eigenvalues of the correlation-normalised covariance below this fraction of the largest are dropped | 1e-10 | src/opmsquid/metrics.py:71, 88 |
+| IC-TD-EXPONENT | Spike-study background moments: independent Gaussian series with a power spectrum 1/f^x, x = | 1 | src/opmsquid/background.py:65; src/opmsquid/ied.py:101 |
+| IC-TD-FMIN-HZ | ... flat below this frequency (Hz); each series is then filtered and scaled to its band variance `s^2 a_i` | 0.5 | src/opmsquid/background.py:66; src/opmsquid/ied.py:101-102 |
+| IC-TD-CSD-NPERSEG | Spike-study room field: the 8 coefficients synthesised from the Welch cross-spectra of the fitted coefficient time courses (segments of this many samples) and scaled by Cholesky factors to the fitted band covariance | 4096 | src/opmsquid/ied.py:41, 105-109 |
+| IC-TD-PAD-S | Spike-study segments: generated this many seconds longer at each end (filter transients), then cropped | 2 | src/opmsquid/ied.py:93-97 |
+| IC-TD-DECIMATE | Decimation: every k-th sample kept after the analysis filter (k = `simulation.decimate`), no separate anti-alias filter | rule | src/opmsquid/ied.py:114 |
+| IC-TD-RESPONSE | Sensor frequency response in the spike study: none for any array (data = lead fields x background moments + external basis x room-field coefficients + white sensor noise; the background and sensor-noise series pass through the analysis filter, the room-field coefficients are band-limited by their spectra, fitted to band-filtered data); the 100-Hz OPM response (A-OPM-BW) enters only the band sensitivity analysis | rule | src/opmsquid/ied.py:110-114; scripts/g2_band_sensitivity.py:90-98 |
+| IC-BOOT-G2 | Adult comparisons (G2): parcel-bootstrap resamples of every primary estimator (oracle, plug-in, peak-channel and mean-power SNR), the lobes and the triaxial control | 1000 | scripts/g2_adult_comparison.py:64, 168, 280, 339, 355-357 |
+| IC-BOOT-G2-SENS | Adult sensitivity analyses: OPM noise sweep, correlated and magnetometer-calibrated background, measured Neuromag spectrum, head positions, scalp gaps and the joint noise x gap grid | 200 | scripts/g2_adult_comparison.py:372, 383, 392, 401, 426, 445, 452 |
+| IC-BOOT-G2-PATCH | Adult extended sources (patches) | 200 | scripts/g2_adult_comparison.py:600-606 |
+| IC-BOOT-G2-BAND | Band sensitivity: resamples of targets, not parcels (this script sets no parcel labels) | 200 | scripts/g2_band_sensitivity.py:105; scripts/g2_adult_comparison.py:69-75 |
+| IC-BOOT-HSE | Head-surface and OPM-axis decomposition (`results/g2/head_surface_effect.json`), parcels | 1000 | scripts/study_head_surface_effect.py:98, 113 |
+| IC-BOOT-G3B-MATCHED | Smaller heads at top contact: matched OPM array (the dense array uses `strata.n_boot` of `configs/g3b_pediatric.toml`; peak-channel and mean-power SNR have no intervals) | 200 | scripts/g3b_pediatric_helmet.py:610 |
+| IC-BOOT-G3B-PLACEMENTS | Smaller heads: the other named placements (centred, back, laterally centred, true 18-mm contact) and both counterfactual helmets (the shifted and rotated placements of the source-blind family, the sensitivity analyses and the patches have medians only) | 200 | scripts/g3b_pediatric_helmet.py:635 |
+| IC-BOOT-G3B-CHANNELS | Smaller heads: channel-count control | 200 | scripts/g3b_pediatric_helmet.py:667 |
+| IC-BOOT-G3B-USEFUL | Smaller heads: moment needed for d = 5, by depth | 200 | scripts/g3b_pediatric_helmet.py:504-505 |
+| IC-BOOT-G4 | Spike detection (exploratory runs and the matched-rate re-analysis, which re-runs the same summary): location resamples of every S50, paired S50 ratio and paired median statistic difference | 1000 | scripts/g4_epilepsy_adult.py:327, 368, 375 |
+| IC-BOOT-LOC | Localization: event resamples of every paired median error difference | 2000 | scripts/g4_localization.py:273 |
+| IC-BOOT-CGAP | Gap-matched counterfactual helmet (revision): resamples outside its primary comparisons (the dense array in the fixed helmet and in the primary gap-matched helmet use `strata.n_boot`) | 200 | scripts/study_g3b_constant_gap.py:539-541, 850 |
+| IC-BOOT-COVVAL | Covariance validation (revision): parcel-bootstrap resamples, the command-line default (the output records the number used) | 1000 | scripts/study_covariance_validation.py:439, 799 |
+| IC-SIGNFLIP-EXACT | Location-level sign-flip test: exact over all sign patterns up to this many non-zero location differences | 20 | src/opmsquid/detection.py:169 |
+| IC-SIGNFLIP-MC | ... beyond it, Monte Carlo over this many random sign patterns (seed 0) | 20000 | src/opmsquid/detection.py:162, 172 |
+| IC-SEED-G3B | Smaller heads: bootstrap seed of the scaled adults and the templates | 7 | scripts/g3b_pediatric_helmet.py:567 |
+| IC-SEED-G3B-SCHOOL | Smaller heads: bootstrap seed of the school-aged children (their own stream) | 8 | scripts/g3b_pediatric_helmet.py:568 |
+| IC-SEED-G3B-GRID | Smaller heads: every head's targets and background grid drawn with a generator seeded with `sources.seed` of `configs/g2_adult.toml` | rule | scripts/g3b_pediatric_helmet.py:138-165 |
+| IC-SEED-G4-SIM | Spike detection: every anatomy's simulation stream seeded with `simulation.seed` of `configs/g4_epilepsy.toml` | rule | scripts/g4_epilepsy_adult.py:138; scripts/g4_epilepsy_pediatric.py:228 |
+| IC-SEED-G4-BOOT | Spike detection summaries: bootstrap seed | 7 | scripts/g4_epilepsy_adult.py:287 |
+| IC-SEED-LOC-HELDOUT | Localization: held-out null data seeded with `localization.seed` + | 1 | scripts/g4_localization.py:157 |
+| IC-SEED-LOC-SECONDARY | Localization: bootstrap of the Neuromag-subset comparisons seeded with `localization.seed` + (the primary comparisons continue the simulation stream) | 2 | scripts/g4_localization.py:78, 234-235 |
+| IC-SEED-CONFIRM | Confirmatory spike run: one stream per anatomy and purpose, `SeedSequence(root_seed, spawn_key=(anatomy index, purpose index[, replicate or statistic]))`, over this many purposes (locations, dictionary, coregistration, baseline, calibration, oracle, held-out, evaluation, events, bootstrap); a bootstrap stream per statistic, keyed by the CRC-32 of its name | 10 | scripts/g4_confirmatory.py:93-94, 124-132 |
+| IC-DSPM-STUDY | The study's dSPM: depth weights `(norm(W g_i)^2)^(-depth)` from the whitened gains of all an array's channels, without a limit; source covariance scaled so that `trace(G_w R G_w^T)` equals the whitened rank; `lambda^2 = 1 / SNR^2`; each row of the kernel divided by its norm (dSPM) | formula | src/opmsquid/localization.py:30-41 |
+| IC-DSPM-MNE-LIMIT | MNE-Python's dSPM (`make_inverse_operator`, fixed orientation, depth exponent of the configuration): the depth weights limited at MNE's default limit | 10 | scripts/g4_localization.py:167-173; mne/defaults.py:300-306; mne/minimum_norm/inverse.py:1964; mne/forward/forward.py:1456-1478 |
+| IC-DSPM-MNE-CHS | MNE-Python's dSPM: depth weights from the unwhitened gains of the planar gradiometers when present, else of the magnetometers (`limit_depth_chs`, MNE's default) | rule | mne/defaults.py:303; mne/forward/forward.py:1280-1300, 1417-1418 |

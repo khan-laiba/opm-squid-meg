@@ -1,0 +1,1620 @@
+{
+  "title": "Model counterparts of the clinical OPM epilepsy studies (report Table 3)",
+  "description": "One record per clinical study of docs/literature/epilepsy_opm_studies.json: the quantity the study reported, the model's closest counterpart as a fact name of scripts/report_facts*.py (or 'no counterpart'), that model quantity's metric, comparator, anatomy and noise condition in words, and the dimensions on which study and model are not matched. The counterparts are qualitative analogues: they are compared with the reports in direction only. Values are given as printed by the facts when this file was written; the report takes them from the facts when the site is built.",
+  "date": "2026-10-04",
+  "facts_built_at_commit": "10e37b9 (branch revision-r2; the uncommitted methods facts module present, which adds no fact used here), scripts/report_facts.py --json",
+  "conventions": {
+    "matched_dimensions": "aspects in which study and model do agree, named more finely than the unmatched vocabulary (e.g. the comparator class may match while the channels compared do not)",
+    "model_counterpart": "the primary fact; 'model_counterpart_paired' is the same quantity for the other OPM array or for Neuromag; 'comparisons' lists every fact used, with role primary, reference, further or explanation",
+    "match_scope": {
+      "analogue": "the comparator class and the kind of metric match; other dimensions do not",
+      "partial": "the comparator or the metric is matched only in part, or the reported quantity is approximated by a bracket of model quantities",
+      "explanation only": "no counterpart of the reported quantity; the model addresses only the authors' explanation of it",
+      "none": "no counterpart"
+    },
+    "unmatched_dimensions": {
+      "hardware": "sensor technology and housing, helmet or cap, SQUID system and its interference suppression",
+      "sensor count": "number and placement of OPM sensors or channels",
+      "sensor noise": "OPM sensor noise",
+      "metric": "what is computed from what: real single or averaged discharges vs single-dipole fields, per patient vs a median over cortical targets, SNR definition",
+      "comparator": "which SQUID channels the OPM is compared with",
+      "band": "analysis band",
+      "source region": "where the discharges arise vs the model's targets",
+      "population": "age and condition of the patients vs the model's anatomies",
+      "recording vs simulation": "recording design (sequential or simultaneous sessions, posture, order, artefacts) vs a paired simulation on identical noise"
+    },
+    "always_unmatched": [
+      "recording vs simulation: real discharges in patients vs noise-free single-dipole fields against modelled noise, in anatomies of people without epilepsy",
+      "hardware: idealized single-axis OPMs with white noise (sensing centre 7 mm above the scalp); Neuromag modelled with a VectorView geometry, TRIUX coils and no signal-space separation"
+    ],
+    "model_defaults": {
+      "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+      "band": "1 to 40 Hz",
+      "adult": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+      "children": "individual school-aged children A-C (OpenNeuro ds005234; typically developing; 7.8 to 8.7 y), Neuromag at top contact in the fixed adult helmet, OPM arrays refitted to each head; area-weighted median over cortical targets (medial wall excluded); range over the three children",
+      "arrays": "matched: 98 single-axis sites at Neuromag's sensor sites; dense: 208 single-axis sites at least 17 mm apart",
+      "peak_channel_snr": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+      "detectability": "known-topography detectability d = sqrt(s' C^-1 s) of a single cortical dipole with the true (oracle) covariance, all channels of a system; OPM over Neuromag",
+      "intervals": "95% parcel-bootstrap intervals (spatial variation within one anatomy)"
+    },
+    "units": "adult (G2) values are ratios OPM/Neuromag (2**median log2 ratio); children's values are D in dB (20 log10 of the ratio, area-weighted median); a ratio within one system is a ratio of medians"
+  },
+  "table3": {
+    "placement": "report/report.md, Section 4.2, replacing the table {#tab-literature}",
+    "caption": "Table: Clinical OPM studies of epilepsy with a SQUID comparison, direct or indirect, or a regional result, each with a qualitative model analogue. An analogue shares at most a comparator, a kind of metric or an age range with the study, so study and model are compared in direction only (Direction: whether the analogue points the same way as the report), and the last column names what is not matched. Two differences apply to every row and are not repeated there: the studies recorded real discharges, single or averaged, in patients with epilepsy, whereas the model computes noise-free fields of single cortical dipoles against modelled noise in anatomies of people without epilepsy; and the model's OPMs are idealized single-axis magnetometers with white noise (sensing centre {{ F.g2_dense_standoff_mm }} mm above the scalp), its Neuromag a VectorView geometry with TRIUX coils and no signal-space separation. Unless stated, model values are medians over cortical targets with sensor plus brain noise, OPM {{ F.g2_opm_asd_primary }} fT/√Hz, {{ F.g2_band_range_hz }} Hz: OPM/Neuromag ratios for the adult at its measured pose (all {{ F.g2_n_targets }} targets, unweighted; brackets: {{ F.g2_ci_level_pct }} parcel-bootstrap intervals) and, for children A–C, D in dB (area-weighted, medial wall excluded, Neuromag at top contact in the fixed adult helmet). Matched: {{ F.g2_matched_sites }} single-axis sites, the array closest in channel count to the larger clinical arrays; dense: {{ F.g2_dense_sites }} sites, more than any array used in epilepsy. Peak-channel SNR compares each system's best channel with its own noise; detectability uses all channels with the true noise covariance; a ratio within one system compares regions, not systems. Literature values are as reported (Section 2.9); '(derived)' marks a value derived in the extraction from printed values and '(preprint)' a value seen only in the preprint. Three further clinical studies made no SQUID comparison and report no regional contrast (Vivekananda et al., 2020; the ictal and the rubidium-versus-helium case reports of Feys et al., 2023); none has a model counterpart. Rb: rubidium vapour sensors; 4He: helium-4 sensors; IED: interictal epileptiform discharge; tSSS: temporally extended signal-space separation; SEEG: stereo-electroencephalography; iEEG: intracranial EEG; CTF and 4D: commercial SQUID systems. {#tab-literature}",
+    "header": "| Study: patients (ages) | OPM sensors | Comparator; SNR measure | Regions | Reported, OPM vs comparator | Model analogue: quantity, comparator, anatomy, value | Direction | Not matched |",
+    "separator": "|---|---|---|---|---|---|---|---|",
+    "rows": [
+      "| Feys et al. (2022): 5 children (5–11 y) | Rb, 32 single-axis, cap around the focus; noise not reported | 102 SQUID magnetometers (MEGIN Triux); peak over baseline SD of each IED, at the channel where the averaged IED peaks | extratemporal (preprint) | amplitude 2.3–4.6× in 5/5; SNR 27–60% higher in 4/5, no difference in 1 | peak-channel SNR against the {{ F.g2_squid_sites }} magnetometers; children A–C ({{ F.g3b_children_age_range }} y) at top contact in the adult helmet: D matched {{ F.g3b_children_matched_vs_mag_ib_peak_d_range }} dB, dense {{ F.g3b_children_dense_vs_mag_ib_peak_d_range }} dB | same: OPM ahead | sensor count and placement; sensor noise; real IEDs per child vs a median over all cortex; extratemporal foci; patients vs typically developing children; helmet position and band not reported |",
+      "| Feys et al. (2023), infant: 1 infant (5 months; corrected age 2 months) | Rb, 26, cap, 4-mm gap; noise not reported | none (other children's recordings); SNR not defined | right centro-parietal | IED amplitude 2.5 pT; SNR 11.1 | no counterpart: the study has no SQUID recording of the infant and reports absolute values, whereas the model gives ratios between systems; its youngest head is the {{ F.g3b_infant12mo_age_months }}-month template ({{ F.g3b_infant12mo_ofc_cm }} cm head circumference, against 33 cm) | – | comparator; metric; age and head size; microcephaly and haemorrhage |",
+      "| Hillebrand et al. (2023): 7 (3 children 10–12 y, 4 adults) | Rb, 6 dual-axis (12 channels), 7–13 fT/√Hz | Triux Neo planar gradiometers after tSSS; automatic-detector z-score per IED | temporal, temporo-parietal, sensorimotor | 0.92–0.98× (derived); 'comparable' | peak-channel SNR against the {{ F.g2_squid_grad_channels }} planar gradiometers; adult at its measured pose: matched {{ F.g2_peak_matched_vs_grad_ib_ratio }} {{ F.g2_peak_matched_vs_grad_ib_ci }}, dense {{ F.g2_peak_dense_vs_grad_ib_ratio }} {{ F.g2_peak_dense_vs_grad_ib_ci }} | same: Neuromag ahead or level | sensor count and axes; sensor noise (7–13 vs {{ F.g2_opm_asd_primary }} fT/√Hz); detector z-score of real IEDs; tSSS; regions vs all cortex; children and adults vs one adult; band not reported |",
+      "| Badier et al. (2023): 1 adult (33 y) | 4He, 4 on scalp, < 50 fT/√Hz on 2 axes | 4 nearest magnetometers of a 248-channel 4D system; event maximum over baseline SD | left temporal pole; hippocampus-only spikes seen by neither | single spike: SNR 7 vs 5; amplitude 5 pT (text) or 2.5 pT (legend) vs 1.1 pT | peak-channel SNR against the {{ F.g2_squid_sites }} magnetometers, adult, all cortex: matched {{ F.g2_peak_matched_vs_mag_ib_ratio }} {{ F.g2_peak_matched_vs_mag_ib_ci }}, dense {{ F.g2_peak_dense_vs_mag_ib_ratio }} {{ F.g2_peak_dense_vs_mag_ib_ci }}; temporal pole, detectability against the magnetometers: matched {{ F.reg_temporalpole_matched_vs_mag_ib_ratio }}, dense {{ F.reg_temporalpole_dense_vs_mag_ib_ratio }}; hippocampus not modelled | same by peak channel; temporal pole: same (dense), opposite (matched) | sensor count; sensor noise (< 50 vs {{ F.g2_opm_asd_primary }} fT/√Hz); nearest channels of another SQUID system vs Neuromag's best; one spike per session; peak-channel value over all cortex; band (2–70 Hz) |",
+      "| Feys et al. (2024): 1 adult (20–30 y, preprint) | Rb, 48 (116 channels), rigid helmet; noise not reported | none (SEEG reference); SNR not defined | right amygdala | SNR 2.75 vs 11.1–16.7 in earlier neocortical OPM data (other patients) | within one system, detectability of parahippocampal over superior temporal sources, adult: dense {{ F.reg_parahippocampal_vs_superiortemporal_dense_abs_ratio }}, Neuromag {{ F.reg_parahippocampal_vs_superiortemporal_combined_abs_ratio }}; amygdala not modelled | same, and equally for Neuromag | amygdala vs a cortical proxy; patients compared across studies vs regions within one head; helmet off the scalp, implants; sensor count; noise not reported |",
+      "| Feys et al. (2025): 11 (8–63 y) | Rb, 43–53 (98–127 channels) incl. 4 face OPMs; noise not reported | 102 SQUID magnetometers (system not named); peak over baseline SD after averaging similar IEDs, peak channel | temporal lobe epilepsy (anterior, medial, basal, lateral and posterior sources) | SNR higher in 1, similar in 2 of 3 tested; nominally lower in the 3 with mesial or polar sources (derived); OPM SNR temporal 9.4 vs extratemporal 14.3 | peak-channel SNR against the {{ F.g2_squid_sites }} magnetometers, adult, all cortex: matched {{ F.g2_peak_matched_vs_mag_ib_ratio }} {{ F.g2_peak_matched_vs_mag_ib_ci }}, dense {{ F.g2_peak_dense_vs_mag_ib_ratio }} {{ F.g2_peak_dense_vs_mag_ib_ci }}; mesial temporal cortex, detectability against the magnetometers: matched {{ F.reg_mesial_temporal_matched_vs_mag_ib_ratio }}, dense {{ F.reg_mesial_temporal_dense_vs_mag_ib_ratio }}; within the dense array, temporal over frontal lobe {{ F.g2_lobe_temporal_vs_frontal_dense_abs_ratio }} | same by peak channel; mesial: same (matched), opposite (dense); within the OPM: same | sensor count and axes, face OPMs; regional model values are detectability, not peak-channel SNR; mesial structures vs a cortical proxy; frontal lobe for extratemporal; ages 8–63 vs one adult; noise and band not reported |",
+      "| Ren et al. (2025), abstract only: 46 (mean 23.7 y) | 128-channel whole-scalp; type and noise not given | SQUID (system and channels not given); SNR not defined | not given | amplitude and SNR higher; IED detection not significantly different | SNR, comparator unknown: peak-channel SNR, adult, against the {{ F.g2_squid_sites }} magnetometers matched {{ F.g2_peak_matched_vs_mag_ib_ratio }}, dense {{ F.g2_peak_dense_vs_mag_ib_ratio }}; against the best of all {{ F.g2_squid_channels }} channels matched {{ F.g2_peak_matched_vs_combined_ib_ratio }}, dense {{ F.g2_peak_dense_vs_combined_ib_ratio }}. Detection: detectability against all {{ F.g2_squid_channels }} channels, matched {{ F.g2_matched_vs_combined_ib_ratio }} {{ F.g2_matched_vs_combined_ib_ci }}, dense {{ F.g2_dense_vs_combined_ib_ratio }} {{ F.g2_dense_vs_combined_ib_ci }} | SNR: depends on the comparator; detection: consistent for the matched array, not the dense | comparator, SNR definition, sensors, noise, band and regions not reported; per-patient detection by review vs single-dipole detectability; 46 patients vs one adult |",
+      "| Schwartz et al. (2025): 7 + 1 adults (22–48 y; 41 y) | 4He, 4 on scalp, < 45 fT/√Hz on 2 axes | 4 nearest channels of a 275-channel CTF, type not named (4D magnetometers for the SEEG case); per-IED maximum over 20-s baseline SD | 5 focal temporal, 2 generalized; deep mesial (SEEG case) | amplitude 2.3× (group); SNR 6.72 vs 8.37; deep spike 6.8 vs 9.0 | peak-channel SNR against the best of all {{ F.g2_squid_channels }} channels, adult: matched {{ F.g2_peak_matched_vs_combined_ib_ratio }} {{ F.g2_peak_matched_vs_combined_ib_ci }}, dense {{ F.g2_peak_dense_vs_combined_ib_ratio }} {{ F.g2_peak_dense_vs_combined_ib_ci }}; detectability with {{ F.g2_opm_asd_sweep_max }}-fT/√Hz OPMs, the top of the model's sweep: matched {{ F.g2_sens_asd30ft_matched_vs_combined_ib_ratio_3dp }}, dense {{ F.g2_sens_asd30ft_dense_vs_combined_ib_ratio_3dp }} | same: Neuromag ahead or level | sensor count; sensor noise above the model's sweep; nearest channels of an unnamed type vs Neuromag's best channel; per-IED SNR in sequential sessions; temporal and generalized foci vs all cortex; band (6–70 and 3–70 Hz) |",
+      "| Shen et al. (2026): 68 (6–60 y) | 64 dual-mode (128 channels), < 15 fT/√Hz, rigid helmet | none; sublobar concordance with iEEG | 51 temporal, 17 extratemporal | concordance 80.1% temporal vs 92.0% extratemporal | no counterpart for concordance. For the authors' explanation (depth, helmet distance): within the dense array, detectability of temporal over frontal targets {{ F.g2_lobe_temporal_vs_frontal_dense_abs_ratio }} (Neuromag {{ F.g2_lobe_temporal_vs_frontal_combined_abs_ratio }}); with a {{ F.g2_opm_gap_large_mm }}-mm OPM gap, detectability against Neuromag dense {{ F.g2_sens_gap6mm_dense_vs_combined_ib_ratio }}, matched {{ F.g2_sens_gap6mm_matched_vs_combined_ib_ratio }} (without: {{ F.g2_dense_vs_combined_ib_ratio }}, {{ F.g2_matched_vs_combined_ib_ratio }}) | – | metric (localization concordance); comparator; dual-axis sensors in a rigid helmet, modelled only as a uniform gap; extratemporal group vs the frontal lobe; ages 6–60 vs one adult; band (2–70 Hz) |"
+    ],
+    "facts_used": [
+      "g2_dense_standoff_mm",
+      "g2_opm_asd_primary",
+      "g2_band_range_hz",
+      "g2_n_targets",
+      "g2_ci_level_pct",
+      "g2_matched_sites",
+      "g2_dense_sites",
+      "g2_squid_sites",
+      "g3b_children_age_range",
+      "g3b_children_matched_vs_mag_ib_peak_d_range",
+      "g3b_children_dense_vs_mag_ib_peak_d_range",
+      "g3b_infant12mo_age_months",
+      "g3b_infant12mo_ofc_cm",
+      "g2_squid_grad_channels",
+      "g2_peak_matched_vs_grad_ib_ratio",
+      "g2_peak_matched_vs_grad_ib_ci",
+      "g2_peak_dense_vs_grad_ib_ratio",
+      "g2_peak_dense_vs_grad_ib_ci",
+      "g2_peak_matched_vs_mag_ib_ratio",
+      "g2_peak_matched_vs_mag_ib_ci",
+      "g2_peak_dense_vs_mag_ib_ratio",
+      "g2_peak_dense_vs_mag_ib_ci",
+      "reg_temporalpole_matched_vs_mag_ib_ratio",
+      "reg_temporalpole_dense_vs_mag_ib_ratio",
+      "reg_parahippocampal_vs_superiortemporal_dense_abs_ratio",
+      "reg_parahippocampal_vs_superiortemporal_combined_abs_ratio",
+      "reg_mesial_temporal_matched_vs_mag_ib_ratio",
+      "reg_mesial_temporal_dense_vs_mag_ib_ratio",
+      "g2_lobe_temporal_vs_frontal_dense_abs_ratio",
+      "g2_squid_channels",
+      "g2_peak_matched_vs_combined_ib_ratio",
+      "g2_peak_dense_vs_combined_ib_ratio",
+      "g2_matched_vs_combined_ib_ratio",
+      "g2_matched_vs_combined_ib_ci",
+      "g2_dense_vs_combined_ib_ratio",
+      "g2_dense_vs_combined_ib_ci",
+      "g2_peak_matched_vs_combined_ib_ci",
+      "g2_peak_dense_vs_combined_ib_ci",
+      "g2_opm_asd_sweep_max",
+      "g2_sens_asd30ft_matched_vs_combined_ib_ratio_3dp",
+      "g2_sens_asd30ft_dense_vs_combined_ib_ratio_3dp",
+      "g2_lobe_temporal_vs_frontal_combined_abs_ratio",
+      "g2_opm_gap_large_mm",
+      "g2_sens_gap6mm_dense_vs_combined_ib_ratio",
+      "g2_sens_gap6mm_matched_vs_combined_ib_ratio"
+    ]
+  },
+  "records": [
+    {
+      "key": "vivekananda2020_actn",
+      "citation_short": "Vivekananda et al. (2020)",
+      "extraction": "docs/literature/epilepsy_opm_studies.md section 3.1; docs/literature/epilepsy_opm_studies.json :: vivekananda2020_actn",
+      "verification_level": "full_text",
+      "in_table3": false,
+      "reported": {
+        "quantity": "OPM recording of interictal spikes and their dipole localization; no SNR or amplitude comparison",
+        "metric": "none (no SNR reported)",
+        "comparator": "none (earlier clinical EEG telemetry only)",
+        "sensors": "rubidium OPMs (QuSpin): 8 first-generation in a plinth (session 1), 15 second-generation in a scanner-cast (session 2)",
+        "sensor_noise": "not measured (the Introduction cites about 10 fT/sqrt(Hz) for recent OPMs)",
+        "region": "right posterior quadrant (right parieto-occipital damage on MRI)",
+        "ages": "1 patient, 47 years",
+        "band": "not given in the extraction",
+        "result": "23 and 19 spikes per 30 min; dipole of the averaged spikes of session 2 in the right posterior quadrant",
+        "direction": "not applicable (no comparator)",
+        "source": "docs/literature/epilepsy_opm_studies.json :: vivekananda2020_actn (opm_type_count_noise, comparator_and_channels_used_for_snr, snr_definition, snr_result, amplitude_result, localization_result, epilepsy_and_regions, ages); paraphrased"
+      },
+      "model_counterpart": "no counterpart",
+      "match_scope": "none",
+      "no_counterpart_reason": "No SQUID comparison and no SNR or amplitude: there is no reported quantity for the model to approximate. The model also has no array of 8 to 15 sensors.",
+      "direction": {
+        "reported": "not applicable (no comparator)",
+        "model": "no counterpart",
+        "agreement": "not applicable"
+      },
+      "matched_dimensions": {},
+      "unmatched_dimensions": [
+        "sensor count",
+        "metric",
+        "comparator",
+        "population",
+        "recording vs simulation"
+      ],
+      "unmatched_detail": {
+        "sensor count": "8 then 15 sensors vs 98 or 208 sites",
+        "metric": "feasibility and dipole location vs SNR-type ratios",
+        "comparator": "none in the study vs Neuromag in every model comparison",
+        "population": "one adult with post-meningitic focal epilepsy vs one adult anatomy without epilepsy",
+        "recording vs simulation": "two OPM sessions without SQUID vs paired simulation"
+      }
+    },
+    {
+      "key": "feys2022_radiology",
+      "citation_short": "Feys et al. (2022)",
+      "extraction": "docs/literature/epilepsy_opm_studies.md section 3.2; docs/literature/epilepsy_opm_studies.json :: feys2022_radiology",
+      "verification_level": "published_abstract_plus_preprint_full_text",
+      "in_table3": true,
+      "table3_order": 1,
+      "reported": {
+        "quantity": "IED amplitude and SNR, OPM vs SQUID magnetometers, per child",
+        "metric": "peak amplitude over baseline SD, measured for each IED at the sensor with the maximal averaged IED amplitude (preprint; the SNR definition is restated by the same group in Feys 2025, p. e145)",
+        "comparator": "102 magnetometers of a 306-channel MEGIN Triux, restricted 'for comparability' (preprint)",
+        "sensors": "32 QuSpin Gen-2 rubidium OPMs, single-axis, flexible EEG-like cap, mounts at 10-10 positions around the presumed focus (preprint)",
+        "sensor_noise": "not reported",
+        "region": "extratemporal focal epilepsies (preprint); per-child regions in Table 1, not seen",
+        "ages": "5 children, median 9.4 years (range 5-11)",
+        "band": "not given in the extraction",
+        "design": "sequential recordings, OPM first in every child (preprint); t tests within each child",
+        "result": "amplitude 2.3 to 4.6 times higher in 5/5 (P < .001); SNR 27% to 60% higher in 4/5 (P = .001-.009), no difference in the fifth (motion artefacts)",
+        "direction": "OPM higher",
+        "source": "docs/literature/epilepsy_opm_studies.json :: feys2022_radiology (opm_type_count_noise, comparator_and_channels_used_for_snr, snr_definition, amplitude_result, snr_result, epilepsy_and_regions, ages); paraphrased"
+      },
+      "model_counterpart": "g3b_children_matched_vs_mag_ib_peak_d_range",
+      "model_counterpart_paired": "g3b_children_dense_vs_mag_ib_peak_d_range",
+      "match_scope": "analogue",
+      "why_this_counterpart": "Same comparator class (the 102 magnetometers of a MEGIN/Neuromag helmet), the same kind of metric (each system's best single channel), children of an age inside the study's range, and the adult cryogenic helmet; the matched array is the one closer to a clinical array in count.",
+      "model_quantity": {
+        "label": "peak-channel SNR against Neuromag's magnetometers, individual children",
+        "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+        "comparator": "Neuromag's 102 magnetometers",
+        "anatomy": "individual school-aged children A-C (OpenNeuro ds005234; typically developing; 7.8 to 8.7 y), Neuromag at top contact in the fixed adult helmet, OPM arrays refitted to each head; area-weighted median over cortical targets (medial wall excluded); range over the three children",
+        "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+        "band": "1 to 40 Hz",
+        "units": "dB (D = 20 log10 of the OPM/Neuromag peak-channel SNR ratio)"
+      },
+      "direction": {
+        "reported": "OPM higher",
+        "model": "peak-channel SNR against Neuromag's magnetometers, individual children: OPM ahead in every child with both arrays",
+        "agreement": "peak-channel SNR against Neuromag's magnetometers, individual children: same"
+      },
+      "comparisons": [
+        {
+          "role": "primary",
+          "label": "peak-channel SNR against Neuromag's magnetometers, individual children",
+          "units": "dB (D = 20 log10 of the OPM/Neuromag peak-channel SNR ratio)",
+          "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+          "comparator": "Neuromag's 102 magnetometers",
+          "anatomy": "individual school-aged children A-C (OpenNeuro ds005234; typically developing; 7.8 to 8.7 y), Neuromag at top contact in the fixed adult helmet, OPM arrays refitted to each head; area-weighted median over cortical targets (medial wall excluded); range over the three children",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "OPM ahead in every child with both arrays",
+          "direction_vs_report": "same",
+          "facts": {
+            "matched": "g3b_children_matched_vs_mag_ib_peak_d_range",
+            "dense": "g3b_children_dense_vs_mag_ib_peak_d_range"
+          },
+          "values_at_writing": {
+            "g3b_children_matched_vs_mag_ib_peak_d_range": "+1.55 to +1.84",
+            "g3b_children_dense_vs_mag_ib_peak_d_range": "+2.05 to +2.48"
+          },
+          "fact_sources": {
+            "g3b_children_matched_vs_mag_ib_peak_d_range": "results/g3b/g3b_summary.json :: derived: min and max over children A-C of D_median_dB['<anat>/opm_matched/mag/intrinsic+brain/peak'] (at childC and childB)",
+            "g3b_children_dense_vs_mag_ib_peak_d_range": "results/g3b/g3b_summary.json :: derived: min and max over children A-C of D_median_dB['<anat>/opm_dense/mag/intrinsic+brain/peak'] (at childC and childB)"
+          }
+        },
+        {
+          "role": "reference",
+          "label": "the adult at top contact, same quantity",
+          "units": "dB",
+          "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+          "comparator": "Neuromag's 102 magnetometers",
+          "anatomy": "adult at top contact in the fixed helmet; area-weighted median, medial wall excluded",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "OPM ahead",
+          "direction_vs_report": "not applicable (the study has no adult)",
+          "facts": {
+            "matched": "g3b_adult_matched_vs_mag_ib_peak_d",
+            "dense": "g3b_adult_dense_vs_mag_ib_peak_d"
+          },
+          "values_at_writing": {
+            "g3b_adult_matched_vs_mag_ib_peak_d": "+1.35",
+            "g3b_adult_dense_vs_mag_ib_peak_d": "+1.84"
+          },
+          "fact_sources": {
+            "g3b_adult_matched_vs_mag_ib_peak_d": "results/g3b/g3b_summary.json :: D_median_dB['adult/opm_matched/mag/intrinsic+brain/peak'] (area-weighted median over cortical targets, medial wall excluded; Neuromag at the primary placement 'top')",
+            "g3b_adult_dense_vs_mag_ib_peak_d": "results/g3b/g3b_summary.json :: D_median_dB['adult/opm_dense/mag/intrinsic+brain/peak'] (area-weighted median over cortical targets, medial wall excluded; Neuromag at the primary placement 'top')"
+          }
+        },
+        {
+          "role": "further",
+          "label": "comparator dependence: the same children against Neuromag's gradiometers",
+          "units": "dB",
+          "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+          "comparator": "Neuromag's 204 planar gradiometers",
+          "anatomy": "individual school-aged children A-C (OpenNeuro ds005234; typically developing; 7.8 to 8.7 y), Neuromag at top contact in the fixed adult helmet, OPM arrays refitted to each head; area-weighted median over cortical targets (medial wall excluded); range over the three children",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "Neuromag's gradiometers ahead or level",
+          "direction_vs_report": "not applicable (the study used the magnetometers); shows that the reported direction depends on that choice",
+          "facts": {
+            "matched": "g3b_children_matched_vs_grad_ib_peak_d_range",
+            "dense": "g3b_children_dense_vs_grad_ib_peak_d_range"
+          },
+          "values_at_writing": {
+            "g3b_children_matched_vs_grad_ib_peak_d_range": "−1.14 to −0.67",
+            "g3b_children_dense_vs_grad_ib_peak_d_range": "−0.66 to 0.00"
+          },
+          "fact_sources": {
+            "g3b_children_matched_vs_grad_ib_peak_d_range": "results/g3b/g3b_summary.json :: derived: min and max over children A-C of D_median_dB['<anat>/opm_matched/grad/intrinsic+brain/peak'] (at childC and childB)",
+            "g3b_children_dense_vs_grad_ib_peak_d_range": "results/g3b/g3b_summary.json :: derived: min and max over children A-C of D_median_dB['<anat>/opm_dense/grad/intrinsic+brain/peak'] (at childC and childB)"
+          }
+        },
+        {
+          "role": "further",
+          "label": "amplitude analogue (adult only; no pediatric peak fields are stored)",
+          "units": "ratio (times)",
+          "metric": "peak field of the best OPM over that of the best Neuromag magnetometer, median per 5-mm depth bin, range over the populated bins",
+          "comparator": "Neuromag's 102 magnetometers",
+          "anatomy": "adult at its measured pose",
+          "noise": "none (field amplitude)",
+          "band": "not applicable",
+          "direction_model": "OPM larger at every depth",
+          "direction_vs_report": "same (amplitude higher in 5/5); population not matched",
+          "facts": {
+            "matched": "g2_leadfield_matched_vs_mag_bins_range_1dp",
+            "dense": "g2_leadfield_dense_vs_mag_bins_range_1dp"
+          },
+          "values_at_writing": {
+            "g2_leadfield_matched_vs_mag_bins_range_1dp": "2.3 to 4.9",
+            "g2_leadfield_dense_vs_mag_bins_range_1dp": "2.3 to 5.4"
+          },
+          "fact_sources": {
+            "g2_leadfield_matched_vs_mag_bins_range_1dp": "results/g2/g2_summary.json :: bridge_to_sphere.opm_matched_ratio_vs_depth (median per depth bin of the OPM / Neuromag magnetometer peak-field ratio); populated bins",
+            "g2_leadfield_dense_vs_mag_bins_range_1dp": "results/g2/g2_summary.json :: bridge_to_sphere.opm_dense_ratio_vs_depth (median per depth bin of the OPM / Neuromag magnetometer peak-field ratio); populated bins"
+          }
+        }
+      ],
+      "alternative_if_children_excluded": {
+        "facts": {
+          "matched": "g3b_school_matched_vs_mag_ib_peak_d",
+          "dense": "g3b_school_dense_vs_mag_ib_peak_d"
+        },
+        "note": "the school-age size control (the adult scaled to a school-age head) at top contact, if the individual children are kept out of the substantive conclusions",
+        "values_at_writing": {
+          "g3b_school_matched_vs_mag_ib_peak_d": "+1.66",
+          "g3b_school_dense_vs_mag_ib_peak_d": "+2.15"
+        }
+      },
+      "matched_dimensions": {
+        "comparator class": "102 magnetometers of a MEGIN/Neuromag-family helmet in both",
+        "kind of metric": "each system's best single channel in both (not how it is estimated)",
+        "age": "the model's children (7.8 to 8.7 y) lie inside the study's 5-11 y",
+        "helmet": "an adult cryogenic helmet in both"
+      },
+      "unmatched_dimensions": [
+        "hardware",
+        "sensor count",
+        "sensor noise",
+        "metric",
+        "band",
+        "source region",
+        "population",
+        "recording vs simulation"
+      ],
+      "unmatched_detail": {
+        "hardware": "QuSpin Gen-2 sensors on a flexible cap vs idealized single-axis sensors; MEGIN Triux vs a VectorView geometry with TRIUX coils and no SSS; the children's position in the helmet is not given in the extraction, the model's is top contact",
+        "sensor count": "32 OPMs placed around the presumed focus vs 98 (matched) or 208 (dense) sites over the whole head",
+        "sensor noise": "not reported vs 15 fT/sqrt(Hz) white",
+        "metric": "real IEDs of each child, at the channel where the averaged IED peaks vs noise-free single-dipole fields, a median over all cortical targets",
+        "band": "not given in the extraction vs 1 to 40 Hz",
+        "source region": "extratemporal foci (preprint) vs all cortex",
+        "population": "five children with focal epilepsy (one after a temporal tumour resection) vs three typically developing children",
+        "recording vs simulation": "sequential sessions, OPM first, motion artefacts in one child vs paired simulation on identical noise"
+      },
+      "table3_row": "| Feys et al. (2022): 5 children (5–11 y) | Rb, 32 single-axis, cap around the focus; noise not reported | 102 SQUID magnetometers (MEGIN Triux); peak over baseline SD of each IED, at the channel where the averaged IED peaks | extratemporal (preprint) | amplitude 2.3–4.6× in 5/5; SNR 27–60% higher in 4/5, no difference in 1 | peak-channel SNR against the {{ F.g2_squid_sites }} magnetometers; children A–C ({{ F.g3b_children_age_range }} y) at top contact in the adult helmet: D matched {{ F.g3b_children_matched_vs_mag_ib_peak_d_range }} dB, dense {{ F.g3b_children_dense_vs_mag_ib_peak_d_range }} dB | same: OPM ahead | sensor count and placement; sensor noise; real IEDs per child vs a median over all cortex; extratemporal foci; patients vs typically developing children; helmet position and band not reported |",
+      "table3_facts": [
+        "g2_squid_sites",
+        "g3b_children_age_range",
+        "g3b_children_matched_vs_mag_ib_peak_d_range",
+        "g3b_children_dense_vs_mag_ib_peak_d_range"
+      ]
+    },
+    {
+      "key": "feys2023_annneurol_ictal",
+      "citation_short": "Feys et al. (2023), ictal recording",
+      "extraction": "docs/literature/epilepsy_opm_studies.md section 3.3; docs/literature/epilepsy_opm_studies.json :: feys2023_annneurol_ictal",
+      "verification_level": "full_text",
+      "in_table3": false,
+      "reported": {
+        "quantity": "seizure SNR at rest vs during hyperventilation, OPM only",
+        "metric": "mean amplitude of the whole seizure over the mean amplitude of the preceding IED-free background, at the sensor with the maximal ictal amplitude",
+        "comparator": "none (cryogenic MEG unavailable; rest vs hyperventilation)",
+        "sensors": "24 triaxial QuSpin QZFM-G3 rubidium OPMs on an EEG-like cap",
+        "sensor_noise": "not reported",
+        "region": "multifocal: left mesio-occipital and temporo-occipital IEDs; seizures from frontal, temporal, parietal and occipital regions",
+        "ages": "1 child, 10 years",
+        "band": "not given in the extraction",
+        "result": "seizure SNR 2.79 (hyperventilation) vs 2.97 (rest), p = 0.43",
+        "direction": "not applicable (no SQUID comparison)",
+        "source": "docs/literature/epilepsy_opm_studies.json :: feys2023_annneurol_ictal (opm_type_count_noise, comparator_and_channels_used_for_snr, snr_definition, snr_result, epilepsy_and_regions, ages); paraphrased"
+      },
+      "model_counterpart": "no counterpart",
+      "match_scope": "none",
+      "no_counterpart_reason": "Ictal activity, hyperventilation and contrasts between recording conditions are not modelled, and the letter has no SQUID comparison.",
+      "direction": {
+        "reported": "not applicable (no SQUID comparison)",
+        "model": "no counterpart",
+        "agreement": "not applicable"
+      },
+      "matched_dimensions": {},
+      "unmatched_dimensions": [
+        "metric",
+        "comparator",
+        "population",
+        "recording vs simulation"
+      ],
+      "unmatched_detail": {
+        "metric": "seizure-to-background amplitude ratio vs interictal single-dipole SNR",
+        "comparator": "rest vs hyperventilation within the OPM vs OPM vs Neuromag",
+        "population": "one 10-year-old with multifocal epilepsy vs anatomies without epilepsy",
+        "recording vs simulation": "ictal recording vs simulated interictal sources"
+      }
+    },
+    {
+      "key": "hillebrand2023_scirep",
+      "citation_short": "Hillebrand et al. (2023)",
+      "extraction": "docs/literature/epilepsy_opm_studies.md section 3.4; docs/literature/epilepsy_opm_studies.json :: hillebrand2023_scirep",
+      "verification_level": "full_text",
+      "in_table3": true,
+      "table3_order": 3,
+      "reported": {
+        "quantity": "SNR proxy of IEDs, OPM vs SQUID planar gradiometers, per patient",
+        "metric": "z-score of each IED from a simple automatic sensor-level detector, averaged over IEDs, as a proxy for SNR",
+        "comparator": "planar gradiometers of a 306-channel MEGIN Triux Neo, after tSSS",
+        "sensors": "6 QuSpin Gen-2 rubidium OPMs in dual-axis mode (radial plus one tangential axis), 12 channels, individual rigid helmets, placed from earlier IED field maps",
+        "sensor_noise": "7-13 fT/sqrt(Hz)",
+        "region": "temporal, temporo-parietal, sensorimotor",
+        "ages": "7 patients: 3 children aged 10-12 years and 4 adults",
+        "band": "not given in the extraction (sensor bandwidth 0 to about 130 Hz)",
+        "design": "same day, not simultaneous: OPM seated in the morning, SQUID supine in the afternoon",
+        "result": "OPM/SQUID 0.98, 0.98 and 0.92 [derived] in the three patients with IEDs in both; the authors call the SNRs comparable",
+        "direction": "SQUID equal or slightly higher",
+        "source": "docs/literature/epilepsy_opm_studies.json :: hillebrand2023_scirep (opm_type_count_noise, comparator_and_channels_used_for_snr, snr_definition, snr_result, epilepsy_and_regions, ages); paraphrased"
+      },
+      "model_counterpart": "g2_peak_matched_vs_grad_ib_ratio",
+      "model_counterpart_paired": "g2_peak_dense_vs_grad_ib_ratio",
+      "match_scope": "analogue",
+      "why_this_counterpart": "Same comparator class (Neuromag-family planar gradiometers) and a single-channel metric.",
+      "model_quantity": {
+        "label": "peak-channel SNR against Neuromag's planar gradiometers, adult",
+        "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+        "comparator": "Neuromag's 204 planar gradiometers",
+        "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+        "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+        "band": "1 to 40 Hz",
+        "units": "ratio (OPM/Neuromag)"
+      },
+      "direction": {
+        "reported": "SQUID equal or slightly higher",
+        "model": "peak-channel SNR against Neuromag's planar gradiometers, adult: Neuromag's gradiometers ahead with both arrays (intervals below 1)",
+        "agreement": "peak-channel SNR against Neuromag's planar gradiometers, adult: same (the model's deficit is larger for the matched array)"
+      },
+      "comparisons": [
+        {
+          "role": "primary",
+          "label": "peak-channel SNR against Neuromag's planar gradiometers, adult",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+          "comparator": "Neuromag's 204 planar gradiometers",
+          "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "Neuromag's gradiometers ahead with both arrays (intervals below 1)",
+          "direction_vs_report": "same (the model's deficit is larger for the matched array)",
+          "facts": {
+            "matched": "g2_peak_matched_vs_grad_ib_ratio",
+            "matched_ci": "g2_peak_matched_vs_grad_ib_ci",
+            "dense": "g2_peak_dense_vs_grad_ib_ratio",
+            "dense_ci": "g2_peak_dense_vs_grad_ib_ci"
+          },
+          "values_at_writing": {
+            "g2_peak_matched_vs_grad_ib_ratio": "0.86",
+            "g2_peak_matched_vs_grad_ib_ci": "[0.84, 0.89]",
+            "g2_peak_dense_vs_grad_ib_ratio": "0.92",
+            "g2_peak_dense_vs_grad_ib_ci": "[0.89, 0.95]"
+          },
+          "fact_sources": {
+            "g2_peak_matched_vs_grad_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_matched/grad/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_matched_vs_grad_ib_ci": "results/g2/g2_summary.json :: primary.peak['opm_matched/grad/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_grad_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_dense/grad/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_grad_ib_ci": "results/g2/g2_summary.json :: primary.peak['opm_dense/grad/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))"
+          }
+        },
+        {
+          "role": "further",
+          "label": "the same quantity in children A-C at top contact (the study had three children aged 10-12 years)",
+          "units": "dB",
+          "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+          "comparator": "Neuromag's 204 planar gradiometers",
+          "anatomy": "individual school-aged children A-C (OpenNeuro ds005234; typically developing; 7.8 to 8.7 y), Neuromag at top contact in the fixed adult helmet, OPM arrays refitted to each head; area-weighted median over cortical targets (medial wall excluded); range over the three children",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "Neuromag's gradiometers ahead or level",
+          "direction_vs_report": "same",
+          "facts": {
+            "matched": "g3b_children_matched_vs_grad_ib_peak_d_range",
+            "dense": "g3b_children_dense_vs_grad_ib_peak_d_range"
+          },
+          "values_at_writing": {
+            "g3b_children_matched_vs_grad_ib_peak_d_range": "−1.14 to −0.67",
+            "g3b_children_dense_vs_grad_ib_peak_d_range": "−0.66 to 0.00"
+          },
+          "fact_sources": {
+            "g3b_children_matched_vs_grad_ib_peak_d_range": "results/g3b/g3b_summary.json :: derived: min and max over children A-C of D_median_dB['<anat>/opm_matched/grad/intrinsic+brain/peak'] (at childC and childB)",
+            "g3b_children_dense_vs_grad_ib_peak_d_range": "results/g3b/g3b_summary.json :: derived: min and max over children A-C of D_median_dB['<anat>/opm_dense/grad/intrinsic+brain/peak'] (at childC and childB)"
+          }
+        }
+      ],
+      "matched_dimensions": {
+        "comparator class": "planar gradiometers of a MEGIN/Neuromag-family system in both",
+        "kind of metric": "a single-channel measure in both"
+      },
+      "unmatched_dimensions": [
+        "hardware",
+        "sensor count",
+        "sensor noise",
+        "metric",
+        "band",
+        "source region",
+        "population",
+        "recording vs simulation"
+      ],
+      "unmatched_detail": {
+        "hardware": "dual-axis QuSpin sensors in rigid helmets vs idealized single-axis sensors; Triux Neo after tSSS vs a Neuromag model without SSS (the room field is absent from this model condition)",
+        "sensor count": "6 sensors (12 channels) placed from earlier field maps vs 98 or 208 sites",
+        "sensor noise": "7-13 fT/sqrt(Hz) vs 15 fT/sqrt(Hz) white (the peak-channel metric was not swept over OPM noise)",
+        "metric": "automatic-detector z-score of real IEDs vs single-dipole peak-channel SNR, a median over targets",
+        "band": "not given in the extraction vs 1 to 40 Hz",
+        "source region": "temporal, temporo-parietal and sensorimotor foci vs all cortex",
+        "population": "3 children and 4 adults with drug-resistant focal epilepsy vs one adult anatomy",
+        "recording vs simulation": "separate sessions with different posture and time of day vs paired simulation"
+      },
+      "table3_row": "| Hillebrand et al. (2023): 7 (3 children 10–12 y, 4 adults) | Rb, 6 dual-axis (12 channels), 7–13 fT/√Hz | Triux Neo planar gradiometers after tSSS; automatic-detector z-score per IED | temporal, temporo-parietal, sensorimotor | 0.92–0.98× (derived); 'comparable' | peak-channel SNR against the {{ F.g2_squid_grad_channels }} planar gradiometers; adult at its measured pose: matched {{ F.g2_peak_matched_vs_grad_ib_ratio }} {{ F.g2_peak_matched_vs_grad_ib_ci }}, dense {{ F.g2_peak_dense_vs_grad_ib_ratio }} {{ F.g2_peak_dense_vs_grad_ib_ci }} | same: Neuromag ahead or level | sensor count and axes; sensor noise (7–13 vs {{ F.g2_opm_asd_primary }} fT/√Hz); detector z-score of real IEDs; tSSS; regions vs all cortex; children and adults vs one adult; band not reported |",
+      "table3_facts": [
+        "g2_squid_grad_channels",
+        "g2_peak_matched_vs_grad_ib_ratio",
+        "g2_peak_matched_vs_grad_ib_ci",
+        "g2_peak_dense_vs_grad_ib_ratio",
+        "g2_peak_dense_vs_grad_ib_ci",
+        "g2_opm_asd_primary"
+      ]
+    },
+    {
+      "key": "feys2023_clinneurophysiol_infant",
+      "citation_short": "Feys et al. (2023), infant",
+      "extraction": "docs/literature/epilepsy_opm_studies.md section 3.5; docs/literature/epilepsy_opm_studies.json :: feys2023_clinneurophysiol_infant",
+      "verification_level": "full_text",
+      "in_table3": true,
+      "table3_order": 2,
+      "reported": {
+        "quantity": "absolute IED amplitude and SNR in one infant, OPM only",
+        "metric": "SNR not defined in the letter (methods refer to Feys 2022)",
+        "comparator": "none in the same patient; the authors compare with the five school-aged children of Feys 2022 (their OPM values and their cryogenic SNRs)",
+        "sensors": "26 QuSpin rubidium OPMs (17 QZFM-G3, 9 QZFM-G2) on a 34-cm cap, with a 4-mm gap to the scalp (3 mm in the Fig. 1 legend)",
+        "sensor_noise": "not reported",
+        "region": "right centro-parietal",
+        "ages": "1 infant, 5 months (corrected age 2 months), head circumference 33 cm (microcephaly)",
+        "band": "not given in the extraction",
+        "result": "IED amplitude 2.5 pT; SNR 11.1 after cardiac-artefact removal",
+        "direction": "not applicable (no same-patient comparator)",
+        "source": "docs/literature/epilepsy_opm_studies.json :: feys2023_clinneurophysiol_infant (opm_type_count_noise, comparator_and_channels_used_for_snr, snr_definition, amplitude_result, snr_result, epilepsy_and_regions, ages); paraphrased"
+      },
+      "model_counterpart": "no counterpart",
+      "match_scope": "none",
+      "no_counterpart_reason": "The study has no SQUID recording of the infant and reports absolute values for one system; the model computes OPM-to-Neuromag ratios for simulated dipoles and gives no absolute SNR of a real discharge. Its youngest head, the 12-month template (46.9 cm head circumference), is older and larger than this infant (33 cm). The previous Table 3 set the infant templates' D against this row; those are OPM-versus-SQUID quantities the study did not measure (Referee 1, minor 17).",
+      "direction": {
+        "reported": "not applicable (no same-patient comparator)",
+        "model": "no counterpart",
+        "agreement": "not applicable"
+      },
+      "withdrawn_counterparts": [
+        "g3b_templates_dense_vs_combined_ib_d_range",
+        "g3b_adult_dense_vs_combined_ib_d",
+        "g3b_infant2yr_cfx_dense_vs_combined_ib_delta",
+        "g3b_infant18mo_cfx_dense_vs_combined_ib_delta",
+        "g3b_infant12mo_cfx_dense_vs_combined_ib_delta"
+      ],
+      "matched_dimensions": {},
+      "unmatched_dimensions": [
+        "hardware",
+        "metric",
+        "comparator",
+        "population",
+        "recording vs simulation"
+      ],
+      "unmatched_detail": {
+        "hardware": "a 4-mm gap between sensor housings and the scalp vs the model's on-scalp placement (sensing centre 7 mm above the scalp)",
+        "metric": "absolute amplitude and SNR of real IEDs vs ratios between systems",
+        "comparator": "none in the infant vs Neuromag in every model comparison",
+        "population": "a preterm infant of corrected age 2 months with microcephaly and a grade IV haemorrhage vs templates of 12 to 24 months",
+        "recording vs simulation": "one 30-min recording vs simulation"
+      },
+      "table3_row": "| Feys et al. (2023), infant: 1 infant (5 months; corrected age 2 months) | Rb, 26, cap, 4-mm gap; noise not reported | none (other children's recordings); SNR not defined | right centro-parietal | IED amplitude 2.5 pT; SNR 11.1 | no counterpart: the study has no SQUID recording of the infant and reports absolute values, whereas the model gives ratios between systems; its youngest head is the {{ F.g3b_infant12mo_age_months }}-month template ({{ F.g3b_infant12mo_ofc_cm }} cm head circumference, against 33 cm) | – | comparator; metric; age and head size; microcephaly and haemorrhage |",
+      "table3_facts": [
+        "g3b_infant12mo_age_months",
+        "g3b_infant12mo_ofc_cm"
+      ]
+    },
+    {
+      "key": "badier2023_eneuro",
+      "citation_short": "Badier et al. (2023)",
+      "extraction": "docs/literature/epilepsy_opm_studies.md section 3.6; docs/literature/epilepsy_opm_studies.json :: badier2023_eneuro",
+      "verification_level": "full_text",
+      "in_table3": true,
+      "table3_order": 4,
+      "reported": {
+        "quantity": "SNR and amplitude of single and averaged IEDs, OPM vs the nearest SQUID magnetometers",
+        "metric": "maximum amplitude of the event over the SD of a baseline (2 s before the event for single spikes)",
+        "comparator": "the 4 SQUID sensors closest to the 4 OPMs (2.72-3.23 cm away) of a 4D Neuroimaging 3600 (248 magnetometers, reference-sensor noise compensation)",
+        "sensors": "helium-4 prototype: 4 sensors on a rigid helmet over the left central and temporal regions",
+        "sensor_noise": "better than 50 fT/sqrt(Hz) on the radial and one tangential axis",
+        "region": "spikes seen by MEG: left temporal pole and adjacent anterior third temporal gyrus (neocortical); hippocampus-only spikes seen by neither system",
+        "ages": "1 woman, 33 years (cavernoma of the left parahippocampal gyrus)",
+        "band": "2-70 Hz (filtering only)",
+        "design": "two sessions, each simultaneous with SEEG, SQUID first; the single spikes compared come from different sessions (the OPM-session spike was stronger on SEEG)",
+        "result": "single spike: SNR 7 (OPM) vs 5 (SQUID); amplitude 5 pT (text) or 2.5 pT (Fig. 2 legend) vs 1.1 pT",
+        "direction": "OPM higher (one spike)",
+        "source": "docs/literature/epilepsy_opm_studies.json :: badier2023_eneuro (opm_type_count_noise, comparator_and_channels_used_for_snr, snr_definition, amplitude_result, snr_result, epilepsy_and_regions, ages); paraphrased"
+      },
+      "model_counterpart": "g2_peak_matched_vs_mag_ib_ratio",
+      "model_counterpart_paired": "g2_peak_dense_vs_mag_ib_ratio",
+      "match_scope": "partial",
+      "why_this_counterpart": "A few sensors over the focus compared with the nearest SQUID magnetometers is closest to each system's best channel against magnetometers; the model has no regional peak-channel values, so the temporal pole is matched only with whole-array detectability; the model has no array of four sensors.",
+      "model_quantity": {
+        "label": "peak-channel SNR against Neuromag's magnetometers, adult, all cortex",
+        "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+        "comparator": "the best of Neuromag's 102 magnetometers",
+        "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+        "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+        "band": "1 to 40 Hz",
+        "units": "ratio (OPM/Neuromag)"
+      },
+      "direction": {
+        "reported": "OPM higher (one spike)",
+        "model": "peak-channel SNR against Neuromag's magnetometers, adult, all cortex: OPM ahead with both arrays",
+        "agreement": "peak-channel SNR against Neuromag's magnetometers, adult, all cortex: same"
+      },
+      "comparisons": [
+        {
+          "role": "primary",
+          "label": "peak-channel SNR against Neuromag's magnetometers, adult, all cortex",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+          "comparator": "the best of Neuromag's 102 magnetometers",
+          "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "OPM ahead with both arrays",
+          "direction_vs_report": "same",
+          "facts": {
+            "matched": "g2_peak_matched_vs_mag_ib_ratio",
+            "matched_ci": "g2_peak_matched_vs_mag_ib_ci",
+            "dense": "g2_peak_dense_vs_mag_ib_ratio",
+            "dense_ci": "g2_peak_dense_vs_mag_ib_ci"
+          },
+          "values_at_writing": {
+            "g2_peak_matched_vs_mag_ib_ratio": "1.14",
+            "g2_peak_matched_vs_mag_ib_ci": "[1.08, 1.19]",
+            "g2_peak_dense_vs_mag_ib_ratio": "1.23",
+            "g2_peak_dense_vs_mag_ib_ci": "[1.17, 1.27]"
+          },
+          "fact_sources": {
+            "g2_peak_matched_vs_mag_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_matched/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_matched_vs_mag_ib_ci": "results/g2/g2_summary.json :: primary.peak['opm_matched/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_mag_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_dense/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_mag_ib_ci": "results/g2/g2_summary.json :: primary.peak['opm_dense/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))"
+          }
+        },
+        {
+          "role": "further",
+          "label": "temporal pole (parcel), whole-array detectability against the magnetometers",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "known-topography detectability d = sqrt(s' C^-1 s) of a single cortical dipole with the true (oracle) covariance, all channels of a system; OPM over Neuromag",
+          "comparator": "Neuromag's 102 magnetometers",
+          "anatomy": "adult at its measured pose; median over the 35 temporal-pole targets of both hemispheres, unweighted",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "dense ahead, matched behind",
+          "direction_vs_report": "same for the dense array, opposite for the matched array",
+          "facts": {
+            "matched": "reg_temporalpole_matched_vs_mag_ib_ratio",
+            "dense": "reg_temporalpole_dense_vs_mag_ib_ratio",
+            "n_targets": "reg_temporalpole_n"
+          },
+          "values_at_writing": {
+            "reg_temporalpole_matched_vs_mag_ib_ratio": "0.88",
+            "reg_temporalpole_dense_vs_mag_ib_ratio": "1.23",
+            "reg_temporalpole_n": "35"
+          },
+          "fact_sources": {
+            "reg_temporalpole_matched_vs_mag_ib_ratio": "results/g2/g2_targets.csv :: derived: median over targets with region lh./rh.temporalpole (35 targets, both hemispheres) of the per-target ratio detect_opm_matched_opm_intrinsic+brain / detect_squid_mag_intrinsic+brain (unweighted; CSV values as stored, 4 decimals)",
+            "reg_temporalpole_dense_vs_mag_ib_ratio": "results/g2/g2_targets.csv :: derived: median over targets with region lh./rh.temporalpole (35 targets, both hemispheres) of the per-target ratio detect_opm_dense_opm_intrinsic+brain / detect_squid_mag_intrinsic+brain (unweighted; CSV values as stored, 4 decimals)",
+            "reg_temporalpole_n": "results/g2/g2_targets.csv :: derived: count of targets with region lh./rh.temporalpole (35 targets, both hemispheres)"
+          }
+        },
+        {
+          "role": "further",
+          "label": "temporal pole, amplitude analogue",
+          "units": "ratio (times)",
+          "metric": "peak field of the best OPM over that of the best Neuromag magnetometer, median over the temporal-pole targets",
+          "comparator": "Neuromag's 102 magnetometers",
+          "anatomy": "adult at its measured pose",
+          "noise": "none (field amplitude)",
+          "band": "not applicable",
+          "direction_model": "OPM larger",
+          "direction_vs_report": "same (amplitude higher)",
+          "facts": {
+            "matched": "reg_temporalpole_peakfield_matched_vs_mag_ratio",
+            "dense": "reg_temporalpole_peakfield_dense_vs_mag_ratio"
+          },
+          "values_at_writing": {
+            "reg_temporalpole_peakfield_matched_vs_mag_ratio": "2.55",
+            "reg_temporalpole_peakfield_dense_vs_mag_ratio": "2.85"
+          },
+          "fact_sources": {
+            "reg_temporalpole_peakfield_matched_vs_mag_ratio": "results/g2/g2_targets.csv :: derived: median over targets with region lh./rh.temporalpole (35 targets, both hemispheres) of amp_opm_matched / amp_squid_mag (per-target peak-field ratio; CSV values as stored)",
+            "reg_temporalpole_peakfield_dense_vs_mag_ratio": "results/g2/g2_targets.csv :: derived: median over targets with region lh./rh.temporalpole (35 targets, both hemispheres) of amp_opm_dense / amp_squid_mag (per-target peak-field ratio; CSV values as stored)"
+          }
+        }
+      ],
+      "no_counterpart_parts": [
+        "hippocampus-only spikes seen by neither system: hippocampus and amygdala are not modelled"
+      ],
+      "matched_dimensions": {
+        "comparator sensor type": "magnetometers in both (but the nearest four of another system vs Neuromag's best)",
+        "age": "an adult in both"
+      },
+      "unmatched_dimensions": [
+        "hardware",
+        "sensor count",
+        "sensor noise",
+        "metric",
+        "comparator",
+        "band",
+        "source region",
+        "population",
+        "recording vs simulation"
+      ],
+      "unmatched_detail": {
+        "hardware": "helium-4 prototype sensors and a 4D system with reference compensation vs idealized single-axis sensors and a Neuromag model",
+        "sensor count": "4 OPMs vs 98 or 208 sites",
+        "sensor noise": "below 50 fT/sqrt(Hz) vs 15 fT/sqrt(Hz) white",
+        "metric": "one single spike per system from different sessions vs a median over single-dipole targets",
+        "comparator": "the 4 magnetometers nearest the OPMs vs the best Neuromag magnetometer",
+        "band": "2-70 Hz vs 1 to 40 Hz",
+        "source region": "left temporal pole vs all cortex (peak-channel value); hippocampus not modelled",
+        "population": "one patient with a parahippocampal cavernoma vs one adult anatomy without epilepsy",
+        "recording vs simulation": "sessions simultaneous with SEEG, SQUID first vs paired simulation"
+      },
+      "table3_row": "| Badier et al. (2023): 1 adult (33 y) | 4He, 4 on scalp, < 50 fT/√Hz on 2 axes | 4 nearest magnetometers of a 248-channel 4D system; event maximum over baseline SD | left temporal pole; hippocampus-only spikes seen by neither | single spike: SNR 7 vs 5; amplitude 5 pT (text) or 2.5 pT (legend) vs 1.1 pT | peak-channel SNR against the {{ F.g2_squid_sites }} magnetometers, adult, all cortex: matched {{ F.g2_peak_matched_vs_mag_ib_ratio }} {{ F.g2_peak_matched_vs_mag_ib_ci }}, dense {{ F.g2_peak_dense_vs_mag_ib_ratio }} {{ F.g2_peak_dense_vs_mag_ib_ci }}; temporal pole, detectability against the magnetometers: matched {{ F.reg_temporalpole_matched_vs_mag_ib_ratio }}, dense {{ F.reg_temporalpole_dense_vs_mag_ib_ratio }}; hippocampus not modelled | same by peak channel; temporal pole: same (dense), opposite (matched) | sensor count; sensor noise (< 50 vs {{ F.g2_opm_asd_primary }} fT/√Hz); nearest channels of another SQUID system vs Neuromag's best; one spike per session; peak-channel value over all cortex; band (2–70 Hz) |",
+      "table3_facts": [
+        "g2_squid_sites",
+        "g2_peak_matched_vs_mag_ib_ratio",
+        "g2_peak_matched_vs_mag_ib_ci",
+        "g2_peak_dense_vs_mag_ib_ratio",
+        "g2_peak_dense_vs_mag_ib_ci",
+        "reg_temporalpole_matched_vs_mag_ib_ratio",
+        "reg_temporalpole_dense_vs_mag_ib_ratio",
+        "g2_opm_asd_primary"
+      ]
+    },
+    {
+      "key": "feys2023_frontneurosci",
+      "citation_short": "Feys et al. (2023), rubidium vs helium-4 case report",
+      "extraction": "docs/literature/epilepsy_opm_studies.md section 3.7; docs/literature/epilepsy_opm_studies.json :: feys2023_frontneurosci",
+      "verification_level": "full_text",
+      "in_table3": false,
+      "reported": {
+        "quantity": "IED SNR and amplitude, rubidium vs helium-4 OPMs recorded simultaneously (no SQUID)",
+        "metric": "peak amplitude of each IED over the background amplitude 100-50 ms before the peak, on a virtual sensor of the single ICA component containing the IEDs",
+        "comparator": "helium-4 vs rubidium OPMs",
+        "sensors": "4 QuSpin Gen-3 triaxial rubidium OPMs and 4 working helium-4 prototypes, about 1 cm from C4 or T4",
+        "sensor_noise": "helium-4 60-65 fT/sqrt(Hz); Discussion: intrinsic 15 (rubidium) and 65 (helium-4) fT/sqrt(Hz)",
+        "region": "right centrotemporal",
+        "ages": "1 child, 11 years",
+        "band": "not given in the extraction",
+        "result": "SNR 21.3 (rubidium) vs 11.4 (helium-4); amplitude 7.8 vs 4.7 pT; attributed by the authors to sensor position, not sensor performance",
+        "direction": "not applicable to OPM vs SQUID",
+        "source": "docs/literature/epilepsy_opm_studies.json :: feys2023_frontneurosci (opm_type_count_noise, comparator_and_channels_used_for_snr, snr_definition, amplitude_result, snr_result, epilepsy_and_regions, ages); paraphrased"
+      },
+      "model_counterpart": "no counterpart",
+      "match_scope": "none",
+      "no_counterpart_reason": "The model compares OPMs with Neuromag, not two OPM technologies; its OPM noise sweep ends at 30 fT/sqrt(Hz), below the helium-4 sensors' 60-65 fT/sqrt(Hz); and the authors attribute the difference to sensor position.",
+      "direction": {
+        "reported": "not applicable to OPM vs SQUID",
+        "model": "no counterpart",
+        "agreement": "not applicable"
+      },
+      "nearest_model_quantity_not_counterpart": {
+        "facts": {
+          "dense_15": "g2_dense_vs_combined_ib_ratio",
+          "dense_30": "g2_sens_asd30ft_dense_vs_combined_ib_ratio_3dp"
+        },
+        "note": "the dense array's detectability ratio against Neuromag at the primary and at the highest swept OPM noise; an effect of OPM noise expressed against a SQUID, not a comparison between OPM types",
+        "values_at_writing": {
+          "g2_dense_vs_combined_ib_ratio": "1.14",
+          "g2_sens_asd30ft_dense_vs_combined_ib_ratio_3dp": "1.008"
+        }
+      },
+      "matched_dimensions": {},
+      "unmatched_dimensions": [
+        "sensor noise",
+        "metric",
+        "comparator",
+        "recording vs simulation"
+      ],
+      "unmatched_detail": {
+        "sensor noise": "60-65 fT/sqrt(Hz) helium-4 sensors vs a sweep of 7 to 30 fT/sqrt(Hz)",
+        "metric": "ICA virtual-sensor SNR of real IEDs vs single-dipole ratios",
+        "comparator": "rubidium vs helium-4 OPMs vs OPM vs Neuromag",
+        "recording vs simulation": "one simultaneous recording vs simulation"
+      }
+    },
+    {
+      "key": "feys2024_annneurol_mesial",
+      "citation_short": "Feys et al. (2024)",
+      "extraction": "docs/literature/epilepsy_opm_studies.md section 3.8; docs/literature/epilepsy_opm_studies.json :: feys2024_annneurol_mesial",
+      "verification_level": "full_text",
+      "in_table3": true,
+      "table3_order": 5,
+      "reported": {
+        "quantity": "OPM SNR of amygdala IEDs, set against earlier OPM recordings of neocortical IEDs in other patients",
+        "metric": "SNR not defined in the letter",
+        "comparator": "none (SEEG as reference; published OPM values 11.1-16.7 from Feys 2022 and the 2023 infant letter)",
+        "sensors": "48 QuSpin rubidium OPMs (20 QZFM-G3, 28 QZFM-G2), 116 channels (18 excluded as noisy), adult-sized rigid helmet, close to rather than on the scalp",
+        "sensor_noise": "not reported",
+        "region": "right amygdala (most active irritative zone)",
+        "ages": "1 woman aged 20-30 years (preprint)",
+        "band": "not given in the extraction",
+        "design": "10 min of OPM-MEG simultaneous with SEEG at the end of a video-SEEG",
+        "result": "SNR 2.75 (amplitude 1.00 pT) vs 11.1-16.7 in earlier neocortical OPM recordings; 31 of 52 SEEG IEDs (60%) seen on OPM",
+        "direction": "deep source weaker (within the OPM, across patients)",
+        "source": "docs/literature/epilepsy_opm_studies.json :: feys2024_annneurol_mesial (opm_type_count_noise, comparator_and_channels_used_for_snr, snr_definition, amplitude_result, snr_result, epilepsy_and_regions, ages); paraphrased"
+      },
+      "model_counterpart": "reg_parahippocampal_vs_superiortemporal_dense_abs_ratio",
+      "model_counterpart_paired": "reg_parahippocampal_vs_superiortemporal_combined_abs_ratio",
+      "match_scope": "partial",
+      "why_this_counterpart": "The study compares a deep source's OPM SNR with neocortical OPM SNRs; the model's nearest quantity is one system's own detectability in a mesial temporal cortical proxy over a lateral neocortical parcel. The amygdala itself is not modelled, and no matched-array fact exists for this ratio.",
+      "model_quantity": {
+        "label": "within one system: parahippocampal over superior temporal detectability",
+        "metric": "median detectability (as defined for the primary metric, but of one system alone) over the parahippocampal targets over that over the superior temporal targets",
+        "comparator": "none (each system against itself): dense OPM; Neuromag's 306 channels",
+        "anatomy": "adult at its measured pose; both hemispheres",
+        "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+        "band": "1 to 40 Hz",
+        "units": "ratio of medians (one system's own detectability, region over region)"
+      },
+      "direction": {
+        "reported": "deep source weaker (within the OPM, across patients)",
+        "model": "within one system: parahippocampal over superior temporal detectability: parahippocampal sources about a third as detectable as superior temporal ones, in both systems alike",
+        "agreement": "within one system: parahippocampal over superior temporal detectability: same, and the model gives the same ratio for Neuromag"
+      },
+      "comparisons": [
+        {
+          "role": "primary",
+          "label": "within one system: parahippocampal over superior temporal detectability",
+          "units": "ratio of medians (one system's own detectability, region over region)",
+          "metric": "median detectability (as defined for the primary metric, but of one system alone) over the parahippocampal targets over that over the superior temporal targets",
+          "comparator": "none (each system against itself): dense OPM; Neuromag's 306 channels",
+          "anatomy": "adult at its measured pose; both hemispheres",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "parahippocampal sources about a third as detectable as superior temporal ones, in both systems alike",
+          "direction_vs_report": "same, and the model gives the same ratio for Neuromag",
+          "facts": {
+            "dense": "reg_parahippocampal_vs_superiortemporal_dense_abs_ratio",
+            "neuromag": "reg_parahippocampal_vs_superiortemporal_combined_abs_ratio"
+          },
+          "values_at_writing": {
+            "reg_parahippocampal_vs_superiortemporal_dense_abs_ratio": "0.36",
+            "reg_parahippocampal_vs_superiortemporal_combined_abs_ratio": "0.36"
+          },
+          "fact_sources": {
+            "reg_parahippocampal_vs_superiortemporal_dense_abs_ratio": "results/g2/g2_targets.csv :: derived: median detect_opm_dense_opm_intrinsic+brain over the parahippocampal targets over the same over the superior temporal targets (one system's own detectability, region against region)",
+            "reg_parahippocampal_vs_superiortemporal_combined_abs_ratio": "results/g2/g2_targets.csv :: derived: median detect_squid_combined_intrinsic+brain over the parahippocampal targets over the same over the superior temporal targets (one system's own detectability, region against region)"
+          }
+        }
+      ],
+      "matched_dimensions": {
+        "design of the contrast": "both are contrasts within one system rather than OPM vs SQUID",
+        "age": "an adult in both"
+      },
+      "unmatched_dimensions": [
+        "hardware",
+        "sensor count",
+        "metric",
+        "source region",
+        "population",
+        "recording vs simulation"
+      ],
+      "unmatched_detail": {
+        "hardware": "a rigid helmet close to rather than on the scalp, with implanted electrodes, screws and cables nearby vs on-scalp idealized sensors without artefacts",
+        "sensor count": "48 sensors (116 channels) vs 208 dense sites",
+        "metric": "absolute SNR compared across patients and studies vs a ratio of medians within one head",
+        "source region": "the amygdala (not modelled) vs parahippocampal cortex as a surface proxy; earlier patients' neocortical, mostly extratemporal foci vs the superior temporal gyrus",
+        "population": "one patient with a cortical malformation and heterotopias vs one adult anatomy without epilepsy",
+        "recording vs simulation": "10 min simultaneous with SEEG vs simulation"
+      },
+      "table3_row": "| Feys et al. (2024): 1 adult (20–30 y, preprint) | Rb, 48 (116 channels), rigid helmet; noise not reported | none (SEEG reference); SNR not defined | right amygdala | SNR 2.75 vs 11.1–16.7 in earlier neocortical OPM data (other patients) | within one system, detectability of parahippocampal over superior temporal sources, adult: dense {{ F.reg_parahippocampal_vs_superiortemporal_dense_abs_ratio }}, Neuromag {{ F.reg_parahippocampal_vs_superiortemporal_combined_abs_ratio }}; amygdala not modelled | same, and equally for Neuromag | amygdala vs a cortical proxy; patients compared across studies vs regions within one head; helmet off the scalp, implants; sensor count; noise not reported |",
+      "table3_facts": [
+        "reg_parahippocampal_vs_superiortemporal_dense_abs_ratio",
+        "reg_parahippocampal_vs_superiortemporal_combined_abs_ratio"
+      ]
+    },
+    {
+      "key": "feys2025_epilepsia_tle",
+      "citation_short": "Feys et al. (2025)",
+      "extraction": "docs/literature/epilepsy_opm_studies.md section 3.9; docs/literature/epilepsy_opm_studies.json :: feys2025_epilepsia_tle",
+      "verification_level": "full_text",
+      "in_table3": true,
+      "table3_order": 6,
+      "reported": {
+        "quantity": "IED SNR and amplitude, OPM vs SQUID magnetometers, per patient; OPM SNR in temporal vs extratemporal epilepsy",
+        "metric": "peak IED amplitude over baseline SD after averaging IEDs of similar morphology and topography, at the channel with the maximal response",
+        "comparator": "102 magnetometers of the centre's cryogenic MEG (system not named in this paper)",
+        "sensors": "43-53 QuSpin Gen-2 and Gen-3 biaxial or triaxial rubidium OPMs (98-127 channels) including 4 face-OPMs, flexible cap, PCA denoising",
+        "sensor_noise": "not reported",
+        "region": "temporal lobe epilepsy; OPM sources anterior 2, medial 2, basal 3, lateral 2, posterior 2",
+        "ages": "11 patients, 8-63 years (mean 37)",
+        "band": "not given in the extraction",
+        "design": "9 patients also had cryogenic MEG (mostly the same day); 3 compared statistically",
+        "result": "SNR higher in 1, similar in 2 of 3 tested; nominally higher in 5 of 9 and lower in 4 [derived]; nominally lower in the three patients with mesial or polar sources (8, 9, 10) [derived]; OPM SNR 9.4 in temporal vs 14.3 in extratemporal epilepsy (p = .02); amplitude higher in 2 and similar in 1 of 3 tested",
+        "direction": "OPM higher or similar; lower for mesial and polar sources (nominal); temporal below extratemporal within the OPM",
+        "source": "docs/literature/epilepsy_opm_studies.json :: feys2025_epilepsia_tle (opm_type_count_noise, comparator_and_channels_used_for_snr, snr_definition, amplitude_result, snr_result, epilepsy_and_regions, ages); paraphrased"
+      },
+      "model_counterpart": "g2_peak_matched_vs_mag_ib_ratio",
+      "model_counterpart_paired": "g2_peak_dense_vs_mag_ib_ratio",
+      "match_scope": "analogue",
+      "why_this_counterpart": "Same comparator class (102 magnetometers) and kind of metric (peak channel); the matched array (98 single-axis channels) is close to the study's 98-127 channels. Regional analogues use whole-array detectability, because no regional peak-channel values are stored.",
+      "model_quantity": {
+        "label": "peak-channel SNR against Neuromag's magnetometers, adult, all cortex",
+        "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+        "comparator": "the best of Neuromag's 102 magnetometers",
+        "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+        "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+        "band": "1 to 40 Hz",
+        "units": "ratio (OPM/Neuromag)"
+      },
+      "direction": {
+        "reported": "OPM higher or similar; lower for mesial and polar sources (nominal); temporal below extratemporal within the OPM",
+        "model": "peak-channel SNR against Neuromag's magnetometers, adult, all cortex: OPM ahead with both arrays",
+        "agreement": "peak-channel SNR against Neuromag's magnetometers, adult, all cortex: same"
+      },
+      "comparisons": [
+        {
+          "role": "primary",
+          "label": "peak-channel SNR against Neuromag's magnetometers, adult, all cortex",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+          "comparator": "the best of Neuromag's 102 magnetometers",
+          "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "OPM ahead with both arrays",
+          "direction_vs_report": "same",
+          "facts": {
+            "matched": "g2_peak_matched_vs_mag_ib_ratio",
+            "matched_ci": "g2_peak_matched_vs_mag_ib_ci",
+            "dense": "g2_peak_dense_vs_mag_ib_ratio",
+            "dense_ci": "g2_peak_dense_vs_mag_ib_ci"
+          },
+          "values_at_writing": {
+            "g2_peak_matched_vs_mag_ib_ratio": "1.14",
+            "g2_peak_matched_vs_mag_ib_ci": "[1.08, 1.19]",
+            "g2_peak_dense_vs_mag_ib_ratio": "1.23",
+            "g2_peak_dense_vs_mag_ib_ci": "[1.17, 1.27]"
+          },
+          "fact_sources": {
+            "g2_peak_matched_vs_mag_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_matched/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_matched_vs_mag_ib_ci": "results/g2/g2_summary.json :: primary.peak['opm_matched/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_mag_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_dense/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_mag_ib_ci": "results/g2/g2_summary.json :: primary.peak['opm_dense/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))"
+          }
+        },
+        {
+          "role": "further",
+          "label": "mesial temporal cortex (parahippocampal and entorhinal), whole-array detectability against the magnetometers",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "known-topography detectability d = sqrt(s' C^-1 s) of a single cortical dipole with the true (oracle) covariance, all channels of a system; OPM over Neuromag",
+          "comparator": "Neuromag's 102 magnetometers",
+          "anatomy": "adult at its measured pose; median over the 127 mesial temporal targets, unweighted",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "matched slightly behind, dense ahead",
+          "direction_vs_report": "same for the matched array, opposite for the dense array",
+          "facts": {
+            "matched": "reg_mesial_temporal_matched_vs_mag_ib_ratio",
+            "dense": "reg_mesial_temporal_dense_vs_mag_ib_ratio",
+            "n_targets": "reg_mesial_temporal_n"
+          },
+          "values_at_writing": {
+            "reg_mesial_temporal_matched_vs_mag_ib_ratio": "0.96",
+            "reg_mesial_temporal_dense_vs_mag_ib_ratio": "1.18",
+            "reg_mesial_temporal_n": "127"
+          },
+          "fact_sources": {
+            "reg_mesial_temporal_matched_vs_mag_ib_ratio": "results/g2/g2_targets.csv :: derived: median over targets with region lh./rh.parahippocampal|entorhinal (127 targets, both hemispheres) of the per-target ratio detect_opm_matched_opm_intrinsic+brain / detect_squid_mag_intrinsic+brain (unweighted; CSV values as stored, 4 decimals)",
+            "reg_mesial_temporal_dense_vs_mag_ib_ratio": "results/g2/g2_targets.csv :: derived: median over targets with region lh./rh.parahippocampal|entorhinal (127 targets, both hemispheres) of the per-target ratio detect_opm_dense_opm_intrinsic+brain / detect_squid_mag_intrinsic+brain (unweighted; CSV values as stored, 4 decimals)",
+            "reg_mesial_temporal_n": "results/g2/g2_targets.csv :: derived: count of targets with region lh./rh.parahippocampal|entorhinal (127 targets, both hemispheres)"
+          }
+        },
+        {
+          "role": "further",
+          "label": "within the dense array: temporal over frontal lobe",
+          "units": "ratio of medians (one system's own detectability, lobe over lobe)",
+          "metric": "median detectability of one system over the temporal-lobe targets over that over the frontal-lobe targets",
+          "comparator": "none (each system against itself)",
+          "anatomy": "adult at its measured pose",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "temporal below frontal in both systems",
+          "direction_vs_report": "same (temporal below extratemporal); the frontal lobe stands in for the study's extratemporal group",
+          "facts": {
+            "dense": "g2_lobe_temporal_vs_frontal_dense_abs_ratio",
+            "neuromag": "g2_lobe_temporal_vs_frontal_combined_abs_ratio"
+          },
+          "values_at_writing": {
+            "g2_lobe_temporal_vs_frontal_dense_abs_ratio": "0.73",
+            "g2_lobe_temporal_vs_frontal_combined_abs_ratio": "0.79"
+          },
+          "fact_sources": {
+            "g2_lobe_temporal_vs_frontal_dense_abs_ratio": "results/g2/g2_targets.csv :: derived: median detect_opm_dense_opm_intrinsic+brain over the temporal-lobe targets over the same over the frontal-lobe targets (one system's own detectability, lobe against lobe)",
+            "g2_lobe_temporal_vs_frontal_combined_abs_ratio": "results/g2/g2_targets.csv :: derived: median detect_squid_combined_intrinsic+brain over the temporal-lobe targets over the same over the frontal-lobe targets (one system's own detectability, lobe against lobe)"
+          }
+        },
+        {
+          "role": "further",
+          "label": "temporal lobe, whole-array detectability against the magnetometers",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "known-topography detectability d = sqrt(s' C^-1 s) of a single cortical dipole with the true (oracle) covariance, all channels of a system; OPM over Neuromag",
+          "comparator": "Neuromag's 102 magnetometers",
+          "anatomy": "adult at its measured pose; median over the 1,240 temporal-lobe targets",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "OPM ahead (matched barely)",
+          "direction_vs_report": "same (higher or similar)",
+          "facts": {
+            "matched": "g2_lobe_temporal_matched_vs_mag_ib_ratio",
+            "matched_ci": "g2_lobe_temporal_matched_vs_mag_ib_ci",
+            "dense": "g2_lobe_temporal_dense_vs_mag_ib_ratio",
+            "dense_ci": "g2_lobe_temporal_dense_vs_mag_ib_ci"
+          },
+          "values_at_writing": {
+            "g2_lobe_temporal_matched_vs_mag_ib_ratio": "1.02",
+            "g2_lobe_temporal_matched_vs_mag_ib_ci": "[1.00, 1.04]",
+            "g2_lobe_temporal_dense_vs_mag_ib_ratio": "1.21",
+            "g2_lobe_temporal_dense_vs_mag_ib_ci": "[1.17, 1.25]"
+          },
+          "fact_sources": {
+            "g2_lobe_temporal_matched_vs_mag_ib_ratio": "results/g2/g2_summary.json :: by_lobe['opm_matched/mag/intrinsic+brain'].temporal (ratio = 2**median_log2, the median over 1,240 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (18))",
+            "g2_lobe_temporal_matched_vs_mag_ib_ci": "results/g2/g2_summary.json :: by_lobe['opm_matched/mag/intrinsic+brain'].temporal (ratio = 2**median_log2, the median over 1,240 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (18))",
+            "g2_lobe_temporal_dense_vs_mag_ib_ratio": "results/g2/g2_summary.json :: by_lobe['opm_dense/mag/intrinsic+brain'].temporal (ratio = 2**median_log2, the median over 1,240 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (18))",
+            "g2_lobe_temporal_dense_vs_mag_ib_ci": "results/g2/g2_summary.json :: by_lobe['opm_dense/mag/intrinsic+brain'].temporal (ratio = 2**median_log2, the median over 1,240 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (18))"
+          }
+        },
+        {
+          "role": "further",
+          "label": "temporal pole (patients 1 and 9 had polar sources), whole-array detectability against the magnetometers",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "known-topography detectability d = sqrt(s' C^-1 s) of a single cortical dipole with the true (oracle) covariance, all channels of a system; OPM over Neuromag",
+          "comparator": "Neuromag's 102 magnetometers",
+          "anatomy": "adult at its measured pose; median over the 35 temporal-pole targets",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "matched behind, dense ahead",
+          "direction_vs_report": "same for the matched array (patient 9 nominally lower), opposite for the dense",
+          "facts": {
+            "matched": "reg_temporalpole_matched_vs_mag_ib_ratio",
+            "dense": "reg_temporalpole_dense_vs_mag_ib_ratio"
+          },
+          "values_at_writing": {
+            "reg_temporalpole_matched_vs_mag_ib_ratio": "0.88",
+            "reg_temporalpole_dense_vs_mag_ib_ratio": "1.23"
+          },
+          "fact_sources": {
+            "reg_temporalpole_matched_vs_mag_ib_ratio": "results/g2/g2_targets.csv :: derived: median over targets with region lh./rh.temporalpole (35 targets, both hemispheres) of the per-target ratio detect_opm_matched_opm_intrinsic+brain / detect_squid_mag_intrinsic+brain (unweighted; CSV values as stored, 4 decimals)",
+            "reg_temporalpole_dense_vs_mag_ib_ratio": "results/g2/g2_targets.csv :: derived: median over targets with region lh./rh.temporalpole (35 targets, both hemispheres) of the per-target ratio detect_opm_dense_opm_intrinsic+brain / detect_squid_mag_intrinsic+brain (unweighted; CSV values as stored, 4 decimals)"
+          }
+        }
+      ],
+      "matched_dimensions": {
+        "comparator class": "102 magnetometers in both",
+        "kind of metric": "each system's best single channel (peak-channel analogue only)",
+        "channel count": "the matched array's 98 channels lie at the lower end of the study's 98-127"
+      },
+      "unmatched_dimensions": [
+        "hardware",
+        "sensor count",
+        "sensor noise",
+        "metric",
+        "band",
+        "source region",
+        "population",
+        "recording vs simulation"
+      ],
+      "unmatched_detail": {
+        "hardware": "biaxial or triaxial QuSpin sensors with face-OPMs and PCA denoising vs single-axis idealized sensors without face sensors; the SQUID system is not named",
+        "sensor count": "43-53 sensors vs 98 or 208 single-axis sites",
+        "sensor noise": "not reported vs 15 fT/sqrt(Hz) white",
+        "metric": "averaged IEDs per patient vs a median over single-dipole targets; the regional model values are whole-array detectability, not peak-channel SNR",
+        "band": "not given in the extraction vs 1 to 40 Hz",
+        "source region": "mesial temporal structures (peri-amygdalar, perihippocampal) vs a cortical proxy; the extratemporal group vs the frontal lobe",
+        "population": "11 patients aged 8-63 years vs one adult anatomy",
+        "recording vs simulation": "separate sessions, sitting vs supine, two with delays of 4 and 15 months vs paired simulation"
+      },
+      "table3_row": "| Feys et al. (2025): 11 (8–63 y) | Rb, 43–53 (98–127 channels) incl. 4 face OPMs; noise not reported | 102 SQUID magnetometers (system not named); peak over baseline SD after averaging similar IEDs, peak channel | temporal lobe epilepsy (anterior, medial, basal, lateral and posterior sources) | SNR higher in 1, similar in 2 of 3 tested; nominally lower in the 3 with mesial or polar sources (derived); OPM SNR temporal 9.4 vs extratemporal 14.3 | peak-channel SNR against the {{ F.g2_squid_sites }} magnetometers, adult, all cortex: matched {{ F.g2_peak_matched_vs_mag_ib_ratio }} {{ F.g2_peak_matched_vs_mag_ib_ci }}, dense {{ F.g2_peak_dense_vs_mag_ib_ratio }} {{ F.g2_peak_dense_vs_mag_ib_ci }}; mesial temporal cortex, detectability against the magnetometers: matched {{ F.reg_mesial_temporal_matched_vs_mag_ib_ratio }}, dense {{ F.reg_mesial_temporal_dense_vs_mag_ib_ratio }}; within the dense array, temporal over frontal lobe {{ F.g2_lobe_temporal_vs_frontal_dense_abs_ratio }} | same by peak channel; mesial: same (matched), opposite (dense); within the OPM: same | sensor count and axes, face OPMs; regional model values are detectability, not peak-channel SNR; mesial structures vs a cortical proxy; frontal lobe for extratemporal; ages 8–63 vs one adult; noise and band not reported |",
+      "table3_facts": [
+        "g2_squid_sites",
+        "g2_peak_matched_vs_mag_ib_ratio",
+        "g2_peak_matched_vs_mag_ib_ci",
+        "g2_peak_dense_vs_mag_ib_ratio",
+        "g2_peak_dense_vs_mag_ib_ci",
+        "reg_mesial_temporal_matched_vs_mag_ib_ratio",
+        "reg_mesial_temporal_dense_vs_mag_ib_ratio",
+        "g2_lobe_temporal_vs_frontal_dense_abs_ratio"
+      ]
+    },
+    {
+      "key": "ren2025_neuroimage",
+      "citation_short": "Ren et al. (2025)",
+      "extraction": "docs/literature/epilepsy_opm_studies.md section 3.10; docs/literature/epilepsy_opm_studies.json :: ren2025_neuroimage",
+      "verification_level": "abstract_only",
+      "in_table3": true,
+      "table3_order": 7,
+      "reported": {
+        "quantity": "IED detection per patient, IED amplitude and SNR, OPM vs SQUID",
+        "metric": "SNR not defined in the abstract; detection compared per patient (McNemar test; detection accuracy 91.3% relative to SQUID; Gwet AC1 0.892)",
+        "comparator": "SQUID-MEG; system and channels used for SNR not given in the abstract",
+        "sensors": "128-channel whole-scalp OPM-MEG; sensor type, number and noise not given",
+        "sensor_noise": "not given",
+        "region": "not given",
+        "ages": "46 patients, mean 23.7 years (SD 8.7)",
+        "band": "not given",
+        "result": "IED detection not significantly different; higher amplitude (p < 0.001) and SNR (p = 0.003) with OPM in the 39 patients with IEDs in both systems",
+        "direction": "OPM higher SNR and amplitude; detection not different",
+        "verification_level": "abstract_only (full text not accessible on 2026-10-04; see access_attempts)",
+        "source": "docs/literature/epilepsy_opm_studies.json :: ren2025_neuroimage (opm_type_count_noise, comparator_and_channels_used_for_snr, snr_definition, amplitude_result, snr_result, epilepsy_and_regions, ages); paraphrased"
+      },
+      "model_counterpart": "g2_peak_matched_vs_mag_ib_ratio",
+      "model_counterpart_paired": "g2_peak_dense_vs_mag_ib_ratio",
+      "match_scope": "partial",
+      "why_this_counterpart": "The SNR definition and the SQUID channels are not given, so the analogue is bracketed by the two Neuromag comparators of the peak-channel metric (the magnetometers alone, as in the Feys studies, and the best of all channels); detection is set against whole-array detectability. The matched array is closer in channel count to a 128-channel system than the dense array.",
+      "model_quantity": {
+        "label": "SNR analogue (comparator unknown): peak-channel SNR against the magnetometers",
+        "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+        "comparator": "the best of Neuromag's 102 magnetometers",
+        "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+        "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+        "band": "1 to 40 Hz",
+        "units": "ratio (OPM/Neuromag)"
+      },
+      "direction": {
+        "reported": "OPM higher SNR and amplitude; detection not different",
+        "model": "SNR analogue (comparator unknown): peak-channel SNR against the magnetometers: OPM ahead; SNR analogue (comparator unknown): peak-channel SNR against all channels: Neuromag ahead; detection analogue: whole-array detectability against all channels: matched level (interval spans 1), dense ahead",
+        "agreement": "SNR analogue (comparator unknown): peak-channel SNR against the magnetometers: same, if the study's comparator was magnetometers; SNR analogue (comparator unknown): peak-channel SNR against all channels: opposite, if the study's comparator was the whole SQUID array; detection analogue: whole-array detectability against all channels: consistent for the matched array (no established difference), not for the dense"
+      },
+      "comparisons": [
+        {
+          "role": "primary",
+          "label": "SNR analogue (comparator unknown): peak-channel SNR against the magnetometers",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+          "comparator": "the best of Neuromag's 102 magnetometers",
+          "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "OPM ahead",
+          "direction_vs_report": "same, if the study's comparator was magnetometers",
+          "facts": {
+            "matched": "g2_peak_matched_vs_mag_ib_ratio",
+            "matched_ci": "g2_peak_matched_vs_mag_ib_ci",
+            "dense": "g2_peak_dense_vs_mag_ib_ratio",
+            "dense_ci": "g2_peak_dense_vs_mag_ib_ci"
+          },
+          "values_at_writing": {
+            "g2_peak_matched_vs_mag_ib_ratio": "1.14",
+            "g2_peak_matched_vs_mag_ib_ci": "[1.08, 1.19]",
+            "g2_peak_dense_vs_mag_ib_ratio": "1.23",
+            "g2_peak_dense_vs_mag_ib_ci": "[1.17, 1.27]"
+          },
+          "fact_sources": {
+            "g2_peak_matched_vs_mag_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_matched/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_matched_vs_mag_ib_ci": "results/g2/g2_summary.json :: primary.peak['opm_matched/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_mag_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_dense/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_mag_ib_ci": "results/g2/g2_summary.json :: primary.peak['opm_dense/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))"
+          }
+        },
+        {
+          "role": "primary",
+          "label": "SNR analogue (comparator unknown): peak-channel SNR against all channels",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+          "comparator": "the best of all 306 Neuromag channels",
+          "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "Neuromag ahead",
+          "direction_vs_report": "opposite, if the study's comparator was the whole SQUID array",
+          "facts": {
+            "matched": "g2_peak_matched_vs_combined_ib_ratio",
+            "matched_ci": "g2_peak_matched_vs_combined_ib_ci",
+            "dense": "g2_peak_dense_vs_combined_ib_ratio",
+            "dense_ci": "g2_peak_dense_vs_combined_ib_ci"
+          },
+          "values_at_writing": {
+            "g2_peak_matched_vs_combined_ib_ratio": "0.85",
+            "g2_peak_matched_vs_combined_ib_ci": "[0.83, 0.87]",
+            "g2_peak_dense_vs_combined_ib_ratio": "0.90",
+            "g2_peak_dense_vs_combined_ib_ci": "[0.88, 0.93]"
+          },
+          "fact_sources": {
+            "g2_peak_matched_vs_combined_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_matched/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_matched_vs_combined_ib_ci": "results/g2/g2_summary.json :: primary.peak['opm_matched/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_combined_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_dense/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_combined_ib_ci": "results/g2/g2_summary.json :: primary.peak['opm_dense/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))"
+          }
+        },
+        {
+          "role": "primary",
+          "label": "detection analogue: whole-array detectability against all channels",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "known-topography detectability d = sqrt(s' C^-1 s) of a single cortical dipole with the true (oracle) covariance, all channels of a system; OPM over Neuromag",
+          "comparator": "Neuromag's 306 channels",
+          "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "matched level (interval spans 1), dense ahead",
+          "direction_vs_report": "consistent for the matched array (no established difference), not for the dense",
+          "facts": {
+            "matched": "g2_matched_vs_combined_ib_ratio",
+            "matched_ci": "g2_matched_vs_combined_ib_ci",
+            "dense": "g2_dense_vs_combined_ib_ratio",
+            "dense_ci": "g2_dense_vs_combined_ib_ci"
+          },
+          "values_at_writing": {
+            "g2_matched_vs_combined_ib_ratio": "1.01",
+            "g2_matched_vs_combined_ib_ci": "[0.99, 1.03]",
+            "g2_dense_vs_combined_ib_ratio": "1.14",
+            "g2_dense_vs_combined_ib_ci": "[1.12, 1.17]"
+          },
+          "fact_sources": {
+            "g2_matched_vs_combined_ib_ratio": "results/g2/g2_summary.json :: primary.oracle['opm_matched/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_matched_vs_combined_ib_ci": "results/g2/g2_summary.json :: primary.oracle['opm_matched/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_dense_vs_combined_ib_ratio": "results/g2/g2_summary.json :: primary.oracle['opm_dense/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_dense_vs_combined_ib_ci": "results/g2/g2_summary.json :: primary.oracle['opm_dense/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))"
+          }
+        },
+        {
+          "role": "further",
+          "label": "weak superficial simulated spikes: S50 ratio, practical detector, 10-20 mm, adult (exploratory spike run; replace by the confirmatory run's facts once they exist)",
+          "units": "ratio S50 Neuromag / S50 OPM (above 1: the OPM needs less strength)",
+          "metric": "strength for 50% detection of focal events with the practical whitened matched-filter detector at a fixed false-event rate, pooled over the band's locations",
+          "comparator": "Neuromag's 306 channels",
+          "anatomy": "adult at its measured pose; 18 locations 10-20 mm below the scalp",
+          "noise": "time-domain version of the sensor plus brain plus room noise model (room field not projected out)",
+          "band": "1-40 Hz",
+          "direction_model": "matched: interval spans 1; dense: OPM needs less strength",
+          "direction_vs_report": "consistent for the matched array; the study's per-patient detection is not restricted to weak superficial spikes",
+          "facts": {
+            "matched": "g4_adult_matched_vs_combined_practical_10_20mm_ratio",
+            "matched_ci": "g4_adult_matched_vs_combined_practical_10_20mm_ratio_ci",
+            "dense": "g4_adult_dense_vs_combined_practical_10_20mm_ratio",
+            "dense_ci": "g4_adult_dense_vs_combined_practical_10_20mm_ratio_ci"
+          },
+          "values_at_writing": {
+            "g4_adult_matched_vs_combined_practical_10_20mm_ratio": "1.16",
+            "g4_adult_matched_vs_combined_practical_10_20mm_ratio_ci": "[0.88, 1.44]",
+            "g4_adult_dense_vs_combined_practical_10_20mm_ratio": "1.36",
+            "g4_adult_dense_vs_combined_practical_10_20mm_ratio_ci": "[1.10, 1.58]"
+          },
+          "fact_sources": {
+            "g4_adult_matched_vs_combined_practical_10_20mm_ratio": "results/g4/g4_adult_summary.json :: paired['opm_matched/opm_vs_squid/combined/practical@1'].depth0.s50_ratio_squid_over_opm.value",
+            "g4_adult_matched_vs_combined_practical_10_20mm_ratio_ci": "results/g4/g4_adult_summary.json :: paired['opm_matched/opm_vs_squid/combined/practical@1'].depth0.s50_ratio_squid_over_opm.ci95 (location bootstrap; open = censored end)",
+            "g4_adult_dense_vs_combined_practical_10_20mm_ratio": "results/g4/g4_adult_summary.json :: paired['opm_dense/opm_vs_squid/combined/practical@1'].depth0.s50_ratio_squid_over_opm.value",
+            "g4_adult_dense_vs_combined_practical_10_20mm_ratio_ci": "results/g4/g4_adult_summary.json :: paired['opm_dense/opm_vs_squid/combined/practical@1'].depth0.s50_ratio_squid_over_opm.ci95 (location bootstrap; open = censored end)"
+          }
+        }
+      ],
+      "matched_dimensions": {
+        "age": "a mostly adult cohort (mean 23.7 y; range not given; PubMed indexing includes adolescents) vs an adult anatomy"
+      },
+      "unmatched_dimensions": [
+        "hardware",
+        "sensor count",
+        "sensor noise",
+        "metric",
+        "comparator",
+        "band",
+        "source region",
+        "population",
+        "recording vs simulation"
+      ],
+      "unmatched_detail": {
+        "hardware": "sensor type not given in the abstract",
+        "sensor count": "128 channels (number of sensors not given) vs 98 or 208 sites",
+        "sensor noise": "not given vs 15 fT/sqrt(Hz) white",
+        "metric": "SNR not defined; detection judged per patient by review vs single-dipole quantities",
+        "comparator": "SQUID system and channels not given",
+        "band": "not given vs 1 to 40 Hz",
+        "source region": "not given vs all cortex",
+        "population": "46 patients with epilepsy vs one adult anatomy",
+        "recording vs simulation": "order and timing of the two recordings not given vs paired simulation"
+      },
+      "access_attempts": [
+        "PubMed (PMID 40254146): no PMC ID; PubMed copyright metadata 'Copyright 2025. Published by Elsevier Inc.', no licence given",
+        "PubMed Central and Europe PMC: not deposited (Europe PMC record: inPMC N, inEPMC N, hasPDF N; full-text link 'Subscription required', although its licence field reads 'cc by')",
+        "Crossref and Elsevier metadata: version of record under CC BY 4.0 from 2025-04-18, open access (gold, APC paid; also OpenAlex and Semantic Scholar); cover date 15 May 2025",
+        "ScienceDirect article page (pii S1053811925002356): HTTP 403 to WebFetch; a CAPTCHA challenge to a direct request (left unanswered); 'There was a problem providing the content you requested' in the desktop app's built-in browser",
+        "Elsevier article API (the text-mining link Crossref lists): full text needs an API key; without one only the metadata record is returned",
+        "Internet Archive: only two 403 captures of the article page (2025-05-10, 2025-08-25); its scholar search and CORE are behind anti-bot pages",
+        "Web search for a preprint or accepted manuscript: none found",
+        "Outcome: full text not obtained; the extraction's entry stays at abstract level and is not changed"
+      ],
+      "table3_row": "| Ren et al. (2025), abstract only: 46 (mean 23.7 y) | 128-channel whole-scalp; type and noise not given | SQUID (system and channels not given); SNR not defined | not given | amplitude and SNR higher; IED detection not significantly different | SNR, comparator unknown: peak-channel SNR, adult, against the {{ F.g2_squid_sites }} magnetometers matched {{ F.g2_peak_matched_vs_mag_ib_ratio }}, dense {{ F.g2_peak_dense_vs_mag_ib_ratio }}; against the best of all {{ F.g2_squid_channels }} channels matched {{ F.g2_peak_matched_vs_combined_ib_ratio }}, dense {{ F.g2_peak_dense_vs_combined_ib_ratio }}. Detection: detectability against all {{ F.g2_squid_channels }} channels, matched {{ F.g2_matched_vs_combined_ib_ratio }} {{ F.g2_matched_vs_combined_ib_ci }}, dense {{ F.g2_dense_vs_combined_ib_ratio }} {{ F.g2_dense_vs_combined_ib_ci }} | SNR: depends on the comparator; detection: consistent for the matched array, not the dense | comparator, SNR definition, sensors, noise, band and regions not reported; per-patient detection by review vs single-dipole detectability; 46 patients vs one adult |",
+      "table3_facts": [
+        "g2_squid_sites",
+        "g2_peak_matched_vs_mag_ib_ratio",
+        "g2_peak_dense_vs_mag_ib_ratio",
+        "g2_squid_channels",
+        "g2_peak_matched_vs_combined_ib_ratio",
+        "g2_peak_dense_vs_combined_ib_ratio",
+        "g2_matched_vs_combined_ib_ratio",
+        "g2_matched_vs_combined_ib_ci",
+        "g2_dense_vs_combined_ib_ratio",
+        "g2_dense_vs_combined_ib_ci"
+      ]
+    },
+    {
+      "key": "schwartz2025_epilepsiaopen",
+      "citation_short": "Schwartz et al. (2025)",
+      "extraction": "docs/literature/epilepsy_opm_studies.md section 3.11; docs/literature/epilepsy_opm_studies.json :: schwartz2025_epilepsiaopen",
+      "verification_level": "full_text",
+      "in_table3": true,
+      "table3_order": 8,
+      "reported": {
+        "quantity": "per-IED SNR and amplitude, OPM vs the nearest SQUID channels; SNR of an averaged deep spike (SEEG case)",
+        "metric": "maximum spike amplitude over the SD of a 20-s IED-free baseline, per IED (part 1); event maximum over baseline SD for the averaged spikes (part 2)",
+        "comparator": "the 4 channels closest to the 4 OPMs of a 275-channel CTF system (sensor type not named; third-order gradient correction); part 2: the 4 closest of a 4D Neuroimaging 3600 (248 magnetometers)",
+        "sensors": "5 triaxial helium-4 OPMs (MAG4Health): 4 on the scalp in a semi-rigid helmet, 1 as a reference",
+        "sensor_noise": "below 45 fT/sqrt(Hz) on the radial and first tangential axes",
+        "region": "part 1: 5 focal epilepsies with temporal spikes, 2 generalized; part 2: averaged spike involving amygdala, anterior hippocampus and temporo-basal region on SEEG",
+        "ages": "7 adults aged 22-48 years (mean 29.2) and one 41-year-old woman",
+        "band": "OPM 6-70 Hz, SQUID 3-70 Hz (part 1); 2-70 Hz (part 2)",
+        "design": "sequential resting recordings, SQUID always first (part 1); two sessions simultaneous with SEEG (part 2)",
+        "result": "group SNR 6.72 (OPM) vs 8.37 (SQUID), p < 0.01, d = 0.27 (0.80x [derived]); SQUID higher in 3 patients, OPM higher but not significantly in 2; amplitude 2.3x (group), 1.4-5.3x (individuals); averaged deep spike SNR 6.8 (OPM) vs 9.0 (SQUID)",
+        "direction": "SQUID higher SNR (small effect); OPM higher amplitude",
+        "source": "docs/literature/epilepsy_opm_studies.json :: schwartz2025_epilepsiaopen (opm_type_count_noise, comparator_and_channels_used_for_snr, snr_definition, amplitude_result, snr_result, epilepsy_and_regions, ages); paraphrased"
+      },
+      "model_counterpart": "g2_peak_matched_vs_combined_ib_ratio",
+      "model_counterpart_paired": "g2_peak_dense_vs_combined_ib_ratio",
+      "match_scope": "partial",
+      "why_this_counterpart": "A per-IED SNR on a few channels is closest to the peak-channel metric; the CTF channels' type is not named, so the comparator is each system's best channel of any type; the helium-4 noise lies above the model's sweep, whose top (30 fT/sqrt(Hz)) is the nearest noise condition, stored only for whole-array detectability.",
+      "model_quantity": {
+        "label": "peak-channel SNR against the best of all Neuromag channels, adult",
+        "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+        "comparator": "the best of all 306 Neuromag channels",
+        "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+        "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+        "band": "1 to 40 Hz",
+        "units": "ratio (OPM/Neuromag)"
+      },
+      "direction": {
+        "reported": "SQUID higher SNR (small effect); OPM higher amplitude",
+        "model": "peak-channel SNR against the best of all Neuromag channels, adult: Neuromag ahead with both arrays; whole-array detectability at the top of the OPM noise sweep: matched behind, dense level",
+        "agreement": "peak-channel SNR against the best of all Neuromag channels, adult: same; whole-array detectability at the top of the OPM noise sweep: same (no OPM lead)"
+      },
+      "comparisons": [
+        {
+          "role": "primary",
+          "label": "peak-channel SNR against the best of all Neuromag channels, adult",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+          "comparator": "the best of all 306 Neuromag channels",
+          "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "Neuromag ahead with both arrays",
+          "direction_vs_report": "same",
+          "facts": {
+            "matched": "g2_peak_matched_vs_combined_ib_ratio",
+            "matched_ci": "g2_peak_matched_vs_combined_ib_ci",
+            "dense": "g2_peak_dense_vs_combined_ib_ratio",
+            "dense_ci": "g2_peak_dense_vs_combined_ib_ci"
+          },
+          "values_at_writing": {
+            "g2_peak_matched_vs_combined_ib_ratio": "0.85",
+            "g2_peak_matched_vs_combined_ib_ci": "[0.83, 0.87]",
+            "g2_peak_dense_vs_combined_ib_ratio": "0.90",
+            "g2_peak_dense_vs_combined_ib_ci": "[0.88, 0.93]"
+          },
+          "fact_sources": {
+            "g2_peak_matched_vs_combined_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_matched/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_matched_vs_combined_ib_ci": "results/g2/g2_summary.json :: primary.peak['opm_matched/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_combined_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_dense/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_combined_ib_ci": "results/g2/g2_summary.json :: primary.peak['opm_dense/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))"
+          }
+        },
+        {
+          "role": "primary",
+          "label": "whole-array detectability at the top of the OPM noise sweep",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "known-topography detectability d = sqrt(s' C^-1 s) of a single cortical dipole with the true (oracle) covariance, all channels of a system; OPM over Neuromag",
+          "comparator": "Neuromag's 306 channels",
+          "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+          "noise": "sensor plus cortical background noise; OPM 30 fT/sqrt(Hz) white",
+          "band": "1 to 40 Hz",
+          "direction_model": "matched behind, dense level",
+          "direction_vs_report": "same (no OPM lead)",
+          "facts": {
+            "matched": "g2_sens_asd30ft_matched_vs_combined_ib_ratio_3dp",
+            "dense": "g2_sens_asd30ft_dense_vs_combined_ib_ratio_3dp"
+          },
+          "values_at_writing": {
+            "g2_sens_asd30ft_matched_vs_combined_ib_ratio_3dp": "0.933",
+            "g2_sens_asd30ft_dense_vs_combined_ib_ratio_3dp": "1.008"
+          },
+          "fact_sources": {
+            "g2_sens_asd30ft_matched_vs_combined_ib_ratio_3dp": "results/g2/g2_summary.json :: sensitivity.opm_asd_30fT['opm_matched/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_sens_asd30ft_dense_vs_combined_ib_ratio_3dp": "results/g2/g2_summary.json :: sensitivity.opm_asd_30fT['opm_dense/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))"
+          }
+        },
+        {
+          "role": "further",
+          "label": "comparator dependence: peak-channel SNR against the magnetometers instead",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "peak-channel SNR: each system's largest ratio of a channel's noise-free single-dipole field (10 nAm) to that channel's in-band noise SD; OPM over Neuromag",
+          "comparator": "the best of Neuromag's 102 magnetometers",
+          "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "OPM ahead",
+          "direction_vs_report": "opposite: with a magnetometer comparator the model would not reproduce the reported direction",
+          "facts": {
+            "matched": "g2_peak_matched_vs_mag_ib_ratio",
+            "dense": "g2_peak_dense_vs_mag_ib_ratio"
+          },
+          "values_at_writing": {
+            "g2_peak_matched_vs_mag_ib_ratio": "1.14",
+            "g2_peak_dense_vs_mag_ib_ratio": "1.23"
+          },
+          "fact_sources": {
+            "g2_peak_matched_vs_mag_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_matched/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_peak_dense_vs_mag_ib_ratio": "results/g2/g2_summary.json :: primary.peak['opm_dense/mag/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))"
+          }
+        },
+        {
+          "role": "further",
+          "label": "deep averaged spike (SEEG case, 4D magnetometers): mesial temporal cortex, whole-array detectability against the magnetometers",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "known-topography detectability d = sqrt(s' C^-1 s) of a single cortical dipole with the true (oracle) covariance, all channels of a system; OPM over Neuromag",
+          "comparator": "Neuromag's 102 magnetometers",
+          "anatomy": "adult at its measured pose; median over the 127 mesial temporal targets",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "matched slightly behind, dense ahead",
+          "direction_vs_report": "same for the matched array, opposite for the dense array",
+          "facts": {
+            "matched": "reg_mesial_temporal_matched_vs_mag_ib_ratio",
+            "dense": "reg_mesial_temporal_dense_vs_mag_ib_ratio"
+          },
+          "values_at_writing": {
+            "reg_mesial_temporal_matched_vs_mag_ib_ratio": "0.96",
+            "reg_mesial_temporal_dense_vs_mag_ib_ratio": "1.18"
+          },
+          "fact_sources": {
+            "reg_mesial_temporal_matched_vs_mag_ib_ratio": "results/g2/g2_targets.csv :: derived: median over targets with region lh./rh.parahippocampal|entorhinal (127 targets, both hemispheres) of the per-target ratio detect_opm_matched_opm_intrinsic+brain / detect_squid_mag_intrinsic+brain (unweighted; CSV values as stored, 4 decimals)",
+            "reg_mesial_temporal_dense_vs_mag_ib_ratio": "results/g2/g2_targets.csv :: derived: median over targets with region lh./rh.parahippocampal|entorhinal (127 targets, both hemispheres) of the per-target ratio detect_opm_dense_opm_intrinsic+brain / detect_squid_mag_intrinsic+brain (unweighted; CSV values as stored, 4 decimals)"
+          }
+        },
+        {
+          "role": "further",
+          "label": "amplitude analogue against the magnetometers (the CTF channels' type is not named)",
+          "units": "ratio (times)",
+          "metric": "peak field of the best OPM over that of the best Neuromag magnetometer, median per 5-mm depth bin, range over the populated bins",
+          "comparator": "Neuromag's 102 magnetometers",
+          "anatomy": "adult at its measured pose",
+          "noise": "none (field amplitude)",
+          "band": "not applicable",
+          "direction_model": "OPM larger at every depth",
+          "direction_vs_report": "same",
+          "facts": {
+            "matched": "g2_leadfield_matched_vs_mag_bins_range_1dp",
+            "dense": "g2_leadfield_dense_vs_mag_bins_range_1dp"
+          },
+          "values_at_writing": {
+            "g2_leadfield_matched_vs_mag_bins_range_1dp": "2.3 to 4.9",
+            "g2_leadfield_dense_vs_mag_bins_range_1dp": "2.3 to 5.4"
+          },
+          "fact_sources": {
+            "g2_leadfield_matched_vs_mag_bins_range_1dp": "results/g2/g2_summary.json :: bridge_to_sphere.opm_matched_ratio_vs_depth (median per depth bin of the OPM / Neuromag magnetometer peak-field ratio); populated bins",
+            "g2_leadfield_dense_vs_mag_bins_range_1dp": "results/g2/g2_summary.json :: bridge_to_sphere.opm_dense_ratio_vs_depth (median per depth bin of the OPM / Neuromag magnetometer peak-field ratio); populated bins"
+          }
+        }
+      ],
+      "matched_dimensions": {
+        "age": "adults in both"
+      },
+      "unmatched_dimensions": [
+        "hardware",
+        "sensor count",
+        "sensor noise",
+        "metric",
+        "comparator",
+        "band",
+        "source region",
+        "population",
+        "recording vs simulation"
+      ],
+      "unmatched_detail": {
+        "hardware": "helium-4 prototype sensors in a semi-rigid helmet and a CTF system with third-order synthetic gradiometry vs idealized single-axis sensors and a Neuromag model",
+        "sensor count": "4 OPMs vs 98 or 208 sites",
+        "sensor noise": "below 45 fT/sqrt(Hz), above the model's sweep (7 to 30 fT/sqrt(Hz))",
+        "metric": "per-IED SNR of real spikes vs a median over single-dipole targets",
+        "comparator": "the 4 CTF channels nearest the OPMs, of a type not named, vs Neuromag's best channel of any type",
+        "band": "6-70 and 3-70 Hz vs 1 to 40 Hz",
+        "source region": "temporal and generalized discharges; deep mesial structures for the SEEG case vs all cortex",
+        "population": "8 adults with epilepsy vs one adult anatomy",
+        "recording vs simulation": "sequential sessions with SQUID first (sleep possible only in the first) vs paired simulation"
+      },
+      "table3_row": "| Schwartz et al. (2025): 7 + 1 adults (22–48 y; 41 y) | 4He, 4 on scalp, < 45 fT/√Hz on 2 axes | 4 nearest channels of a 275-channel CTF, type not named (4D magnetometers for the SEEG case); per-IED maximum over 20-s baseline SD | 5 focal temporal, 2 generalized; deep mesial (SEEG case) | amplitude 2.3× (group); SNR 6.72 vs 8.37; deep spike 6.8 vs 9.0 | peak-channel SNR against the best of all {{ F.g2_squid_channels }} channels, adult: matched {{ F.g2_peak_matched_vs_combined_ib_ratio }} {{ F.g2_peak_matched_vs_combined_ib_ci }}, dense {{ F.g2_peak_dense_vs_combined_ib_ratio }} {{ F.g2_peak_dense_vs_combined_ib_ci }}; detectability with {{ F.g2_opm_asd_sweep_max }}-fT/√Hz OPMs, the top of the model's sweep: matched {{ F.g2_sens_asd30ft_matched_vs_combined_ib_ratio_3dp }}, dense {{ F.g2_sens_asd30ft_dense_vs_combined_ib_ratio_3dp }} | same: Neuromag ahead or level | sensor count; sensor noise above the model's sweep; nearest channels of an unnamed type vs Neuromag's best channel; per-IED SNR in sequential sessions; temporal and generalized foci vs all cortex; band (6–70 and 3–70 Hz) |",
+      "table3_facts": [
+        "g2_squid_channels",
+        "g2_peak_matched_vs_combined_ib_ratio",
+        "g2_peak_matched_vs_combined_ib_ci",
+        "g2_peak_dense_vs_combined_ib_ratio",
+        "g2_peak_dense_vs_combined_ib_ci",
+        "g2_opm_asd_sweep_max",
+        "g2_sens_asd30ft_matched_vs_combined_ib_ratio_3dp",
+        "g2_sens_asd30ft_dense_vs_combined_ib_ratio_3dp"
+      ]
+    },
+    {
+      "key": "shen2026_epilepsia",
+      "citation_short": "Shen et al. (2026)",
+      "extraction": "docs/literature/epilepsy_opm_studies.md section 3.12; docs/literature/epilepsy_opm_studies.json :: shen2026_epilepsia",
+      "verification_level": "full_text",
+      "in_table3": true,
+      "table3_order": 9,
+      "reported": {
+        "quantity": "concordance of OPM dipole localization with the iEEG-defined epileptogenic zone, temporal vs extratemporal epilepsy",
+        "metric": "sublobar concordance (any overlap of AAL regions) with Gwet AC1; no SNR measured",
+        "comparator": "none (iEEG and surgical outcome as references)",
+        "sensors": "Marvel MEG 128 (X-MAGTECH): 64 sensors in dual mode, 128 channels, rigid spherical helmet with fixed positions",
+        "sensor_noise": "better than 15 fT/sqrt(Hz)",
+        "region": "51 temporal, 17 extratemporal",
+        "ages": "68 patients, 6-60 years (mean 28)",
+        "band": "2-70 Hz",
+        "result": "concordance 90.0% overall; 80.1% temporal vs 92.0% extratemporal; the authors attribute the lower temporal concordance to a larger sensor-to-source distance (mesial depth; the rigid helmet sits farther from the temporal lobe)",
+        "direction": "temporal worse (within the OPM)",
+        "source": "docs/literature/epilepsy_opm_studies.json :: shen2026_epilepsia (opm_type_count_noise, comparator_and_channels_used_for_snr, snr_definition, snr_result, localization_result, epilepsy_and_regions, ages); paraphrased"
+      },
+      "model_counterpart": "no counterpart",
+      "match_scope": "explanation only",
+      "no_counterpart_reason": "Localization concordance against iEEG is not modelled (the model's localization study reports errors against the true source by array, source type and strength, not by lobe), and there is no SQUID comparator. The model has analogues only of the authors' explanation.",
+      "model_quantity": {
+        "label": "depth: within one system, temporal over frontal lobe detectability",
+        "metric": "median detectability of one system over the temporal-lobe targets over that over the frontal-lobe targets",
+        "comparator": "none (each system against itself)",
+        "anatomy": "adult at its measured pose",
+        "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+        "band": "1 to 40 Hz",
+        "units": "ratio of medians (one system's own detectability, lobe over lobe)"
+      },
+      "direction": {
+        "reported": "temporal worse (within the OPM)",
+        "model": "depth: within one system, temporal over frontal lobe detectability: temporal below frontal in both systems; helmet distance: a uniform OPM scalp gap: a 6-mm gap lowers both arrays' ratios",
+        "agreement": "depth: within one system, temporal over frontal lobe detectability: same as the authors' explanation; no statement about concordance; helmet distance: a uniform OPM scalp gap: same as the authors' explanation; a uniform gap, not a rigid spherical helmet"
+      },
+      "comparisons": [
+        {
+          "role": "explanation",
+          "label": "depth: within one system, temporal over frontal lobe detectability",
+          "units": "ratio of medians (one system's own detectability, lobe over lobe)",
+          "metric": "median detectability of one system over the temporal-lobe targets over that over the frontal-lobe targets",
+          "comparator": "none (each system against itself)",
+          "anatomy": "adult at its measured pose",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "temporal below frontal in both systems",
+          "direction_vs_report": "same as the authors' explanation; no statement about concordance",
+          "facts": {
+            "dense": "g2_lobe_temporal_vs_frontal_dense_abs_ratio",
+            "neuromag": "g2_lobe_temporal_vs_frontal_combined_abs_ratio"
+          },
+          "values_at_writing": {
+            "g2_lobe_temporal_vs_frontal_dense_abs_ratio": "0.73",
+            "g2_lobe_temporal_vs_frontal_combined_abs_ratio": "0.79"
+          },
+          "fact_sources": {
+            "g2_lobe_temporal_vs_frontal_dense_abs_ratio": "results/g2/g2_targets.csv :: derived: median detect_opm_dense_opm_intrinsic+brain over the temporal-lobe targets over the same over the frontal-lobe targets (one system's own detectability, lobe against lobe)",
+            "g2_lobe_temporal_vs_frontal_combined_abs_ratio": "results/g2/g2_targets.csv :: derived: median detect_squid_combined_intrinsic+brain over the temporal-lobe targets over the same over the frontal-lobe targets (one system's own detectability, lobe against lobe)"
+          }
+        },
+        {
+          "role": "explanation",
+          "label": "helmet distance: a uniform OPM scalp gap",
+          "units": "ratio (OPM/Neuromag)",
+          "metric": "known-topography detectability d = sqrt(s' C^-1 s) of a single cortical dipole with the true (oracle) covariance, all channels of a system; OPM over Neuromag",
+          "comparator": "Neuromag's 306 channels",
+          "anatomy": "adult (MNE sample subject) at its measured pose in the Neuromag helmet; median over all 7,661 cortical targets (medial wall included), unweighted",
+          "noise": "sensor plus cortical background noise (room field excluded); OPM 15 fT/sqrt(Hz) white, Neuromag magnetometers 3.5 fT/sqrt(Hz), gradiometers 3.6 fT/(cm sqrt(Hz))",
+          "band": "1 to 40 Hz",
+          "direction_model": "a 6-mm gap lowers both arrays' ratios",
+          "direction_vs_report": "same as the authors' explanation; a uniform gap, not a rigid spherical helmet",
+          "facts": {
+            "dense_gap": "g2_sens_gap6mm_dense_vs_combined_ib_ratio",
+            "matched_gap": "g2_sens_gap6mm_matched_vs_combined_ib_ratio",
+            "dense_nogap": "g2_dense_vs_combined_ib_ratio",
+            "matched_nogap": "g2_matched_vs_combined_ib_ratio",
+            "gap_mm": "g2_opm_gap_large_mm"
+          },
+          "values_at_writing": {
+            "g2_sens_gap6mm_dense_vs_combined_ib_ratio": "1.04",
+            "g2_sens_gap6mm_matched_vs_combined_ib_ratio": "0.96",
+            "g2_dense_vs_combined_ib_ratio": "1.14",
+            "g2_matched_vs_combined_ib_ratio": "1.01",
+            "g2_opm_gap_large_mm": "6"
+          },
+          "fact_sources": {
+            "g2_sens_gap6mm_dense_vs_combined_ib_ratio": "results/g2/g2_summary.json :: sensitivity.gap_6mm['opm_dense/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_sens_gap6mm_matched_vs_combined_ib_ratio": "results/g2/g2_summary.json :: sensitivity.gap_6mm['opm_matched/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_dense_vs_combined_ib_ratio": "results/g2/g2_summary.json :: primary.oracle['opm_dense/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_matched_vs_combined_ib_ratio": "results/g2/g2_summary.json :: primary.oracle['opm_matched/combined/intrinsic+brain'] (ratio = 2**median_log2, the median over 7,661 targets of d_OPM/d_SQUID; 95 % CI = 2**ci95, parcel bootstrap, parcels (70))",
+            "g2_opm_gap_large_mm": "results/g2/g2_summary.json :: config.sensors.opm_scalp_gap_mm (the larger scalp gap)"
+          }
+        }
+      ],
+      "matched_dimensions": {},
+      "unmatched_dimensions": [
+        "hardware",
+        "sensor count",
+        "metric",
+        "comparator",
+        "band",
+        "source region",
+        "population",
+        "recording vs simulation"
+      ],
+      "unmatched_detail": {
+        "hardware": "dual-mode sensors in a rigid spherical helmet vs on-scalp single-axis sensors; the helmet's distance is modelled only as a uniform gap",
+        "sensor count": "64 sensors (128 channels) vs 208 dense sites",
+        "metric": "localization concordance with iEEG vs detectability",
+        "comparator": "none vs Neuromag (or within one system)",
+        "band": "2-70 Hz vs 1 to 40 Hz",
+        "source region": "the extratemporal group vs the frontal lobe; temporal epilepsy vs all temporal-lobe targets",
+        "population": "68 patients aged 6-60 years vs one adult anatomy",
+        "recording vs simulation": "90 min of interictal recording, dipole fits without averaging vs simulation"
+      },
+      "table3_row": "| Shen et al. (2026): 68 (6–60 y) | 64 dual-mode (128 channels), < 15 fT/√Hz, rigid helmet | none; sublobar concordance with iEEG | 51 temporal, 17 extratemporal | concordance 80.1% temporal vs 92.0% extratemporal | no counterpart for concordance. For the authors' explanation (depth, helmet distance): within the dense array, detectability of temporal over frontal targets {{ F.g2_lobe_temporal_vs_frontal_dense_abs_ratio }} (Neuromag {{ F.g2_lobe_temporal_vs_frontal_combined_abs_ratio }}); with a {{ F.g2_opm_gap_large_mm }}-mm OPM gap, detectability against Neuromag dense {{ F.g2_sens_gap6mm_dense_vs_combined_ib_ratio }}, matched {{ F.g2_sens_gap6mm_matched_vs_combined_ib_ratio }} (without: {{ F.g2_dense_vs_combined_ib_ratio }}, {{ F.g2_matched_vs_combined_ib_ratio }}) | – | metric (localization concordance); comparator; dual-axis sensors in a rigid helmet, modelled only as a uniform gap; extratemporal group vs the frontal lobe; ages 6–60 vs one adult; band (2–70 Hz) |",
+      "table3_facts": [
+        "g2_lobe_temporal_vs_frontal_dense_abs_ratio",
+        "g2_lobe_temporal_vs_frontal_combined_abs_ratio",
+        "g2_opm_gap_large_mm",
+        "g2_sens_gap6mm_dense_vs_combined_ib_ratio",
+        "g2_sens_gap6mm_matched_vs_combined_ib_ratio",
+        "g2_dense_vs_combined_ib_ratio",
+        "g2_matched_vs_combined_ib_ratio"
+      ]
+    }
+  ]
+}
