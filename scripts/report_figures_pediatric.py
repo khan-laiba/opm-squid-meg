@@ -344,7 +344,7 @@ def fig_r6(s: dict, keys) -> dict:
     a2.set_xlabel("Δ = D$_\\mathrm{head}$ − D$_\\mathrm{adult}$ (dB)")
     a1.set_title("(a)  OPM advantage per head", loc="left")
     a2.set_title("(b)  Change from the adult", loc="left")
-    est = {}  # (b): the estimator of each class's Delta, named in the figure (Referee 1, minor 14)
+    est = {}  # (b): the estimator of each class's Delta, named in the figure
     for c, a, b in groups(kids, pos):
         a1.text(-0.01, -a + 0.5, style.CLASS_LABEL[c], transform=a1.get_yaxis_transform(), ha="right", va="bottom",
                 fontsize=6.8, color=GREY, style="italic")

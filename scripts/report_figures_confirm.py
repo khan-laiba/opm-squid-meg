@@ -334,11 +334,16 @@ def figure(results_dir: Path, out_dir: Path) -> dict:
     ax_a.set_title(f"(a)  Declared endpoint, spikes {band} mm deep", loc="left")
     ax_b.set_title("(b)  Oracle detector", loc="left")
     ax_c.set_title("(c)  Mismatched detector", loc="left")
-    h = [Line2D([], [], **mstyle("childC", color="0.15", ms=4.8)), Line2D([], [], **mstyle("childC", color=tint("0.15"), ms=4.2)),
-         Line2D([], [], **mstyle("childC", False, color="0.15", ms=4.8)),
-         Line2D([], [], marker="|", ms=8, mew=1.3, color="0.62", ls="none")]
-    fig.legend(h, ["confirmatory run (dark)", "exploratory run (light; endpoint chosen after the analyses)",
-                   "open: censored estimate (a bound)", "(b, c): endpoint ratio of (a)"],
+    any_censored = any(how in ("lower bound", "upper bound") for how in drawn.values())  # legend only what is drawn
+    any_open = any("open" in how for how in drawn.values())
+    h = [Line2D([], [], **mstyle("childC", color="0.15", ms=4.8)), Line2D([], [], **mstyle("childC", color=tint("0.15"), ms=4.2))]
+    labels = ["confirmatory run (dark)", "exploratory run (light; endpoint chosen after the analyses)"]
+    if any_censored:
+        h.append(Line2D([], [], **mstyle("childC", False, color="0.15", ms=4.8)))
+        labels.append("open: censored estimate (a bound)")
+    h.append(Line2D([], [], marker="|", ms=8, mew=1.3, color="0.62", ls="none"))
+    labels.append("(b, c): endpoint ratio of (a)")
+    fig.legend(h, labels,
                loc="upper center", ncol=2, bbox_to_anchor=(0.55, 1 - (0.04 + (0.2 if reasons else 0.0)) / H), handlelength=1.0,
                columnspacing=1.4, fontsize=7,
                title=f"Dense OPM array vs Neuromag ({n_squid} channels), thresholds frozen for a nominal {rt} false event/min; paired on "
@@ -349,8 +354,10 @@ def figure(results_dir: Path, out_dir: Path) -> dict:
                  color="#D55E00", weight="bold")
     fig.text(0.0, 0.72 / H, textwrap.fill(
         f"Lines: 95 % location-bootstrap intervals ({n_boot} resamples) over the {n_loc} locations per anatomy ({n_ev} focal events, "
-        f"the first of {common([per[k]["config"]["confirmatory"]["design"]["noise_replicates"] for k in labs])} noise replicates); arrows: open ends (resamples outside the tested {strengths[0]:g}–{strengths[-1]:g} nAm); open "
-        "marker with dashed arrow: censored point estimate. p: two-sided sign-flip test on the per-location differences in "
+        f"the first of {common([per[k]["config"]["confirmatory"]["design"]["noise_replicates"] for k in labs])} noise replicates)"
+        + (f"; arrows: open ends (resamples outside the tested {strengths[0]:g}–{strengths[-1]:g} nAm)" if any_open else "")
+        + ("; open marker with dashed arrow: censored point estimate" if any_censored else "")
+        + ". p: two-sided sign-flip test on the per-location differences in "
         f"detection counts ({method}), Holm-adjusted over the anatomies within each panel's family; ✓ and bold: below "
         f"{alpha:g}. (b) known topography, waveform and time, per-trial false-positive probability {o_alpha}; (c) {mismatch}, "
         f"thresholds recalibrated to the same nominal {rt} per minute. Exploratory run: {n_loc_x} locations per anatomy. The adult at its measured head "

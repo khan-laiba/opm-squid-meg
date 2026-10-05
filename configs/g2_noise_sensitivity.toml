@@ -1,8 +1,8 @@
-# Adult noise-model sensitivity analyses (referee round 1: Fable major issue 1 (a)-(d), Codex major
-# issue 1). Driver: scripts/study_noise_sensitivity.py. Everything not listed here (arrays, targets,
+# Adult noise-model sensitivity analyses (revision: near-skull cortex, coloured OPM noise, far-field
+# sources, noise sweep). Driver: scripts/study_noise_sensitivity.py. Everything not listed here (arrays, targets,
 # background grid, band, room field, conditions, OPM noise sweep) is read from configs/g2_adult.toml,
 # so the variants differ from the published adult comparison only in what is listed below.
-# Tags: [R] requested by a referee or by the revision task, [S] declared sensitivity value (not a
+# Tags: [R] requested in the revision, [S] declared sensitivity value (not a
 # measured or device value), [C] numerical choice, [D] taken from the data or the code base.
 
 [general]

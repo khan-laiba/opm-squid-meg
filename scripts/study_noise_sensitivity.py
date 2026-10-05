@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""Adult noise-model sensitivity analyses requested by the referees (round 1; NEW).
+"""Adult noise-model sensitivity analyses (revision; NEW).
 
-Fable, major issue 1: "(a) a sensitivity run with the shallow cortex included in the background;
-(b) a coloured OPM noise model (1/f + white, with the corner frequency swept) rather than a
-uniformly worse white sensor; (c) a bounded cardiac/ocular far-field term for both systems, or a
-quantitative argument that the 8-term projection removes it equally; (d) presenting the primary
-adult result as the range over the noise sweep". Codex, major issue 1: "test credible structured
-and colored noise alternatives and present the resulting range of comparative conclusions. Also
-quantify sensitivity to the omitted near-skull cortical background."
+The analyses: (a) the near-skull cortex, which the primary model omits, added to the background, to
+the targets or both; (b) a coloured OPM noise model (1/f plus white, the corner frequency swept)
+beside a uniformly worse white sensor; (c) bounded cardiac and ocular far-field terms for both
+systems; (d) the primary adult result over the OPM white-noise sweep; and the joint runs. They test
+structured and coloured alternatives to the white-noise model and report the resulting range of the
+comparison (supplementary text, sections C.6 and C.7).
 
 Everything is the adult comparison of scripts/g2_adult_comparison.py (MNE sample subject, its
 measured head position, the same arrays, 7,661 cortical targets of 10 nAm, 7-mm background grid
@@ -71,7 +70,11 @@ from opmsquid import (anatomy, background, environment, forward, g2, ied, io, me
                       paths, plotting)
 
 OUT = ROOT / "results" / "g2_noise_sensitivity"
-STATUS = "NEW (referee round 1: adult noise-model sensitivity; Fable major issue 1 (a)-(d), Codex major issue 1)"
+STATUS = "NEW (revision: adult noise-model sensitivity; near-skull cortex, coloured OPM noise, far-field sources, noise sweep)"
+PURPOSE = ("(a) the near-skull cortex added to the background, to the targets or both; (b) a coloured OPM noise model (1/f "
+           "plus white, the corner frequency swept) beside a uniformly worse white sensor; (c) bounded cardiac and ocular "
+           "far-field terms for both systems; (d) the primary adult result over the OPM white-noise sweep; the range of "
+           "the comparison under these structured and coloured alternatives")
 PARTS = ("sweep", "near_skull", "coloured", "far_field", "joint")
 MU0_4PI = 1e-7  # mu_0 / (4 pi) [T m / A]
 T0 = time.time()
@@ -766,7 +769,7 @@ def part_coloured(ctx, rec):
                        "band detectability of the adult comparison when every noise term is white. The band-variance alternative "
                        "(spatial whitening only) keeps the adult band covariance and raises the OPM variance by the band-averaged "
                        "1/f factor: the penalty a detector that ignores the spectral shapes would pay (an upper bound on the "
-                       "penalty). A uniformly worse white sensor (the white-level sweep) is the referee's contrast."))
+                       "penalty). A uniformly worse white sensor (the white-level sweep) is the contrast it is compared with."))
     res = {}
     # Neuromag does not depend on the OPM noise: one evaluation per signal spectrum
     for kind, w in weights.items():
@@ -1510,14 +1513,7 @@ def main():
     scfg = tomllib.loads((ROOT / "configs" / "g2_noise_sensitivity.toml").read_text())
     ctx = setup(cfg, scfg, args)
     summary = dict(status=STATUS, test_run=test, config=dict(adult=cfg, sensitivity=scfg),
-                   referee_requests=dict(
-                       fable_major_1=("(a) a sensitivity run with the shallow cortex included in the background; (b) a coloured OPM noise "
-                                      "model (1/f + white, with the corner frequency swept) rather than a uniformly worse white sensor; "
-                                      "(c) a bounded cardiac/ocular far-field term for both systems, or a quantitative argument that the "
-                                      "8-term projection removes it equally; (d) presenting the primary adult result as the range over the "
-                                      "noise sweep"),
-                       codex_major_1=("test credible structured and colored noise alternatives and present the resulting range of "
-                                      "comparative conclusions. Also quantify sensitivity to the omitted near-skull cortical background.")),
+                   purpose=PURPOSE,
                    conventions=("Median over targets of the paired ratio d_OPM / d_Neuromag (stored as median_log2 and as ratio), 95 % "
                                 "CI from a bootstrap over the Desikan-Killiany parcels and the medial-wall labels (scripts/"
                                 "g2_adult_comparison.compare), share of targets and of parcels with the OPM higher; d = sqrt(s^T C^+ s) "

@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
-"""Quality control of the school-aged children's anatomy against their MRIs (G3B, G4; referee round 1).
+"""Quality control of the school-aged children's anatomy against their MRIs (G3B, G4; revision).
 
-Requests (round-1 referee reports):
-* Fable, single biggest weakness (i): the children's "white surfaces lie 3.7-5.7 mm from the 'scalp'
-  (impossible for an 8-year-old, whose scalp plus skull is >= 8 mm) ... child B has 247 targets
-  shallower than 10 mm"; to fix: "verify the children's scalp/white-surface geometry against the MRIs
-  (scalp-to-cortex distance maps; compare to the dataset's T1) and either repair or drop them".
-* Codex, major issue 2: "Provide MRI-based overlays, coordinate-transform checks and quantitative
-  surface/registration quality measures. Correct and rerun affected analyses, or remove those
-  anatomies from substantive conclusions."
+Why: the children's white surfaces lie 3.7-5.7 mm below the scalp used, and child B has 247 targets
+shallower than 10 mm. The check compares the children's scalp and white-surface geometry with their
+MRIs (scalp-to-cortex distance maps, the T1 head boundary, MRI overlays, coordinate-transform checks
+and quantitative surface and registration measures), and repairs a surface or drops an anatomy if it
+fails (supplementary text, section D.3).
 
 Anatomies, with the surfaces exactly as G3B and G4 load them (``opmsquid.anatomy``): children A-C
 (sub-Z213, sub-Z209, sub-Z226; configs/g3b_pediatric.toml) and, as references, the adult (MNE sample;
@@ -24,8 +21,8 @@ template (the closest in age; ``--anatomies`` selects others). Checks:
    relative to the surface; and the rigid shift of the white surface that maximises the white/grey
    contrast (T1 1 mm inside minus 1 mm outside the surface).
 2. The cortex near the scalp: exact distance of every white-surface vertex to the dense scalp used by
-   G3B; area and Desikan-Killiany parcels closer than 8 mm (the referee's scalp-plus-skull bound, also
-   the modelled skull depth of A-BEM-CHILD) and 10 mm (the referee's target count), with the G3B
+   G3B; area and Desikan-Killiany parcels closer than 8 mm (a scalp-plus-skull bound, also the
+   modelled skull depth of A-BEM-CHILD) and 10 mm (the shallow-target count), with the G3B
    targets below both (results/g3b/g3b_targets_<key>.csv); by head sector; and, where the T1 exists,
    the same distances to the MRI head boundary.
 3. The scalp against the MRI head boundary: T1 profiles along the scalp's outward normals (smoothed
@@ -103,7 +100,7 @@ from scipy.spatial import cKDTree  # noqa: E402
 from opmsquid import anatomy, fsio, io, paths, pediatric, plotting  # noqa: E402
 
 OUT = ROOT / "results" / "g3b_children_qc"
-STATUS = ("NEW check (referee round 1): the school-aged children's anatomy against their MRIs "
+STATUS = ("NEW check (revision): the school-aged children's anatomy against their MRIs "
           "(D-G3-ANAT, A-BEM-CHILD, A-G3-FID): frames, cortex near the scalp, scalp vs MRI head boundary, "
           "head circumference, overlays, verdict, correction")
 TEMPLATES = {"infant2yr": "ANTS2-0Years3T", "infant18mo": "ANTS18-0Months3T", "infant12mo": "ANTS12-0Months3T"}  # as G3B
@@ -125,8 +122,11 @@ TOLERANCE_MM = 1.0  # verdict tolerance: one voxel of the 1-mm T1
 PRIMARY = "otsu"  # the MRI head boundary: where the T1 falls through the volume's air/tissue (Otsu) level; 'half_max' and
 #                   'steepest' are sensitivity definitions (a half-maximum of the local peak moves inward where the
 #                   subcutaneous fat is much brighter than the skin, as in child C)
+PURPOSE = ("verify the children's scalp and white-surface geometry against their MRIs (scalp-to-cortex distance maps, the "
+           "T1 head boundary), with MRI overlays, coordinate-transform checks and quantitative surface and registration "
+           "measures; repair a surface or drop an anatomy that fails")
 HEADER_TOLERANCE_MM = 0.01  # volume geometries agree if no corner of the volume moves more than this
-NEAR_MM = (8.0, 10.0)  # Fable: scalp plus skull >= 8 mm (= A-BEM-CHILD depth); targets shallower than 10 mm
+NEAR_MM = (8.0, 10.0)  # a scalp-plus-skull bound of 8 mm (= A-BEM-CHILD depth); targets shallower than 10 mm
 TEST_INWARD_MM = 4.0  # correction test (adult): uniform inward displacement, the order of child B's apparent deficit
 TEST_SHIFT_MM = (2.0, 0.0, 0.0)  # registration test (adult): rigid translation of the scalp and of the white surface
 SECTOR_MM = 30.0  # head sectors (head frame): left x < -30, right x > 30, front y > 30, back y < -30, top z > 60 mm
@@ -1304,11 +1304,7 @@ def main(argv=None):
     args.out.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     keys = list(dict.fromkeys(["adult"] + list(args.anatomies)))  # the adult first: it is the verdict's reference
-    out = dict(status=STATUS, requests=dict(
-        fable="verify the children's scalp/white-surface geometry against the MRIs (scalp-to-cortex distance maps; compare to "
-              "the dataset's T1) and either repair or drop them",
-        codex="Provide MRI-based overlays, coordinate-transform checks and quantitative surface/registration quality measures. "
-              "Correct and rerun affected analyses, or remove those anatomies from substantive conclusions."),
+    out = dict(status=STATUS, purpose=PURPOSE,
         parameters=dict(profile_mm=PROFILE_MM, air_from_mm=AIR_FROM_MM, peak_window_mm=PEAK_WINDOW_MM,
                         grad_window_mm=GRAD_WINDOW_MM, white_window_mm=WHITE_WINDOW_MM, white_contrast_mm=WHITE_CONTRAST_MM,
                         white_sample=WHITE_SAMPLE, shift_coarse_mm=SHIFT_COARSE_MM, shift_fine_mm=SHIFT_FINE_MM,
@@ -1318,7 +1314,7 @@ def main(argv=None):
                         correction_taper="full above half the depth of the mesh below the fiducial plane, linear to none "
                                          "at the mesh's bottom (the neck's cut edge)",
                         tests_on_adult=dict(inward_mm=TEST_INWARD_MM, translation_mm=TEST_SHIFT_MM),
-                        note="declared analysis choices of this check; thresholds 8 and 10 mm from the referee's request "
+                        note="declared analysis choices of this check; thresholds 8 and 10 mm as in the shallow-cortex question "
                              "(8 mm also configs/g3b_pediatric.toml child_skull_depth_mm); the adult test displacements are "
                              "declared test values"),
         anatomies={})

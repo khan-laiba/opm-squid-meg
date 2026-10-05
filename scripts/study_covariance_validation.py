@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Noise-model covariance validation against the measured Neuromag noise (revision, referee round 1).
+"""Noise-model covariance validation against the measured Neuromag noise (revision).
 
-Requests
-* Codex, major issue 1: "Extend the checks beyond median channel RMS to held-out channelwise
-  variances, spatial correlations, covariance eigenstructure and spectral behavior where the
-  supplied measurement framework permits. Distinguish quantities fitted to data from independent
-  predictions."
-* Fable, major issue 1: the cortical background "is calibrated on one scalar (median Neuromag
-  gradiometer variance), under-predicts the measured magnetometer brain noise by 27 % (0.73x),
-  spans 0.13-0.78 of the measured per-channel variance on the magnetometers".
+What is checked
+* Beyond the median channel RMS: held-out channelwise variances, spatial correlations, the
+  covariance eigenstructure and the spectral behaviour, as far as the measured data allow,
+  with the quantities fitted to the data kept apart from those the model predicts
+  (supplementary text, section C).
+* The cortical background, calibrated on one scalar (the median good gradiometer's variance),
+  against the measured magnetometer brain noise and the measured per-channel variances on the
+  magnetometers.
 
 Measured noise, as G2 builds it (``g2.measured_noise``): the MNE sample recording's 320 pre-stimulus
 windows (-200 to 0 ms) and its empty-room recording; each channel's record mean removed, filtered
@@ -93,13 +93,13 @@ N_EIG_STORED = 60
 WINDOW = inspect.signature(g2.measured_noise).parameters["window"].default
 TRIM_S = inspect.signature(g2.measured_noise).parameters["trim_s"].default
 
-REQUESTS = {
-    "codex_major_1": "Extend the checks beyond median channel RMS to held-out channelwise variances, spatial correlations, "
-                     "covariance eigenstructure and spectral behavior where the supplied measurement framework permits. "
-                     "Distinguish quantities fitted to data from independent predictions.",
-    "fable_major_1": "That model is calibrated on one scalar (median Neuromag gradiometer variance), under-predicts the measured "
-                     "magnetometer brain noise by 27 % (0.73x), spans 0.13-0.78 of the measured per-channel variance on the "
-                     "magnetometers",
+PURPOSE = {
+    "beyond_median_rms": "Extend the checks beyond the median channel RMS to held-out channelwise variances, spatial "
+                         "correlations, the covariance eigenstructure and the spectral behaviour, as far as the measured "
+                         "data allow, keeping the quantities fitted to the data apart from the model's predictions.",
+    "background_calibration": "Check the cortical background, calibrated on one scalar (the median good gradiometer's "
+                              "variance), against the measured magnetometer brain noise and the measured per-channel "
+                              "variances on the magnetometers.",
 }
 FITTED_VS_PREDICTED = [
     dict(quantity="cortical background scale (one scalar; one per sub-band in the band analysis)", role="fitted",
@@ -791,7 +791,7 @@ def main():
                                           n_nonpositive_measured=r["n_nonpositive"])
     summary = dict(
         status=STATUS,
-        requests=REQUESTS,
+        purpose=PURPOSE,
         fitted_vs_predicted=FITTED_VS_PREDICTED,
         declared_choices=dict(sub_bands_hz=[list(b) for b in SUB_BANDS], sub_band_note=SUB_BAND_NOTE,
                               distance_bins_mm=DIST_EDGES_MM.tolist(), subspace_dimensions=list(K_SUBSPACE),

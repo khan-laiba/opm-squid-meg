@@ -307,8 +307,8 @@ Configuration: `configs/goldenholz_reference.toml`.
 * Extension (NEW): the matched 98-site OPM array. The brain-noise sources are calibrated on the
   recorded minus empty-room variance (instrument noise is 6 % of the recorded variance for
   magnetometers and 35 % for gradiometers), then intrinsic noise is added explicitly (SQUID
-  brochure values; OPM swept 7-30 fT/sqrt(Hz)), 0.5-100 Hz. Brain noise only, the OPM array ties
-  both SQUID sensor types (Eq. 1 median +0.1 dB vs magnetometers, -0.08 dB vs gradiometers).
+  brochure values; OPM swept 7-30 fT/sqrt(Hz)), 0.5-100 Hz. Brain noise only, the OPM array is within about 0.1 dB of
+  both SQUID sensor types (point estimates: Eq. 1 median +0.1 dB vs magnetometers, -0.08 dB vs gradiometers).
   With intrinsic noise, OPM vs gradiometers is +1.3 to +2.3 dB (the gradiometer noise floor),
   and OPM vs magnetometers +0.2 dB at 7 fT/sqrt(Hz) to -1.0 dB at 30 fT/sqrt(Hz) (crossing near
   12 fT/sqrt(Hz)). Equal channel counts or coverage do not explain these differences (checked).

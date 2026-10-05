@@ -5,9 +5,9 @@ build_facts() merges the per-milestone fact modules:
   scripts/report_facts_g12.py  G1A, G1B, G1C, G2 (adult) and the adult regions
   scripts/report_facts_g3.py   G3A, G3B (pediatric) and the regions by head
   scripts/report_facts_g4.py   G4 (spike detection, localization, motion)
-  scripts/report_facts_methods.py  Methods details asked for in referee round 1 (noise model, OPM axes, time-domain
+  scripts/report_facts_methods.py  Methods details added in the revision (noise model, OPM axes, time-domain
                                model, bootstrap resamples, seeds, location-level test resolution, parameter provenance)
-  scripts/report_facts_rev.py  the referee round-1 analyses (noise-model sensitivity, the noise model against the
+  scripts/report_facts_rev.py  the revision analyses (noise-model sensitivity, the noise model against the
                                measured Neuromag covariance, the children's MRI quality check)
   scripts/report_facts_writer.py  facts added by the writers of the revised report (the adult's primary ratios as D in dB,
                                the OPM averaging volume's effect from the register)

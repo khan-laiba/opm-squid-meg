@@ -92,7 +92,7 @@ class TestCompanions(unittest.TestCase):
             self.assertGreater(chk.n.get(X.SUMMARIES[name].name, 0), 1000, name)
 
     def test_child_b_below_10mm(self):
-        """Referee 2's example: the count of g3b_summary.json follows from the companion (the rounded table prints
+        """The example of the revision: the count of g3b_summary.json follows from the companion (the rounded table prints
         some of these targets as 10.00)."""
         s = next(x for x in SPECS if x.family == "pediatric" and x.anatomy == "childB")
         c = self.comps[s]

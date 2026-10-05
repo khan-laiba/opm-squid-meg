@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Report facts for the Methods details asked for in referee round 1 (prefix meth_), merged by scripts/report_facts.py.
+"""Report facts for the Methods details added in the revision (prefix meth_), merged by scripts/report_facts.py.
 
-The referees asked for: the cortical background's moment variance per source and its grid, the oracle covariance, the
+The details: the cortical background's moment variance per source and its grid, the oracle covariance, the
 OPM sensitive-axis construction and its effect, the external-field projection, the Neuromag system modelled, the
 parameters of the time-domain (spike) model, the two dSPM implementations, the number of bootstrap resamples of every
 interval family, the random seeds of the spike runs, the 12-month template's thin skull and the single-layer check, what

@@ -65,7 +65,7 @@ step g4_compare $PY scripts/g4_epilepsy_pediatric.py --compare           # G4  p
 step g4_matched $PY scripts/study_g4_matched_rate.py                     # G4  detection at matched held-out false-event rates
 step fit_failures $PY scripts/study_g4_fit_failures.py                   # G4  failed fits under declared criteria (from the event tables)
 step g4_motion $PY scripts/g4_motion.py                                  # G4  head motion and OPM slippage (bounded extension)
-# analyses added for the referees' round-1 requests (2026-10-04); the children's QC needs their T1 and head masks
+# analyses added in the revision (2026-10-04); the children's QC needs their T1 and head masks
 # (configs/school_subjects_qc_manifest.json, fetched with the surfaces by scripts/fetch_school_subjects.py):
 step cov_valid $PY scripts/study_covariance_validation.py               # G2   noise model vs the measured Neuromag covariance
 step noise_sens $PY scripts/study_noise_sensitivity.py                  # G2   near-skull cortex, coloured OPM noise, far-field sources

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Report figures in the manuscript's own terms (round-1 referee reports: no internal analysis
+"""Report figures in the manuscript's own terms (revision: no internal analysis
 labels in the panels, one dB colour scale for the cortical maps, a legible geometry figure), drawn
 from stored outputs only: nothing is simulated or re-analysed.
 

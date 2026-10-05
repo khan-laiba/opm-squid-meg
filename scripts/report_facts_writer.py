@@ -882,6 +882,14 @@ def round3b_facts(F: Facts, root: Path) -> None:
     F.add("wr_cgap_scaled_templates_interaction_range", f"{signed(min(meds), 2)} to {signed(max(meds), 2)}",
           [min(meds), max(meds)], f"{CGAP} :: interaction['<head>/gap_matched/combined/intrinsic+brain'].interaction.median "
           "(derived: min and max over the scaled adults and the infant templates; every ci95 above zero, checked)")
+    it_top = [cg["interaction"][f"{h}/gap_matched_top/combined/intrinsic+brain"]["interaction"] for h in scaled_templates]
+    mt = [float(x["median"]) for x in it_top]
+    if not all(float(x["ci95"][0]) > 0 for x in it_top):
+        raise ValueError(f"{CGAP}: an interaction interval at the adult's top-contact gap includes zero")
+    F.add("wr_cgap_scaled_templates_interaction_top_range", f"{signed(min(mt), 2)} to {signed(max(mt), 2)}", [min(mt), max(mt)],
+          f"{CGAP} :: interaction['<head>/gap_matched_top/combined/intrinsic+brain'].interaction.median (derived: min and max over "
+          "the scaled adults and the infant templates, the helmet fitted at the adult's top-contact gap; every ci95 above zero, "
+          "checked)")
     top = [cg["delta_vs_adult_top"][f"{h}/gap_matched_top/opm_dense/combined/intrinsic+brain"]["delta"] for h in scaled_templates]
     tm = [float(x["median"]) for x in top]
     F.add("wr_cgap_scaled_templates_fittedtop_vs_top_range", f"{signed(min(tm), 2)} to {signed(max(tm), 2)}", [min(tm), max(tm)],

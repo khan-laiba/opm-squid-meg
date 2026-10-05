@@ -70,7 +70,7 @@ LOBES = (("frontal", "Frontal"), ("parietal", "Parietal"), ("temporal", "Tempora
 PARCELS = (("precentral", "Precentral", ""), ("superiortemporal", "Superior temporal", "lateral temporal"),
            ("parahippocampal", "Parahippocampal", ""))
 # a lobe whose parcel bootstrap would rest on fewer parcels than this gets no interval (the insula: one parcel per
-# hemisphere); Referee 1: report no interval rather than a crude one
+# hemisphere): no interval rather than a crude one
 MIN_CI_PARCELS = 3
 
 

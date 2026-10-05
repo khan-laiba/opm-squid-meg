@@ -1,4 +1,4 @@
-"""Report facts of the referee round-1 revision analyses (scripts/report_facts_rev.py) against the stored results:
+"""Report facts of the revision analyses (scripts/report_facts_rev.py) against the stored results:
 formats, sources, registration, literal values read from the result files, the study's own printed summary, and the
 guard on the noise-sensitivity configuration."""
 import importlib.util
@@ -389,7 +389,7 @@ class TestStageB2Facts(unittest.TestCase):
         self.assertEqual(v["rev_db_check_n_moved"], "5")
 
     def test_not_ahead_targets(self):
-        """Referee 1, minor 13: the 4 of 7,661 targets at which the dense array is not ahead (sensor + brain noise)."""
+        """The 4 of 7,661 targets at which the dense array is not ahead (sensor + brain noise)."""
         v = self.v
         self.assertEqual(v["rev_g2_notahead_n"], "4")
         self.assertEqual(v["rev_g2_notahead_n_csv_undecided"], "1")       # equal at the CSV's 4 decimals

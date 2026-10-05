@@ -1,31 +1,31 @@
 #!/usr/bin/env python3
-"""Report facts for the referee round-1 revision analyses (prefix rev_), merged by scripts/report_facts.py.
+"""Report facts for the revision analyses (prefix rev_), merged by scripts/report_facts.py.
 
 facts(root) -> {name: {"value": text as printed, "raw": unrounded number(s) or text, "source": "results/<file> :: <key path>"
 or "results/<file> :: derived: <how>"}}. Read only; nothing is re-run:
-  rev_ns_   results/g2_noise_sensitivity/noise_sensitivity_summary.json: the adult noise model's sensitivity (Fable major
-            issue 1 (a)-(d), Codex major issue 1). sweep: the OPM white-noise sweep with 1,000-resample parcel-bootstrap
+  rev_ns_   results/g2_noise_sensitivity/noise_sensitivity_summary.json: the adult noise model's sensitivity (near-skull
+            cortex, coloured OPM noise, far-field sources). sweep: the OPM white-noise sweep with 1,000-resample parcel-bootstrap
             intervals and the break-even white levels; near: the cortex within 4 mm of the inner skull in the background and
             as targets, in three forward models; col: coloured (1/f + white) OPM noise with swept corners; ff: far-field
             cardiac and ocular sources and the energy the projection leaves of them; joint: all alternatives together; alt:
             the range over the run's own headline table. Its stored configuration must equal configs/g2_noise_sensitivity.toml.
   rev_cov_  results/g2_covariance_validation/covariance_validation.json: the noise model against the measured Neuromag
-            covariance of the MNE sample recording (Codex major issue 1, Fable major issue 1): what is fitted and what is
+            covariance of the MNE sample recording: what is fitted and what is
             predicted, channel variances (held-out halves), channel patterns, correlation against distance, eigenstructure,
             the heart, sub-bands, Neuromag detectability with the measured covariance, the implied OPM/Neuromag scenarios.
   rev_qc_   results/g3b_children_qc/children_qc.json: the school-aged children's surfaces against their MRIs, with the adult
-            and the 2-year template as references (Fable weakness (i), Codex major issue 2); configs/school_subjects_qc_manifest.json.
+            and the 2-year template as references; configs/school_subjects_qc_manifest.json.
   Stage B2 sections (marked in the code):
   rev_cgap_ results/g3b_constant_gap/g3b_constant_gap_summary.json: the counterfactual helmet fitted to each head at the
-            adult's gap (both referees' control): the adult's gaps; per head and helmet (fixed at top contact; scaled
+            adult's gap: the adult's gaps; per head and helmet (fixed at top contact; scaled
             with the head, centred and laterally centred; fitted at the adult's gap and at its top-contact gap) the gap,
             the scale k and whether the clearance binds; D with intervals; Delta at the adult's gap, at its top-contact gap,
             against the adult at top contact and at equal OPM site count; within-head contrasts (fixed minus another
             helmet); interactions; the fixed helmet's placement band; regional D; ranges and counts over the groups.
   rev_db_   results/g2/g2_depth_bins.json (scripts/study_g2_depth_bins.py): 95 % parcel-bootstrap intervals of the adult
-            depth curves per 5-mm bin (Referee 1), the bins whose interval lies above, spans or lies below 1.
+            depth curves per 5-mm bin, the bins whose interval lies above, spans or lies below 1.
   rev_g2_notahead_  results/g2/g2_targets.csv: the targets at which the dense array is not ahead with sensor + brain
-            noise (Referee 1, minor 13): depth, parcel, lobe.
+            noise: depth, parcel, lobe.
   rev_seed_ the random seeds that no other module states (G1B, G1C, the adult patches and convergence subset, the band
             and head-surface bootstraps, the near-mesh and BEM-sphere checks, the smaller heads' patch centres and
             usefulness strata, the gap-matched helmet, the sign-flip Monte Carlo, the confirmatory replicates); values set
@@ -2081,7 +2081,7 @@ def db_facts(F, root):
 
 
 # ------------------------------------------------------------------------------------------------
-# the targets at which the dense array is not ahead (rev_g2_notahead_; Referee 1, minor 13)
+# the targets at which the dense array is not ahead (rev_g2_notahead_)
 G2_TARGETS, G2_SUMMARY = "results/g2/g2_targets.csv", "results/g2/g2_summary.json"
 DK_READABLE = {"bankssts": "banks of the superior temporal sulcus", "caudalanteriorcingulate": "caudal anterior cingulate",
                "caudalmiddlefrontal": "caudal middle frontal", "cuneus": "cuneus", "entorhinal": "entorhinal",

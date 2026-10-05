@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Supplementary figure of the MRI quality check of the school-aged children (referee round 1), drawn
+"""Supplementary figure of the MRI quality check of the school-aged children (revision), drawn
 in the report's style from the check's own geometry.
 
   Figure_S_children_qc  (a) For the adult, children A-C and the 24-month template, a 50 x 50 mm section

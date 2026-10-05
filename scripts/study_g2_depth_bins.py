@@ -2,8 +2,8 @@
 """Per-depth-bin intervals of the adult comparison (G2): a 95 % parcel-bootstrap interval for the median ratio in every
 5-mm depth bin of results/g2/g2_summary.json (log2_ratio_vs_depth), from the stored per-target values.
 
-Referee round 1 (Referee 1, figures): the depth-bin crossings of the adult depth curve were called descriptive because no
-per-bin intervals were stored. Nothing is simulated here. Inputs:
+Revision: the depth-bin crossings of the adult depth curve were descriptive because no per-bin intervals were stored.
+Nothing is simulated here. Inputs:
   results/g2/g2_targets.csv        per-target detectabilities (4 decimals) and peak fields (5 significant digits)
   results/g2/g2_targets_depth.csv  the unrounded depth of every target and its 5-mm bin (column depth_bin_5mm; written by
                                    scripts/export_target_precision.py). g2_targets.csv prints the depth to 0.01 mm, which
@@ -58,7 +58,7 @@ DEPTH = "results/g2/g2_targets_depth.csv"
 SUMMARY = "results/g2/g2_summary.json"
 CONFIG = "configs/g2_adult.toml"
 OUT = "results/g2/g2_depth_bins.json"
-STATUS = ("NEW (revision, referee round 1: 95 % parcel-bootstrap intervals of the adult depth curves per 5-mm depth bin, "
+STATUS = ("NEW (revision: 95 % parcel-bootstrap intervals of the adult depth curves per 5-mm depth bin, "
           "from the stored per-target values; nothing simulated)")
 N_BOOT = inspect.signature(G2.compare).parameters["n_boot"].default  # the adult analysis's primary resample count
 MIN_N = inspect.signature(G2.binned).parameters["min_n"].default  # bins with fewer targets have no stored median

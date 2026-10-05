@@ -298,7 +298,7 @@ def page_summary(d):
     dspm = {a: pl[f"{a}_vs_squid/patch/320nAm"]["dspm_error_mm"] for a in ("opm_matched", "opm_dense")}
     items = [
         f"With modelled brain noise, the dense {n_dense}-site OPM array has <strong>{cmp_str(dense)}</strong> the known-topography "
-        f"detectability of the Neuromag system (all 306 channels; median over {g2['n_targets']:,} cortical targets, 95 % CI "
+        f"detectability of the Neuromag system (all 306 channels; median over {g2['n_targets']:,} targets, the {g2['medial_wall']['n_targets']} on the medial wall included, 95 % CI "
         f"from a bootstrap over cortical parcels; higher at all but {g2['n_targets'] - round(dense['share_opm_better'] * g2['n_targets']):,} "
         f"targets). An OPM array at "
         f"Neuromag's own sites ({n_matched} of 102 fit) shows no established advantage: {cmp_str(matched)}. Conditions: OPM white noise 15 fT/&radic;Hz, "
