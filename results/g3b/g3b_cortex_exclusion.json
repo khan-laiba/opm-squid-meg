@@ -1,0 +1,201 @@
+{
+  "status": "DERIVED (the cortex left out by the source rule A-BEM-DIST in each native head; surfaces loaded as the pediatric analyses load them; nothing simulated)",
+  "rule": "usable: inside the inner-skull BEM surface and at least 4 mm from its 5120-triangle mesh (opmsquid.anatomy.FullResCortex.usable)",
+  "near_scalp": "vertices whose distance to the scalp used (the dense MRI scalp of each head; point-to-surface, as the children's MRI check measures it) is below the threshold",
+  "anatomies": {
+    "adult": {
+      "subject": "sample",
+      "whole_surface": {
+        "n_vertices": 312273,
+        "area_cm2": 2024.3747651127724,
+        "usable_share": 0.9278504465402376,
+        "outside_inner_skull_share": 0.0007009142087354837,
+        "within_4mm_of_inner_skull_share": 0.07144863925102705,
+        "n_usable_vertices": 284935
+      },
+      "within_8mm_of_scalp": {
+        "n_vertices": 0,
+        "area_cm2": 0.0,
+        "usable_share": null,
+        "outside_inner_skull_share": null,
+        "within_4mm_of_inner_skull_share": null,
+        "n_usable_vertices": 0
+      },
+      "within_10mm_of_scalp": {
+        "n_vertices": 11,
+        "area_cm2": 0.04592668959723158,
+        "usable_share": 0.0,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 1.0,
+        "n_usable_vertices": 0
+      }
+    },
+    "infant2yr": {
+      "subject": "ANTS2-0Years3T",
+      "whole_surface": {
+        "n_vertices": 167824,
+        "area_cm2": 1069.5897938940248,
+        "usable_share": 0.9924981218270136,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.00750187817298644,
+        "n_usable_vertices": 166583
+      },
+      "within_8mm_of_scalp": {
+        "n_vertices": 0,
+        "area_cm2": 0.0,
+        "usable_share": null,
+        "outside_inner_skull_share": null,
+        "within_4mm_of_inner_skull_share": null,
+        "n_usable_vertices": 0
+      },
+      "within_10mm_of_scalp": {
+        "n_vertices": 598,
+        "area_cm2": 4.04938256939415,
+        "usable_share": 0.9790121678444511,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.020987832155548787,
+        "n_usable_vertices": 584
+      }
+    },
+    "infant18mo": {
+      "subject": "ANTS18-0Months3T",
+      "whole_surface": {
+        "n_vertices": 157910,
+        "area_cm2": 1000.725655135856,
+        "usable_share": 0.9741883688071105,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.025811631192889588,
+        "n_usable_vertices": 153987
+      },
+      "within_8mm_of_scalp": {
+        "n_vertices": 135,
+        "area_cm2": 0.9396607359536647,
+        "usable_share": 0.0,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 1.0,
+        "n_usable_vertices": 0
+      },
+      "within_10mm_of_scalp": {
+        "n_vertices": 1854,
+        "area_cm2": 11.775541470748017,
+        "usable_share": 0.45981321638807987,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.5401867836119202,
+        "n_usable_vertices": 911
+      }
+    },
+    "infant12mo": {
+      "subject": "ANTS12-0Months3T",
+      "whole_surface": {
+        "n_vertices": 141484,
+        "area_cm2": 905.7187306736239,
+        "usable_share": 0.9880800752079024,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.0119199247920977,
+        "n_usable_vertices": 139728
+      },
+      "within_8mm_of_scalp": {
+        "n_vertices": 0,
+        "area_cm2": 0.0,
+        "usable_share": null,
+        "outside_inner_skull_share": null,
+        "within_4mm_of_inner_skull_share": null,
+        "n_usable_vertices": 0
+      },
+      "within_10mm_of_scalp": {
+        "n_vertices": 1736,
+        "area_cm2": 11.98096537555074,
+        "usable_share": 0.7238364185295237,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.2761635814704762,
+        "n_usable_vertices": 1204
+      }
+    },
+    "childA": {
+      "subject": "sub-Z213",
+      "whole_surface": {
+        "n_vertices": 295051,
+        "area_cm2": 1996.9993131077938,
+        "usable_share": 0.9272657984588296,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.07273420154117029,
+        "n_usable_vertices": 270522
+      },
+      "within_8mm_of_scalp": {
+        "n_vertices": 4065,
+        "area_cm2": 22.358969708541466,
+        "usable_share": 0.06426612731963548,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.9357338726803647,
+        "n_usable_vertices": 182
+      },
+      "within_10mm_of_scalp": {
+        "n_vertices": 16416,
+        "area_cm2": 98.07696343982168,
+        "usable_share": 0.13253346197594731,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.8674665380240529,
+        "n_usable_vertices": 1703
+      }
+    },
+    "childB": {
+      "subject": "sub-Z209",
+      "whole_surface": {
+        "n_vertices": 274035,
+        "area_cm2": 1851.679448334959,
+        "usable_share": 0.8999146985909806,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.10008530140901922,
+        "n_usable_vertices": 241908
+      },
+      "within_8mm_of_scalp": {
+        "n_vertices": 14761,
+        "area_cm2": 83.40200556562677,
+        "usable_share": 0.050093742034048094,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.949906257965952,
+        "n_usable_vertices": 570
+      },
+      "within_10mm_of_scalp": {
+        "n_vertices": 36381,
+        "area_cm2": 219.6066652948401,
+        "usable_share": 0.26035959944390485,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.739640400556095,
+        "n_usable_vertices": 8168
+      }
+    },
+    "childC": {
+      "subject": "sub-Z226",
+      "whole_surface": {
+        "n_vertices": 265918,
+        "area_cm2": 1933.5222620265347,
+        "usable_share": 0.9667409389425484,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.033259061057451494,
+        "n_usable_vertices": 256735
+      },
+      "within_8mm_of_scalp": {
+        "n_vertices": 586,
+        "area_cm2": 3.616747073363097,
+        "usable_share": 0.0,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 1.0,
+        "n_usable_vertices": 0
+      },
+      "within_10mm_of_scalp": {
+        "n_vertices": 4585,
+        "area_cm2": 31.40004925552048,
+        "usable_share": 0.08525082336721253,
+        "outside_inner_skull_share": 0.0,
+        "within_4mm_of_inner_skull_share": 0.9147491766327875,
+        "n_usable_vertices": 341
+      }
+    }
+  },
+  "provenance": {
+    "commit": "1d7230c+dirty",
+    "mne_version": "1.13.2",
+    "numpy_version": "2.5.3"
+  }
+}

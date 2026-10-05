@@ -401,7 +401,7 @@ Design
   variance excess; C a pessimistic bound, Neuromag as measured and the OPM bearing that whole excess as
   cortical noise; D Neuromag as measured, the OPM exactly as modelled; E Neuromag with its measured empty
   room and modelled brain noise. Intervals: 1,000 parcel-bootstrap resamples (IC-BOOT-COVVAL).
-* 3-70 Hz band (revision; design only, not yet run): `scripts/g2_band_sensitivity.py` also rebuilds the
+* 3-70 Hz band (revision): `scripts/g2_band_sensitivity.py` also rebuilds the
   whole noise model in a 3-70 Hz band, a band used for clinical spike review, by the rules of its other
   bands (Butterworth order 4, zero phase; brain scale recalibrated on the good gradiometers and room field
   refitted in the band; with and without the 100-Hz OPM response; 200 resamples of targets,
@@ -564,7 +564,11 @@ intrinsic + brain noise, OPM 15 fT/sqrt(Hz) unless stated; parcel-bootstrap 95 %
   0.888 [0.855, 0.921]; C 0.799 [0.760, 0.842] | 0.675 [0.647, 0.703]. Which scenario holds depends on
   how the OPM's real noise departs from the model, which no measurement here constrains: the noise
   model is validated in part for Neuromag, not for the OPM arrays.
-* 3-70 Hz band: not yet computed.
+* 3-70 Hz band (`results/g2/g2_band_sensitivity.json`, bands['3-70Hz']; adult detectability, not the
+  time-domain spike study): dense | site-matched against Neuromag's 306 channels with sensor plus brain
+  noise 1.137 [1.133, 1.141] | 1.011 [1.009, 1.013], after the projection 1.108 | 0.945 (1-40 Hz: 1.144 |
+  1.009 and 1.115 | 0.948); with the 100-Hz OPM response 1.130 | 1.008. Intervals resample targets
+  (IC-BOOT-G2-BAND), so they are narrower than the primary parcel intervals.
 
 ## 9. Epilepsy relevance, adult (G4, NEW) — `opmsquid.ied`, `opmsquid.detection`, `opmsquid.localization`, `scripts/g4_*.py`
 

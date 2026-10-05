@@ -795,6 +795,48 @@ def sphere_facts(F: Facts, root: Path) -> None:
           "surface below the scalp, mm)")
 
 
+
+def round3_facts(F: Facts, root: Path) -> None:
+    """Facts added for the third round: the adult ratio without the medial wall, child B's shallow targets measured to the
+    MRI head boundary, the cortex the source rule leaves out per head, and the Poisson uncertainty of the calibrated
+    1-per-minute operating point."""
+    g2s = json.loads((root / "results/g2/g2_summary.json").read_text())
+    r = float(g2s["medial_wall"]["ratios_without"]["opm_dense/combined/intrinsic+brain"])
+    F.add("wr_g2_dense_ib_ratio_no_medial_wall", f"{r:.3f}", r, "results/g2/g2_summary.json :: medial_wall.ratios_without"
+          "['opm_dense/combined/intrinsic+brain'] (the adult's median over its targets without the 558 medial-wall ones)")
+    q = json.loads((root / QC).read_text())["anatomies"]["childB"]["g3b_targets"]
+    n_mri = int(q["below_10mm_to_mri_boundary"])
+    F.add("wr_qc_child_b_targets_lt10mm_mri_n", count(n_mri), n_mri, f"{QC} :: anatomies['childB'].g3b_targets."
+          "below_10mm_to_mri_boundary (child B's targets less than 10 mm from the MRI head boundary)")
+    ex = json.loads((root / "results/g3b/g3b_cortex_exclusion.json").read_text())["anatomies"]
+    src = "results/g3b/g3b_cortex_exclusion.json :: anatomies[{}].{}"
+    for key, tok in (("adult", "adult"), ("infant2yr", "infant2yr"), ("infant18mo", "infant18mo"), ("infant12mo", "infant12mo"),
+                     ("childA", "child_a"), ("childB", "child_b"), ("childC", "child_c")):
+        w = float(ex[key]["whole_surface"]["within_4mm_of_inner_skull_share"]) + float(ex[key]["whole_surface"]["outside_inner_skull_share"])
+        F.add(f"wr_excl_{tok}_pct", f"{100 * w:.1f}%", 100 * w, src.format(f"'{key}'", "whole_surface (outside_inner_skull_share + "
+              "within_4mm_of_inner_skull_share: the white-surface area that is neither target nor background)"))
+    vals = [100 * (float(ex[k]["whole_surface"]["within_4mm_of_inner_skull_share"]) + float(ex[k]["whole_surface"]["outside_inner_skull_share"]))
+            for k in ("childA", "childB", "childC")]
+    F.add("wr_excl_children_pct_range", f"{min(vals):.1f}% to {max(vals):.1f}%", [min(vals), max(vals)],
+          src.format("'childA', 'childB', 'childC'", "whole_surface"))
+    b8 = ex["childB"]["within_8mm_of_scalp"]
+    F.add("wr_excl_child_b_lt8mm_n", count(int(b8["n_vertices"])), int(b8["n_vertices"]),
+          src.format("'childB'", "within_8mm_of_scalp.n_vertices (white-surface vertices less than 8 mm from the scalp used)"))
+    F.add("wr_excl_child_b_lt8mm_usable_n", count(int(b8["n_usable_vertices"])), int(b8["n_usable_vertices"]),
+          src.format("'childB'", "within_8mm_of_scalp.n_usable_vertices"))
+    cfg = tomllib.loads((root / CONFIRM_CFG).read_text())
+    base = tomllib.loads((root / "configs/g4_epilepsy.toml").read_text())
+    rate = float(cfg["endpoint"]["false_events_per_min"])
+    minutes = float(base["null"]["calibration_min"])
+    n_ev = rate * minutes
+    F.add("wr_confirm_calib_expected_events", f"{n_ev:g}", n_ev, f"{CONFIRM_CFG} :: endpoint.false_events_per_min, "
+          "configs/g4_epilepsy.toml :: null.calibration_min (derived: their product, the false events a threshold set for that "
+          "rate places on the calibration null)")
+    rel = 100 / math.sqrt(n_ev)
+    F.add("wr_confirm_calib_poisson_pct", f"{rel:.0f}%", rel, f"{CONFIRM_CFG} :: endpoint.false_events_per_min, "
+          "configs/g4_epilepsy.toml :: null.calibration_min (derived: 1/sqrt(expected false events), the Poisson relative "
+          "standard deviation of a rate estimated from that many events)")
+
 def facts(root: Path = ROOT) -> dict:
     """Every writer fact, name -> {"value", "raw", "source"}."""
     root = Path(root)
@@ -828,6 +870,7 @@ def facts(root: Path = ROOT) -> dict:
     cgap_projected_interval_facts(F, root)
     confirm_depth_comparison_facts(F, root)
     confirm_exact_p_facts(F, root)
+    round3_facts(F, root)
     return dict(F)
 
 

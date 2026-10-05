@@ -447,8 +447,8 @@ def fig_joint(D) -> dict:
                 source = "Focal dipole" if fam == "focal" else f"{D['patch_radius']:g}-mm patch"
                 ax.set_title(f"{source}, {s:g} nAm", fontsize=8.0)
         y_top = axs[i, 0].get_position().y1
-        fig.text(0.01, y_top + (0.028 if i == 0 else 0.006), f"({'abc'[i]})  {inv['label']}: detected and localized within "
-                 f"{D['radius']:g} mm", ha="left", va="bottom", fontsize=8.2)
+        fig.text(0.01, y_top + (0.028 if i == 0 else 0.006), f"({'abc'[i]})  {inv['label']}: detected, and localized within "
+                 f"{D['radius']:g} mm at the true peak sample", ha="left", va="bottom", fontsize=8.2)
     fig.text(0.6175, 0.095, f"Share of the {n} injected events per condition (%)", ha="center", va="top", fontsize=7.8)
     systems = [Patch(facecolor=dark[a], edgecolor="none", label=lab) for a, lab in
                ((SQUID, f"Neuromag ({D['sites']['adult'][SQUID]} channels)"), ("opm_dense", "dense OPM array"),

@@ -451,6 +451,21 @@ class TestWriterFacts(unittest.TestCase):
         self.assertEqual(W._sci(5e-5), "5.0 × 10⁻⁵")
         self.assertEqual(W._sci(0.0099), "9.9 × 10⁻³")
 
+    def test_round3_facts_against_their_files(self):
+        g2s = json.loads((ROOT / "results/g2/g2_summary.json").read_text())
+        self.assertAlmostEqual(self.F["wr_g2_dense_ib_ratio_no_medial_wall"]["raw"],
+                               g2s["medial_wall"]["ratios_without"]["opm_dense/combined/intrinsic+brain"], places=12)
+        qc = json.loads((ROOT / "results/g3b_children_qc/children_qc.json").read_text())["anatomies"]["childB"]["g3b_targets"]
+        self.assertEqual(self.F["wr_qc_child_b_targets_lt10mm_mri_n"]["raw"], qc["below_10mm_to_mri_boundary"])
+        ex = json.loads((ROOT / "results/g3b/g3b_cortex_exclusion.json").read_text())["anatomies"]
+        for key, tok in (("adult", "adult"), ("childA", "child_a"), ("childB", "child_b"), ("childC", "child_c")):
+            w = ex[key]["whole_surface"]
+            self.assertAlmostEqual(self.F[f"wr_excl_{tok}_pct"]["raw"],
+                                   100 * (w["within_4mm_of_inner_skull_share"] + w["outside_inner_skull_share"]), places=9)
+        self.assertEqual(self.F["wr_excl_child_b_lt8mm_usable_n"]["raw"], ex["childB"]["within_8mm_of_scalp"]["n_usable_vertices"])
+        self.assertEqual(self.F["wr_confirm_calib_expected_events"]["value"], "20")
+        self.assertEqual(self.F["wr_confirm_calib_poisson_pct"]["value"], "22%")
+
     def test_registered_last_in_the_merged_facts(self):
         R = _load("report_facts")
         self.assertEqual(R.MODULES[-1], "report_facts_writer")
