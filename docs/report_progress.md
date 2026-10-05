@@ -40,7 +40,8 @@ figures and result files CC BY 4.0).
   fitted at the adult's gap shows that fitting reduces the smaller heads' extra advantage, not that the
   advantage needs the wide gap. Fable 5.1 asked for multi-axis clinical arrays to be named, a checkable
   pre-specification, the excluded cortex per head and a plainer Abstract.
-- Round 3 (the round-3 revision): both referees reviewing, with the round-2 reports and the response.
+- Round 3 (commit fabd710, after two internal pre-checks): both referees reviewing, with the round-2 reports and the
+  point-by-point response.
 
 ## Log
 
