@@ -1,13 +1,13 @@
 {
  "provenance": {
-  "commit": "13bb30c+dirty",
+  "commit": "e3212c3+dirty",
   "drawn_at": {
-   "Figure_R0_sphere": "13bb30c+dirty",
-   "Figure_R11_maps_adult": "13bb30c+dirty",
-   "Figure_R12_geometry": "13bb30c+dirty",
-   "Figure_R13_maps_heads": "13bb30c+dirty",
-   "Figure_R14_maps_scaled": "13bb30c+dirty",
-   "Figure_R15_arrays": "13bb30c+dirty"
+   "Figure_R0_sphere": "e3212c3+dirty",
+   "Figure_R11_maps_adult": "e3212c3+dirty",
+   "Figure_R12_geometry": "e3212c3+dirty",
+   "Figure_R13_maps_heads": "e3212c3+dirty",
+   "Figure_R14_maps_scaled": "e3212c3+dirty",
+   "Figure_R15_arrays": "e3212c3+dirty"
   }
  },
  "figures": {
@@ -166,7 +166,7 @@
   },
   "Figure_R12_geometry": {
    "inputs": [
-    "results/g3b/g3b_geometry_sections.json (written by scripts/export_g3b_geometry.py at 4da5f17+dirty from the stored state of the pediatric run 71de176 and the constant-gap run 10e37b9) :: anatomies[<head>].sections (sagittal.scalp, coronal.scalp, coronal.white.lh/rh: polylines, head frame, mm), coils_mm (fixed_top, fitted_adult_gap; scaled_x_centred: not drawn, its offset from the fitted helmet), opm_dense_mm, transforms (top: device_to_head, moved_mm; gap_matched: device_to_head, k, k_at_target, target_gap_mm, clearance_binding; counterfactual_x-centred: device_to_head, k, k_nominal), gaps_mm (checks), neuromag (magnetometers, coil_centres_device_mm: check), fitted_helmet.rule, provenance (commit, source_state.commit, constant_gap_summary.commit)",
+    "results/g3b/g3b_geometry_sections.json (written by scripts/export_g3b_geometry.py at e3212c3 from the stored state of the pediatric run 71de176 and the constant-gap run 10e37b9) :: anatomies[<head>].sections (sagittal.scalp, coronal.scalp, coronal.white.lh/rh: polylines, head frame, mm), coils_mm (fixed_top, fitted_adult_gap; scaled_x_centred: not drawn, its offset from the fitted helmet), opm_dense_mm, transforms (top: device_to_head, moved_mm; gap_matched: device_to_head, k, k_at_target, target_gap_mm, clearance_binding; counterfactual_x-centred: device_to_head, k, k_nominal), gaps_mm (checks), neuromag (magnetometers, coil_centres_device_mm: check), fitted_helmet.rule, provenance (commit, source_state.commit, constant_gap_summary.commit)",
     "results/g3b/g3b_summary.json :: placements[<head>]['top'|'counterfactual_x-centred'|'x-centred'] (moved_mm, k, k_nominal, shift_x_mm, min/median/max_dist_mm: checks and labels), arrays[<head>].opm_dense (n_sites, standoff_mm), anatomies[<head>].head_size.ofc_mm, config.placement (clearance_mm, dewar_spacing_mm), provenance.commit",
     "results/g3b_constant_gap/g3b_constant_gap_summary.json :: target_gaps.gap_matched.gap_mm, helmets[<head>].gap_matched (k, k_at_target, clearance_binding, min/median/max_mm: labels and checks; every head for the clearance-bound ones), provenance.commit"
    ],
@@ -370,7 +370,7 @@
   },
   "Figure_R15_arrays": {
    "inputs": [
-    "results/g2/g2_arrays.json (written by scripts/export_g2_arrays.py at dbced6b+dirty: the adult run's arrays rebuilt by its code and checked against results/g2/g2_summary.json of run e53bea8) :: neuromag.coil_centres_mm, opm_matched.sensing_centres_mm, opm_dense.sensing_centres_mm, head_surface (vertices_mm, triangles, n_vertices, n_triangles, conform), <array>.descriptors and checks.sensor_distance_mm (checks), provenance",
+    "results/g2/g2_arrays.json (written by scripts/export_g2_arrays.py at e3212c3: the adult run's arrays rebuilt by its code and checked against results/g2/g2_summary.json of run e53bea8) :: neuromag.coil_centres_mm, opm_matched.sensing_centres_mm, opm_dense.sensing_centres_mm, head_surface (vertices_mm, triangles, n_vertices, n_triangles, conform), <array>.descriptors and checks.sensor_distance_mm (checks), provenance",
     "results/g2/g2_summary.json :: arrays.squid (sites, channels), arrays.opm_matched and arrays.opm_dense (n_sites, min_spacing_mm, standoff_mm, excluded_sites), arrays.head_surface_conform.n_vertices, bridge_to_sphere.sensor_distance_mm (squid, opm_matched, opm_dense: median, p5, p95), provenance.commit"
    ],
    "description": "The adult (MNE sample subject) in its head frame (Neuromag convention from the digitised fiducials: x towards the right preauricular point, y towards the nasion, z up; mm), in orthographic projection, seen from the right (top row: view along -x, anterior to the right) and from above (bottom row: view along -z, anterior up), all panels at one scale. Head: the boundary-element head surface of the forward model on the MRI scalp (2562 vertices, 5120 triangles; conformed to the MRI scalp, vertices moved a median 1.05 mm), drawn with smooth grey shading lit from the viewer's side and its visible outline; the side view is cut at z = -70 mm (neck). Markers: a sensor is drawn when no part of the head surface lies between it and the viewer and, in the side view, when it is on the right half of the head (x > 0), so that the far side's sensors do not overlap the near side's (drawn, side/top: Neuromag 47/102; site-matched OPM 44/96; dense OPM 99/206). (a) Neuromag (306 channels): the 102 magnetometer coil centres of the sample recording (each of the sensor sites also holds two planar gradiometers) at the adult's measured head position, the primary position of the adult analyses; median 29.8 mm from the scalp (nearest MRI scalp vertex; 5th-95th percentile 25.4-35.9 mm). (b) Site-matched OPM array: the Neuromag sites that fit the OPM placement rules, each projected onto the scalp (98 of 102; the sites of magnetometers MEG 0111, MEG 0141, MEG 1421, MEG 1431 excluded), at least 22.1 mm apart. (c) Dense OPM array: the densest feasible single-axis array under the packing rule (208 sites, at least 17.0 mm apart). OPM markers are the sensing centres, 7 mm from the scalp along the head-surface normal (median distance to the nearest MRI scalp vertex 6.99 and 7.00 mm); each OPM measures the field component along the head-surface normal. Colours: Okabe-Ito, the report's array colours (Neuromag black, site-matched OPM sky blue, dense OPM blue). The channel-budget control of the adult analyses (204 sites, a subset of the dense array) is not analysed in the main text and not drawn. Positions and head surface are read from results/g2/g2_arrays.json, exported by scripts/export_g2_arrays.py, which rebuilds the adult run's arrays with its code and reproduces every array descriptor and sensor-to-scalp distance stored in results/g2/g2_summary.json (checked again here: site counts, descriptors, distances).",

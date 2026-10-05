@@ -4922,7 +4922,7 @@
     "endpoint_max_holm_p_exact": 0.0102996826171875
   },
   "provenance": {
-    "commit": "13bb30c+dirty",
+    "commit": "e3212c3",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

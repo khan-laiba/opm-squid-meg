@@ -4,7 +4,7 @@
     "targets": "results/g2/g2_targets.csv",
     "targets_status": "NEW (realistic adult OPM vs Neuromag comparison, MNE sample subject) | commit e53bea8",
     "depth": "results/g2/g2_targets_depth.csv",
-    "depth_status": "Depth below the scalp at full precision and its bins for the targets of g2_targets.csv (commit e53bea8), same rows in the same order; g2_patch_targets.csv has the same rows and printed depth | commit dbced6b+dirty",
+    "depth_status": "Depth below the scalp at full precision and its bins for the targets of g2_targets.csv (commit e53bea8), same rows in the same order; g2_patch_targets.csv has the same rows and printed depth | commit e3212c3",
     "summary": "results/g2/g2_summary.json",
     "summary_commit": "e53bea8",
     "config": "configs/g2_adult.toml"
@@ -2267,9 +2267,9 @@
     "max_rel_diff_log_vs_linear_median_peak_field": 3.29198721849e-06,
     "max_rel_diff_log_vs_linear_median_peak_field_at": "peak_field/opm_matched 10-15 mm"
   },
-  "runtime_s": 1.5615949630737305,
+  "runtime_s": 1.5194621086120605,
   "provenance": {
-    "commit": "dbced6b+dirty",
+    "commit": "e3212c3",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
   }

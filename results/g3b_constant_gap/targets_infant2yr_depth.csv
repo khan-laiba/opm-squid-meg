@@ -1,4 +1,4 @@
-# Depth below the scalp at full precision and its bins for the targets of targets_infant2yr.csv (commit 10e37b9), same rows in the same order | commit dbced6b+dirty
+# Depth below the scalp at full precision and its bins for the targets of targets_infant2yr.csv (commit 10e37b9), same rows in the same order | commit e3212c3
 # cortical: 0 on the medial wall, which every summary of these heads leaves out; depth_mm: the depth [mm] as computed, in the shortest decimal form that reads back as the same double (targets_infant2yr.csv prints it to 6 decimals); bins are half-open, lo <= value < hi (empty: outside every bin); depth_stratum: the depth strata of g3b_constant_gap_summary.json (0-10, 10-15, 15-20, 20-25, 25-30, 30-40, 40-50, 50-60, 60-90 mm; 0-10 = below 10 mm)
 hemi,vertno,cortical,depth_mm,depth_stratum
 0,16,1,11.293707767302722,10-15

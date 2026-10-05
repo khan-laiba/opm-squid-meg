@@ -22,7 +22,7 @@ figures and result files CC BY 4.0).
 | 1. Foundations: number provenance, new figures from stored outputs, verified literature table, site integration | done | 31,150 sourced facts; figures R1-R10; 15 studies (14 verified in full text); 197 tests pass |
 | 2. Draft the report as one narrative | done | about 8,500 words of main text, 10 figures, 3 tables, 39 references |
 | 3. Internal verification: numbers, claims against evidence, methods completeness, build, tests, links | done | 166 checker issues resolved; supplementary pages cleaned for publication; 197 tests pass |
-| 4. Referee rounds (both referees, same round) | in progress | round 1: major revisions from both; revision in progress, round 2 next |
+| 4. Referee rounds (both referees, same round) | in progress | round 1: major revisions from both; revision done; round 2 under review |
 | 5. Deploy to GitHub Pages and check the live site | first deployment done | the round-1 version is live; redeploy after acceptance |
 
 ## Referee rounds
@@ -33,7 +33,7 @@ figures and result files CC BY 4.0).
   cardiac/ocular fields as sensitivity analyses); a quality check of the school-aged children's MRI
   surfaces; a helmet fitted to each head at the adult's gap, with placement uncertainty; a confirmatory
   spike run with the endpoint fixed in advance; public code; and a shorter manuscript in its own terms.
-- Round 2: in preparation (revision branch `revision-r2`).
+- Round 2 (commit after the revision's clean re-draw): both referees reviewing the revised manuscript, with the round-1 reports and the point-by-point response.
 
 ## Log
 
@@ -94,3 +94,11 @@ figures and result files CC BY 4.0).
   The 3-70 Hz band was added to the band analysis and the children's MRI check re-run with full-precision
   depths, both from a clean checkout. Stage B3 (the confirmatory results written in, nine checkers, editor,
   point-by-point response letter) is running; round 2 follows.
+- 2026-10-05: stage B3 done: the confirmatory results written into Section 3.6 (Table 3, Figure 8) and S1
+  (section G.5); figures in the manuscript's terms; nine independent checkers, an editor and two rechecks.
+  Every reported sign-flip p is now the exact p over all sign patterns, computed from the stored
+  per-location differences (`scripts/g4_confirm_exact_p.py`); the run's Monte Carlo estimates give the same
+  Holm decisions in all 25 families. A usage limit stopped the last editor and the response-letter agents;
+  the remaining recheck findings were fixed and the point-by-point response written directly, its numbers
+  checked against the rendered pages. The revision was merged into the main branch, and every export and
+  report figure re-drawn at that clean commit (content identical; only the provenance stamps changed).

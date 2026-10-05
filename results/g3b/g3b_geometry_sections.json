@@ -1029,7 +1029,7 @@
   }
  },
  "provenance": {
-  "commit": "4da5f17+dirty",
+  "commit": "e3212c3",
   "mne_version": "1.13.2",
   "numpy_version": "2.5.3",
   "source_state": {
