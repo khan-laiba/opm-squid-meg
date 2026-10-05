@@ -1,6 +1,6 @@
 {
  "provenance": {
-  "commit": "e3212c3+dirty"
+  "commit": "859f71a"
  },
  "figures": {
   "Figure_S_children_qc": {
@@ -978,13 +978,13 @@
      }
     },
     "runtime_s": {
-     "adult": 76.1,
-     "childA": 66.4,
-     "childB": 54.7,
-     "childC": 64.4,
-     "infant2yr": 40.9
+     "adult": 74.3,
+     "childA": 65.3,
+     "childB": 53.6,
+     "childC": 62.9,
+     "infant2yr": 40.3
     },
-    "peak_memory_gb": 1.24
+    "peak_memory_gb": 1.32
    }
   }
  }

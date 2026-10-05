@@ -1,13 +1,13 @@
 {
  "provenance": {
-  "commit": "e3212c3+dirty",
+  "commit": "859f71a",
   "drawn_at": {
-   "Figure_R0_sphere": "e3212c3+dirty",
-   "Figure_R11_maps_adult": "e3212c3+dirty",
-   "Figure_R12_geometry": "e3212c3+dirty",
-   "Figure_R13_maps_heads": "e3212c3+dirty",
-   "Figure_R14_maps_scaled": "e3212c3+dirty",
-   "Figure_R15_arrays": "e3212c3+dirty"
+   "Figure_R0_sphere": "859f71a",
+   "Figure_R11_maps_adult": "859f71a",
+   "Figure_R12_geometry": "859f71a",
+   "Figure_R13_maps_heads": "859f71a",
+   "Figure_R14_maps_scaled": "859f71a",
+   "Figure_R15_arrays": "859f71a"
   }
  },
  "figures": {
