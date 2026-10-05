@@ -1,6 +1,6 @@
 # Legacy work (before the adult-to-pediatric study)
 
-Scripts and outputs written on 2026-09-29, before `GOAL.md` defined the adult-to-pediatric
+Scripts and outputs written on 2026-09-29, before the study specification defined the adult-to-pediatric
 study. Their science is unchanged. They were moved from the repository root into this folder on
 2026-09-30, and on 2026-10-01 they were prepared for release (D-REL-FONTS,
 `docs/release_checklist.md`): text is now set in open fonts (DejaVu Sans, STIX italic) unless

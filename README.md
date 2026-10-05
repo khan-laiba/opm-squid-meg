@@ -4,7 +4,7 @@ Simulation study comparing on-scalp optically pumped magnetometers (OPM) with th
 (Vectorview/TRIUX-type) SQUID system: an analytical benchmark, adaptations of two published
 adult studies, a realistic adult comparison, a pediatric fixed-helmet versus head-adaptive
 extension, and epilepsy (interictal spike) detection and localization examples in both.
-The goal and milestones are in `GOAL.md`; the plan, status and decisions log in `PLAN.md`.
+The milestones, plan, status and decisions log are in `PLAN.md`.
 
 This is a proposed study in development. It does not claim that any author of the reproduced
 papers has reviewed or approved it. The OPM advantage is tested, not assumed.
@@ -20,7 +20,7 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G2 realistic adult OPM vs Neuromag | NEW | done, checked; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2`, `adult-baseline-v3` and `adult-baseline-v4` (equal OPM standoff on every head) |
 | G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates, three school-aged children of OpenNeuro ds005234 with a modelled skull, and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`, recomputed with the v3 arrays (`adult-baseline-v3`) and with every head surface on its MRI scalp (`adult-baseline-v4`); the 2-year-template pass checked (fixes re-verified); the 18- and 12-month templates added on 2026-10-01, the school-aged children on 2026-10-03 (v4 only) |
 | G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates, both size controls and three school-aged children); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts checked |
-| G5 software, reproduction, report | - | 160 unit tests pass with the v4 results and the school-aged children (a clean clone of 0b57bba, data through `OPMSQUID_DATA`, empty cache: 159 pass, 1 skipped without the stored lead fields); `scripts/run_all.sh` (resumable: `RESUME=1`); result CSVs carry a status line; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
+| G5 software, reproduction, report | - | 197 unit tests pass; the report is built from the stored results and published as a GitHub Pages site |
 
 "Checked" means separate checking passes within the project by reviewer agents, with fixes
 re-verified (on 2026-10-01 also complete passes by two other models); it is not external peer review.
@@ -244,7 +244,8 @@ the local cache, then the analytical G1A benchmark, which needs no data):
 ```
 
 Each driver writes `results/<milestone>/` and records the code commit it ran in its JSON.
-Commit hashes in result files identify the code version in the project's private repository.
+Commit hashes in result files identify the code version in this repository; `docs/commit_map.tsv` maps the hashes
+recorded before 2026-10-04 to the current history.
 
 The sample data must end up in `data/external/MNE-sample-data` (`src/opmsquid/paths.py`;
 override with `OPMSQUID_DATA`). Caches go to `cache/` (`OPMSQUID_CACHE`).
@@ -255,9 +256,9 @@ override with `OPMSQUID_DATA`). Caches go to `cache/` (`OPMSQUID_CACHE`).
 open `site/_build/index.html`) from the committed result files, in the order the goal asks for:
 adult benchmarks, realistic adult results, pediatric extension, epilepsy, then methods,
 parameters and reproduction. Every number is read from `results/`; the downloads list each file's
-size, SHA-256 and the code commit recorded in it; the build fails on any broken link. Nothing is
-deployed: repository visibility and GitHub Pages stay unchanged until the owner approves a
-release (release-ready and publicly deployed are separate statuses).
+size, SHA-256 and the code commit recorded in it; the build fails on any broken link. The published report,
+https://khan-laiba.github.io/opm-squid-meg/, is this build, committed to the `gh-pages` branch by
+`scripts/deploy_pages.py` and checked with `scripts/check_live_site.py`.
 
 ## Data and privacy
 
@@ -275,20 +276,22 @@ release (release-ready and publicly deployed are separate statuses).
   `configs/school_subjects_manifest.json`). Results derived from them (`results/g3b/g3b_targets_child*.csv`,
   `school_subjects_preparation.json`, `school_anatomy_checks.json`, the G3B summary, report and figures,
   `results/g4/*child*` and the pediatric G4 cross-reading summaries and reports) are derived quantities
-  only; the dataset's metadata say CC0 and its acknowledgement text CC BY: cite it, and confirm with the
-  owner before any public release.
+  only; the dataset's metadata say CC0 and its acknowledgement text CC BY: the report and the supplementary
+  pages cite the dataset and its paper.
 - Not committed: the reference PDFs, the MNE sample data and anatomy (`data/`), computed caches
   (`cache/`). Results contain only derived quantities of the public datasets.
 - Release preparation (`docs/release_checklist.md`): every figure is set in open fonts (DejaVu
   Sans, STIX); the published Jas et al. Fig. 3 raster used by the legacy verification is CC-BY 4.0
   and carries its attribution; output summaries no longer record local absolute paths; every
   commit and tag records Laiba Khan with GitHub's no-reply address, and no file in the history
-  holds an e-mail address. Still the owner's decisions: a licence (none yet), the earlier
-  font-embedding PDFs that remain in the history, the redistribution of fsaverage-derived
+  holds an e-mail address. Licences (2026-10-04): the code is under the MIT licence (`LICENSE`); the
+  report text, documentation, figures and result files under CC BY 4.0 (`LICENSE-CONTENT.md`).
+  Still open: the earlier font-embedding PDFs that remain in the history, the redistribution of fsaverage-derived
   figures, and two documents that name local folders (the template-derived results: decided
   2026-10-04, above).
 - Commit hashes: on 2026-10-04 the history was rewritten to correct the recorded author identity
   (file contents and dates did not change, every commit hash did): commit hashes recorded before
   that date, in result files and documents, refer to the original history; `docs/commit_map.tsv`
   maps each of them to the current commit.
-- The repository is private. No website is deployed; publication needs explicit owner approval.
+- The repository is public (since 2026-10-04) and the report is published at
+  https://khan-laiba.github.io/opm-squid-meg/.

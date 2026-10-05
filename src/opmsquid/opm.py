@@ -2,13 +2,12 @@
 
 Sensor model (study assumptions, labelled in docs/provenance_register.md)
 ------------------------------------------------------------------------
-* Sensing volume: a 10-mm cubic vapour cell (Jas et al. 2026, experimental system, as stated in
-  GOAL.md), represented by a custom MNE coil definition ``OPM_COIL_TYPE`` with 1, 8 (2x2x2
+* Sensing volume: a 10-mm cubic vapour cell (Jas et al. 2026, experimental system), represented by a custom MNE coil definition ``OPM_COIL_TYPE`` with 1, 8 (2x2x2
   Gauss-Legendre) or 27 (3x3x3) integration points averaging the field component along the
   sensitive axis. This is a single-axis, point-sampling-free magnetometer model; the cell size
   is a declared assumption, not a vendor specification.
 * Placement: the sensing centre lies ``standoff`` = 7 mm from the helmet's inner surface
-  (Jas et al. 2026 experimental geometry, as stated in GOAL.md) plus a separate, declared
+  (Jas et al. 2026 experimental geometry) plus a separate, declared
   ``scalp_gap`` between the helmet's inner surface and the MRI scalp (default 0 mm; swept).
 * Sites are defined on the MRI scalp; the sensitive axis is the normal of a smooth reference
   surface averaged within ``normal_radius`` (G2: the BEM head surface within 15 mm; without

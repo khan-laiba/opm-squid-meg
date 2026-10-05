@@ -2,7 +2,7 @@
 
 **Goal.** Publish the pediatric epilepsy research report as a GitHub Pages site built from the
 analysis already in this repository, as one coherent story that starts from Jas et al. (2026) and
-builds step by step to pediatric epilepsy, following the story plan and the supervisor's guidance
+builds step by step to pediatric epilepsy, following the story plan and the study questions
 (the brain regions covered by OPM epilepsy studies, OPM vs SQUID by region across head sizes, the
 number of sensors). Every number and figure must trace to an analysis output in the repository.
 

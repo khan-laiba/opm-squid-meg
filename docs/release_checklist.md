@@ -4,7 +4,7 @@ Status on 2026-10-01: **release-ready: no** (the owner decisions of section 3 ar
 **publicly deployed: no** (private repository, no Pages site).
 
 The repository stays private and no website is deployed. Making the repository public, enabling
-GitHub Pages or publishing the report needs the owner's explicit approval (GOAL.md, G5); release-ready
+GitHub Pages or publishing the report needs the owner's explicit approval (the study specification, G5); release-ready
 and publicly deployed are separate statuses. This list records what has been prepared and what
 remains the owner's decision. It does not claim that any author of the reproduced papers has
 reviewed or approved the study.
@@ -108,15 +108,15 @@ a Pages site, if ever enabled, would be public.
    (re-plotted in `Figure_G1B_vs_paper.png`, compared in the G1B table) and the Fig. 6 values in
    `g1b_summary.json`. Their source is named where they are shown (S1 caption and table: "values
    digitised from Hunold et al. (2016), Figs 4a and 5a, for comparison"; the downloads note on S8).
-8. **Local references.** `docs/audit.md` and `goal_condition.txt` name the local working folders,
+8. **Local references.** `docs/audit.md` names the local working folders (`goal_condition.txt`, which also did, was removed on 2026-10-04),
    and `legacy/realistic_head_output/realistic_head_results.npz` stores the local SUBJECTS_DIR of
    the original run; edit or drop before publication if the folder names should not appear.
 9. **Literature extractions.** `docs/literature/{jas2026,hunold2016,goldenholz2009}.md` are long
    paraphrased extractions, with parameter tables and digitised figure values, of three papers, two
    of them paywalled; confirm that publishing them is acceptable, or keep them private and cite page
    numbers only.
-10. **The goal text.** `GOAL.md` and its copy `OPM_SQUID_Adult_to_Pediatric_Goal.md` name a third
-   person and describe a mentoring relationship; decide whether they belong in a public release.
+10. **The goal text.** Resolved 2026-10-04: the goal texts were removed from the public tree (they remain
+   in the history).
 11. **Historic diagnoses.** `results/g2/bem_skin_refinement_v1_arrays.json` and
     `results/g2/near_mesh_check_v1_arrays.json` record a dirty commit (historic v1 diagnoses, labelled
     in `docs/methods.md` and in the report's download list); keep them labelled or drop them.

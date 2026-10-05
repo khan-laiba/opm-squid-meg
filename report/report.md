@@ -364,7 +364,7 @@ With explicit sensor, cortical-background and room noise on a realistic head in 
 
 ## Data and code availability {#data}
 
-All result files on which this report rests (JSON and CSV), the figures and the generated reports can be downloaded from [S8](reproduce.html), each with its size, checksum and the code commit that produced it. [S7](numbers.html) lists every number read at build time with the result file, configuration, parameter or methods note, or literature extraction, and the key, it comes from. The analysis code and the literature extraction are in a private repository.
+All result files on which this report rests (JSON and CSV), the figures and the generated reports can be downloaded from [S8](reproduce.html), each with its size, checksum and the code commit that produced it. [S7](numbers.html) lists every number read at build time with the result file, configuration, parameter or methods note, or literature extraction, and the key, it comes from. The analysis code, configurations, tests and literature extraction are public at [github.com/khan-laiba/opm-squid-meg](https://github.com/khan-laiba/opm-squid-meg) under the MIT licence; this report, its figures and the result files are released under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 ## References {#references}
 

@@ -1,6 +1,6 @@
 # PLAN — adult-to-pediatric OPM vs SQUID MEG study
 
-Milestone plan for `GOAL.md`. Each task is labelled:
+Milestone plan for the study specification (kept outside the public repository since 2026-10-04). Each task is labelled:
 
 - **REPRO**: reproduction of a published result, with the paper's own definitions.
 - **ADAPT**: methodological adaptation (original anatomy, recordings or details unavailable).
@@ -26,7 +26,7 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 
 | Date | Decision | Source |
 |---|---|---|
-| 2026-09-30 | `GOAL.md` = verbatim copy of `OPM_SQUID_Adult_to_Pediatric_Goal.md`; condensed `/goal` text in `goal_condition.txt` (3,352 characters). | owner |
+| 2026-09-30 | The study specification and its condensed form were kept with the repository (removed from the public tree on 2026-10-04). | owner |
 | 2026-09-30 | New PRIVATE GitHub repository `khan-laiba/opm-squid-meg` (none existed); push after G0; no Pages deployment or public visibility without explicit approval. | owner |
 | 2026-09-30 | Real Neuromag geometry from the MNE sample dataset (`MNE-sample-data-processed.tar.gz`, 1.58 GB, osf.io via `mne.datasets.sample`), stored in `data/external/` (not committed). | owner |
 | 2026-09-30 | Earlier scripts/outputs moved unchanged to `legacy/`; the conformal dense arrays are labelled an idealized baseline. | GOAL G0 |
@@ -55,7 +55,7 @@ live in `docs/provenance_register.md`; methods in `docs/methods.md`.
 | Jas et al. 2026 preprint (PDF) | G1A, G3 size benchmark | available locally (not committed) |
 | Hunold et al. 2016 (PDF) | G1B | available locally (not committed) |
 | Goldenholz et al. 2009 (PDF) | G1C | available locally (not committed) |
-| TRIUX specification image | G2 noise and geometry references | **not found on disk** (project folders searched again 2026-10-01; personal folders not searched); values transcribed in GOAL.md are used and flagged |
+| TRIUX specification image | G2 noise and geometry references | **not found on disk** (project folders searched again 2026-10-01; personal folders not searched); values transcribed in the study specification are used and flagged |
 | MRN Neuromag page (T3 coils 3014/3024, shielded-room floor 5-7 fT) | G2 | read 2026-09-30 |
 | MNE implementation docs (coil definitions, frames), MNE 1.13.2 | all | read 2026-09-30 |
 | Neuromag 3-D geometry, `dev_head_t`, head-MRI trans | G2 | MNE sample data (MGH Vectorview: 204 grads coil 3012 T1, 102 mags coil 3024 T3) |
@@ -362,7 +362,7 @@ exact-sphere BEM check involves no head model and is kept):
    (A-G3-PLACE); status lines in the result CSVs and on the G1A replica's summary; a minimum-count rule for
    the G1B patch bins and the segment-only Hilbert variant; `RESUME=1 scripts/run_all.sh`. Still open: a CI
    workflow (owner decision: minutes on a private repository).
-2. The TRIUX specification image was not found; values from GOAL.md are used and flagged.
+2. The TRIUX specification image was not found; the manufacturer's typical values are used and flagged.
 3. OPM device noise: no single verified device specification; a declared 7-30 fT/sqrt(Hz)
    sweep is used instead.
 4. Clean-environment smoke test: done on 2026-09-30 with a fresh venv at a commit before 81168f3 (87

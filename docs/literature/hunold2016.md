@@ -272,7 +272,7 @@ No other normalization is described: nothing rescales to a target SNR, and nothi
 
 - The authors state that they **omitted sensor noise** in the simulations (p. 1158). They argue that biological noise usually dominates and that sensor noise differs between sensor types (p. 1158).
 - Environmental or interference noise is not mentioned; none is modelled.
-- The reference simulations are therefore **brain-noise-only**, which confirms the GOAL.md statement.
+- The reference simulations are therefore **brain-noise-only**, which confirms the study specification.
 - The authors suggest the framework can characterize new sensors, such as atomic magnetometers, *provided* their sensor noise is known (p. 1158).
 
 ---
@@ -565,7 +565,7 @@ The full table is in Appendix D.
 6. **Background spectrum** [NS]: band edges, filter design, band weights (only a range of 0.4–0.6 is given), and the Gotman et al (1973) asymmetry-ratio definition (by citation only).
    - Record the choices. Consider checking the simulated sensor spectrum against typical resting EEG/MEG.
 7. **Background normalization** [NS]: peak (max|s| = 10 nAm) vs min–max; per band vs after summation; no area weighting.
-   - MNE note: the MEG→OPM comparison needs a mesh-independent convention; GOAL.md asks for area/covariance scaling. Keep the Hunold convention in its own configuration.
+   - MNE note: the MEG→OPM comparison needs a mesh-independent convention; the study specification asks for area/covariance scaling. Keep the Hunold convention in its own configuration.
 8. **Background realizations** [NS]. Fig. 6 indicates one fixed realization reused across sources. Use a fixed seed, reuse the realization across source positions *and* sensor arrays, and optionally add repeated realizations as an extension.
 9. **Background placement** [NS]: the random 10% node subset (seed), both hemispheres, and whether spike-source nodes are excluded.
 10. **Orientation angle** [NS]: folding (arccos|n·m|) vs excluding angles > 90°; node-normal computation. Watch the medial surfaces, where the nearest inner-skull node may be far away or oblique.
@@ -573,7 +573,7 @@ The full table is in Appendix D.
 12. **Bin edges and out-of-range sources** [NS]: which side is closed; sources shallower than 20 mm.
 13. **Trace construction** [NS]: how dipoles 10–19 and 20 are chosen, and the "closest" metric. With MNE and new anatomy, exact trace replication is impossible. Equivalent designs are to sample sources so the bins are filled evenly, or to use all white-surface vertices with per-bin subsampling.
 14. **Patch growth** [NS]: growth order, area computation (vertex vs triangle areas) and moment allocation (density × vertex area assumed).
-    - **Strength convention:** Hunold uses the scalar sum (612–678 nAm). GOAL.md requires comparing fixed total scalar moment and fixed moment density separately, preserving signed summation.
+    - **Strength convention:** Hunold uses the scalar sum (612–678 nAm). The study specification requires comparing fixed total scalar moment and fixed moment density separately, preserving signed summation.
 15. **MEG geometry** [NS]: helmet position relative to the head and Vectorview coil type.
     - Use actual Vectorview geometry and transforms (e.g. MNE sample data). Pick T1 or T3 (3022/3012 vs 3024/3014) and record the choice. Use `accuracy='normal'` for the 4-point integration.
 16. **BEM numerics.** Galerkin (paper) vs MNE's linear collocation. Expect small differences.

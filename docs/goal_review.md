@@ -1,13 +1,13 @@
 # End-to-end goal review (2026-10-02)
 
-Review of the study against every milestone of `GOAL.md` (G0-G5) at commit 9771f68 of
+Review of the study against every milestone of the study specification (G0-G5) at commit 9771f68 of
 `khan-laiba/opm-squid-meg` (private; tag `adult-baseline-v3`), written as the closing statement the
 goal asks for in G5: milestone evidence, repository and commit, exact commands, result and report
 locations, conditional scientific findings, and the items that failed, were not run or are blocked.
 Nothing in this document claims that any author of the reproduced papers has reviewed or approved
 the study.
 
-How the review was done: (1) every requirement sentence of `GOAL.md` was checked against the code,
+How the review was done: (1) every requirement sentence of the study specification was checked against the code,
 configuration, documentation and result files; (2) three independent reviewer agents audited G0-G1,
 G2-G3 and G4-G5 with the cross-cutting rules, each in a fresh clone, read-only; (3) the test suite
 was run in a clean clone of the commit; (4) the two complete external reviews of 2026-10-01 (Fable 5.1:
@@ -109,7 +109,7 @@ started before the lead fields were rebuilt, 2026-10-01) wrote nothing and was r
 Not run or not available:
 1. No native school-aged anatomy (owner decision 2026-09-30): the school-age case is a scaled adult,
    labelled a size-only control. Any claim about anatomical variability would need individual children.
-2. The TRIUX specification image was not on disk; its values were transcribed from `GOAL.md` and
+2. The TRIUX specification image was not on disk; its values were transcribed from the study specification and
    flagged (U-HW1).
 3. No verified OPM device noise specification: a declared 7-30 fT/sqrt(Hz) sweep instead.
 4. The Jas SEF recordings, the Hunold and Goldenholz participants and the recorded-noise branch of
@@ -210,7 +210,7 @@ descriptors, the calibration ratio, the Eq. 1 median and share).
 |---|---|---|
 | G0: papers read in full; legacy audited and reused; conformal results labelled idealized; GOAL/PLAN/methods/register; sources vs assumptions separated; ambiguities recorded; outputs preserved; legacy claims labelled | met | `docs/literature/*`, `docs/audit.md`, `legacy/README.md`, the register's [P]/[C]/[A] tags and U-rows |
 | G0: the TRIUX image read | not met (blocked) | not on disk; values transcribed from the goal text and flagged (U-HW1); now also stated that they are applied to the Vectorview geometry with MRN T3 coils |
-| G0: repository instructions and mentor statement inspected; documentation versions recorded | partial (now recorded) | a line in `docs/audit.md`; DOC-MNE and DOC-PAGES in the register; "before implementation" cannot be shown |
+| G0: repository instructions inspected; documentation versions recorded | partial (now recorded) | a line in `docs/audit.md`; DOC-MNE and DOC-PAGES in the register; "before implementation" cannot be shown |
 | G1A: parameters, standoffs, eta, depth from the scalp, analytical vs numerical, 27.665 mm, silent sources excluded, sigma documented, toy benchmark, no gradiometer claim, SEF as context, status on outputs | met | `opmsquid.sphere`, `results/g1a` |
 | G1B: sources, patches of ~20 mm^2, binning, 600-nAm reference in a dedicated configuration, MM vs GM first, OPM as extension, channel selection and Hilbert SNR, brain-noise-only reference, 2.5 not a detector threshold, status on outputs | met with notes | the configuration is now the source of truth (the driver read some values from code); the inferred numerator stated in PLAN; patch bins not matched to the paper and sparse bins now stated (methods 6); the 171 medial-wall dipoles recorded (U-HU-wall) |
 | G1C: paper definitions, 10/16-mm patches at 50 pAm/mm^2 in a configuration, Eq. 1 with 1/N, modelled vs recorded noise, conductivities as printed with 0.06 S/m investigated, status on outputs | met with two measured side-effects | the usable-vertex rule truncates patches near the skull and G1C keeps the medial wall that G2 and G4 exclude: both now computed in the run (`patch_truncation`, `without_medial_wall` in `g1c_summary.json`: 22-31 % of the patches lose more than 5 % of their area, 7-9 % of patch SNRs change by more than 1 dB with a median of 0; without the wall the focal median is -21.66 instead of -22.13 dB) and stated (methods 7, A-BEM-DIST); the recorded-noise branch named task-baseline noise (GO-rec); 0.006 S/m stated as the headline value (PLAN) |
