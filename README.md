@@ -6,7 +6,7 @@ adult studies, a realistic adult comparison, a pediatric fixed-helmet versus hea
 extension, and epilepsy (interictal spike) detection and localization examples in both.
 The milestones, plan, status and decisions log are in `PLAN.md`.
 
-This is a proposed study in development. It does not claim that any author of the reproduced
+This is a simulation study, reported as a GitHub Pages site. It does not claim that any author of the reproduced
 papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 
 ## Status
@@ -20,7 +20,7 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | G2 realistic adult OPM vs Neuromag | NEW | done, checked; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2`, `adult-baseline-v3` and `adult-baseline-v4` (equal OPM standoff on every head) |
 | G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates, three school-aged children of OpenNeuro ds005234 with a modelled skull, and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`, recomputed with the v3 arrays (`adult-baseline-v3`) and with every head surface on its MRI scalp (`adult-baseline-v4`); the 2-year-template pass checked (fixes re-verified); the 18- and 12-month templates added on 2026-10-01, the school-aged children on 2026-10-03 (v4 only) |
 | G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates, both size controls and three school-aged children); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts checked |
-| G5 software, reproduction, report | - | 197 unit tests pass; the report is built from the stored results and published as a GitHub Pages site |
+| G5 software, reproduction, report | - | 315 unit tests pass; the report is built from the stored results and published as a GitHub Pages site |
 
 "Checked" means separate checking passes within the project by reviewer agents, with fixes
 re-verified (on 2026-10-01 also complete passes by two other models); it is not external peer review.
@@ -36,8 +36,8 @@ caveats in `docs/methods.md` and `results/g2/G2_report.md`:
   Neuromag system: about 1.6x for sources 10-15 mm below the scalp, falling to 1.05-1.07x below
   35 mm. After the 8-term external-field projection, the study's second headline condition, the
   ratio is 1.12x [1.08-1.15] (higher for 84 % of targets; the projection costs the dense array 3 %
-  and Neuromag 0.5 % of their detectability). An OPM array at Neuromag's own 98 sites ties it
-  (1.01x), and falls behind after the projection (0.95x [0.90-0.98]). With Neuromag's channel
+  and Neuromag 0.5 % of their detectability). An OPM array at Neuromag's own 98 sites shows no established
+  advantage (1.01x [0.99-1.03]), and falls behind after the projection (0.95x [0.90-0.98]). With Neuromag's channel
   count (a triaxial OPM at those sites, 294 channels) it is 1.12x, or 1.05x if the tangential axes
   are twice as noisy. With covariances estimated from 10 or 60 s of data instead of the oracle, the
   dense ratio is 1.23x or 1.16x (Neuromag's 306 channels lose more to estimation). The ratio
@@ -73,15 +73,16 @@ caveats in `docs/methods.md` and `results/g2/G2_report.md`:
   mainly to the sensor axes (the stored normals were nearly radial: 1.07x -> 1.12x) and partly to the
   sites (standoff and coverage: 1.05x -> 1.07x; the 12 lower occipital sites alone about 2 %); the
   conductor surface itself changes nothing.
-- Simulated interictal spikes: at 10-20 mm depth the dense array needs about a quarter less source
+- Simulated interictal spikes, exploratory run (the confirmatory run is in the report, Section 3.6): at 10-20 mm depth the dense array needs about a quarter less source
   strength for 50 % detection (34 [28-51] vs 47 [36-63] nAm; the intervals overlap, the paired
   strength ratio is 1.36 [1.10-1.58]); 11 of the 18 locations favour the OPM, 1 Neuromag, 6 tie
   (p = 0.004, uncorrected); with an oracle detector that knows the source and onset, 15 favour the
   OPM and none Neuromag (p = 0.00006). The practical detector knows the three simulated spike
   morphologies and the true forward model, so it is idealized: absolute sensitivities and
   false-event rates are optimistic, and whether this optimism is the same for every array was not
-  tested in these runs (a confirmatory run with new locations, seeds and null data and one
-  detector-mismatch variant is declared in `configs/g4_confirmatory.toml`). These spike results are
+  tested in these runs (the confirmatory run, with new locations, seeds and null data and one
+  detector-mismatch variant declared in `configs/g4_confirmatory.toml` before it ran, passed in all nine anatomies with
+  S50 ratios of 1.27-1.47; the anatomies are not independent replications; fixed adult helmet, idealized detector). These spike results are
   exploratory: the superficial endpoint was chosen after them. The superficial advantage holds in every run, its size varies (v3
   8/2, ratio 1.29; v2 16/0, 1.51). In v4 the dense array is also favoured at 20-30 mm (9/1,
   p = 0.014) and 45-70 mm (9/0, p = 0.004); the equal-standoff change raised its G2 detectability
@@ -112,8 +113,8 @@ Pediatric findings (G3B, NEW), conditional on one adult head, three average infa
 one database (24, 18 and 12 months; O'Reilly et al. 2021), three individual school-aged children of
 one dataset (7.8-8.7 years; OpenNeuro ds005234, Fadeev et al. 2024; their skull modelled because the
 dataset's segmentation failed, their fiducials transferred from the adult; an MRI quality check in
-the revision found their surfaces registered to their MRIs and their scalps on the MRI head boundary
-as the adult's is) and two scaled copies of
+the revision found their surfaces registered to their MRIs and their scalps 1.3-1.5 mm inside the MRI head
+boundary, as the adult's is (1.3 mm); their near-scalp anatomy could not be verified, so they are provisional examples) and two scaled copies of
 the adult; the same Neuromag helmet, sensors and noise for every head; OPM arrays refitted to each head with the
 adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report.md`:
 - With the child raised to 20-mm contact with the top of the fixed helmet, the dense OPM array's
@@ -136,7 +137,8 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   templates kept +0.24 and +0.18 dB). With the background fixed per unit cortical area, both systems'
   detectability rises in these smaller heads and the on-scalp OPM's rises more (vertex-wise +1.10 and
   +1.67 dB vs Neuromag +0.65 and +0.54 dB in the scaled controls); with a helmet that fits (scaled
-  with the head, laterally centred), the SQUID gains at least as much. The children's arrays also
+  with the head, laterally centred), the SQUID gains about as much or more (point estimates; the templates'
+  intervals include 0). The smaller heads' arrays also
   have fewer OPM sites (174, 155, 151, 157 and 144; school-aged children 155, 153 and 167; adult
   208); at an equal site count Delta would be larger.
 - A helmet fitted to each head at the adult's own gap (29.55 mm; added in the revision,
@@ -156,7 +158,7 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   surface (vertex-wise +2.40 dB at 10-15 mm for the 2-year size) and smallest at 40-60 mm. In the
   templates the within-stratum gain is smallest at 20-50 mm, larger near the surface and deeper (most
   deep in the 24- and 18-month templates, at 10-15 mm in the 12-month one) and larger for radial
-  sources, but much of their pooled gain reflects their shallower cortex (reweighted to the adult's depth mix, +0.32, +0.53 and +0.29
+  sources, but their pooled gain falls when their shallower cortex is reweighted (to the adult's depth mix, +0.32, +0.53 and +0.29
   instead of +0.85, +0.90 and +1.05 dB at target level); it is also regionally asymmetric, with the
   templates off-centre in the helmet. Top contact is the adult's second-lowest of 12 source-blind
   placements (mid-family for the templates and size controls; 4th, 6th and 3rd from the lowest for

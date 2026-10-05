@@ -47,7 +47,7 @@ CODE = {  # numeric rows: (file, line, the value as the code writes it)
     "IC-BOOT-G3B-USEFUL": ("scripts/g3b_pediatric_helmet.py", 505, "200, cfg"),
     "IC-BOOT-G4": ("scripts/g4_epilepsy_adult.py", 327, "range(1000)"),
     "IC-BOOT-LOC": ("scripts/g4_localization.py", 273, "n_boot=2000"),
-    "IC-BOOT-CGAP": ("scripts/study_g3b_constant_gap.py", 850, "secondary=200"),
+    "IC-BOOT-CGAP": ("scripts/study_g3b_constant_gap.py", 861, "secondary=200"),
     "IC-BOOT-COVVAL": ("scripts/study_covariance_validation.py", 439, "default=1000"),
     "IC-SIGNFLIP-EXACT": ("src/opmsquid/detection.py", 169, "len(x) <= 20"),
     "IC-SIGNFLIP-MC": ("src/opmsquid/detection.py", 162, "n_mc=20000"),

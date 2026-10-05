@@ -466,6 +466,26 @@ class TestWriterFacts(unittest.TestCase):
         self.assertEqual(self.F["wr_confirm_calib_expected_events"]["value"], "20")
         self.assertEqual(self.F["wr_confirm_calib_poisson_pct"]["value"], "22%")
 
+    def test_round3b_facts_against_their_files(self):
+        ex = json.loads((ROOT / "results/g3b/g3b_cortex_exclusion.json").read_text())["anatomies"]
+        self.assertEqual(set(ex), {"adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC"})
+        left = {k: 100 * (v["whole_surface"]["within_4mm_of_inner_skull_share"] + v["whole_surface"]["outside_inner_skull_share"])
+                for k, v in ex.items()}
+        self.assertEqual(self.F["wr_excl_scaled_pct_range"]["raw"], [min(left["school"], left["size2yr"]),
+                                                                     max(left["school"], left["size2yr"])])
+        near = [100 * (1 - ex[k]["within_8mm_of_scalp"]["usable_share"]) for k in ("childA", "childB", "childC")]
+        self.assertEqual(self.F["wr_excl_children_lt8mm_pct_range"]["raw"], [min(near), max(near)])
+        cg = json.loads((ROOT / "results/g3b_constant_gap/g3b_constant_gap_summary.json").read_text())
+        heads = ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo")
+        it = [cg["interaction"][f"{h}/gap_matched/combined/intrinsic+brain"]["interaction"] for h in heads]
+        self.assertTrue(all(x["ci95"][0] > 0 for x in it))
+        self.assertEqual(self.F["wr_cgap_scaled_templates_interaction_range"]["raw"],
+                         [min(x["median"] for x in it), max(x["median"] for x in it)])
+        top = [cg["delta_vs_adult_top"][f"{h}/gap_matched_top/opm_dense/combined/intrinsic+brain"]["delta"] for h in heads]
+        self.assertEqual(self.F["wr_cgap_scaled_templates_fittedtop_vs_top_n_ci_above0"]["raw"],
+                         sum(x["ci95"][0] > 0 for x in top))
+        self.assertRegex(self.F["wr_build_commit"]["value"], r"^([0-9a-f]{7,}(\+dirty)?|\(not a git checkout\))$")
+
     def test_registered_last_in_the_merged_facts(self):
         R = _load("report_facts")
         self.assertEqual(R.MODULES[-1], "report_facts_writer")

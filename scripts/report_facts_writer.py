@@ -909,8 +909,8 @@ def round3b_facts(F: Facts, root: Path) -> None:
         commit = head + ("+dirty" if dirty else "")
     except (OSError, subprocess.CalledProcessError):
         commit = "(not a git checkout)"
-    F.add("wr_build_commit", commit, commit, "git rev-parse --short HEAD of the repository the pages are built from, "
-          "'+dirty' if its sources have uncommitted changes (as the page header)")
+    F.add("wr_build_commit", commit, commit, ".git :: HEAD, abbreviated (git rev-parse --short HEAD at build time; '+dirty' "
+          "if the sources the pages are built from have uncommitted changes, as the page header)")
 
 
 def facts(root: Path = ROOT) -> dict:
