@@ -82,6 +82,7 @@ for _a in adult school size2yr infant2yr infant18mo infant12mo childA childB chi
   step g4c_$_a $PY scripts/g4_confirmatory.py $_a --no-combine          # G4   confirmatory spike run, one anatomy
 done
 step g4c_combine $PY scripts/g4_confirmatory.py --check-endpoint-code --combine-only  # G4  confirmatory endpoint over the nine anatomies
+step g4c_exact $PY scripts/g4_confirm_exact_p.py                         # G4   exact sign-flip p of every confirmatory comparison (from the stored differences)
 step report_figures $PY scripts/report_figures_adult.py                 # G5   report figures from stored outputs
 step report_figures_ped $PY scripts/report_figures_pediatric.py         # G5   report figures from stored outputs
 step report_figures_noise $PY scripts/report_figures_noise.py           # G5   main-text figure of the noise-model checks (R17)

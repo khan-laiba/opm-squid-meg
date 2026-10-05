@@ -394,7 +394,8 @@ def fig_effects(D) -> dict:
         "ends at exactly 0 are common. Beside an interval (left, or right where a marker is in the way): * p < 0.05, "
         f"** p < {bonf:.4g} "
         f"(Wilcoxon signed-rank, uncorrected; {bonf:.4g} = 0.05 / {D['family_per_array']}, the comparisons of one anatomy and OPM "
-        f"array). {DAGGER} Adult at its measured head position; the other heads at top contact in the adult helmet."), y=0.098)
+        f"array). {DAGGER} Adult at its measured head position; the other heads at top contact in the fixed adult helmet."),
+        y=0.098)
     style.save(fig, "Figure_S_localization_effects")
     return dict(values=values, plotted=plotted, lims={f"{s:g}nAm/{g}": list(v[:2]) for (s, g), v in lims.items()}, bonf=bonf)
 
@@ -467,7 +468,7 @@ def fig_joint(D) -> dict:
         f"known. Dense OPM array: {site_text(D, 'opm_dense')}; site-matched: {D['sites']['adult']['opm_matched']} and "
         f"{span([D['sites'][k]['opm_matched'] for k in D['keys'][1:]])}. * paired OPM {MINUS} Neuromag difference in joint success "
         "with p < 0.05 (exact McNemar, uncorrected; stored for the dipole fit and the study's dSPM). "
-        f"{DAGGER} Adult at its measured head position; the other heads at top contact in the adult helmet."), y=0.072)
+        f"{DAGGER} Adult at its measured head position; the other heads at top contact in the fixed adult helmet."), y=0.072)
     style.save(fig, "Figure_S_joint_detection_localization")
     return dict(values=values, conds=[f"{f}/{s:g}nAm" for f, s in conds], heldout_range=[min(held), max(held)])
 
@@ -569,8 +570,8 @@ def fig_curves() -> dict:
     h.append(Patch(facecolor="0.5", alpha=0.25, edgecolor="none", label="Wilson 95 % band (event level, descriptive)"))
     fig.legend(handles=h, loc="upper left", bbox_to_anchor=(0.005, 0.998), ncol=3, handlelength=2.2, columnspacing=1.3, fontsize=7.2)
     held = {k: g["detectors"][k]["heldout_false_per_min"][f"{op:g}"] for k in DETECTORS}
-    names = {"squid/combined": f"Neuromag {n_ch['combined']}", "squid/grad": "gradiometers", "squid/mag": "magnetometers",
-             "opm_dense/opm": "dense", "opm_matched/opm": "site-matched"}
+    names = {"squid/combined": f"Neuromag, {n_ch['combined']} channels", "squid/grad": "gradiometers",
+             "squid/mag": "magnetometers", "opm_dense/opm": "dense OPM", "opm_matched/opm": "site-matched OPM"}
     footnote(fig, (
         f"Adult (MNE sample subject at its measured head position), exploratory spike run: {n_loc} locations per depth band, "
         f"each with {len(stretches)} morphologies at every strength, so {n_pt} focal events per point; the noise (sensor, cortical "

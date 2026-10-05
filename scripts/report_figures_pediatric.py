@@ -5,7 +5,8 @@ outputs only: nothing is re-analysed. Definitions are those of scripts/g3b_pedia
 scripts/g4_epilepsy_adult.py (paired S50 ratio, location sign-flip test).
 
   R5  D by lobe and for four parcels or parcel groups on the nine heads; fixed and scaled helmet
-  R6  D_child and Delta = D_child - D_adult with 95 % intervals, both headline noise conditions
+  R6  D_head and Delta = D_head - D_adult with 95 % intervals, both headline noise conditions; panel (b)
+      names each class's Delta estimator (vertex-wise for the scaled adults, parcel-matched otherwise)
   R7  helmet fit vs head size: D at five helmet conditions, Neuromag gap, share of cortex with the
       OPM ahead, OPM site count
   R8  Delta per depth stratum
@@ -52,6 +53,7 @@ G3A = "results/g3a/g3a_size_benchmark.json"
 G4 = "results/g4/g4_{}_summary.json"
 G4_REPORT = "results/g4/G4_pediatric_report.md"
 G2_CFG = "configs/g2_adult.toml"
+G2_SUMMARY = "results/g2/g2_summary.json"  # the projection's term count (the same noise model)
 JAS = "docs/literature/jas2026.md"
 OUT_JSON = "figures_pediatric.json"
 
@@ -79,6 +81,13 @@ CM: dict = {}  # head circumference [cm] per anatomy, filled in main()
 # helpers
 def load(rel: str):
     return json.loads((ROOT / rel).read_text())
+
+
+def projection_terms() -> int:
+    """Terms of the room-field projection of the 'projected' condition (the noise model's external basis), as the adult
+    comparison stores them: retained rank with the room field minus retained rank after the projection."""
+    r = load(G2_SUMMARY)["retained_rank"]
+    return r["squid/intrinsic+brain+env"] - r["squid/projected"]
 
 
 def order(s: dict) -> list[str]:
@@ -236,7 +245,7 @@ def fig_r5(s: dict, keys, reg: dict, n: dict, check: float) -> dict:
     xs = slots(keys, gap=0.22)
     ys = {r: i + (0.4 if i >= len(lobes) else 0.0) for i, r in enumerate(rows)}
     panels = (("top", "(a)  Fixed adult helmet, top contact (primary placement)"),
-              ("counterfactual_x-centred", "(b)  Helmet scaled with the head, laterally centred (counterfactual)"))
+              ("counterfactual_x-centred", "(b)  Helmet scaled with the head, laterally centred"))
     vals = {}
     for pl, _ in panels:
         for k in keys:
@@ -273,7 +282,7 @@ def fig_r5(s: dict, keys, reg: dict, n: dict, check: float) -> dict:
         ax.text(x_hi + 0.15, -0.6, "targets\nper cell", ha="left", va="bottom", fontsize=6.5, color=GREY)
     cax = fig.add_axes([0.30, 0.04, 0.45, 0.013])
     cb = fig.colorbar(ScalarMappable(norm, cmap), cax=cax, orientation="horizontal")
-    cb.set_label("D = OPM dense minus Neuromag (dB)", fontsize=8)
+    cb.set_label("D = dense OPM minus Neuromag (dB)", fontsize=8)
     cb.ax.tick_params(labelsize=7)
     cax.text(-0.02, 0.5, "Neuromag ahead", transform=cax.transAxes, ha="right", va="center", fontsize=7, color="0.3")
     cax.text(1.02, 0.5, "OPM ahead", transform=cax.transAxes, ha="left", va="center", fontsize=7, color="0.3")
@@ -331,17 +340,29 @@ def fig_r6(s: dict, keys) -> dict:
     a2.axvline(0, color="0.5", lw=0.8, zorder=0)
     a1.set_xlim(-0.15, 2.65)
     a2.set_xlim(-0.55, 1.65)
-    a1.set_xlabel("D$_\\mathrm{child}$ = OPM dense minus Neuromag (dB)")
-    a2.set_xlabel("Δ = D$_\\mathrm{child}$ − D$_\\mathrm{adult}$ (dB)")
+    a1.set_xlabel("D$_\\mathrm{head}$ = dense OPM minus Neuromag (dB)")
+    a2.set_xlabel("Δ = D$_\\mathrm{head}$ − D$_\\mathrm{adult}$ (dB)")
     a1.set_title("(a)  OPM advantage per head", loc="left")
     a2.set_title("(b)  Change from the adult", loc="left")
+    est = {}  # (b): the estimator of each class's Delta, named in the figure (Referee 1, minor 14)
     for c, a, b in groups(kids, pos):
         a1.text(-0.01, -a + 0.5, style.CLASS_LABEL[c], transform=a1.get_yaxis_transform(), ha="right", va="bottom",
                 fontsize=6.8, color=GREY, style="italic")
+        d = [s["comparisons"][f"{k}/opm_dense/combined/{COND}/detect"]["delta"] for k in kids if style.ANAT_CLASS[k] == c]
+        if all("n_parcels" in x for x in d):  # no vertex correspondence: parcel differences (stored 'method')
+            n_p = sorted({x["n_parcels"] for x in d})
+            rng = str(n_p[0]) if len(n_p) == 1 else f"{n_p[0]}\u2013{n_p[-1]}"
+            est[c] = f"\u0394 parcel-matched ({rng} parcels)"
+        elif not any("n_parcels" in x for x in d) and c == "scaled":  # the adult's own vertices
+            est[c] = "\u0394 vertex-wise (the same vertices)"
+        else:
+            raise ValueError(f"{c}: mixed or unexpected Delta estimators")
+        a2.text(0.985, -a + 0.5, est[c], transform=a2.get_yaxis_transform(), ha="right", va="bottom", fontsize=6.8,
+                color=GREY, style="italic")
     h = [Line2D([], [], **mstyle("childC", True, color="0.3")), Line2D([], [], **mstyle("childC", False, color="0.3")),
          Line2D([], [], color="k", lw=0.9), Line2D([], [], color="k", lw=0.9, ls=(0, (4, 2)))]
-    fig.legend(h, ["intrinsic + brain noise (filled)", "projected: room field removed (open)",
-                   f"adult D, intrinsic + brain ({db(ref[COND])} dB)", f"adult D, projected ({db(ref['projected'])} dB)"],
+    fig.legend(h, ["sensor plus brain noise (filled)", f"after the {projection_terms()}-term projection (open)",
+                   f"adult D, sensor plus brain noise ({db(ref[COND])} dB)", f"adult D, after the projection ({db(ref['projected'])} dB)"],
                loc="upper center", ncol=2, bbox_to_anchor=(0.62, 1.0), handlelength=1.8, columnspacing=1.5)
     primary = {k: s["comparisons"][f"{k}/opm_dense/combined/{COND}/detect"] for k in kids}
     if any(primary[k]["d_child"]["n"] != n_cortical(s, kids)[k] for k in kids):
@@ -351,7 +372,7 @@ def fig_r6(s: dict, keys) -> dict:
                   f"bootstrap ({s['config']['strata']['n_boot']:,} resamples); \u0394 vertex-wise for the scaled adults, over "
                   f"{min(parc)}\u2013{max(parc)} parcels for the templates and children.", y=0.035)
     style.save(fig, "Figure_R6_pediatric_D")
-    return dict(order=kids, adult_D_dB={c: ref[c] for c in ref}, values=out)
+    return dict(order=kids, adult_D_dB={c: ref[c] for c in ref}, values=out, delta_estimator_labels=est)
 
 
 # ----------------------------------------------------------------------------------------------
@@ -388,9 +409,9 @@ def fig_r7(s: dict, keys) -> dict:
     ax_a.set_xlim(-0.45, 4.9)
     ax_a.set_ylim(0, 3.9)
     ax_a.axhline(0, color="0.75", lw=0.7, zorder=0)
-    ax_a.set_ylabel("D, OPM dense minus Neuromag (dB)")
+    ax_a.set_ylabel("D, dense OPM minus Neuromag (dB)")
     ax_a.text(1.0, 1.02, "fixed adult helmet", transform=ax_a.get_xaxis_transform(), ha="center", va="bottom", fontsize=7, color="0.3")
-    ax_a.text(3.95, 1.02, "counterfactual helmet", transform=ax_a.get_xaxis_transform(), ha="center", va="bottom", fontsize=7,
+    ax_a.text(3.95, 1.02, "helmet scaled with the head", transform=ax_a.get_xaxis_transform(), ha="center", va="bottom", fontsize=7,
               color="0.3")
     hline_label(ax_a, -0.3, 0.12, f"grey band: adult over its {len(fam)} standard\nplacements ({db(min(fam))} to {db(max(fam))} dB)",
                 ha="left", va="bottom")
@@ -429,8 +450,8 @@ def fig_r7(s: dict, keys) -> dict:
     ax_c.set_title("(c)  Share of cortex where the OPM is ahead", loc="left", pad=14)
     ax_c.legend([Line2D([], [], **mstyle("childC", True, color="0.3")), Line2D([], [], **mstyle("childC", False, color="0.3")),
                  Line2D([], [], **mstyle("childC", True, color="0.3", alpha=0.3))],
-                ["matched array, intrinsic + brain", "matched array, projected", "dense array (faint)"], loc="lower left",
-                ncol=2, handlelength=1.0, columnspacing=0.8, borderaxespad=0.2, fontsize=6.8)
+                ["site-matched OPM, sensor plus brain noise", f"site-matched OPM, after the {projection_terms()}-term projection",
+                 "dense OPM (faint)"], loc="lower left", ncol=1, handlelength=1.0, borderaxespad=0.2, fontsize=6.8)
 
     # (d) OPM site count and the adult's loss at that count
     a_n = s["arrays"]["adult"]["opm_dense"]["n"]
@@ -449,7 +470,7 @@ def fig_r7(s: dict, keys) -> dict:
     hline_label(ax_d, max(pos.values()) + 0.4, a_top + 0.03, f"adult, all {a_n} sites ({db(a_top)} dB)", ha="right", va="bottom")
     ax_d.set_ylim(0, 1.25)
     ax_d.set_ylabel("adult D, subsampled (dB)")
-    ax_d.set_title("(d)  OPM site count (numbers) and the adult's loss", loc="left", pad=14)
+    ax_d.set_title("(d)  Dense OPM sites (numbers), the adult's loss", loc="left", pad=14)
     for ax in (ax_b, ax_c, ax_d):
         ax.set_xticks([pos[k] for k in keys], [style.ANAT_SHORT[k] for k in keys], rotation=40, ha="right", fontsize=6.8)
         ax.set_xlim(-0.6, max(pos.values()) + 0.6)
@@ -493,10 +514,9 @@ def fig_r8(s: dict, keys) -> dict:
         ax.tick_params(axis="x", which="minor", length=2)
     a1.set_ylim(-0.75, 2.55)
     fig.supxlabel("depth below the scalp (mm; points at stratum centres)", fontsize=8.5, y=-0.02)
-    a1.set_ylabel("Δ in the stratum: D$_\\mathrm{child}$ − D$_\\mathrm{adult}$\nof the stratum medians (dB)")
-    # panels (e) and (f): the report shows this image below Figure R7's panels (a) to (d)
-    a1.set_title("(e)  Scaled adults and infant templates", loc="left")
-    a2.set_title("(f)  Individual children (95 % parcel-bootstrap intervals)", loc="left")
+    a1.set_ylabel("Δ in the stratum: D$_\\mathrm{head}$ − D$_\\mathrm{adult}$\nof the stratum medians (dB)")
+    a1.set_title("(a)  Scaled adults and infant templates", loc="left")
+    a2.set_title("(b)  Individual children (95 % parcel-bootstrap intervals)", loc="left")
     footnote(fig, f"Targets per stratum: {min(n_child):,}\u2013{max(n_child):,} (smaller heads), {min(n_adult):,}\u2013"
                   f"{max(n_adult):,} (adult); strata with fewer than {s['config']['strata']['min_n']} in either head omitted. "
                   f"Intervals: 95 %, parcels resampled in each anatomy ({s['config']['strata']['n_boot']:,} resamples).", y=-0.07)
@@ -513,8 +533,11 @@ def fig_r9(s: dict, keys) -> dict:
     levels, primary = [float(a) for a in g2["opm_asd_fT_per_rtHz"]], float(g2["opm_asd_primary_fT_per_rtHz"])
     fig, axs = plt.subplots(1, 2, figsize=(style.FULL_W, 3.9), sharey=True, gridspec_kw=dict(wspace=0.06))
     out = dict(order=keys, levels_fT_per_rtHz=levels, primary_fT_per_rtHz=primary, floor_fT_per_rtHz=FLOOR_FT)
-    for ax, arr, title in ((axs[0], "opm_dense", "(a)  OPM dense vs Neuromag 306"),
-                           (axs[1], "opm_matched", "(b)  OPM matched vs Neuromag 306")):
+    n_sq = {s["arrays"][k]["squid:top"]["n"] for k in keys}
+    if len(n_sq) != 1:
+        raise ValueError(f"Neuromag channel counts differ between heads: {n_sq}")
+    n_sq = n_sq.pop()
+    for ax, arr, title in ((axs[0], "opm_dense", "(a)  Dense OPM array"), (axs[1], "opm_matched", "(b)  Site-matched OPM array")):
         for k in keys:
             v = [sens[f"{k}/opm_asd_{a:g}fT/{arr}/combined/{COND}"] for a in levels]
             prim = s["D_median_dB"][f"{k}/{arr}/combined/{COND}/detect"]
@@ -536,7 +559,8 @@ def fig_r9(s: dict, keys) -> dict:
     axs[0].set_ylim(-1.0, 3.4)
     fig.legend(handles=anat_legend(keys, ms=4.5), loc="upper center", ncol=3, bbox_to_anchor=(0.52, 0.0), handlelength=2.0,
                columnspacing=1.2, fontsize=7)
-    footnote(fig, f"D: area-weighted median over the cortical targets ({n_text(s, keys)}); Neuromag noise unchanged.", y=-0.16)
+    footnote(fig, f"D: OPM array minus Neuromag ({n_sq} channels), area-weighted median over the cortical targets "
+                  f"({n_text(s, keys)}); Neuromag noise unchanged.", y=-0.16)
     style.save(fig, "Figure_R9_noise_floor")
     return out
 
@@ -672,11 +696,12 @@ def fig_r10(s: dict, keys) -> dict:
                       ha="left", va="bottom", fontsize=9)
     footnote(fig, f"Arrow: interval end open (bootstrap resamples outside the tested {min(strengths):g}\u2013{max(strengths):g} nAm); "
                   "dotted: open at both ends; open marker with dashed arrow: Neuromag does not reach 50 % detection, the ratio "
-                  f"lies above the bound. \u2020 Adult at its measured head position, the other heads at top contact. {n_loc} "
+                  f"lies above the bound. \u2020 Adult at its measured head position, the other heads at top contact in the fixed "
+                  f"adult helmet. {n_loc} "
                   f"locations ({n_ev} focal events) per band and anatomy.", y=0.045)
     h = [Line2D([], [], **mstyle("childC", color="0.2", ms=4.5)), Line2D([], [], **mstyle("childC", color=tint("0.2"), ms=4.5)),
          Line2D([], [], **mstyle("childC", False, color="0.2", ms=4.5))]
-    fig.legend(h, ["OPM dense (dark)", "OPM matched (light)", "open: censored point estimate (a bound)"], loc="upper center",
+    fig.legend(h, ["dense OPM (dark)", "site-matched OPM (light)", "open: censored point estimate (a bound)"], loc="upper center",
                ncol=3, bbox_to_anchor=(0.6, 0.995), handlelength=1.0, columnspacing=1.4, fontsize=7,
                title="Practical detector, thresholds frozen at 1 false event/min; paired on identical simulated spikes",
                title_fontsize=7)
@@ -758,10 +783,11 @@ def provenance(s: dict, keys, v: dict) -> dict:
     holm_max = max(r10["p_holm_depth0"]["opm_dense"].values())
     holm_m = {k: p for k, p in r10["p_holm_depth0"]["opm_matched"].items() if p < 0.05}
     n_boot = s["config"]["strata"]["n_boot"]
+    n_ext = projection_terms()
     return {
         "Figure_R5_regions_heads": dict(
             inputs=[G3B] + [TARGETS.format(k) for k in keys],
-            description=("Area-weighted median D (dB; dense OPM vs Neuromag 306 channels, intrinsic + brain noise, 10-nAm "
+            description=("Area-weighted median D (dB; dense OPM array vs Neuromag (306 channels), sensor plus brain noise, 10-nAm "
                          "cortical-normal dipoles; medial wall excluded) per lobe from g3b_summary.json placement_D["
                          "'<anatomy>/<placement>/combined/intrinsic+brain'].by_lobe, placement 'top' in (a) and "
                          "'counterfactual_x-centred' in (b). The parcel rows of (a) are computed here from "
@@ -782,37 +808,40 @@ def provenance(s: dict, keys, v: dict) -> dict:
                  f"{below_b} of {len(b5) * len(kids)} lobe cells are at or below it. The parcel rows of the second map are "
                  "hatched as not stored."),
             caption_draft=("Figure R5. Which brain regions favour the OPM at which head size. Area-weighted median D, dense OPM "
-                           "minus Neuromag 306 (intrinsic + brain noise), by lobe and for precentral, superior temporal, "
+                           "array minus Neuromag (306 channels), sensor plus brain noise, by lobe and for precentral, superior temporal, "
                            "parahippocampal and mesial temporal (parahippocampal + entorhinal) cortex, both hemispheres, medial "
                            "wall excluded; right: cortical targets per cell (range over the heads). (a) The fixed adult helmet "
-                           "at top contact. (b) The counterfactual helmet scaled with the head and laterally centred (lobes "
+                           "at top contact. (b) The helmet scaled with the head, laterally centred (lobes "
                            f"only: parcel values were not stored for this helmet). Head circumference {cm_rng}; the infant heads "
                            "are average templates, the children individual MRIs."),
             values=r5),
         "Figure_R6_pediatric_D": dict(
-            inputs=[G3B],
+            inputs=[G3B, f"{G2_SUMMARY} :: retained_rank (the projection's term count)"],
             description=("g3b_summary.json comparisons['<anatomy>/opm_dense/combined/<condition>/detect'] for condition "
                          "'intrinsic+brain' (filled) and 'projected' (open): d_child.median with ci95 in (a), delta.median "
                          "with ci95 in (b). The adult's D is d_adult.median, identical in every comparison (checked): "
-                         f"{db(r6['adult_D_dB'][COND])} dB (intrinsic + brain), {db(r6['adult_D_dB']['projected'])} dB "
-                         f"(projected). Intervals: parcel bootstrap, 95 %, {n_boot:,} resamples. Delta is vertex-wise for the "
+                         f"{db(r6['adult_D_dB'][COND])} dB (sensor plus brain noise), {db(r6['adult_D_dB']['projected'])} dB "
+                         f"(after the {n_ext}-term projection). Intervals: parcel bootstrap, 95 %, {n_boot:,} resamples. Delta is vertex-wise for the "
                          f"scaled copies (the same cortical vertex; {min(vert):,}-{max(vert):,} homologous targets) and the "
                          "area-weighted median of parcel differences for the templates and children (no vertex correspondence; "
                          f"{min(parc)}-{max(parc)} Desikan-Killiany parcels). " + order_txt),
             alt=("Two dot plots with one row per smaller head: left, each head's D with vertical lines at the adult's D; "
-                 "right, Delta with 95 % intervals. Under intrinsic + brain noise Delta is positive in "
+                 "right, Delta with 95 % intervals, each class labelled with its estimator. With sensor plus brain noise Delta is "
+                 "positive in "
                  f"{len(ib_pos)} of {len(kids)} heads, with the interval above zero in {len(ib_excl0)} "
-                 f"(not: {names([k for k in kids if k not in ib_excl0])}); in the projected condition the interval includes "
+                 f"(not: {names([k for k in kids if k not in ib_excl0])}); after the projection the interval includes "
                  f"zero for {names(pj_incl0)}."),
-            caption_draft=("Figure R6. Children in the adult helmet. (a) D_child, dense OPM minus Neuromag 306, at top contact; "
-                           "vertical lines: the adult's D (solid: intrinsic + brain noise; dashed: projected, the room field "
-                           "removed by an 8-term projection). (b) Delta = D_child - D_adult. Filled: intrinsic + brain noise; open: "
-                           "projected. Lines: 95 % parcel-bootstrap intervals (spatial, within one anatomy; no between-subject "
-                           f"variability). Under intrinsic + brain noise Delta is {rng([ib[k]['delta'] for k in kids])} dB over "
+            caption_draft=("Figure R6. Smaller heads in the fixed adult helmet. (a) D_head, dense OPM array minus Neuromag (306 "
+                           "channels), at top contact; vertical lines: the adult's D (solid: sensor plus brain noise; dashed: the "
+                           f"room field added and removed by the {n_ext}-term projection). (b) Delta = D_head - D_adult, vertex-wise "
+                           "for the scaled adults and parcel-matched for the templates and children (labelled in the panel). "
+                           f"Filled: sensor plus brain noise; open: after the {n_ext}-term projection. Lines: 95 % parcel-bootstrap "
+                           "intervals (spatial, within one anatomy; no between-subject "
+                           f"variability). With sensor plus brain noise Delta is {rng([ib[k]['delta'] for k in kids])} dB over "
                            f"the eight heads and {rng([ib[k]['delta'] for k in child])} dB for the individual children."),
             values=r6),
         "Figure_R7_helmet_fit": dict(
-            inputs=[G3B, G3A, JAS, "docs/methods.md"],
+            inputs=[G3B, G3A, JAS, "docs/methods.md", f"{G2_SUMMARY} :: retained_rank (the projection's term count)"],
             description=("(a) g3b_summary.json placement_D['<anatomy>/<placement>/combined/intrinsic+brain'].median for "
                          "centred, top, x-centred, counterfactual and counterfactual_x-centred; dashed: the adult at top "
                          f"({db(r7['adult_top_D_dB'])} dB) and counterfactual_x-centred ({db(r7['adult_counterfactual_x_centred_D_dB'])}"
@@ -824,7 +853,7 @@ def provenance(s: dict, keys, v: dict) -> dict:
                          f"{r7['sphere_gap_mm']:g} mm (g3a_size_benchmark.json size_following[*].xi_squid_mm; Jas et al. 2026, "
                          "docs/literature/jas2026.md section 2.1). (c) comparisons['<anatomy>/<array>/combined/<condition>/"
                          "detect'].d_child.share_positive (adult: d_adult.share_positive, identical in every comparison), matched "
-                         "array solid, dense array faint; filled intrinsic + brain, open projected. (d) channel_count_control["
+                         "array solid, dense array faint; filled sensor plus brain noise, open after the projection. (d) channel_count_control["
                          "'<anatomy>/combined'].n_sites (numbers) and .d_adult_subsampled.median (the adult's dense array "
                          "subsampled by farthest-point sampling to that count; same placement and noise) against the adult's full "
                          "array (dashed). " + order_txt),
@@ -835,21 +864,21 @@ def provenance(s: dict, keys, v: dict) -> dict:
                  f"for {names(cfx_above)} only. (b) The Neuromag gap at top contact is wider than the adult's for "
                  f"{len(wider_top)} of {len(kids)} smaller heads; in the scaled helmet it is narrower than the adult's except "
                  f"for {names(cfx_wider)}; every gap exceeds the sphere model's {r7['sphere_gap_mm']:g} mm. (c) The dense "
-                 f"array's share of cortex with the OPM ahead is {min(dense_ib):.2f}-{max(dense_ib):.2f} under intrinsic + "
-                 f"brain noise; the matched array's is higher than the adult's in {len(m_higher)} of {len(kids)} smaller heads "
+                 f"array's share of cortex with the OPM ahead is {min(dense_ib):.2f}-{max(dense_ib):.2f} with sensor plus "
+                 f"brain noise; the site-matched array's is higher than the adult's in {len(m_higher)} of {len(kids)} smaller heads "
                  "under both conditions. (d) The adult's D falls by "
                  f"{min(loss):.2f}-{max(loss):.2f} dB when its {a_sites}-site array is cut to {min(sites)}-{max(sites)} sites."),
-            caption_draft=("Figure R7. Helmet fit and head size, each panel against one fixed reference. (a) D (dense OPM minus "
-                           "Neuromag 306, intrinsic + brain noise) at five helmet conditions; dashed: the adult at top contact and "
+            caption_draft=("Figure R7. Helmet fit and head size, each panel against one fixed reference. (a) D (dense OPM array minus "
+                           "Neuromag (306 channels), sensor plus brain noise) at five helmet conditions; dashed: the adult at top contact and "
                            "in its own scaled, laterally centred helmet; grey: the adult over its "
                            f"{r7['adult_family_D_dB']['n']} standard placements. (b) Median Neuromag coil-to-scalp gap: "
                            f"{min(g_top[k] for k in kids):.1f}-{max(g_top[k] for k in kids):.1f} mm at top contact (adult "
                            f"{g_top['adult']:.1f}), {min(g_cfx[k] for k in kids):.1f}-{max(g_cfx[k] for k in kids):.1f} mm in the "
                            f"scaled, laterally centred helmet (adult {g_cfx['adult']:.1f}); dotted: the "
                            f"{r7['sphere_gap_mm']:g}-mm gap the sphere model keeps for every head size. (c) Share of cortical area "
-                           "with D > 0 (the preprint's metric), matched-site array (solid) and dense array (faint). (d) Dense OPM "
+                           "with D > 0 (the preprint's metric), site-matched array (solid) and dense array (faint). (d) Dense OPM "
                            f"sites per head ({min(sites)}-{max(sites)}; adult {a_sites}) and the adult's D with its array "
-                           "subsampled to each count. The counterfactual helmet is an array construction (coil centres scaled), "
+                           "subsampled to each count. The helmet scaled with the head is an array construction (coil centres scaled), "
                            "not a device."),
             values=r7),
         "Figure_R8_depth_matched": dict(
@@ -866,11 +895,11 @@ def provenance(s: dict, keys, v: dict) -> dict:
                  f"{'positive in every stratum' if left_pos else 'not positive in every stratum'}. Individual children: Delta "
                  f"is {rng(shallow)} dB in the strata shallower than 30 mm, with the interval entirely below zero at 20-25 mm "
                  f"for {names(below_2025)}, and {'positive' if deep_pos else 'mixed'} from 30 mm deeper."),
-            caption_draft=("Figure R8. Depth-matched comparison with the adult. Delta per depth stratum (dense OPM vs Neuromag 306, "
-                           "intrinsic + brain noise, top contact): the area-weighted median D of a head's cortical targets in the "
-                           "stratum minus the adult's in the same stratum (a difference of the two heads' medians). (e) Scaled "
-                           "adults and infant templates. (f) Individual children with 95 % parcel-bootstrap intervals (panel "
-                           "letters continue those of Figure R7, below which the report shows this image). Strata with fewer than "
+            caption_draft=("Figure R8. Depth-matched comparison with the adult. Delta per depth stratum (dense OPM array vs Neuromag "
+                           "(306 channels), sensor plus brain noise, top contact): the area-weighted median D of a head's cortical targets in the "
+                           "stratum minus the adult's in the same stratum (a difference of the two heads' medians). (a) Scaled "
+                           "adults and infant templates. (b) Individual children with 95 % parcel-bootstrap intervals. Strata with "
+                           "fewer than "
                            f"{r8['min_n']} targets in either head are omitted; targets per stratum "
                            f"{r8['n_child_range'][0]:,}-{r8['n_child_range'][1]:,} (smaller heads), "
                            f"{r8['n_adult_range'][0]:,}-{r8['n_adult_range'][1]:,} (adult)."),
@@ -887,10 +916,11 @@ def provenance(s: dict, keys, v: dict) -> dict:
             alt=("Two line plots of D against the OPM white noise, one line per head; every line "
                  f"{'falls' if falls else 'does not fall monotonically'} as the noise rises. At "
                  f"{FLOOR_FT:g} fT per root hertz the dense array's D is {rng(list(d30['opm_dense'].values()))} dB "
-                 f"(negative for {names(neg30['opm_dense'])}); the matched array's is "
+                 f"(negative for {names(neg30['opm_dense'])}); the site-matched array's is "
                  f"{rng(list(d30['opm_matched'].values()))} dB (negative for {len(neg30['opm_matched'])} of {len(keys)} heads)."),
-            caption_draft=("Figure R9. The noise condition. D (OPM minus Neuromag 306, intrinsic + brain noise, top contact) "
-                           "against the OPM's white sensor noise, Neuromag unchanged. (a) Dense array; (b) matched-site array. "
+            caption_draft=("Figure R9. The noise condition. D (OPM minus Neuromag (306 channels), sensor plus brain noise, top "
+                           "contact) against the OPM's white sensor noise, Neuromag unchanged. (a) Dense OPM array; (b) "
+                           "site-matched OPM array. "
                            f"Grey line: the primary {r9['primary_fT_per_rtHz']:g} fT/sqrt(Hz); dotted: about {FLOOR_FT:g} "
                            "fT/sqrt(Hz), the approximate OPM empty-room floor in the Jas et al. (2026) recording (broadband). At "
                            f"{FLOOR_FT:g} fT/sqrt(Hz) the dense array's D is {rng(list(d30['opm_dense'].values()))} dB (adult "
@@ -913,21 +943,21 @@ def provenance(s: dict, keys, v: dict) -> dict:
                          "locations per band and anatomy. " + order_txt),
             alt=("Forest plots of the S50 ratio on a log axis with a line at 1. At 10-20 mm the dense array's ratio is "
                  f"{min(r['value'] for r in dense0.values()):.2f}-{max(r['value'] for r in dense0.values()):.2f} in the nine "
-                 f"heads, its interval including 1 for {names(d_incl1)}; the matched array's ratio is "
+                 f"heads, its interval including 1 for {names(d_incl1)}; the site-matched array's ratio is "
                  f"{min(r['value'] for r in match0.values()):.2f}-{max(r['value'] for r in match0.values()):.2f}, its interval "
                  f"including 1 for {len(m_incl1)} heads. In the deeper bands the ratios lie near 1 with wide or open "
                  f"intervals; censored or missing estimates: {len(censored[1])}, {len(censored[2])} and {len(censored[3])} of "
                  f"{2 * len(keys)} at {', '.join(r10['bands_mm'][1:])} mm."),
-            caption_draft=("Figure R10. Interictal spikes. Strength for 50 % detection, Neuromag 306 over OPM, paired on identical "
+            caption_draft=("Figure R10. Interictal spikes. Strength for 50 % detection, Neuromag (306 channels) over OPM, paired on identical "
                            "simulated spikes (practical detector, thresholds frozen at 1 false event per minute); > 1: the OPM "
-                           "detects at a lower strength. Dark: dense OPM; light: matched-site OPM. Lines: 95 % bootstrap intervals "
+                           "detects at a lower strength. Dark: dense OPM; light: site-matched OPM. Lines: 95 % bootstrap intervals "
                            "over the 18 locations per band; arrows: open ends; open markers: censored estimates. (a) 10-20 mm, "
                            f"dense-array ratios {min(r['value'] for r in dense0.values()):.2f}-"
                            f"{max(r['value'] for r in dense0.values()):.2f}; right: locations favouring each system and the "
                            "location sign-flip p, Holm-adjusted over the nine anatomies (each array separately; dense array "
-                           f"largest {fmt_p(holm_max)}; matched array below 0.05 for {names(list(holm_m))}); the endpoint was chosen "
+                           f"largest {fmt_p(holm_max)}; site-matched array below 0.05 for {names(list(holm_m))}); the endpoint was chosen "
                            "post hoc. (b) Deeper bands. Dagger: the adult sits at its measured head position, the smaller heads at "
-                           "top contact."),
+                           "top contact in the fixed adult helmet."),
             values=r10),
     }
 

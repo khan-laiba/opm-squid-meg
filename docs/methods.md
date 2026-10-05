@@ -663,7 +663,7 @@ level and the 1-per-minute operating point are operational study choices, not cl
   in the earlier run: not robust).
 
 Confirmatory detection run (revision; `configs/g4_confirmatory.toml`, `scripts/g4_confirmatory.py`;
-D-G4-CONFIRM; design declared before the run, results not yet available). The runs above are
+D-G4-CONFIRM; design declared before the run; results in `results/g4_confirm/`). The runs above are
 exploratory: the superficial endpoint was chosen after them. This run fixes that endpoint and tests it
 on new data.
 * Endpoint (fixed before the run): in each of the nine anatomies (adult, the two scaled adults, the
@@ -692,6 +692,17 @@ on new data.
   morphology) and candidate topographies from a 1-layer BEM (inner skull) with a 2-mm/2-deg
   coregistration error (one draw per anatomy, shared by all arrays), applied to the same events and
   null data as the primary detector.
+* p values: the run computed each sign-flip p as declared (every sign pattern up to 20 non-zero
+  differences, 20,000 random patterns beyond). The report gives the exact p over all sign patterns,
+  computed afterwards from the stored location differences through the distribution of the signed sum
+  (`scripts/g4_confirm_exact_p.py`, `results/g4_confirm/g4_confirm_exact_p.json`): the run's estimates
+  differ from it by at most 0.0073 and give the same Holm decision for every anatomy in all 25 families
+  (the 20 of the combined summary and the endpoint in each of the 5 noise replicates).
+* Result (`results/g4_confirm/G4_confirm_report.md`): the run is confirmatory (all nine anatomies at one
+  clean commit, ae458a9, with the declared settings). The endpoint passes the Holm-corrected test in all
+  nine anatomies (S50 ratios Neuromag / OPM 1.27-1.47) and in each of the five noise replicates; the
+  oracle and the mismatched detector agree (the mismatched detector with matched thresholds in 8 of 9);
+  the site-matched array passes in 5 of 9.
 
 Localization design (`scripts/g4_localization.py`, bounded)
 * 24 locations (2 per depth x orientation stratum), focal dipoles and 10-mm patches at 80 and

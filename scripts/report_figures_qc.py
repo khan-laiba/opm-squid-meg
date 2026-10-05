@@ -2,7 +2,7 @@
 """Supplementary figure of the MRI quality check of the school-aged children (referee round 1), drawn
 in the report's style from the check's own geometry.
 
-  Figure_S_children_qc  (a) For the adult, children A-C and the 2-year template, a 50 x 50 mm section
+  Figure_S_children_qc  (a) For the adult, children A-C and the 24-month template, a 50 x 50 mm section
       through the white-surface vertex closest to the scalp used (the size of the check's zoom panels;
       sagittal or coronal, whichever holds more of the scalp's outward normal at that point, so that the
       section crosses the layers): the T1, the dense MRI scalp used, the MRI head boundary, the outer and
@@ -72,7 +72,7 @@ CONFIG = "configs/g3b_pediatric.toml"
 NAME = "Figure_S_children_qc"
 OUT_JSON = "figures_qc.json"
 KEYS = ("adult", "childA", "childB", "childC", "infant2yr")  # the check's anatomies: the children between the references
-LABEL = {**style.ANAT_LABEL, "infant2yr": "2-year template"}  # the manuscript's name of the 24-month template
+LABEL = dict(style.ANAT_LABEL)  # the manuscript's names (the template: "24-month template")
 HALF_MM = 25.0  # half-width of the sections: the check's zoom panels (study_children_qc.overlay_figure)
 PIXEL_MM = 0.2  # T1 sampling of the sections, as the check's zoom panels
 CDF_STEP_MM = 0.02  # (b) drawn on this grid (exact counts at every grid point)
@@ -99,7 +99,7 @@ DK = dict(  # Desikan-Killiany parcels (FreeSurfer aparc) in words
     superiorfrontal="superior frontal", superiorparietal="superior parietal", superiortemporal="superior temporal",
     supramarginal="supramarginal", frontalpole="frontal pole", temporalpole="temporal pole",
     transversetemporal="transverse temporal", insula="insula")
-TEXT_NAME = dict(adult="adult", childA="child A", childB="child B", childC="child C", infant2yr="2-year template")
+TEXT_NAME = dict(adult="adult", childA="child A", childB="child B", childC="child C", infant2yr="24-month template")
 MINUS, EN, TIMES, PM = "−", "–", "×", "±"
 
 
@@ -386,7 +386,7 @@ def draw(M: dict, J: dict) -> dict:
             f"ticks every 10 mm. MRI head boundary: where the T1 falls through the volume's air/tissue (Otsu) level along "
             f"the scalp's outward normals; in (a) and (b) the scalp moved onto it. "
             f"(c) Over the head above the fiducial plane; bars: quartiles; shaded: the adult's median {PM} {tol:g} mm. "
-            f"Data: OpenNeuro ds005234 (Fadeev et al., 2024) for children A{EN}C; 2-year template: O'Reilly et al. (2021); "
+            f"Data: OpenNeuro ds005234 (Fadeev et al., 2024) for children A{EN}C; 24-month template: O'Reilly et al. (2021); "
             f"adult: MNE sample data.")
     fig.text(0.02 / W, 1 - (top_ax + h_ax + 0.62) / H, textwrap.fill(foot, 138), ha="left", va="top", fontsize=6.6,
              color="0.25")
@@ -426,7 +426,7 @@ def entry(M: dict, J: dict, cfg: dict, drawn: dict, counts: dict) -> dict:
     med = {k: off[k][qc.PRIMARY]["median_mm"] for k in KEYS}
     half = {k: off[k]["half_max"]["median_mm"] for k in KEYS}
     caption = (
-        "MRI quality check of the anatomy of the three school-aged children, with the adult and the 2-year (24-month) infant "
+        "MRI quality check of the anatomy of the three school-aged children, with the adult and the 24-month infant "
         "template as references; the scalp, skull and white surfaces as the forward models use them. "
         f"(a) Sections of {2 * HALF_MM:g} {TIMES} {2 * HALF_MM:g} mm through the white-surface vertex closest to the scalp used "
         f"(open circle; {sections}), sagittal or coronal, whichever contains more of the scalp's outward normal there, so that "
@@ -451,10 +451,10 @@ def entry(M: dict, J: dict, cfg: dict, drawn: dict, counts: dict) -> dict:
         f"{-med['infant2yr']:.2f} mm outside its boundary (verdict: outside). The children's shallow cortex is therefore not "
         "the product of a misplaced scalp. Children A–C: OpenNeuro ds005234 (Fadeev et al., 2024; de-identified, data "
         "licence CC0); "
-        "2-year template: O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database (Richards et al., 2016); "
+        "24-month template: O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database (Richards et al., 2016); "
         "adult: MNE sample subject.")
     alt = ("Three-part figure. (a) Five small grey-scale MRI sections, each 50 mm wide, of the adult, children A to C and the "
-           "2-year template, each centred on the white-surface vertex closest to the scalp, with coloured outlines of the scalp "
+           "24-month template, each centred on the white-surface vertex closest to the scalp, with coloured outlines of the scalp "
            "used, the MRI head boundary just outside it (inside it for the template), the outer and inner skull and the white "
            f"surface; the children's closest vertices lie {cw['childA']['distance_mm']:.1f} to "
            f"{max(cw[k]['distance_mm'] for k in kids):.1f} mm below the scalp, the adult's "

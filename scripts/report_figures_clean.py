@@ -5,16 +5,17 @@ from stored outputs only: nothing is simulated or re-analysed.
 
   R0   the spherical benchmark: (a) equal-SNR depth against the noise ratio eta in the sphere of
        Jas et al. (2026) (our reimplementation, results/g1a), (b) the same quantity on the realistic
-       adult head for the matched and dense OPM arrays and the sphere with the real standoffs
+       adult head for the site-matched and dense OPM arrays and the sphere with the real standoffs
        (results/g2/g2_summary.json :: bridge_to_sphere)
-  R11  D (dB) on the adult's inflated cortex: dense and matched OPM arrays against Neuromag's 306
-       channels, sensor + brain noise (results/g2/g2_targets.csv)
+  R11  D (dB) on the adult's inflated cortex: dense and site-matched OPM arrays against Neuromag's 306
+       channels, sensor plus brain noise (results/g2/g2_targets.csv); lettered (c), the report showing it
+       as panel (c) of the adult figure, below R1's (a) and (b)
   R12  geometry: sagittal and coronal scalp sections of the adult, the 12-month template and child B,
        each with the fixed adult helmet at top contact, the helmet fitted at the adult's gap (the
        constant-gap control) and the dense OPM sites (results/g3b/g3b_geometry_sections.json, checked
-       against results/g3b_constant_gap/g3b_constant_gap_summary.json)
+       against results/g3b_constant_gap/g3b_constant_gap_summary.json); lettered (d), below R15's (a)-(c)
   R13  D (dB) on the inflated cortex of the 24- and 12-month templates, dense array, top contact
-       (results/g3b/g3b_targets_<anatomy>.csv), on the colour scale of R11
+       (results/g3b/g3b_targets_<anatomy>.csv), on the colour scale of R11; lettered (c), below R6's (a), (b)
   R14  D (dB) on the adult's inflated cortex for the adult and the two scaled adults (school-age and
        2-year size), dense array, top contact (results/g3b/g3b_targets_<anatomy>.csv), same scale
   R15  the adult's arrays (Methods): Neuromag's 102 sensor sites (magnetometer coil centres) at the
@@ -197,7 +198,7 @@ def figure_sphere() -> dict:
         raise SystemExit("the arrays differ in the eta range where the OPM leads at every depth: reword the annotation")
     bx.text(1.08, 22, f"\u03b7 \u2264 {max(ahead['opm_dense']):g}:\nOPM ahead at every\ndepth (both arrays)", ha="left",
             va="center", fontsize=7, color="0.3")
-    bx.text(5.95, 30, f"Neuromag ahead at every depth:\nmatched \u03b7 \u2265 {min(behind['opm_matched']):g}, "
+    bx.text(5.95, 30, f"Neuromag ahead at every depth:\nsite-matched \u03b7 \u2265 {min(behind['opm_matched']):g}, "
             f"dense \u03b7 \u2265 {min(behind['opm_dense']):g}", ha="right", va="center", fontsize=7, color="0.3")
     bx.set_title("(b) Realistic adult head", loc="left")
     bx.set_xlabel(r"Noise ratio $\eta = \sigma_{\mathrm{OPM}}\,/\,\sigma_{\mathrm{magnetometer}}$")
@@ -256,15 +257,15 @@ def figure_sphere() -> dict:
             f"grid {etas[0]:g}-{etas[-1]:g} in steps of {step:g}. Points are drawn where a crossing exists: "
             + "; ".join(f"{style.ARRAY_LABEL[a]} {rng_txt[a]}" for a in arr)
             + f"; the OPM leads in every depth bin for eta {min(ahead['opm_dense']):g}-{max(ahead['opm_dense']):g} (both "
-            f"arrays) and Neuromag already in the shallowest bin for eta >= {min(behind['opm_matched']):g} (matched) and "
+            f"arrays) and Neuromag already in the shallowest bin for eta >= {min(behind['opm_matched']):g} (site-matched) and "
             f">= {min(behind['opm_dense']):g} (dense). Dashed: the sphere of (a) with the real median standoffs (OPM "
-            f"matched array {xi_opm:.2f} mm, Neuromag magnetometer coils {xi_sq:.2f} mm from the scalp). Depth axis "
+            f"site-matched array {xi_opm:.2f} mm, Neuromag magnetometer coils {xi_sq:.2f} mm from the scalp). Depth axis "
             "inverted (deeper down) and shared by both panels."),
         alt=("Two line charts of the equal-SNR depth below the scalp (vertical axis inverted, deeper down) against the "
              f"noise ratio eta from {etas[0]:g} to {etas[-1]:g}. Left, the sphere: the depth falls from the sphere centre "
              f"at eta {eta0:.2f} to the brain surface at eta {eta1:.2f}; above the curve the OPM's SNR is higher; an open "
              f"diamond marks the preprint's printed {printed['printed_mm']:g} mm at eta 3, next to the exact "
-             f"{exact[3.0]:.1f} mm. Right, the realistic adult head: the matched and dense OPM arrays cross between "
+             f"{exact[3.0]:.1f} mm. Right, the realistic adult head: the site-matched and dense OPM arrays cross between "
              f"{cross_lo:.0f} and {cross_hi:.0f} mm for eta {eta_lo:g} to {eta_hi:g}, close to the dashed sphere with the "
              "real standoffs."),
         caption_draft=(
@@ -275,7 +276,7 @@ def figure_sphere() -> dict:
             f"between {eta0:.2f} and {eta1:.2f}; the diamond marks the {printed['printed_mm']:g} mm printed in the preprint "
             f"at eta = 3 (exact {exact[3.0]:.1f} mm). (b) The same quantity on the realistic adult head: depth at which the "
             "median over targets of the peak field of the OPM array over that of the best Neuromag magnetometer equals eta "
-            f"(sensor noise only), for the matched ({n['opm_matched']} sites) and dense ({n['opm_dense']} sites) arrays, "
+            f"(sensor noise only), for the site-matched ({n['opm_matched']} sites) and dense ({n['opm_dense']} sites) arrays, "
             f"and the sphere of (a) with the real median standoffs ({xi_opm:.1f} and {xi_sq:.1f} mm). Adapted from Jas et "
             "al. (2026), CC BY 4.0."),
         values=values)
@@ -334,9 +335,10 @@ def render(ax, verts, tris, gyral, val, cat, camera_x: float, norm) -> None:
     ax.axis("off")
 
 
-def map_figure(name: str, rows: list[tuple[str, list]], note: str, extend: str) -> None:
+def map_figure(name: str, rows: list[tuple[str, list]], note: str, extend: str, letter: str | None = None) -> None:
     """Rows of four views (left lateral, left medial, right medial, right lateral) with a title above
-    each row, one horizontal colour bar and the two greys below."""
+    each row, one horizontal colour bar and the two greys below; ``letter`` (e.g. '(c)') labels the whole image
+    when the report shows it as one panel of a figure, its rows then unlettered."""
     norm = Normalize(-LIM_DB, LIM_DB)
     asp = max(np.ptp(v[:, 2]) / np.ptp(v[:, 1]) for _, hem in rows for v, *_ in hem)
     W, lm, rm, gap = style.FULL_W, 0.04, 0.04, 0.06
@@ -344,6 +346,8 @@ def map_figure(name: str, rows: list[tuple[str, list]], note: str, extend: str) 
     rh, th, top = cw * asp + 0.04, 0.27, 0.22
     H = top + len(rows) * (th + rh) + 0.62
     fig = plt.figure(figsize=(W, H))
+    if letter:
+        fig.text(lm / W, (H - 0.04) / H, letter, ha="left", va="top", fontsize=9)
     for i, (title, hem) in enumerate(rows):
         y0 = H - top - (i + 1) * (th + rh)
         fig.text(lm / W, (y0 + rh + th - 0.04) / H, title, ha="left", va="top", fontsize=9)
@@ -388,14 +392,15 @@ def adult_maps() -> tuple[list, dict]:
     medial = np.char.endswith(np.array([r["region"] for r in rows]).astype(str), "unknown")
     src_file = paths.SUBJECTS_DIR / "sample" / "bem" / "sample-oct-6-src.fif"
     out, vals = [], {}
-    for letter, a in zip("ab", ("opm_dense", "opm_matched")):
+    for a in ("opm_dense", "opm_matched"):
         d = 20.0 * np.log10(col(rows, f"detect_{a}_opm_{COND}") / sq)
         stored = s["primary"]["oracle"][f"{a}/combined/{COND}"]["median_log2"] * DB_PER_LOG2
         if abs(np.median(d) - stored) > 0.005:
             raise SystemExit(f"{G2_TARGETS} does not reproduce the stored median for {a} "
                              f"({np.median(d):.4f} vs {stored:.4f} dB)")
         hem = cortex_values(paths.SUBJECTS_DIR, "sample", src_file, rows, d)
-        out.append((f"({letter}) {style.ARRAY_LABEL[a]} ({s['arrays'][a]['n_sites']} sites) vs Neuromag "
+        lab = style.ARRAY_LABEL[a]
+        out.append((f"{lab[0].upper()}{lab[1:]} ({s['arrays'][a]['n_sites']} sites) vs Neuromag "
                     f"({s['arrays']['squid']['channels']} channels)", hem, d))
         vals[a] = dict(median_all_targets_dB=float(np.median(d)), stored_median_dB=float(stored),
                        median_without_medial_wall_dB=float(np.median(d[~medial])), share_positive=float(np.mean(d > 0)),
@@ -412,7 +417,7 @@ def template_maps() -> tuple[list, dict]:
     g = load(G3B)
     sd = paths.EXTERNAL / anatomy.INFANT_SUBJECTS
     out, vals = [], {}
-    for letter, (k, name) in zip("ab", TEMPLATES.items()):
+    for k, name in TEMPLATES.items():
         rows = io.read_csv(ROOT / G3B_TARGETS.format(k))
         d = 20.0 * np.log10(col(rows, f"detect_opm_dense_opm_{COND}") / col(rows, f"detect_squid_top_combined_{COND}"))
         medial = np.char.endswith(np.array([r["region"] for r in rows]).astype(str), "unknown")
@@ -423,7 +428,7 @@ def template_maps() -> tuple[list, dict]:
             raise SystemExit(f"{G3B_TARGETS.format(k)} does not reproduce the stored D ({wmed:.4f} vs {stored:.4f} dB)")
         hem = cortex_values(sd, name, sd / name / "bem" / f"{name}-oct-6-src.fif", rows, d)
         n_sites, n_sq = g["arrays"][k]["opm_dense"]["n_sites"], g["arrays"][k]["squid:top"]["n"]
-        out.append((f"({letter}) {style.ANAT_LABEL[k]}: {style.ARRAY_LABEL['opm_dense']} ({n_sites} sites) vs "
+        out.append((f"{style.ANAT_LABEL[k]}: {style.ARRAY_LABEL['opm_dense']} ({n_sites} sites) vs "
                     f"Neuromag ({n_sq} channels)", hem, d))
         vals[k] = dict(template=name, n_sites=n_sites, n_squid_channels=n_sq,
                        area_weighted_median_without_medial_wall_dB=wmed, stored_D_dB=stored,
@@ -491,12 +496,13 @@ def figures_maps() -> dict:
     ext = extend_of([d for *_, d in adult] + [d for *_, d in heads] + [d for *_, d in scaled])
     g2s, g3 = load(G2), load(G3B)
     q = g2s["config"]["sources"]["focal_nAm"]
+    # R11 and R13 are panel (c) of the report's adult and children's figures (below R1 and R6); R14 stands alone
     map_figure("Figure_R11_maps_adult", [(t, h) for t, h, _ in adult],
-               f"Adult at its measured head position; sensor + brain noise; {q:g}-nAm dipoles", ext)
+               f"Adult, measured head position; sensor plus brain noise; {q:g}-nAm dipoles", ext, letter="(c)")
     map_figure("Figure_R13_maps_heads", [(t, h) for t, h, _ in heads],
-               f"Top contact in the adult helmet; sensor + brain noise; {q:g}-nAm dipoles", ext)
+               f"Fixed adult helmet, top contact; sensor plus brain noise; {q:g}-nAm dipoles", ext, letter="(c)")
     map_figure("Figure_R14_maps_scaled", [(t, h) for t, h, _ in scaled],
-               f"Top contact in the adult helmet; sensor + brain noise; {q:g}-nAm dipoles", ext)
+               f"Fixed adult helmet, top contact; sensor plus brain noise; {q:g}-nAm dipoles", ext)
     n_sq = g2s["arrays"]["squid"]["channels"]
     vd, vm = va["opm_dense"], va["opm_matched"]
     v2, v1 = vh["infant2yr"], vh["infant12mo"]
@@ -540,7 +546,7 @@ def figures_maps() -> dict:
             f"sample subject at its measured head position, {va['targets']['n']:,} targets, {q:g}-nAm cortical-normal "
             "dipoles, sensor white noise + cortical background, oracle covariance), drawn at the target's vertex of the "
             "oct-6 source space on the inflated white surface. The median over all targets is "
-            f"{vd['median_all_targets_dB']:.3f} dB (dense) and {vm['median_all_targets_dB']:.3f} dB (matched), equal to "
+            f"{vd['median_all_targets_dB']:.3f} dB (dense) and {vm['median_all_targets_dB']:.3f} dB (site-matched), equal to "
             f"the stored median log2 ratios times 20 log10 2 ({vd['stored_median_dB']:.3f} and "
             f"{vm['stored_median_dB']:.3f} dB; checked). Under the pediatric convention (area-weighted median, medial "
             f"wall excluded) the dense array's D at the same pose is {adult_aw:.3f} dB ({G3B} "
@@ -550,16 +556,17 @@ def figures_maps() -> dict:
             "vertices."),
         alt=("Inflated left and right cortical hemispheres in lateral and medial views, two rows. Top, the dense OPM "
              f"array against Neuromag's {n_sq} channels: red almost everywhere ({vd['share_positive']:.1%} of targets "
-             "above 0 dB), strongest on lateral convexities, paler on medial and ventral surfaces. Bottom, the matched "
+             "above 0 dB), strongest on lateral convexities, paler on medial and ventral surfaces. Bottom, the site-matched "
              f"array: a mix of pale red and blue ({vm['share_positive']:.0%} above 0 dB), blue on the ventral and polar "
              "temporal and frontal surfaces. Grey: medial wall (light) and scattered vertices near the inner skull "
              "(dark)."),
         caption_draft=(
             "D on the adult's inflated cortex (MNE sample subject at its measured head position; sensor plus brain "
-            f"noise; {q:g}-nAm dipoles). (a) Dense array ({g2s['arrays']['opm_dense']['n_sites']} sites) and (b) matched "
-            f"array ({g2s['arrays']['opm_matched']['n_sites']} sites) against Neuromag's {n_sq} channels; red: the "
+            f"noise; {q:g}-nAm dipoles), lettered (c) in the image (the report shows it below Figure R1's panels): the dense "
+            f"array ({g2s['arrays']['opm_dense']['n_sites']} sites, top) and the site-matched array "
+            f"({g2s['arrays']['opm_matched']['n_sites']} sites, bottom) against Neuromag's {n_sq} channels; red: the "
             f"OPM's detectability is higher. Median D {fmt_db(vd['median_all_targets_dB'])} dB (dense) and "
-            f"{fmt_db(vm['median_all_targets_dB'])} dB (matched) over all {va['targets']['n']:,} targets (dense array, "
+            f"{fmt_db(vm['median_all_targets_dB'])} dB (site-matched) over all {va['targets']['n']:,} targets (dense array, "
             f"area-weighted without the medial wall: {fmt_db(adult_aw)} dB). Light grey: medial wall; dark grey: cortex "
             f"within {NEAR_SKULL_MM:g} mm of the inner skull, which is not simulated as a target and is also left out of "
             "the brain background. The colour scale is that of Figure R13."),
@@ -579,7 +586,7 @@ def figures_maps() -> dict:
             "24-month (ANTS2-0Years3T) and 12-month (ANTS12-0Months3T) infant templates in their native dimensions, the "
             f"dense OPM array refitted to each head, Neuromag's {v2['n_squid_channels']} channels with the head at top "
             "contact in the fixed adult helmet (the adult's measured pose, then raised until the nearest magnetometer "
-            f"coil is {clearance:g} mm from the scalp), sensor + brain noise, {q:g}-nAm cortical-normal dipoles, drawn "
+            f"coil is {clearance:g} mm from the scalp), sensor plus brain noise, {q:g}-nAm cortical-normal dipoles, drawn "
             "on each template's own inflated cortex (no vertex correspondence with the adult). Area-weighted median D "
             f"without the medial wall (opmsquid.pediatric.weighted_median, weights area_mm2): {w2:.3f} dB (24 months) "
             f"and {w1:.3f} dB (12 months), equal to the stored values ({v2['stored_D_dB']:.3f} and "
@@ -594,9 +601,10 @@ def figures_maps() -> dict:
              f"{v2['share_above_limit']:.0%} and {v1['share_above_limit']:.0%} of the targets lie beyond the end of the "
              "colour scale, and paler on the medial surfaces."),
         caption_draft=(
-            "D on the inflated cortex of the (a) 24-month and (b) 12-month infant templates (O'Reilly et al., 2021; "
+            "D on the inflated cortex of the 24-month (top) and 12-month (bottom) infant templates, lettered (c) in the image "
+            "(the report shows it below Figure R6's panels; O'Reilly et al., 2021; "
             f"Richards et al., 2016): dense OPM array ({v2['n_sites']} and {v1['n_sites']} sites) against Neuromag's "
-            f"{v2['n_squid_channels']} channels with the head at top contact in the adult helmet; sensor plus brain "
+            f"{v2['n_squid_channels']} channels with the head at top contact in the fixed adult helmet; sensor plus brain "
             f"noise; {q:g}-nAm dipoles. Area-weighted median D {fmt_db(w2)} and {fmt_db(w1)} dB (medial wall excluded; "
             f"the adult at top contact {fmt_db(adult_top)} dB). Colour scale and greys as in Figure R11."),
         values=dict(vh, colour_limit_dB=LIM_DB, extend=ext))
@@ -619,7 +627,7 @@ def figures_maps() -> dict:
             f"'{g3['anatomies']['school']['scale_note']}' and '{g3['anatomies']['size2yr']['scale_note']}'): the dense OPM "
             f"array refitted to each head ({sa['n_sites']}, {ss['n_sites']} and {s2['n_sites']} sites), Neuromag's "
             f"{sa['n_squid_channels']} channels with the head at top contact in the fixed adult helmet (the adult's measured "
-            f"pose, then raised until the nearest magnetometer coil is {clearance:g} mm from the scalp), sensor + brain "
+            f"pose, then raised until the nearest magnetometer coil is {clearance:g} mm from the scalp), sensor plus brain "
             f"noise, {q:g}-nAm cortical-normal dipoles. A scaled adult keeps the adult's vertices, so all three rows are "
             "drawn on the adult's inflated cortex and compare vertex by vertex; its targets are the adult's that stay "
             f"usable on the scaled meshes (inside the scaled inner skull and at least {NEAR_SKULL_MM:g} mm from it), so "
@@ -628,7 +636,7 @@ def figures_maps() -> dict:
             f"medial wall (opmsquid.pediatric.weighted_median, weights area_mm2): {wa:.3f} dB (adult), {ws:.3f} dB "
             f"(school-age size) and {w2s:.3f} dB (2-year size), equal to the stored values ({sa['stored_D_dB']:.3f}, "
             f"{ss['stored_D_dB']:.3f} and {s2['stored_D_dB']:.3f} dB; checked). The adult at its measured position is "
-            "Figure R11a. " + grey_txt + " " + scale_txt + f" Targets above +{LIM_DB:g} dB: {sa['share_above_limit']:.1%} "
+            "Figure R11 (dense array). " + grey_txt + " " + scale_txt + f" Targets above +{LIM_DB:g} dB: {sa['share_above_limit']:.1%} "
             f"(adult), {ss['share_above_limit']:.1%} (school-age size), {s2['share_above_limit']:.1%} (2-year size); below "
             f"-{LIM_DB:g} dB: " + (", ".join(f"{v['share_below_minus_limit']:.1%}" for v in (sa, ss, s2))
                                    if any(v["share_below_minus_limit"] for v in (sa, ss, s2)) else "none") + "."),
@@ -641,7 +649,7 @@ def figures_maps() -> dict:
         caption_draft=(
             "D on the adult's inflated cortex for (a) the adult and the adult scaled (b) to school-age size "
             f"(\u00d7{ss['scale']:.3f}) and (c) to the 24-month template's head circumference (\u00d7{s2['scale']:.3f}), each "
-            f"at top contact in the adult helmet: dense OPM array ({sa['n_sites']}, {ss['n_sites']} and {s2['n_sites']} "
+            f"at top contact in the fixed adult helmet: dense OPM array ({sa['n_sites']}, {ss['n_sites']} and {s2['n_sites']} "
             f"sites) against Neuromag's {sa['n_squid_channels']} channels; sensor plus brain noise; {q:g}-nAm dipoles. The "
             "scaled adults keep the adult's vertices, so the rows compare vertex by vertex. Area-weighted median D "
             f"{fmt_db(wa)}, {fmt_db(ws)} and {fmt_db(w2s)} dB (medial wall excluded). Dark grey also marks the adult's "
@@ -733,6 +741,7 @@ def figure_geometry() -> dict:
     t_top, t_mid, t_bot = 0.62, 0.36, 0.92  # title block, sagittal x label, coronal x label + legend
     H = t_top + 2 * ph + t_mid + t_bot
     fig = plt.figure(figsize=(W, H))
+    fig.text(0.02 / W, (H - 0.04) / H, "(d)", ha="left", va="top", fontsize=9)  # the report shows it as panel (d) of Figure 1
     markers = ((dict(marker="o", ms=3.0, mfc="none", mec=style.ARRAY_COLOR["opm_dense"], mew=0.8), "opm"),
                (dict(marker="s", ms=3.6, mfc="none", mec=FITTED_COLOR, mew=0.9), "fitted"),
                (dict(marker="s", ms=3.0, mfc="k", mec="k", mew=0.0), "fixed"))
@@ -774,7 +783,7 @@ def figure_geometry() -> dict:
         fig.text(cx, (H - 0.04) / H, style.ANAT_LABEL[k], ha="center", va="top", fontsize=9)
         fig.text(cx, (H - 0.24) / H,
                  f"median gap: fixed {pl['top']['median_dist_mm']:.1f}, fitted {fr['median_mm']:.1f} mm\n"
-                 f"fitted helmet ×{hd['k']:.3f}; {g['arrays'][k]['opm_dense']['n_sites']} OPM sites",
+                 f"fitted helmet ×{hd['k']:.3f}; {g['arrays'][k]['opm_dense']['n_sites']} dense OPM sites",
                  ha="center", va="top", fontsize=7, color="0.25", linespacing=1.3)
         vals[k] = dict(top=dict(moved_mm=pl["top"]["moved_mm"], median_gap_mm=pl["top"]["median_dist_mm"],
                                 min_gap_mm=pl["top"]["min_dist_mm"], max_gap_mm=pl["top"]["max_dist_mm"]),
@@ -871,7 +880,8 @@ def figure_geometry() -> dict:
              f"the adult's {g_fix[0]:.0f} mm), while the fitted helmet is shrunk to follow the head at the adult's gap "
              f"({g_fit[1]:.1f} mm in each)."),
         caption_draft=(
-            "Helmet geometry. Sagittal (top) and coronal (bottom) sections through the head origin of the adult, the "
+            "Helmet geometry, lettered (d) in the image (the report shows it below Figure R15's panels (a) to (c)). "
+            "Sagittal (top) and coronal (bottom) sections through the head origin of the adult, the "
             "12-month template and child B, at the same scale: scalp (black) and, in the coronal sections, white-matter "
             "surface (grey); filled squares, the Neuromag magnetometers of the fixed adult helmet with the head at top "
             "contact; open squares, the helmet fitted at the adult's gap (the Neuromag helmet scaled about the laterally "

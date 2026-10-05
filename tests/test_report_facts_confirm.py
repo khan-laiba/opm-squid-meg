@@ -3,7 +3,8 @@
 Always: the formatting of censored ratios, unreached S50 and flags, and a clear FileNotFoundError when results/g4_confirm
 (or its combined summary) is missing. When results/g4_confirm/g4_confirm_summary.json exists: every fact has a value and
 an existing source, the combiner's check() is clean, names and formats follow the conventions of the other fact modules,
-the Holm adjustment of the endpoint follows from the stored p values, and key values equal the formatted value at their
+the Holm adjustment of the endpoint follows from the exact p values (results/g4_confirm/g4_confirm_exact_p.json,
+whose Monte Carlo values are the stored ones), and key values equal the formatted value at their
 place in the result files, given as (fact name, file and key path, formatting) triples: no number is written into this
 test. The facts are read from the repository root, or from the root named by REPORT_FACTS_CONFIRM_ROOT (e.g. a pilot run
 on test seeds in a temporary tree whose results/g4_confirm holds its files)."""
@@ -126,6 +127,21 @@ GLOBAL = [
 ]
 
 
+EXACT = "g4_confirm_exact_p.json"  # the reported p values are the exact sign-flip p (scripts/g4_confirm_exact_p.py)
+
+
+def _to_exact(file: str, path: tuple, lab: str | None) -> tuple:
+    """A stored Monte Carlo p field (or a Holm value or pass count derived from it) -> its exact counterpart."""
+    if file.startswith("g4c_") and len(path) == 3 and path[0] == "comparisons" and path[2] == "location_sign_flip_p":
+        return EXACT, ("comparisons", path[1], lab, "p_exact")
+    if file == "g4_confirm_summary.json" and path[0] in ("families", "monte_carlo") and len(path) > 2 \
+            and path[2] in ("p", "holm_p", "n_pass"):
+        return EXACT, path
+    if file == "g4_confirm_summary.json" and path[0] == "anatomy" and path[2:] == ("endpoint", "holm_p"):
+        return EXACT, ("families", "endpoint", "holm_p", path[1])
+    return file, path
+
+
 def _doc(name: str, cache: dict):
     if name not in cache:
         path = ROOT / name if "/" in name else DIR / name
@@ -238,6 +254,7 @@ class TestConfirmFacts(unittest.TestCase):
         rows += [(n, f, p, fmt, dict(lab=lab, t=lab.lower())) for lab in self.labs for n, f, p, fmt in PER_ANATOMY]
         for name, file, path, fmt, kw in rows:
             name, file, path = self._expand(name, **kw), self._expand(file, **kw), self._expand(path, **kw)
+            file, path = _to_exact(file, path, kw.get("lab"))
             want = _at(_doc(file, self.docs), path)
             got = self.f[name]["value"]
             if want is None:  # a censored point estimate or an S50 beyond the tested strengths
@@ -247,9 +264,20 @@ class TestConfirmFacts(unittest.TestCase):
             checked += 1
         self.assertEqual(checked, len(GLOBAL) + len(PER_ANATOMY) * len(self.labs))
 
-    def test_endpoint_holm_follows_from_the_stored_p(self):
-        p = {lab: _doc(f"g4c_{lab}_summary.json", self.docs)["comparisons"][self.subst["ep"]]["location_sign_flip_p"]
-             for lab in self.labs}
+    def test_exact_p_belongs_to_the_stored_run(self):
+        ex = _doc(EXACT, self.docs)
+        for lab in self.labs:
+            rows = _doc(f"g4c_{lab}_summary.json", self.docs)["comparisons"]
+            for path, c in rows.items():
+                if "location_differences" in c:
+                    self.assertEqual(ex["comparisons"][path][lab]["p_monte_carlo"], c["location_sign_flip_p"], (lab, path))
+        ag = ex["agreement"]
+        self.assertEqual(ag["n_families_same_decisions"], ag["n_families"])
+        self.assertEqual(self.f["cf_exact_n_families_same_decisions"]["raw"], ag["n_families"])
+
+    def test_endpoint_holm_follows_from_the_exact_p(self):
+        ex = _doc(EXACT, self.docs)
+        p = {lab: ex["comparisons"][self.subst["ep"]][lab]["p_exact"] for lab in self.labs}
         adj = M.holm(p)
         alpha = _doc("g4_confirm_summary.json", self.docs)["endpoint"]["definition"]["alpha"]
         for lab in self.labs:

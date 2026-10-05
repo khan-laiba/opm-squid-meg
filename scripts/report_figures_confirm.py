@@ -49,6 +49,7 @@ from matplotlib.ticker import FixedLocator, NullLocator  # noqa: E402
 NAME = "Figure_R16_confirm"
 OUT_JSON = "figures_confirm.json"
 EXPLO = "results/g4/g4_pediatric_comparison.json"
+G2 = "results/g2/g2_summary.json"  # Neuromag's channel count (the same system in every run): arrays.squid.channels
 CLASSES = ("adult", "scaled", "template", "child")
 GREY = "0.45"
 PASS = "#009E73"  # Okabe-Ito bluish green: the tick of a passed test
@@ -198,6 +199,7 @@ def figure(results_dir: Path, out_dir: Path) -> dict:
     labs = [k for k in style.ANAT_ORDER if k in cf["anatomy"]]
     per = {k: json.loads((results_dir / f"g4c_{k}_summary.json").read_text()) for k in labs}
     explo = json.loads((ROOT / EXPLO).read_text())["comparison"]
+    n_squid = json.loads((ROOT / G2).read_text())["arrays"]["squid"]["channels"]
     ep = cf["endpoint"]["definition"]
     alpha, rate = ep["alpha"], ep["false_events_per_min"]
     rt = f"{rate:g}"
@@ -205,9 +207,19 @@ def figure(results_dir: Path, out_dir: Path) -> dict:
     pair = comp.split("/practical@")[0]
     if pair != "opm_dense/opm_vs_squid/combined" or not comp.endswith("/replicate0"):
         raise ValueError(f"unexpected endpoint comparison {comp!r}")
-    fam = {"endpoint": cf["families"]["endpoint"]["holm_p"],
-           "oracle": cf["families"][f"secondary/{pair}/oracle/replicate0"]["holm_p"],
-           "mismatch": cf["families"][f"secondary/{pair}/mismatch@{rt}/replicate0"]["holm_p"]}
+    fam_keys = {"endpoint": "endpoint", "oracle": f"secondary/{pair}/oracle/replicate0",
+                "mismatch": f"secondary/{pair}/mismatch@{rt}/replicate0"}
+    fam_mc = {k: cf["families"][f]["holm_p"] for k, f in fam_keys.items()}  # the run's Monte Carlo values
+    # the p values drawn are the exact sign-flip p (scripts/g4_confirm_exact_p.py, from the stored location differences)
+    exact_path = results_dir / "g4_confirm_exact_p.json"
+    if not exact_path.is_file():
+        raise FileNotFoundError(f"{exact_path} not found: run scripts/g4_confirm_exact_p.py")
+    exact = json.loads(exact_path.read_text())
+    for k, f in fam_keys.items():
+        if exact["families"][f]["holm_p_monte_carlo"] != fam_mc[k]:
+            raise ValueError(f"{exact_path}: families['{f}'] was computed from other Monte Carlo values (rerun it)")
+    fam = {k: exact["families"][f]["holm_p"] for k, f in fam_keys.items()}
+    sect_path = {"endpoint": comp, "oracle": f"{pair}/oracle/replicate0", "mismatch": f"{pair}/mismatch@{rt}/replicate0"}
     reasons = not_confirmatory_reasons(cf, per)
 
     rows = {}
@@ -217,29 +229,34 @@ def figure(results_dir: Path, out_dir: Path) -> dict:
         for key in ("s50_ratio_squid_over_opm", "location_sign_flip_p", "locations_favouring_opm", "locations_favouring_squid"):
             if a["exploratory"][key] != e[key]:
                 raise ValueError(f"{k}: the combined summary's exploratory {key} differs from {EXPLO}")
-        if a["endpoint"]["holm_p"] != fam["endpoint"][k]:
+        if a["endpoint"]["holm_p"] != fam_mc["endpoint"][k]:
             raise ValueError(f"{k}: anatomy endpoint holm_p differs from families['endpoint']")
+        p_ex = {s: exact["comparisons"][path][k]["p_exact"] for s, path in sect_path.items()}
+        for s, path in sect_path.items():
+            if exact["comparisons"][path][k]["p_monte_carlo"] != a[s]["location_sign_flip_p"]:
+                raise ValueError(f"{exact_path}: comparisons['{path}']['{k}'] does not belong to the combined summary")
         rows[k] = dict(confirmatory=dict(a["endpoint"]["s50_ratio_squid_over_opm"], locations_favouring_opm=a["endpoint"]["locations_favouring_opm"],
                                          locations_favouring_squid=a["endpoint"]["locations_favouring_squid"],
-                                         location_sign_flip_p=a["endpoint"]["location_sign_flip_p"], p_holm=fam["endpoint"][k]),
+                                         location_sign_flip_p=p_ex["endpoint"], p_holm=fam["endpoint"][k]),
                        exploratory=dict(e["s50_ratio_squid_over_opm"], locations_favouring_opm=e["locations_favouring_opm"],
                                         locations_favouring_squid=e["locations_favouring_squid"],
                                         location_sign_flip_p=e["location_sign_flip_p"],
                                         p_holm_over_present_anatomies=a["exploratory"]["holm_p_over_present_anatomies"]),
                        oracle=dict(a["oracle"]["s50_ratio_squid_over_opm"], locations_favouring_opm=a["oracle"]["locations_favouring_opm"],
                                    locations_favouring_squid=a["oracle"]["locations_favouring_squid"],
-                                   location_sign_flip_p=a["oracle"]["location_sign_flip_p"], p_holm=fam["oracle"][k]),
+                                   location_sign_flip_p=p_ex["oracle"], p_holm=fam["oracle"][k]),
                        mismatch=dict(a["mismatch"]["s50_ratio_squid_over_opm"], locations_favouring_opm=a["mismatch"]["locations_favouring_opm"],
                                      locations_favouring_squid=a["mismatch"]["locations_favouring_squid"],
-                                     location_sign_flip_p=a["mismatch"]["location_sign_flip_p"], p_holm=fam["mismatch"][k]))
+                                     location_sign_flip_p=p_ex["mismatch"], p_holm=fam["mismatch"][k]))
 
     # design numbers for the footnote (every anatomy's summary; a test run may mix them)
     n_loc = common([per[k]["n_locations"] for k in labs])
     n_ev = common([per[k]["n_events_per_replicate"] for k in labs])
     strengths = per[labs[0]]["config"]["inherited"]["events"]["strengths_nAm"]
     n_boot = common([per[k]["config"]["confirmatory"]["design"]["bootstrap_resamples"] for k in labs], lambda x: f"{x:,}")
-    tests = {per[k]["declared_choices"].get("sign_flip_test", "") for k in labs} - {""}
-    method = " / ".join(sorted({t.split(" (")[0] for t in tests})) or "exact"
+    ag = exact["agreement"]
+    method = (f"exact, over all sign patterns; the run's 20,000-pattern Monte Carlo estimates give the same decisions in "
+              f"{ag['n_families_same_decisions']} of {ag['n_families']} families")
     o_alpha = common([o["alpha"] for k in labs for o in per[k]["oracle"].values()])
     n_loc_x = common([explo[f"{k}/n_locations_per_depth_band"]["depth0"] for k in labs])
     band = f"{ep['depth_band_mm'][0]:g}–{ep['depth_band_mm'][1]:g}"
@@ -322,21 +339,22 @@ def figure(results_dir: Path, out_dir: Path) -> dict:
          Line2D([], [], marker="|", ms=8, mew=1.3, color="0.62", ls="none")]
     fig.legend(h, ["confirmatory run (dark)", "exploratory run (light; endpoint chosen after the analyses)",
                    "open: censored estimate (a bound)", "(b, c): endpoint ratio of (a)"],
-               loc="upper center", ncol=2, bbox_to_anchor=(0.6, 1 - (0.04 + (0.2 if reasons else 0.0)) / H), handlelength=1.0,
+               loc="upper center", ncol=2, bbox_to_anchor=(0.55, 1 - (0.04 + (0.2 if reasons else 0.0)) / H), handlelength=1.0,
                columnspacing=1.4, fontsize=7,
-               title=f"Dense OPM vs Neuromag 306, thresholds frozen at {rt} false event/min; paired on identical simulated spikes",
+               title=f"Dense OPM array vs Neuromag ({n_squid} channels), thresholds frozen at {rt} false event/min; paired on "
+                     "identical simulated spikes",
                title_fontsize=7)
     if reasons:
         fig.text(0.5, 1 - 0.03 / H, "NOT CONFIRMATORY: " + "; ".join(reasons), ha="center", va="top", fontsize=8.5,
                  color="#D55E00", weight="bold")
     fig.text(0.0, 0.72 / H, textwrap.fill(
         f"Lines: 95 % location-bootstrap intervals ({n_boot} resamples) over the {n_loc} locations per anatomy ({n_ev} focal events, "
-        f"noise replicate 0); arrows: open ends (resamples outside the tested {strengths[0]:g}–{strengths[-1]:g} nAm); open "
+        f"the first of {common([per[k]["config"]["confirmatory"]["design"]["noise_replicates"] for k in labs])} noise replicates); arrows: open ends (resamples outside the tested {strengths[0]:g}–{strengths[-1]:g} nAm); open "
         "marker with dashed arrow: censored point estimate. p: two-sided sign-flip test on the per-location differences in "
         f"detection counts ({method}), Holm-adjusted over the anatomies within each panel's family; ✓ and bold: below "
         f"{alpha:g}. (b) known topography, waveform and time, per-trial false-positive probability {o_alpha}; (c) {mismatch}, "
         f"thresholds recalibrated to {rt} per minute. Exploratory run: {n_loc_x} locations per anatomy. The adult at its measured head "
-        "position, the other heads at top contact.", 150), ha="left", va="top", fontsize=6.5, color="0.3")
+        "position, the other heads at top contact in the fixed adult helmet.", 150), ha="left", va="top", fontsize=6.5, color="0.3")
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / f"{NAME}.png"
     fig.savefig(path, dpi=style.DPI)
@@ -346,7 +364,7 @@ def figure(results_dir: Path, out_dir: Path) -> dict:
                 band=band, n_loc=n_loc, n_ev=n_ev, n_boot=n_boot, method=method, oracle_alpha=o_alpha, n_loc_exploratory=n_loc_x,
                 mismatch=mismatch,
                 strengths=[strengths[0], strengths[-1]], commits=cf["simulated_at_commits"], confirmatory=cf["confirmatory"],
-                path=path)
+                n_squid=n_squid, path=path)
 
 
 # ----------------------------------------------------------------------------------------------
@@ -375,7 +393,8 @@ def provenance(v: dict, results_dir: Path) -> dict:
               else "NOT confirmatory: " + "; ".join(v["reasons"]))
     cens_txt = lambda n: f" ({n} censored)" if n else ""  # noqa: E731
     return {NAME: dict(
-        inputs=[f"{R}/g4_confirm_summary.json"] + [f"{R}/g4c_{k}_summary.json" for k in labs] + [EXPLO],
+        inputs=[f"{R}/g4_confirm_summary.json"] + [f"{R}/g4c_{k}_summary.json" for k in labs] + [EXPLO]
+        + [f"{G2} :: arrays.squid.channels (the legend's Neuromag channel count)"],
         description=(f"Run status: {status}; commits {', '.join(v['commits'])}. (a) g4_confirm_summary.json anatomy[<anatomy>]."
                      "endpoint.s50_ratio_squid_over_opm (value, value_bounds, value_censored, ci95), dark, and "
                      f"{EXPLO} comparison['<anatomy>/paired/opm_dense/opm_vs_squid/combined/practical@{v['rate']:g}/depth0']"
@@ -395,7 +414,8 @@ def provenance(v: dict, results_dir: Path) -> dict:
              f"({names(p_c)}), and the interval includes 1 for {names(incl1)}. The oracle detector's ratio is "
              f"{o_rng}{cens_txt(o_cens)} (Holm p below {alpha:g}: {names(p_o)}); the mismatched detector's {m_rng}"
              f"{cens_txt(m_cens)} (Holm p below {alpha:g}: {names(p_m)})."),
-        caption_draft=(f"Figure R16. Confirmatory spike run. Strength for 50 % detection, Neuromag 306 over the dense OPM array, "
+        caption_draft=(f"Figure R16. Confirmatory spike run. Strength for 50 % detection, Neuromag ({v['n_squid']} channels) over the "
+                       "dense OPM array, "
                        f"for focal spikes {v['band']} mm below the scalp, paired on identical simulated spikes at {v['n_loc']} "
                        f"newly drawn locations per anatomy (> 1: the OPM detects at a lower strength); lines: 95 % location-"
                        "bootstrap intervals; arrows: open ends; open markers: censored estimates. (a) The endpoint declared before "
@@ -405,7 +425,8 @@ def provenance(v: dict, results_dir: Path) -> dict:
                        f"({v['n_loc_exploratory']} locations per anatomy, endpoint chosen after the analyses), ratios {x_rng}. "
                        f"(b) Oracle detector (known topography, waveform and time): ratios {o_rng}. (c) Mismatched detector "
                        f"({v['mismatch']}), thresholds recalibrated to the same rate: ratios {m_rng}. Panels (b) and (c) are "
-                       "secondary analyses, each Holm-adjusted within its own family; grey bars mark the endpoint's ratio."),
+                       "secondary analyses, each Holm-adjusted within its own family; grey bars mark the endpoint's ratio. The adult "
+                       "at its measured head position, the other heads at top contact in the fixed adult helmet."),
         values=dict(status=status, commits=v["commits"], alpha=alpha, false_events_per_min=v["rate"], band_mm=v["band"],
                     n_locations=v["n_loc"], n_events_per_replicate=v["n_ev"], bootstrap_resamples=v["n_boot"],
                     sign_flip_test=v["method"], oracle_alpha=v["oracle_alpha"], exploratory_n_locations=v["n_loc_exploratory"],

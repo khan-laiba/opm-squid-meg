@@ -253,7 +253,7 @@ def panel_b(sf, cov, pub):
     r, k = imp["ratios"], imp["checks"]["magnetometer_variance_excess_k"]
     if not close(k, cov["model"]["magnetometer_calibration_scale_ratio"]):
         raise ValueError(f"{COV}: magnetometer_variance_excess_k {k} != model.magnetometer_calibration_scale_ratio")
-    rows = [("published", "Published model\n(sensor plus brain noise)", pub)]
+    rows = [("published", "Primary model\n(sensor plus brain noise)", pub)]
     for letter, key, lab in SCENARIOS:
         if key not in imp["assumptions"]:
             raise ValueError(f"{COV}: opm_implication.assumptions has no '{key}'")
@@ -458,7 +458,7 @@ def panel_d(sf, ns, pub):
                       "corner (sensor plus brain noise)"),
          Line2D([], [], color="0.25", lw=0, marker="D", ms=4.4, label="break-even level, 95 % interval (filled: sensor\n"
                 "plus brain noise; open: after the projection)"),
-         Line2D([], [], color="0.7", lw=0.8, label=f"published model's level ({prim:g} fT/√Hz)")]
+         Line2D([], [], color="0.7", lw=0.8, label=f"primary model's level ({prim:g} fT/√Hz)")]
     ax.legend(handles=h, loc="upper center", bbox_to_anchor=(0.5, -0.2), fontsize=FS_NOTE, handlelength=2.4,
               borderaxespad=0.0, labelspacing=0.45, ncol=1)
     title(sf, "(d) OPM white-noise level")
@@ -507,7 +507,7 @@ def texts(v, cov, ns, g2, pub):
         return "below it except at " + ", ".join(f"{x:g}" for x in lv if x not in low) + " fT/sqrt(Hz)"
 
     assert all(x["measured"][1] > 1 for x in a_.values())  # wording guard (alt text: 'intervals above 1')
-    # (c): the largest changes against the published model, per array (%)
+    # (c): the largest changes against the primary model, per array (%)
     chg = {a: [100 * (x[a][0] / pub[a][0] - 1) for x in c_.values()] for a in ARRAYS}
     fr_white = {a: 100 * (cv["none, frequency-resolved"][a][0] / pub[a][0] - 1) for a in ARRAYS}
 
@@ -535,7 +535,7 @@ def texts(v, cov, ns, g2, pub):
         f"{COV} :: opm_implication.assumptions, opm_implication.checks.magnetometer_variance_excess_k, "
         "model.magnetometer_calibration_scale_ratio",
         f"{COV} :: plain_summary (checks)",
-        f"{G2} :: primary.oracle['<array>/combined/intrinsic+brain'] (median_log2, ci95) = the published model",
+        f"{G2} :: primary.oracle['<array>/combined/intrinsic+brain'] (median_log2, ci95) = the primary model",
         f"{G2} :: arrays.<array>.n_sites, arrays.squid.channels",
         f"{NS} :: sweep.levels_fT, sweep.entries['<level>'].comparisons['<array>/combined/<intrinsic+brain|projected>'] "
         "(ratio, ci95_ratio, stored_g2)",
@@ -577,18 +577,18 @@ def texts(v, cov, ns, g2, pub):
         f"ratio); B, both systems' cortical backgrounds scaled by the measured magnetometer variance excess k = {k:.2f}; C, a "
         "pessimistic bound, Neuromag with its measured covariance and the OPM bearing that whole excess as cortical noise; "
         "D, Neuromag as measured, the OPM exactly as modelled; E, Neuromag with its measured empty room and the modelled "
-        f"brain noise, the OPM as modelled. Top row (grey): the published model, sensor plus brain noise against all {sq} "
+        f"brain noise, the OPM as modelled. Top row (grey): the primary model, sensor plus brain noise against all {sq} "
         f"channels ({G2} primary.oracle), also drawn as a line per array with its interval shaded in (b) and (c). "
         f"(c) The ratio at the primary OPM white level ({lk} fT/sqrt(Hz)) with sensor plus brain noise when what the model "
         "leaves out is added (the near-skull and coloured-noise variants recalibrate the cortical background on the "
-        "measured gradiometer brain noise, as the published model does): the cortex 2-4 mm from the inner skull (the valid "
+        "measured gradiometer brain noise, as the primary model does): the cortex 2-4 mm from the inner skull (the valid "
         "vertices closer than 4 mm to it, "
-        "left out of the published model; below 2 mm the lead fields are not converged) in the background, as additional "
+        "left out of the primary model; below 2 mm the lead fields are not converged) in the background, as additional "
         f"targets or both (near_skull.primary.floor_2mm); coloured OPM noise with a 1/f corner at {corners} Hz under the "
         "frequency-resolved detector (coloured.results "
-        "'frequency_resolved/flat'), whose white-noise value (corner 'none') is its reference and lies below the published "
+        "'frequency_resolved/flat'), whose white-noise value (corner 'none') is its reference and lies below the primary "
         "band-variance ratio; heart and eye sources (a cardiac current dipole 250 mm below the head and current dipoles at "
-        f"the two eyes, each half the far-field variance) added on top of the published cortical background at the room "
+        f"the two eyes, each half the far-field variance) added on top of the primary model's cortical background at the room "
         "field's level "
         f"({ff['room_field']:.0f} fT at the median magnetometer) or filling the magnetometer brain-noise shortfall "
         f"({ff['magnetometer_shortfall']:.0f} fT; far_field.results['cardiac+ocular/<level>/added'], the mode adverse to the "
@@ -602,7 +602,7 @@ def texts(v, cov, ns, g2, pub):
         "from the same parcel resamples applied to the whole curve), drawn as a diamond on the ratio of 1 with its interval "
         f"(filled and {BE_DB_OFFSET:g} dB above the line: sensor plus brain noise; open and {BE_DB_OFFSET:g} dB below: after "
         "the projection; the offsets only keep the intervals apart); dashed: the most adverse combination "
-        "(joint_without_far_field, sensor plus brain noise, frequency-resolved); grey vertical line: the published model's "
+        "(joint_without_far_field, sensor plus brain noise, frequency-resolved); grey vertical line: the primary model's "
         f"level. The joint run with the heart and eyes added (joint) lies, for the site-matched array, "
         f"{joint_side('opm_matched')} ({jf['opm_matched'][0]:.3f} against {jw['opm_matched'][0]:.3f} at {lk} fT/sqrt(Hz); "
         f"panel c) and, for the dense array, {joint_side('opm_dense')}. No OPM noise was measured: (a) checks the model for "
@@ -613,7 +613,7 @@ def texts(v, cov, ns, g2, pub):
         f"{f2(a_['combined']['measured'])} times the modelled for all good channels, {f2(a_['mag']['measured'])} for the "
         f"magnetometers and {f2(a_['grad']['measured'])} for the gradiometers, with intervals above 1, while an exact model "
         "would give a narrow grey range at 1; removing the heart's field changes little. (b) Forest plot of the implied "
-        f"OPM/Neuromag ratio for the dense and site-matched arrays: the published model {both(b_['published'])}, scenarios A, "
+        f"OPM/Neuromag ratio for the dense and site-matched arrays: the primary model {both(b_['published'])}, scenarios A, "
         f"B and E about the same ({both(b_['A'])}, {both(b_['B'])}, {both(b_['E'])}), D lower ({both(b_['D'])}) and C, the "
         f"pessimistic bound, lowest ({both(b_['C'])}). (c) Forest plot of the ratios at {lk} fT/sqrt(Hz) with each omission "
         "of the noise model added: near-skull cortex, coloured OPM noise, heart and eye fields and the joint runs move the "
@@ -643,9 +643,9 @@ def texts(v, cov, ns, g2, pub):
         f"backgrounds scaled by the magnetometer variance excess (× {k:.2f}), {both(b_['B'])}; C, the pessimistic bound, "
         f"Neuromag as measured and the OPM bearing the whole excess, {bci(b_['C'])}; D, Neuromag as measured and the OPM as "
         f"modelled, {bci(b_['D'])}; E, Neuromag's measured empty room with the modelled brain noise, {both(b_['E'])}; the "
-        f"published model (sensor plus brain noise, grey row and vertical lines) {bci(b_['published'])}. (c) At {lk} fT/√Hz "
+        f"primary model (sensor plus brain noise, grey row and vertical lines) {bci(b_['published'])}. (c) At {lk} fT/√Hz "
         "with sensor plus brain noise, what the model leaves out moves the ratios by at most "
-        f"{max(abs(x) for v in chg.values() for x in v):.0f} % against the published model (dense "
+        f"{max(abs(x) for v in chg.values() for x in v):.0f} % against the primary model (dense "
         f"{pct(min(chg['opm_dense']))} to {pct(max(chg['opm_dense']))} %, site-matched {pct(min(chg['opm_matched']))} to "
         f"{pct(max(chg['opm_matched']))} %; the frequency-resolved detector alone, with white noise, gives "
         f"{pct(fr_white['opm_dense'])} and {pct(fr_white['opm_matched'])} %): the cortex 2-4 mm from the "
@@ -670,7 +670,7 @@ def texts(v, cov, ns, g2, pub):
         f"{adv['opm_dense'][-1][0]:.2f} at {lv[0]:g}, {lk} and {lv[-1]:g} fT/√Hz. Medians over the targets with 95 % "
         "parcel-bootstrap intervals (lines and bands) within this one anatomy; top and right-hand axes: the same ratios in "
         f"dB (D for the OPM/Neuromag ratios); dense OPM array {sites['opm_dense']} sites, site-matched {sites['opm_matched']}, "
-        f"Neuromag {sq} channels. No OPM noise was measured: the model is checked against measured noise for Neuromag only.")
+        f"Neuromag ({sq} channels). No OPM noise was measured: the model is checked against measured noise for Neuromag only.")
     return inputs, description, alt, caption
 
 
@@ -690,7 +690,7 @@ def main():
     h = [Line2D([], [], color=style.ARRAY_COLOR[a], marker=MARKER[a], ms=4.2, lw=1.3,
                 mec="white" if a == "opm_dense" else style.ARRAY_COLOR[a], mew=0.4,
                 label=f"{ARRAY_TERM[a]} ({g2['arrays'][a]['n_sites']} sites)") for a in ARRAYS]
-    h += [Patch(facecolor="0.88", edgecolor="0.45", lw=0.6, label="published model, 95 % interval shaded (b, c)")]
+    h += [Patch(facecolor="0.88", edgecolor="0.45", lw=0.6, label="primary model, 95 % interval shaded (b, c)")]
     fig.legend(handles=h, loc="outside upper center", ncol=3, fontsize=7.3, handlelength=1.8, columnspacing=1.1,
                title="Medians over the targets with their 95 % parcel-bootstrap intervals (lines, bands)", title_fontsize=7.3)
     db = check_db_axes(fig)

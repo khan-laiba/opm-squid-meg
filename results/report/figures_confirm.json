@@ -1,6 +1,6 @@
 {
  "provenance": {
-  "commit": "1bcb0ca+dirty",
+  "commit": "13bb30c+dirty",
   "results_dir": "results/g4_confirm",
   "confirmatory": true
  },
@@ -17,11 +17,12 @@
     "results/g4_confirm/g4c_childA_summary.json",
     "results/g4_confirm/g4c_childB_summary.json",
     "results/g4_confirm/g4c_childC_summary.json",
-    "results/g4/g4_pediatric_comparison.json"
+    "results/g4/g4_pediatric_comparison.json",
+    "results/g2/g2_summary.json :: arrays.squid.channels (the legend's Neuromag channel count)"
    ],
    "description": "Run status: confirmatory (all nine anatomies, one commit, declared settings); commits ae458a9. (a) g4_confirm_summary.json anatomy[<anatomy>].endpoint.s50_ratio_squid_over_opm (value, value_bounds, value_censored, ci95), dark, and results/g4/g4_pediatric_comparison.json comparison['<anatomy>/paired/opm_dense/opm_vs_squid/combined/practical@1/depth0'].s50_ratio_squid_over_opm, light (checked equal to anatomy[<anatomy>].exploratory). Text: locations_favouring_opm : locations_favouring_squid; Holm p from families['endpoint'].holm_p (dark) and anatomy[<anatomy>].exploratory.holm_p_over_present_anatomies (light). (b) anatomy[<anatomy>].oracle and (c) anatomy[<anatomy>].mismatch (.s50_ratio_squid_over_opm), with families['secondary/opm_dense/opm_vs_squid/combined/oracle/replicate0'] and ['.../mismatch@1/replicate0'].holm_p; grey bars: the endpoint's point estimate. A tick and bold: Holm-adjusted p below the declared alpha (0.05). Shared logarithmic x axis 0.7\u20132 (display choice: the drawn values and finite interval ends with a margin); open interval ends are arrows to the axis edge. Anatomies in the order of scripts/report_style.py ANAT_ORDER with its labels, classes separated by hairlines. Drawn as: value.",
    "alt": "Three forest plots of the S50 ratio Neuromag over OPM on a log axis with a line at 1, one row per anatomy (9). In the confirmatory run the dense array's ratio is 1.27\u20131.47, against 1.18\u20131.65 in the exploratory run; the declared test passes after Holm correction in 9 of 9 anatomies (Adult, School size, 2-y size, 24 mo, 18 mo, 12 mo, Child A, Child B, Child C), and the interval includes 1 for none. The oracle detector's ratio is 1.27\u20131.62 (Holm p below 0.05: Adult, School size, 2-y size, 24 mo, 18 mo, 12 mo, Child A, Child B, Child C); the mismatched detector's 1.23\u20131.50 (Holm p below 0.05: Adult, School size, 2-y size, 24 mo, 18 mo, 12 mo, Child A, Child B, Child C).",
-   "caption_draft": "Figure R16. Confirmatory spike run. Strength for 50 % detection, Neuromag 306 over the dense OPM array, for focal spikes 10\u201320 mm below the scalp, paired on identical simulated spikes at 36 newly drawn locations per anatomy (> 1: the OPM detects at a lower strength); lines: 95 % location-bootstrap intervals; arrows: open ends; open markers: censored estimates. (a) The endpoint declared before the run (practical scanning detector, thresholds frozen at 1 false event per minute, first noise realization): ratios 1.27\u20131.47; the two-sided location sign-flip test, Holm-adjusted over the anatomies, is below 0.05 in 9 of 9. Light: the exploratory run (18 locations per anatomy, endpoint chosen after the analyses), ratios 1.18\u20131.65. (b) Oracle detector (known topography, waveform and time): ratios 1.27\u20131.62. (c) Mismatched detector (templates between the simulated morphologies and candidate fields from a 1-layer model with a 2-mm / 2-deg coregistration error), thresholds recalibrated to the same rate: ratios 1.23\u20131.50. Panels (b) and (c) are secondary analyses, each Holm-adjusted within its own family; grey bars mark the endpoint's ratio.",
+   "caption_draft": "Figure R16. Confirmatory spike run. Strength for 50 % detection, Neuromag (306 channels) over the dense OPM array, for focal spikes 10\u201320 mm below the scalp, paired on identical simulated spikes at 36 newly drawn locations per anatomy (> 1: the OPM detects at a lower strength); lines: 95 % location-bootstrap intervals; arrows: open ends; open markers: censored estimates. (a) The endpoint declared before the run (practical scanning detector, thresholds frozen at 1 false event per minute, first noise realization): ratios 1.27\u20131.47; the two-sided location sign-flip test, Holm-adjusted over the anatomies, is below 0.05 in 9 of 9. Light: the exploratory run (18 locations per anatomy, endpoint chosen after the analyses), ratios 1.18\u20131.65. (b) Oracle detector (known topography, waveform and time): ratios 1.27\u20131.62. (c) Mismatched detector (templates between the simulated morphologies and candidate fields from a 1-layer model with a 2-mm / 2-deg coregistration error), thresholds recalibrated to the same rate: ratios 1.23\u20131.50. Panels (b) and (c) are secondary analyses, each Holm-adjusted within its own family; grey bars mark the endpoint's ratio. The adult at its measured head position, the other heads at top contact in the fixed adult helmet.",
    "values": {
     "status": "confirmatory (all nine anatomies, one commit, declared settings)",
     "commits": [
@@ -33,7 +34,7 @@
     "n_locations": "36",
     "n_events_per_replicate": "648",
     "bootstrap_resamples": "1,000",
-    "sign_flip_test": "Monte Carlo, 20,000 sign patterns",
+    "sign_flip_test": "exact, over all sign patterns; the run's 20,000-pattern Monte Carlo estimates give the same decisions in 25 of 25 families",
     "oracle_alpha": "0.001",
     "exploratory_n_locations": "18",
     "mismatch_variant": "templates between the simulated morphologies and candidate fields from a 1-layer model with a 2-mm / 2-deg coregistration error",
@@ -68,8 +69,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 24,
        "locations_favouring_squid": 0,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 1.1920928955078125e-07,
+       "p_holm": 7.82310962677002e-07
       },
       "exploratory": {
        "value": 1.3642996381439392,
@@ -102,8 +103,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 26,
        "locations_favouring_squid": 2,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 1.1846423149108887e-06,
+       "p_holm": 4.738569259643555e-06
       },
       "mismatch": {
        "value": 1.499647391343041,
@@ -119,8 +120,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 27,
        "locations_favouring_squid": 0,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 1.4901161193847656e-08,
+       "p_holm": 1.043081283569336e-07
       }
      },
      "school": {
@@ -138,8 +139,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 25,
        "locations_favouring_squid": 1,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 2.980232238769531e-07,
+       "p_holm": 1.1920928955078125e-06
       },
       "exploratory": {
        "value": 1.6041601528584555,
@@ -172,8 +173,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 34,
        "locations_favouring_squid": 0,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 1.1641532182693481e-10,
+       "p_holm": 1.0477378964424133e-09
       },
       "mismatch": {
        "value": 1.392712288970469,
@@ -189,8 +190,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 28,
        "locations_favouring_squid": 2,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 2.775341272354126e-07,
+       "p_holm": 1.341104507446289e-06
       }
      },
      "size2yr": {
@@ -208,8 +209,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 27,
        "locations_favouring_squid": 1,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 1.1175870895385742e-07,
+       "p_holm": 7.82310962677002e-07
       },
       "exploratory": {
        "value": 1.6529006363084227,
@@ -242,8 +243,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 32,
        "locations_favouring_squid": 0,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 4.656612873077393e-10,
+       "p_holm": 3.259629011154175e-09
       },
       "mismatch": {
        "value": 1.4884968919343788,
@@ -259,8 +260,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 29,
        "locations_favouring_squid": 0,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 3.725290298461914e-09,
+       "p_holm": 3.3527612686157227e-08
       }
      },
      "infant2yr": {
@@ -278,8 +279,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 28,
        "locations_favouring_squid": 2,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 1.6205012798309326e-07,
+       "p_holm": 8.102506399154663e-07
       },
       "exploratory": {
        "value": 1.4368164942227504,
@@ -312,8 +313,8 @@
        "share_resamples_reached_at_weakest": 0.005,
        "locations_favouring_opm": 29,
        "locations_favouring_squid": 1,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 2.2351741790771484e-08,
+       "p_holm": 1.341104507446289e-07
       },
       "mismatch": {
        "value": 1.4179528137975959,
@@ -329,8 +330,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 29,
        "locations_favouring_squid": 0,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 3.725290298461914e-09,
+       "p_holm": 3.3527612686157227e-08
       }
      },
      "infant18mo": {
@@ -348,8 +349,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 30,
        "locations_favouring_squid": 1,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 1.210719347000122e-08,
+       "p_holm": 1.0896474123001099e-07
       },
       "exploratory": {
        "value": 1.330640833953098,
@@ -382,8 +383,8 @@
        "share_resamples_reached_at_weakest": 0.01,
        "locations_favouring_opm": 34,
        "locations_favouring_squid": 0,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 1.1641532182693481e-10,
+       "p_holm": 1.0477378964424133e-09
       },
       "mismatch": {
        "value": 1.4371278430501646,
@@ -399,8 +400,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 28,
        "locations_favouring_squid": 1,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 4.0978193283081055e-08,
+       "p_holm": 2.4586915969848633e-07
       }
      },
      "infant12mo": {
@@ -418,8 +419,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 29,
        "locations_favouring_squid": 1,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 3.3527612686157227e-08,
+       "p_holm": 2.682209014892578e-07
       },
       "exploratory": {
        "value": 1.463866052926606,
@@ -452,8 +453,8 @@
        "share_resamples_reached_at_weakest": 0.022,
        "locations_favouring_opm": 30,
        "locations_favouring_squid": 3,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 1.050066202878952e-07,
+       "p_holm": 5.25033101439476e-07
       },
       "mismatch": {
        "value": 1.4269148669992129,
@@ -469,8 +470,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 28,
        "locations_favouring_squid": 2,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 2.682209014892578e-07,
+       "p_holm": 1.341104507446289e-06
       }
      },
      "childA": {
@@ -522,8 +523,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 23,
        "locations_favouring_squid": 5,
-       "location_sign_flip_p": 0.00015,
-       "p_holm": 0.00015
+       "location_sign_flip_p": 0.00013832002878189087,
+       "p_holm": 0.00027664005756378174
       },
       "mismatch": {
        "value": 1.2264610334180532,
@@ -558,8 +559,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 21,
        "locations_favouring_squid": 2,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 1.1205673217773438e-05,
+       "p_holm": 2.2411346435546875e-05
       },
       "exploratory": {
        "value": 1.1787998978689838,
@@ -592,8 +593,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 19,
        "locations_favouring_squid": 3,
-       "location_sign_flip_p": 5e-05,
-       "p_holm": 0.0001
+       "location_sign_flip_p": 0.00020456314086914062,
+       "p_holm": 0.00027664005756378174
       },
       "mismatch": {
        "value": 1.2299345624117508,
@@ -609,8 +610,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 20,
        "locations_favouring_squid": 7,
-       "location_sign_flip_p": 0.00365,
-       "p_holm": 0.0073
+       "location_sign_flip_p": 0.004426032304763794,
+       "p_holm": 0.008852064609527588
       }
      },
      "childC": {
@@ -628,8 +629,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 25,
        "locations_favouring_squid": 2,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 2.175569534301758e-06,
+       "p_holm": 6.5267086029052734e-06
       },
       "exploratory": {
        "value": 1.4349286683690985,
@@ -662,8 +663,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 29,
        "locations_favouring_squid": 5,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 3.8079451769590378e-06,
+       "p_holm": 1.1423835530877113e-05
       },
       "mismatch": {
        "value": 1.3370485739182054,
@@ -679,8 +680,8 @@
        "share_resamples_reached_at_weakest": 0.0,
        "locations_favouring_opm": 26,
        "locations_favouring_squid": 4,
-       "location_sign_flip_p": 0.0,
-       "p_holm": 0.0
+       "location_sign_flip_p": 8.340924978256226e-06,
+       "p_holm": 2.5022774934768677e-05
       }
      }
     },

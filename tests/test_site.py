@@ -39,6 +39,17 @@ class TestMarkdown(unittest.TestCase):
         self.assertIn("<td>&lt;script&gt;</td>", h)  # never raw HTML from documents
         self.assertIn("echo &lt;hi&gt;", h)
 
+    def test_comments_are_dropped_and_text_after_them_is_an_error(self):
+        h = sb.md_to_html("Before.\n<!-- one line -->\nAfter one.\n\n<!-- two\nlines -->\n\nAfter two.\n  <!-- indented -->  \nEnd.\n")
+        self.assertEqual(h, "<p>Before.</p>\n<p>After one.</p>\n<p>After two.</p>\n<p>End.</p>")
+        # text after '-->' on the comment's last line used to vanish with the comment: now an error naming the line
+        for md, line in (("Text.\n\n<!-- B3: a note --> The sentence that would vanish.\n", 3),
+                         ("# T\n\n<!-- a note\n   over two lines --> lost\n\nNext.\n", 4)):
+            with self.subTest(md=md), self.assertRaisesRegex(ValueError, f"^line {line}: text after '-->' would be dropped"):
+                sb.md_to_html(md)
+        with self.assertRaisesRegex(ValueError, "^line 3: comment not closed by '-->'"):  # the rest of the document is not lost
+            sb.md_to_html("Text.\n\n<!-- never closed\n\nA paragraph.\n")
+
     def test_link_checker_finds_missing_files_and_anchors(self):
         with tempfile.TemporaryDirectory() as d:
             d = Path(d)
@@ -253,6 +264,9 @@ class TestSiteBuild(unittest.TestCase):
                  ("Text.", s1 + "Value: {{ F.no_such_fact_s }}\n", "supplement.md", "no_such_fact_s"),
                  ("Text.", s1 + "See [@fig-nowhere].\n", "supplement.md", "fig-nowhere"),
                  ("Text.", "No title line.\n", "supplement.md", "title"),
+                 # a comment that would swallow text: the error names the file and the line in it
+                 ("<!-- B3: a note --> The sentence that would vanish.", None, "report.md", "line 3: text after '-->'"),
+                 ("Text.", s1 + "<!-- a\nnote --> lost\n", "supplement.md", "line 4: text after '-->'"),
                  (FIG_R1.replace("fig-s-qc", "fig-r"), s1 + FIG_R1.replace("fig-s-qc", "fig-r"), "report.md",
                   "defined in both documents: fig-r"))
         for body, supplement, where, needle in cases:

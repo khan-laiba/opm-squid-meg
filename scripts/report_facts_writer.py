@@ -46,6 +46,33 @@ Read only; nothing is re-run. Every fact is computed from unrounded stored value
                                   Bonferroni threshold of the localization figure and its family size
   wr_qc_near_lo_mm, wr_qc_near_hi_mm  the two near-scalp thresholds of the children's MRI check
   wr_ns_depth_bin_mm              the depth-bin width of the noise-sensitivity run's own depth results
+  wr_confirm_rate_equality_endpoint_<frozen|matched>_n_p05, _heads_p05  the confirmatory run's equal-rate tests between
+                                  the dense array and Neuromag on the independent evaluation null (the endpoint's two
+                                  arrays, practical detector, frozen or rate-matched thresholds): how many anatomies have
+                                  p < 0.05 and which (results/g4_confirm/g4c_<anatomy>_summary.json)
+  wr_confirm_n_rate_cells         the number of anatomy-and-array combinations with a realized false-event rate in the
+                                  confirmatory run (the three arrays in every anatomy), the denominator of the cf_rate_*
+                                  _n_ci_excludes_target counts
+  wr_opm_asd_sweep_list           the OPM white-noise sweep levels as a list with a final 'and' (results/g2/g2_summary.json)
+  wr_n_depth_bands_words          the number of depth bands of the exploratory spike run, in words
+  wr_g3b_smaller_bgonly_*         the smaller heads' median D with their own cortical background halved or doubled minus the
+                                  ADULT'S PRIMARY median D (the adult's background unscaled), as a range over the eight
+                                  smaller heads (results/g3b/g3b_summary.json): the stored 'delta/...' sensitivity scales the
+                                  adult too, which keeps the per-area convention between heads; this difference of medians
+                                  tests the smaller heads' background level against the adult's
+  wr_fig_maps_heads_*             the colour-scale limit of the templates' cortical maps and the share of each template's
+                                  targets above it (results/report/figures_clean.json); the _cortical_ twins count the
+                                  coloured cortical targets only (medial wall excluded), recomputed from the per-target
+                                  tables results/g3b/g3b_targets_<template>.csv
+  wr_sphere_brain_depth_mm        the depth of the brain surface below the scalp in the spherical benchmark, head radius
+                                  minus brain radius (results/g1a/g1a_benchmark.json)
+  wr_cgap_fitted_proj_delta_n_ci_includes_zero_words  how many of the eight smaller heads' projected-condition Delta
+                                  intervals in the helmet fitted at the adult's gap span zero, in words
+  wr_cf_dense_practical_ratio_below_adult_depth_heads  the anatomies whose confirmatory endpoint S50 ratio (replicate 0)
+                                  lies below the adult's 15-20 mm depth-bin detectability ratio of the dense array
+  wr_cf_endpoint_p_holm_exact_max_mc_zero  the largest Holm-adjusted sign-flip p of the declared endpoint, by exact
+                                  enumeration of the stored per-location differences, over the anatomies whose stored
+                                  Monte Carlo p is zero (printed '<0.0001')
 Formats as scripts/report_facts_g12.py (whose helpers are imported): dB signed with 2 decimals, intervals "[lo, hi]",
 U+2212 for negatives, counts with thousands separators.
 
@@ -76,7 +103,10 @@ FIGS_CLEAN = "results/report/figures_clean.json"
 G4_PED = "results/g4/g4_pediatric_comparison.json"
 G4_SUMMARY = "results/g4/g4_{anatomy}_summary.json"
 CONFIRM_CFG = "configs/g4_confirmatory.toml"
-HEAD_LABELS = {"adult": "adult", "school": "school-age size", "size2yr": "2-year size", "infant2yr": "24-month template",
+CONFIRM_SUMMARY = "results/g4_confirm/g4_confirm_summary.json"
+CONFIRM_PER = "results/g4_confirm/g4c_{anatomy}_summary.json"
+CONFIRM_ENDPOINT_PAIR = "opm_dense/opm_vs_squid/combined/primary/{thresholds}"
+HEAD_LABELS ={"adult": "adult", "school": "school-age size", "size2yr": "2-year size", "infant2yr": "24-month template",
                "infant18mo": "18-month template", "infant12mo": "12-month template", "childA": "child A",
                "childB": "child B", "childC": "child C"}
 WORDS = {0: "zero", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine",
@@ -371,6 +401,31 @@ def confirmatory_facts(F: Facts, root: Path) -> None:
     F.add("wr_confirm_pilot_locs_per_band", n_locs, int(n_locs), src + ": locations per band in the pilot runs")
 
 
+def confirm_rate_facts(F: Facts, root: Path) -> None:
+    """The confirmatory run's equal-rate tests of the endpoint's two arrays on the evaluation null, counted over the
+    anatomies, and the number of anatomy-and-array combinations with a realized false-event rate."""
+    labels = json.loads((root / CONFIRM_SUMMARY).read_text())["anatomies"]
+    per = {a: json.loads((root / CONFIRM_PER.format(anatomy=a)).read_text()) for a in labels}
+    for thresholds in ("frozen", "matched"):
+        key = CONFIRM_ENDPOINT_PAIR.format(thresholds=thresholds)
+        low = []
+        for a in labels:
+            t = per[a]["false_event_rate_equality_on_evaluation_null"][key]
+            p = float(t["conditional_binomial_p"] if "conditional_binomial_p" in t else t["exact_conditional_p"])
+            if p < 0.05:
+                low.append(a)
+        src = (f"{CONFIRM_SUMMARY} :: anatomies, each read from {CONFIRM_PER.format(anatomy='<anatomy>')} "
+               f"false_event_rate_equality_on_evaluation_null['{key}'].conditional_binomial_p (derived: anatomies with "
+               "p < 0.05, uncorrected; the test is approximate, the arrays sharing the background and room noise)")
+        F.add(f"wr_confirm_rate_equality_endpoint_{thresholds}_n_p05", count(len(low)), len(low), src + ": count")
+        F.add(f"wr_confirm_rate_equality_endpoint_{thresholds}_heads_p05",
+              _name_list([HEAD_LABELS[a] for a in low]) if low else "none", low, src + ": the anatomies")
+    cells = sum(1 for a in labels for k in per[a]["false_events"] if k.endswith("|primary"))
+    F.add("wr_confirm_n_rate_cells", count(cells), cells,
+          f"{CONFIRM_SUMMARY} :: anatomies, each read from {CONFIRM_PER.format(anatomy='<anatomy>')} false_events (derived: "
+          "the sensor sets with a realized rate of the primary detector, summed over the anatomies)")
+
+
 def count_word_facts(F: Facts, root: Path) -> None:
     """Small counts in words, for running prose."""
     labels = json.loads((root / G4_PED).read_text())["labels"]
@@ -546,6 +601,200 @@ def threshold_facts(F: Facts, root: Path) -> None:
           f"{NOISE_SENS} :: sweep.entries['{key}'].depth['opm_dense/combined/intrinsic+brain'][*].lo, .hi (bin width, mm)")
 
 
+G1A = "results/g1a/g1a_benchmark.json"
+SMALLER_HEADS = ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC")
+BG_FACTOR_TOKENS = {"0.5": "x0p5", "2": "x2"}
+
+
+def sweep_list_facts(F: Facts, root: Path) -> None:
+    """The OPM white-noise sweep levels as a list with a final 'and'."""
+    levels = json.loads((root / G2).read_text())["config"]["sensors"]["opm_asd_fT_per_rtHz"]
+    vals = [float(x) for x in levels]
+    if vals != sorted(vals) or len(vals) < 2:
+        raise ValueError(f"{G2}: the sweep levels should be increasing, found {levels}")
+    F.add("wr_opm_asd_sweep_list", _name_list(f"{v:g}" for v in vals), vals,
+          f"{G2} :: config.sensors.opm_asd_fT_per_rtHz (the sweep levels, fT/sqrt(Hz), as a list with a final 'and')")
+
+
+def depth_band_facts(F: Facts, root: Path) -> None:
+    """The number of depth bands of the exploratory spike run, in words."""
+    locs = json.loads((root / G4_SUMMARY.format(anatomy="adult")).read_text())["locations"]
+    bands = {int(l["stratum"][0]) for l in locs}
+    F.add("wr_n_depth_bands_words", words(len(bands)), len(bands),
+          f"{G4_SUMMARY.format(anatomy='adult')} :: derived: distinct locations[].stratum[0] (the depth bands), in words")
+
+
+def background_scaling_facts(F: Facts, root: Path) -> None:
+    """The smaller heads' median D with their own background scaled by each factor minus the adult's primary median D."""
+    d = json.loads((root / G3B).read_text())
+    sens, D = d["sensitivity_median_D_dB"], d["D_median_dB"]
+    adult = float(D["adult/opm_dense/combined/intrinsic+brain/detect"])
+    src = (f"{G3B} :: sensitivity_median_D_dB['<head>/background_x{{f}}/opm_dense/combined/intrinsic+brain'] - "
+           "D_median_dB['adult/opm_dense/combined/intrinsic+brain/detect'] (derived: the smaller head's area-weighted median "
+           "D with its own cortical background multiplied by {f}, minus the adult's primary median D with the adult's "
+           "background unscaled; min and max over the eight smaller heads, dB)")
+    all_vals = []
+    for factor, tok in BG_FACTOR_TOKENS.items():
+        vals = [float(sens[f"{h}/background_x{factor}/opm_dense/combined/intrinsic+brain"]) - adult for h in SMALLER_HEADS]
+        lo, hi = min(vals), max(vals)
+        F.add(f"wr_g3b_smaller_bgonly_{tok}_d_minus_adult_range", f"{signed(lo, 2)} to {signed(hi, 2)}", [lo, hi],
+              src.format(f=factor))
+        all_vals += vals
+    lo, hi = min(all_vals), max(all_vals)
+    F.add("wr_g3b_smaller_bgonly_d_minus_adult_range", f"{signed(lo, 2)} to {signed(hi, 2)}", [lo, hi],
+          src.format(f="0.5 or 2") + "; the range over both factors")
+
+
+G3B_TARGETS = "results/g3b/g3b_targets_{head}.csv"
+MAPS_NUM = "detect_opm_dense_opm_intrinsic+brain"
+MAPS_DEN = "detect_squid_top_combined_intrinsic+brain"
+
+
+def maps_heads_facts(F: Facts, root: Path) -> None:
+    """The colour-scale limit of the templates' cortical maps and the share of targets above it: over all targets, as
+    the figure's provenance stores it, and over the coloured cortical targets (medial wall excluded), recomputed from the
+    per-target tables; the all-target share must reproduce the stored one."""
+    v = json.loads((root / FIGS_CLEAN).read_text())["figures"]["Figure_R13_maps_heads"]["values"]
+    lim = float(v["colour_limit_dB"])
+    F.add("wr_fig_maps_heads_colour_limit_db", f"{lim:g}", lim,
+          f"{FIGS_CLEAN} :: figures.Figure_R13_maps_heads.values.colour_limit_dB (the end of the colour scale, dB)")
+    for head in ("infant2yr", "infant12mo"):
+        s = float(v[head]["share_above_limit"]) * 100
+        F.add(f"wr_fig_maps_heads_above_limit_pct_{head}", f"{s:.1f}%", s,
+              f"{FIGS_CLEAN} :: figures.Figure_R13_maps_heads.values['{head}'].share_above_limit (share of the template's "
+              "targets above the colour limit, medial wall included, drawn in the end colour; as a percentage)")
+        rows = _read_targets_csv(root / G3B_TARGETS.format(head=head))
+        d = [20.0 * math.log10(float(r[MAPS_NUM]) / float(r[MAPS_DEN])) for r in rows]
+        if len(rows) != int(v[head]["n_targets"]) or abs(sum(x > lim for x in d) / len(d) - s / 100) > 1e-9:
+            raise ValueError(f"{G3B_TARGETS.format(head=head)}: the share of all targets above {lim:g} dB does not "
+                             f"reproduce the figure's stored share for {head}")
+        cortical = [x for r, x in zip(rows, d) if not r["region"].endswith(".unknown")]
+        if len(cortical) != len(rows) - int(v[head]["medial_wall"]):
+            raise ValueError(f"{G3B_TARGETS.format(head=head)}: the targets outside the 'unknown' (medial wall) region "
+                             f"are not n_targets minus medial_wall for {head}")
+        c = sum(x > lim for x in cortical) / len(cortical) * 100
+        F.add(f"wr_fig_maps_heads_above_limit_cortical_pct_{head}", f"{c:.1f}%", c,
+              f"{G3B_TARGETS.format(head=head)} :: D = 20 log10({MAPS_NUM} / {MAPS_DEN}) per target (dense OPM array "
+              "against Neuromag's 306 channels at top contact, sensor plus brain noise); derived: the share of the "
+              f"cortical targets (region not '*.unknown', the medial wall) with D above the colour limit of "
+              f"{FIGS_CLEAN} :: figures.Figure_R13_maps_heads.values.colour_limit_dB, as a percentage")
+
+
+def cgap_projected_interval_facts(F: Facts, root: Path) -> None:
+    """How many of the eight smaller heads' Delta intervals at the adult's gap span zero with the room field projected
+    out, in words."""
+    d = json.loads((root / CGAP).read_text())["delta_same_rule"]
+    n = 0
+    for h in SMALLER_HEADS:
+        lo, hi = (float(c) for c in d[f"{h}/gap_matched/opm_dense/combined/projected"]["delta"]["ci95"])
+        n += lo <= 0.0 <= hi
+    F.add("wr_cgap_fitted_proj_delta_n_ci_includes_zero_words", words(n), n,
+          f"{CGAP} :: delta_same_rule['<head>/gap_matched/opm_dense/combined/projected'].delta.ci95 (derived: the smaller "
+          "heads whose 95 % parcel-bootstrap interval of Delta at the adult's gap, room field projected out, includes "
+          "zero; count in words)")
+
+
+def _the(label: str) -> str:
+    return label if label.startswith("child") else "the " + label
+
+
+def confirm_depth_comparison_facts(F: Facts, root: Path) -> None:
+    """The anatomies whose confirmatory endpoint S50 ratio lies below the adult's dense detectability ratio in the
+    15-20 mm depth bin, the lower end of the 10-20 mm range the main text cites beside the spike result."""
+    bins = json.loads((root / DEPTH_BINS).read_text())["comparisons"]["opm_dense/combined/intrinsic+brain"]["bins"]
+    b = next(b for b in bins if float(b["lo"]) == 15.0 and float(b["hi"]) == 20.0)
+    ref = float(b["ratio"])
+    labels = json.loads((root / CONFIRM_SUMMARY).read_text())["anatomies"]
+    key = CONFIRM_ENDPOINT_PAIR.format(thresholds="frozen")
+    below = []
+    for a in labels:
+        c = json.loads((root / CONFIRM_PER.format(anatomy=a)).read_text())["comparisons"]
+        fam = next(k for k in c if k.startswith("opm_dense/opm_vs_squid/combined/practical@1/replicate0"))
+        if float(c[fam]["s50_ratio_squid_over_opm"]["value"]) < ref:
+            below.append(a)
+    if not below or len(below) == len(labels):
+        raise ValueError(f"{CONFIRM_SUMMARY}: expected some but not all anatomies below the adult's 15-20 mm ratio {ref:.3f}")
+    F.add("wr_cf_dense_practical_ratio_below_adult_depth_heads", _name_list(_the(HEAD_LABELS[a]) for a in below), below,
+          f"{CONFIRM_SUMMARY} :: anatomies, each read from {CONFIRM_PER.format(anatomy='<anatomy>')} comparisons"
+          "['opm_dense/opm_vs_squid/combined/practical@1/replicate0'].s50_ratio_squid_over_opm.value (the declared "
+          f"endpoint's paired S50 ratio) against {DEPTH_BINS} :: comparisons['opm_dense/combined/intrinsic+brain']"
+          f".bins[lo = 15, hi = 20].ratio (the adult's median detectability ratio in the 15-20 mm bin, {ref:.3f}); "
+          "derived: the anatomies whose S50 ratio lies below it")
+
+
+SUP = str.maketrans("-0123456789", "⁻⁰¹²³⁴⁵⁶⁷⁸⁹")
+
+
+def _sci(p: float) -> str:
+    """'2.2 × 10⁻⁵'."""
+    e = int(math.floor(math.log10(p)))
+    m = p / 10 ** e
+    if round(m, 1) >= 10:
+        m, e = m / 10, e + 1
+    return f"{m:.1f} × 10{str(e).translate(SUP)}"
+
+
+def exact_sign_flip_p(x) -> float:
+    """Two-sided exact sign-flip p for a zero mean of integer per-location differences, by enumerating the distribution
+    of the signed sum over all 2^n sign patterns (the non-zero differences only, as src/opmsquid/detection.sign_flip_p)."""
+    x = [int(round(float(v))) for v in x if float(v) != 0.0]
+    if not x:
+        return 1.0
+    dist = {0: 1}
+    for v in x:
+        nd = {}
+        for s, c in dist.items():
+            nd[s + v] = nd.get(s + v, 0) + c
+            nd[s - v] = nd.get(s - v, 0) + c
+        dist = nd
+    t = abs(sum(x))
+    return sum(c for s, c in dist.items() if abs(s) >= t) / 2 ** len(x)
+
+
+def _holm(ps: dict) -> dict:
+    run, out = 0.0, {}
+    for i, (k, p) in enumerate(sorted(ps.items(), key=lambda kv: kv[1])):
+        run = max(run, min(1.0, (len(ps) - i) * p))
+        out[k] = run
+    return out
+
+
+def confirm_exact_p_facts(F: Facts, root: Path) -> None:
+    """The declared endpoint's Holm-adjusted p by exact enumeration, where the stored value is a Monte Carlo zero."""
+    labels = json.loads((root / CONFIRM_SUMMARY).read_text())["anatomies"]
+    fam = "opm_dense/opm_vs_squid/combined/practical@1/replicate0"
+    exact, stored = {}, {}
+    for a in labels:
+        c = json.loads((root / CONFIRM_PER.format(anatomy=a)).read_text())["comparisons"][fam]
+        x = c["location_differences"]
+        if any(abs(float(v) - round(float(v))) > 1e-9 for v in x):
+            raise ValueError(f"{CONFIRM_PER.format(anatomy=a)}: location differences are not integers")
+        exact[a], stored[a] = exact_sign_flip_p(x), float(c["location_sign_flip_p"])
+        if sum(1 for v in x if float(v) != 0.0) <= 20 and abs(exact[a] - stored[a]) > 1e-9:
+            raise ValueError(f"{CONFIRM_PER.format(anatomy=a)}: the exact p does not reproduce the stored exact value")
+    adj = _holm(exact)
+    zeros = [a for a in labels if stored[a] == 0.0]
+    if not zeros:
+        raise ValueError(f"{CONFIRM_SUMMARY}: no anatomy of the endpoint has a Monte Carlo p of zero")
+    m = max(adj[a] for a in zeros)
+    F.add("wr_cf_endpoint_p_holm_exact_max_mc_zero", _sci(m), m,
+          f"{CONFIRM_SUMMARY} :: anatomies, each read from {CONFIRM_PER.format(anatomy='<anatomy>')} comparisons['{fam}']"
+          ".location_differences (derived: the two-sided sign-flip p by exact enumeration of all sign patterns of the "
+          "non-zero per-location differences, Holm-adjusted over the nine anatomies; the largest adjusted value over the "
+          f"anatomies whose stored Monte Carlo p, .location_sign_flip_p, is 0: {', '.join(zeros)})")
+
+
+def sphere_facts(F: Facts, root: Path) -> None:
+    """The depth of the brain surface below the scalp in the spherical benchmark."""
+    p = json.loads((root / G1A).read_text())["parameters"]
+    depth = float(p["h_mm"]) - float(p["b_mm"])
+    if depth <= 0:
+        raise ValueError(f"{G1A}: head radius {p['h_mm']} is not larger than brain radius {p['b_mm']}")
+    F.add("wr_sphere_brain_depth_mm", f"{depth:g}", depth,
+          f"{G1A} :: parameters.h_mm - parameters.b_mm (derived: head radius minus brain radius, the depth of the brain "
+          "surface below the scalp, mm)")
+
+
 def facts(root: Path = ROOT) -> dict:
     """Every writer fact, name -> {"value", "raw", "source"}."""
     root = Path(root)
@@ -563,6 +812,7 @@ def facts(root: Path = ROOT) -> dict:
     far_field_facts(F, root)
     oracle_facts(F, root)
     confirmatory_facts(F, root)
+    confirm_rate_facts(F, root)
     count_word_facts(F, root)
     share_facts(F, root)
     scenario_d_facts(F, root)
@@ -570,6 +820,14 @@ def facts(root: Path = ROOT) -> dict:
     cgap_depth_label_facts(F, root)
     cgap_interval_facts(F, root)
     threshold_facts(F, root)
+    sweep_list_facts(F, root)
+    depth_band_facts(F, root)
+    background_scaling_facts(F, root)
+    maps_heads_facts(F, root)
+    sphere_facts(F, root)
+    cgap_projected_interval_facts(F, root)
+    confirm_depth_comparison_facts(F, root)
+    confirm_exact_p_facts(F, root)
     return dict(F)
 
 

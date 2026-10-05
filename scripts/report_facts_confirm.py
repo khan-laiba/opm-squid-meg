@@ -64,6 +64,12 @@ DIR = "results/g4_confirm"
 CF = f"{DIR}/g4_confirm_summary.json"
 PER = DIR + "/g4c_{}_summary.json"
 CHECK = f"{DIR}/g4c_endpoint_code_check.json"
+EXACT = f"{DIR}/g4_confirm_exact_p.json"  # exact sign-flip p of every comparison (scripts/g4_confirm_exact_p.py)
+EXACT_NOTE = (f" [p: the exact sign-flip p and its Holm adjustment, {EXACT} (from the stored location_differences; "
+              "the run's Monte Carlo values in the field named here agree and give the same Holm decisions)]")
+SECTIONS = {"oracle": "opm_dense/opm_vs_squid/combined/oracle/replicate0",  # the combined summary's per-anatomy copies
+            "mismatch": "opm_dense/opm_vs_squid/combined/mismatch@1/replicate0",
+            "matched_array": "opm_matched/opm_vs_squid/combined/practical@1/replicate0"}
 EXPLO = "results/g4/g4_pediatric_comparison.json"
 CFG = "configs/g4_confirmatory.toml"
 BASE_CFG = "configs/g4_epilepsy.toml"
@@ -916,12 +922,85 @@ def _exploratory(F: Facts, D: dict) -> None:
 
 
 # ----------------------------------------------------------------------------------------------
+def _exact(D: dict, root: Path) -> dict:
+    """Replace every stored sign-flip p, and the Holm values and pass counts derived from it, by the exact p of {EXACT}
+    (scripts/g4_confirm_exact_p.py: the declared exact test, computed from the stored location differences), after
+    checking that the file belongs to these summaries (its Monte Carlo values are the stored ones, cell by cell) and
+    that each copy is matched to its comparison by its differences or ratios. Returns the file's agreement block."""
+    if not (root / EXACT).is_file():
+        raise FileNotFoundError(f"{EXACT} not found in {root}: run scripts/g4_confirm_exact_p.py")
+    ex = _json(root / EXACT)
+    comp, cf, per, labs = ex["comparisons"], D["cf"], D["per"], D["labs"]
+    alpha = cf["endpoint"]["definition"]["alpha"]
+
+    def exact(path: str, lab: str, stored: float) -> float:
+        e = comp[path][lab]
+        if e["p_monte_carlo"] != stored:
+            raise ValueError(f"{EXACT}: {path} {lab} was computed from p {e['p_monte_carlo']}, the summary stores {stored} "
+                             "(rerun scripts/g4_confirm_exact_p.py)")
+        return e["p_exact"]
+
+    ep = cf["endpoint"]["comparison"]
+    for lab in labs:
+        rows = per[lab]["comparisons"]
+        for path, c in rows.items():
+            if "location_differences" in c:
+                c["location_sign_flip_p"] = exact(path, lab, c["location_sign_flip_p"])
+        for base, m in per[lab]["monte_carlo"].items():
+            m["location_sign_flip_p"] = [exact(f"{base}/replicate{r}", lab, v) for r, v in enumerate(m["location_sign_flip_p"])]
+            m["n_p_below_alpha"] = sum(v < alpha for v in m["location_sign_flip_p"])
+        a = cf["anatomy"][lab]
+        a["endpoint"]["location_sign_flip_p"] = exact(ep, lab, a["endpoint"]["location_sign_flip_p"])
+        a["endpoint"]["holm_p"] = ex["families"]["endpoint"]["holm_p"][lab]
+        for sect, path in SECTIONS.items():
+            if (a[sect]["location_differences"] != rows[path]["location_differences"]
+                    or a[sect]["s50_ratio_squid_over_opm"] != rows[path]["s50_ratio_squid_over_opm"]):
+                raise ValueError(f"{CF}: anatomy['{lab}'].{sect} is not {PER.format(lab)} comparisons['{path}']")
+            a[sect]["location_sign_flip_p"] = exact(path, lab, a[sect]["location_sign_flip_p"])
+        base = ep.rsplit("/", 1)[0]
+        if a["monte_carlo"]["s50_ratio"] != per[lab]["monte_carlo"][base]["s50_ratio"]:
+            raise ValueError(f"{CF}: anatomy['{lab}'].monte_carlo is not {PER.format(lab)} monte_carlo['{base}']")
+        a["monte_carlo"]["location_sign_flip_p"] = [exact(f"{base}/replicate{r}", lab, v)
+                                                    for r, v in enumerate(a["monte_carlo"]["location_sign_flip_p"])]
+    for group, key in [("families", k) for k in cf["families"]] + [("monte_carlo", k) for k in ex["monte_carlo"]]:
+        fam, e = cf[group][key], ex[group][key]
+        if e["holm_p_monte_carlo"] != fam["holm_p"] or e["n_pass_monte_carlo"] != fam["n_pass"]:
+            raise ValueError(f"{EXACT}: {group}['{key}'] does not belong to {CF} (rerun scripts/g4_confirm_exact_p.py)")
+        fam.update(p=dict(e["p"]), holm_p=dict(e["holm_p"]), n_pass=e["n_pass"])
+    mcs = cf["monte_carlo_summary"]
+    mcs["n_pass_per_replicate"] = [ex["monte_carlo"][f"replicate{r}"]["n_pass"] for r in range(mcs["n_replicates"])]
+    mcs["n_replicates_all_pass"] = sum(n == len(labs) for n in mcs["n_pass_per_replicate"])
+    return ex["agreement"]
+
+
+def _exact_facts(F: Facts, ag: dict) -> None:
+    """How the exact sign-flip p compares with the run's Monte Carlo estimates."""
+    s = f"{EXACT} :: agreement"
+    F.add("cf_exact_n_cells", count(ag["n_cells"]), ag["n_cells"], f"{s}.n_cells (anatomy x comparison)")
+    F.add("cf_exact_n_cells_monte_carlo", count(ag["n_cells_monte_carlo"]), ag["n_cells_monte_carlo"],
+          f"{s}.n_cells_monte_carlo (more than 20 non-zero location differences: the run sampled 20,000 sign patterns)")
+    F.add("cf_exact_n_cells_enumerated", count(ag["n_cells_enumerated_by_the_run"]), ag["n_cells_enumerated_by_the_run"],
+          f"{s}.n_cells_enumerated_by_the_run (the run enumerated every pattern itself; reproduced exactly)")
+    F.add("cf_exact_max_abs_p_diff", sig(ag["max_abs_p_difference"], 2), ag["max_abs_p_difference"],
+          f"{s}.max_abs_p_difference (largest |exact p - Monte Carlo p| over the cells)")
+    F.add("cf_exact_n_families", count(ag["n_families"]), ag["n_families"], f"{s}.n_families (the combined summary's "
+          "families and noise replicates of the endpoint)")
+    F.add("cf_exact_n_families_same_decisions", count(ag["n_families_same_decisions"]), ag["n_families_same_decisions"],
+          f"{s}.n_families_same_decisions (every anatomy's Holm decision at alpha the same with exact and Monte Carlo p)")
+    F.add("cf_exact_max_p_where_mc_zero", pval(ag["max_exact_p_where_monte_carlo_zero"]),
+          ag["max_exact_p_where_monte_carlo_zero"], f"{s}.max_exact_p_where_monte_carlo_zero")
+    F.add("cf_exact_max_holm_p_where_mc_zero", sig(ag["max_exact_holm_p_where_monte_carlo_holm_zero"], 2),
+          ag["max_exact_holm_p_where_monte_carlo_holm_zero"], f"{s}.max_exact_holm_p_where_monte_carlo_holm_zero")
+
+
+# ----------------------------------------------------------------------------------------------
 def facts(root: Path = ROOT) -> dict:
     """Every fact of the confirmatory spike run: name -> {"value", "raw", "source"}."""
     root = Path(root)
     D = _read(root)
     reasons = _status(D)
     _consistency(D)
+    agreement = _exact(D, root)  # from here on every sign-flip p is the exact one
     D["confirmatory"] = not reasons
     F = Facts("" if not reasons else " [run not confirmatory: " + "; ".join(reasons) + "]")
     _design(F, D, reasons)
@@ -931,6 +1010,11 @@ def facts(root: Path = ROOT) -> dict:
     _false_events(F, D)
     _locations(F, D, not reasons)
     _exploratory(F, D)
+    _exact_facts(F, agreement)
+    for name, f in F.items():  # values derived from the confirmatory run's sign-flip p are now the exact ones
+        if name.startswith("cf_") and not name.startswith("cf_exact_") and "exploratory" not in name and any(
+                k in f["source"] for k in ("sign_flip_p", "holm_p", "n_pass", "n_p_below_alpha", "n_replicates_all_pass")):
+            f["source"] += EXACT_NOTE
     return dict(F)
 
 

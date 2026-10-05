@@ -69,6 +69,9 @@ LOBES = (("frontal", "Frontal"), ("parietal", "Parietal"), ("temporal", "Tempora
          ("cingulate", "Cingulate"), ("insula", "Insula"))
 PARCELS = (("precentral", "Precentral", ""), ("superiortemporal", "Superior temporal", "lateral temporal"),
            ("parahippocampal", "Parahippocampal", ""))
+# a lobe whose parcel bootstrap would rest on fewer parcels than this gets no interval (the insula: one parcel per
+# hemisphere); Referee 1: report no interval rather than a crude one
+MIN_CI_PARCELS = 3
 
 
 # ----------------------------------------------------------------------------------------------
@@ -432,7 +435,7 @@ def figure_noise(s, bands):
     top, bot, foot = fig.add_gridspec(3, 1, height_ratios=[1, 1.1, 0.07])
     a1, a2 = (fig.add_subplot(g) for g in top.subgridspec(1, 2, width_ratios=[3, 1.05]))
     b1, b2, c1 = (fig.add_subplot(g) for g in bot.subgridspec(1, 3, width_ratios=[1.2, 1.2, 1.25]))
-    parts = (("intrinsic_rms", "sensor\n(intrinsic)"), ("brain_rms", "brain"), ("env_rms", "room field"))
+    parts = (("intrinsic_rms", "sensor"), ("brain_rms", "brain"), ("env_rms", "room field"))
 
     def bars(ax, names, scale, fmt, width):
         n = len(names)
@@ -484,12 +487,12 @@ def figure_noise(s, bands):
     b1.legend(handles=[Patch(facecolor="white", edgecolor="0.1", hatch="////", label="measured"),
                        Patch(facecolor="0.45", label="model")], loc="upper left", bbox_to_anchor=(0.0, 0.7))
     pair(b2, [("empty room", meas["empty_room_rms_grad_fT_cm"], model["empty_room_rms_grad_fT_cm"],
-               f"CHECK\nbrochure sensor noise;\nroom field {100 * expl['grad']:.1f} %"),
+               f"CHECK\ndatasheet sensor noise;\nroom field {100 * expl['grad']:.1f} %"),
               ("brain noise", meas["brain_rms_grad_fT_cm"], model["brain_rms_grad_fT_cm"], "CALIBRATED\nequal by\nconstruction")],
          "fT/cm", 53, style.ARRAY_COLOR["grad"], "{:.1f}",
          pc_txt.format(f"gradiometers ({c['n_grad']})", pc["grad"]["p5"], pc["grad"]["p95"], pc["grad"]["median"]))
 
-    keys = (("opm_dense", "OPM\ndense", "opm_dense"), ("opm_matched", "OPM\nmatched", "opm_matched"),
+    keys = (("opm_dense", "dense\nOPM", "opm_dense"), ("opm_matched", "site-matched\nOPM", "opm_matched"),
             ("squid_mag", "Neuromag\nmag.", "mag"), ("squid_grad", "Neuromag\ngrad.", "grad"))
     v = [100 * vshare[k] for k, _, _ in keys]
     c1.bar(range(len(keys)), v, 0.62, color=[style.ARRAY_COLOR[col] for _, _, col in keys], zorder=2)
@@ -533,13 +536,14 @@ def figure_noise(s, bands):
             "(noise_composition, stored in T and T/m, drawn in fT and fT/cm): sensor (intrinsic) noise = ASD x "
             f"sqrt(ENBW {s['enbw_hz']:.1f} Hz) with {c['asd']:g} fT/sqrt(Hz) for the OPM (declared, not a device value) and "
             f"{sq_asd['mag_fT_per_rtHz']:g} fT/sqrt(Hz) and {sq_asd['grad_fT_per_cm_rtHz']:g} fT/(cm sqrt(Hz)) for the "
-            "Neuromag magnetometers and gradiometers (brochure values); brain = the distributed cortical background, its "
+            "Neuromag magnetometers and gradiometers (the TRIUX datasheet's typical values); brain = the distributed cortical "
+            "background, its "
             f"scale calibrated once on the Neuromag gradiometers; room field = the {c['n_ext']}-term external field fitted "
             "to the Neuromag empty-room recording. The components are drawn side by side because RMS values do not add "
             "(variances do). (b) The only measured quantities, all from the Neuromag recording, against the model: the "
             "empty-room RMS (the model's room field is FITTED to this recording; it explains most of the magnetometers' "
             "empty-room variance but only the stated small share of the gradiometers', whose agreement is therefore a CHECK "
-            "of the brochure sensor noise) and the brain noise (task baseline "
+            "of the datasheet sensor noise) and the brain noise (task baseline "
             "minus empty room): the gradiometer level is CALIBRATED, equal by construction, and the magnetometer level is "
             f"the one independent PREDICTION (model / measured RMS {ratio_mag:.2f}). The x-axis labels give the per-channel "
             "spread of the model / measured brain-noise variance ratio (5th and 95th percentiles over channels; a variance "
@@ -560,21 +564,21 @@ def figure_noise(s, bands):
              f"the Neuromag magnetometers' and {100 * vshare['squid_grad']:.1f} % of its gradiometers'."),
         caption_draft=(
             f"Figure R2. The noise model and what anchors it. (a) Modelled in-band ({c['band']}) RMS noise per channel, "
-            f"sensor / brain / room field: OPM dense {fT['opm_dense']['intrinsic_rms']:.0f} / {fT['opm_dense']['brain_rms']:.0f} / "
-            f"{fT['opm_dense']['env_rms']:.0f} fT, OPM matched {fT['opm_matched']['intrinsic_rms']:.0f} / "
+            f"sensor / brain / room field: dense OPM array {fT['opm_dense']['intrinsic_rms']:.0f} / {fT['opm_dense']['brain_rms']:.0f} / "
+            f"{fT['opm_dense']['env_rms']:.0f} fT, site-matched OPM array {fT['opm_matched']['intrinsic_rms']:.0f} / "
             f"{fT['opm_matched']['brain_rms']:.0f} / {fT['opm_matched']['env_rms']:.0f} fT, Neuromag magnetometers "
             f"{fT['squid_mag']['intrinsic_rms']:.0f} / {fT['squid_mag']['brain_rms']:.0f} / {fT['squid_mag']['env_rms']:.0f} fT, "
             f"gradiometers {gr['intrinsic_rms']:.1f} / {gr['brain_rms']:.1f} / {gr['env_rms']:.1f} fT/cm. (b) Measured vs "
             f"model (Neuromag only): empty room {meas['empty_room_rms_mag_fT']:.1f} vs {model['empty_room_rms_mag_fT']:.1f} fT "
             f"(magnetometers) and {meas['empty_room_rms_grad_fT_cm']:.1f} vs {model['empty_room_rms_grad_fT_cm']:.1f} fT/cm "
             f"(gradiometers), with the room field fitted to this recording (explaining {100 * expl['mag']:.0f} % and "
-            f"{100 * expl['grad']:.1f} % of the variance, so the gradiometer agreement checks the brochure sensor noise); "
+            f"{100 * expl['grad']:.1f} % of the variance, so the gradiometer agreement checks the datasheet sensor noise); "
             f"gradiometer brain noise {meas['brain_rms_grad_fT_cm']:.1f} fT/cm, "
             f"calibrated (equal by construction); magnetometer brain noise {meas['brain_rms_mag_fT']:.0f} fT measured vs "
             f"{model['brain_rms_mag_fT']:.0f} fT predicted ({ratio_mag:.2f}x); per channel the model / measured brain-noise "
             f"variance spans {pc['mag']['p5']:.2f}-{pc['mag']['p95']:.2f} (magnetometers) and {pc['grad']['p5']:.2f}-"
             f"{pc['grad']['p95']:.2f} (gradiometers; 5th-95th percentiles). (c) Sensor noise is {100 * vshare['opm_dense']:.1f} % "
-            f"(dense) and {100 * vshare['opm_matched']:.1f} % (matched) of the OPM channels' in-band variance, "
+            f"(dense) and {100 * vshare['opm_matched']:.1f} % (site-matched) of the OPM channels' in-band variance, "
             f"{100 * vshare['squid_mag']:.1f} % of the Neuromag magnetometers' and {100 * vshare['squid_grad']:.1f} % of its "
             "gradiometers' (each component's median channel variance). No OPM noise was measured: the OPM sensor "
             "noise is declared, its brain and room noise are the Neuromag-calibrated model."),
@@ -596,14 +600,14 @@ def condition_rows(s):
     def both(block, path, key):
         return {a: ratio(block[f"{a}/{key}"]) for a in ARRAYS}, [f"{SUMMARY} :: {path}['<array>/{key}']"]
 
-    g = "Comparator (detectability, sensor + brain noise)"
-    add("primary", g, f"vs Neuromag {c['n_all']} (primary)", *both(P["oracle"], "primary.oracle", "combined/intrinsic+brain"))
+    g = "Comparator (detectability, sensor plus brain noise)"
+    add("primary", g, f"vs Neuromag ({c['n_all']} channels), primary", *both(P["oracle"], "primary.oracle", "combined/intrinsic+brain"))
     add("grad", g, f"vs {c['n_grad']} gradiometers", *both(P["oracle"], "primary.oracle", "grad/intrinsic+brain"))
     add("mag", g, f"vs {c['n_mag']} magnetometers", *both(P["oracle"], "primary.oracle", "mag/intrinsic+brain"))
-    g = "Metric (sensor + brain noise)"
-    add("peak306", g, f"Peak-channel SNR vs the best of {c['n_all']}", *both(P["peak"], "primary.peak", "combined/intrinsic+brain"))
+    g = "Metric (sensor plus brain noise)"
+    add("peak306", g, f"Peak-channel SNR vs the best of {c['n_all']} channels", *both(P["peak"], "primary.peak", "combined/intrinsic+brain"))
     add("peak102", g, f"Peak-channel SNR vs {c['n_mag']} magnetometers", *both(P["peak"], "primary.peak", "mag/intrinsic+brain"))
-    add("meanpow", g, f"Mean-power SNR vs {c['n_all']} (as amplitude)",
+    add("meanpow", g, f"Mean-power SNR vs {c['n_all']} channels (as amplitude)",
         *both(P["meanpow_db"], "primary.meanpow_db", "combined/intrinsic+brain"))
     for sec in cfg["covariance"]["estimate_seconds"]:
         lab = f"T{sec:g}"
@@ -611,10 +615,10 @@ def condition_rows(s):
         assert n == round(2 * c["width"] * sec)
         add(lab, g, f"Plug-in covariance, {n:,} samples (2BT of {sec:g} s)",
             *both(P[f"plugin_{lab}"], f"primary.plugin_{lab}", "combined/intrinsic+brain"))
-    g = f"Noise and hardware (detectability vs Neuromag {c['n_all']})"
+    g = f"Noise and hardware (detectability vs {c['n_all']} channels)"
     add("intrinsic", g, "Sensor noise only", *both(P["oracle"], "primary.oracle", "combined/intrinsic"))
     add("env", g, "+ room field", *both(P["oracle"], "primary.oracle", "combined/intrinsic+brain+env"))
-    add("projected", g, f"+ room field, projected ({c['n_ext']} terms)", *both(P["oracle"], "primary.oracle", "combined/projected"))
+    add("projected", g, f"+ room field, after the {c['n_ext']}-term projection", *both(P["oracle"], "primary.oracle", "combined/projected"))
     for asd in cfg["sensors"]["opm_asd_fT_per_rtHz"]:
         if asd != c["asd"]:
             add(f"asd{asd:g}", g, f"OPM sensor noise {asd:g} fT/\u221aHz (primary {c['asd']:g})",
@@ -627,7 +631,7 @@ def condition_rows(s):
     add("joint", g, "30 fT/\u221aHz and a 3-mm gap (joint)",
         {a: (J[jk][a]["ratio"], *J[jk][a]["ci95"]) for a in ARRAYS},
         [f"{SUMMARY} :: sensitivity_joint_asd_gap['{jk}'].<array>.{{ratio, ci95}}"])
-    for id_, key, lab in (("tri", "equal_noise", f"Triaxial at the matched sites, {T['channels']} channels"),
+    for id_, key, lab in (("tri", "equal_noise", f"Triaxial at the site-matched sites, {T['channels']} channels"),
                           ("tri2", "tangential_noise_x2", "Triaxial, tangential axes at 2\u00d7 noise")):
         add(id_, g, lab, {"triaxial": ratio(T[f"{key}/combined/intrinsic+brain"])},
             [f"{SUMMARY} :: triaxial_control['{key}/combined/intrinsic+brain']"])
@@ -653,7 +657,7 @@ def figure_conditions(s, t):
                 y -= 1.0
         y -= 0.35
     fig = plt.figure(figsize=(style.FULL_W, 7.4), layout="constrained")
-    ax, vx = fig.subplots(1, 2, sharey=True, gridspec_kw=dict(width_ratios=[4.2, 1.0]))
+    ax, vx = fig.subplots(1, 2, sharey=True, gridspec_kw=dict(width_ratios=[4.0, 1.2]))
     get = {r["id"]: r["values"] for r in rows}
     for a in ARRAYS:
         ax.axvspan(get["primary"][a][1], get["primary"][a][2], color=style.ARRAY_COLOR[a], alpha=0.13, lw=0, zorder=0)
@@ -667,7 +671,7 @@ def figure_conditions(s, t):
                 ax.plot([lo, hi], [yy + off[a]] * 2, "-", color=col, lw=1.3, zorder=3, solid_capstyle="butt")
             ax.plot(v, yy + off[a], MARKER[a], color=col, ms=4.2 if a != "triaxial" else 4.8, zorder=4,
                     mec="white" if a == "opm_dense" else col, mew=0.4)
-            vx.text(0.08 if a == "opm_dense" else 0.58, yy, ("\u25b2 " if a == "triaxial" else "") + f"{v:.2f}", ha="left",
+            vx.text(0.06 if a == "opm_dense" else 0.5, yy, ("\u25b2 " if a == "triaxial" else "") + f"{v:.2f}", ha="left",
                     va="center", fontsize=7, color=col, transform=vx.get_yaxis_transform())
     for gname, yy in heads.items():
         ax.text(0.004, yy, gname, transform=ax.get_yaxis_transform(), ha="left", va="center", fontsize=7.8, fontweight="bold",
@@ -683,7 +687,7 @@ def figure_conditions(s, t):
     ax.spines["left"].set_visible(False)
     ax.set_xlabel(f"Median ratio OPM / Neuromag over the {s['n_targets']:,} targets (log scale; > 1: OPM higher)")
     vx.axis("off")
-    for x_, a, lab in ((0.08, "opm_dense", "dense"), (0.58, "opm_matched", "matched")):
+    for x_, a, lab in ((0.06, "opm_dense", "dense"), (0.5, "opm_matched", "site-matched")):
         vx.text(x_, 0.7, lab, transform=vx.get_yaxis_transform(), ha="left", va="center", fontsize=7.5, fontweight="bold",
                 color=style.ARRAY_COLOR[a])
     n_par = int(s["primary"]["oracle"]["opm_dense/combined/intrinsic+brain"]["ci_method"].split("(")[1].rstrip(")"))
@@ -724,8 +728,8 @@ def figure_conditions(s, t):
            f"{TARGETS} :: region (the bootstrap groups: Desikan-Killiany parcels and medial-wall labels)"],
         description=(
             f"Forest plot of the adult (G2) median over {s['n_targets']:,} cortical targets of the paired ratio OPM / "
-            "Neuromag under every stored condition, for the dense and the matched OPM arrays and the triaxial control at "
-            "the matched sites. Every value except the joint row is stored as median_log2 = the median over targets of "
+            "Neuromag under every stored condition, for the dense and the site-matched OPM arrays and the triaxial control at "
+            "the site-matched sites. Every value except the joint row is stored as median_log2 = the median over targets of "
             f"log2(m_OPM / m_Neuromag) with a 95 % CI from a bootstrap over {n_par} parcels (the region labels of the "
             f"targets: {n_par - len(medial)} Desikan-Killiany parcels and {len(medial)} medial-wall labels); it is drawn "
             "as 2**x. The joint OPM-noise x scalp-gap row (sensitivity_joint_asd_gap) is stored as a ratio with its CI "
@@ -737,36 +741,36 @@ def figure_conditions(s, t):
             "it is on the amplitude scale of detectability), and plug-in detectability (Ledoit-Wolf covariance estimated "
             f"from one common noise realization of {n_est[0]:,} or {n_est[1]:,} independent samples, the 2BT equivalent of "
             f"{secs[0]:g} or {secs[1]:g} s in the {c['width']:g}-Hz-wide band, not estimates from coloured time series). "
-            "Conditions vary one factor at a time from the primary (oracle covariance, sensor + brain noise, OPM "
+            "Conditions vary one factor at a time from the primary (oracle covariance, sensor plus brain noise, OPM "
             f"{c['asd']:g} fT/sqrt(Hz), no scalp gap, 3-layer BEM, measured head position) except the joint row. The "
             "1-layer BEM row is a convergence check on a random "
             f"{s['config']['convergence']['subset_targets']:,}-target subset without an interval; on the same subset the "
             f"3-layer reference is {2 ** sub['opm_dense/combined/intrinsic+brain']:.3f} (dense) and "
-            f"{2 ** sub['opm_matched/combined/intrinsic+brain']:.3f} (matched). Grey row: the primary result; shaded "
+            f"{2 ** sub['opm_matched/combined/intrinsic+brain']:.3f} (site-matched). Grey row: the primary result; shaded "
             "vertical bands: each array's primary 95 % CI; logarithmic x axis with a line at 1 and, on top, the same ratio "
             f"in dB (20 log10 of the ratio, which for the detectability rows is D; ticks every {R3_DB_STEP:g} dB); the "
             "right-hand columns repeat the medians (triangle: triaxial)."),
         alt=(f"Forest plot with {len(rows)} rows in three groups (comparator, metric, noise and hardware). Each row shows "
-             "the OPM / Neuromag median ratio with a 95 % interval for the dense array (dark blue circles) and the matched "
+             "the OPM / Neuromag median ratio with a 95 % interval for the dense array (dark blue circles) and the site-matched "
              "array (light blue squares) on a logarithmic axis with a line at 1 and a dB scale on top. The dense array is "
              "below 1 in "
-             f"{len(under['opm_dense'])} of {n_rows['opm_dense']} rows (" + "; ".join(under["opm_dense"]) + "); the matched "
+             f"{len(under['opm_dense'])} of {n_rows['opm_dense']} rows (" + "; ".join(under["opm_dense"]) + "); the site-matched "
              f"array, {v('primary', 'opm_matched')} in the primary row, is below 1 in {len(under['opm_matched'])} of "
-             f"{n_rows['opm_matched']} rows. Two triaxial rows show a triaxial array at the matched sites."),
+             f"{n_rows['opm_matched']} rows. Two triaxial rows show a triaxial array at the site-matched sites."),
         caption_draft=(
             "Figure R3. The adult ranking depends on the comparator, the metric and the OPM noise. Median ratio OPM / "
-            f"Neuromag over {s['n_targets']:,} targets with parcel-bootstrap 95 % CIs; values dense / matched. Primary "
-            f"(detectability against all {c['n_all']} channels, sensor + brain noise): dense {ci('primary', 'opm_dense')}, "
-            f"matched {ci('primary', 'opm_matched')}. Against the {c['n_grad']} gradiometers alone {vb('grad')}, the "
+            f"Neuromag over {s['n_targets']:,} targets with parcel-bootstrap 95 % CIs; values dense / site-matched. Primary "
+            f"(detectability against all {c['n_all']} channels, sensor plus brain noise): dense {ci('primary', 'opm_dense')}, "
+            f"site-matched {ci('primary', 'opm_matched')}. Against the {c['n_grad']} gradiometers alone {vb('grad')}, the "
             f"{c['n_mag']} magnetometers alone {vb('mag')}. Peak-channel SNR {vb('peak306')} against the best of the "
             f"{c['n_all']} channels and {vb('peak102')} against the best magnetometer; mean-power SNR {vb('meanpow')}; "
             f"plug-in covariance {vb(f'T{secs[0]:g}')} ({n_est[0]:,} samples) and {vb(f'T{secs[1]:g}')} ({n_est[1]:,}). "
-            f"Sensor noise only {vb('intrinsic')}; with the room field {vb('env')}; projected {vb('projected')}. OPM "
+            f"Sensor noise only {vb('intrinsic')}; with the room field {vb('env')}; after the {c['n_ext']}-term projection {vb('projected')}. OPM "
             f"sensor noise {', '.join(f'{a:g}' for a in asds)} fT/sqrt(Hz): {', '.join(v(f'asd{a:g}') for a in asds)} "
-            f"(dense) and {', '.join(v(f'asd{a:g}', 'opm_matched') for a in asds)} (matched; primary {c['asd']:g}); scalp "
+            f"(dense) and {', '.join(v(f'asd{a:g}', 'opm_matched') for a in asds)} (site-matched; primary {c['asd']:g}); scalp "
             "gap " + ", ".join(f"{g:g} mm {vb(f'gap{g:g}')}" for g in gaps)
             + f"; 30 fT/sqrt(Hz) with a 3-mm gap {ci('joint', 'opm_dense')} (dense) and {ci('joint', 'opm_matched')} "
-            f"(matched). Triaxial OPM at the matched sites {v('tri', 'triaxial')} ({v('tri2', 'triaxial')} with the "
+            f"(site-matched). Triaxial OPM at the site-matched sites {v('tri', 'triaxial')} ({v('tri2', 'triaxial')} with the "
             f"tangential axes at twice the noise); 1-layer BEM {vb('bem1')} "
             f"({s['config']['convergence']['subset_targets']:,}-target subset, no interval). One factor varied at a time "
             "except the joint row. Top axis: the same ratios in dB (20 log10 of the ratio)."),
@@ -826,15 +830,24 @@ def figure_regions(s, t):
     fig = plt.figure(figsize=(style.FULL_W, 6.2), layout="constrained")
     axs = fig.subplots(1, 4, sharey=True, gridspec_kw=dict(width_ratios=[1.65, 1.65, 1.05, 1.05]))
     off = {"opm_dense": 0.19, "opm_matched": -0.19}
-    for ax, key, title in ((axs[0], "v306", f"(a) vs Neuromag {c['n_all']}"), (axs[1], "v102", f"(b) vs {c['n_mag']} magnetometers")):
+    no_ci = [r["name"] for r in regs if r["kind"] == "lobe" and r["parcels"] < MIN_CI_PARCELS]
+    assert no_ci == ["Insula"], f"lobes without an interval: {no_ci} (the caption names the insula only)"
+    for ax, key, title in ((axs[0], "v306", f"(a) vs all {c['n_all']} channels"),
+                           (axs[1], "v102", f"(b) vs {c['n_mag']} magnetometers")):
         for yy, r in zip(ys, regs):
             for a in ARRAYS:
                 v, lo, hi = r[key][a]
                 ax.barh(yy + off[a], v - 1.0, 0.36, left=1.0, color=style.ARRAY_COLOR[a], zorder=2)
+                if r["name"] in no_ci:
+                    continue
                 eb = ax.errorbar(v, yy + off[a], xerr=[[v - lo], [hi - v]], fmt="none", ecolor="0.05", elinewidth=0.9,
                                  capsize=2.0 if r["kind"] == "lobe" else 0, zorder=3)
                 if r["kind"] == "parcel":
                     eb[2][0].set_linestyle(IQR_DASH)
+            if r["name"] in no_ci:  # beside the longer bar, inside the row
+                x_end = max(max(r[key][a][0] for a in ARRAYS), 1.0)
+                ax.text(x_end * 1.03, yy, f"no interval\n({r['parcels']} parcels)", ha="left", va="center", fontsize=6.5,
+                        style="italic", color="0.25", linespacing=1.1, zorder=4)
         log_axis(ax, "x", [0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4], (0.78, 1.5))
         db_axis(ax, "x", R4_DB_STEP[0], "D (dB)")
         ax.set_title(title, loc="left")
@@ -857,7 +870,7 @@ def figure_regions(s, t):
     log_axis(ax, "x", [1, 2, 4], (0.9, 7.0))
     db_axis(ax, "x", R4_DB_STEP[1], "dB")
     ax.set_title("(d) Signal", loc="left")
-    ax.set_xlabel("median peak-field ratio\ndense / mag. (log)", fontsize=7.5)
+    ax.set_xlabel("median peak-field ratio\ndense OPM / mag. (log)", fontsize=7.5)
     axs[0].set_yticks(ys, [r["label"] for r in regs])
     for ax in axs:
         ax.tick_params(axis="y", length=0)
@@ -866,7 +879,7 @@ def figure_regions(s, t):
     h += [Line2D([], [], color="0.05", lw=0.9, marker="|", ms=5, label="lobes: 95 % parcel-bootstrap interval"),
           Line2D([], [], color="0.05", lw=0.9, ls=IQR_DASH, label="single parcels: IQR over targets (a spread)")]
     fig.legend(handles=h, loc="outside upper center", ncol=2,
-               title="Sensor + brain noise; both hemispheres pooled; bars start at a ratio of 1", title_fontsize=7.5)
+               title="Sensor plus brain noise; both hemispheres pooled; bars start at a ratio of 1", title_fontsize=7.5)
     fig.align_titles()  # (c) has no dB axis on top: its title level with the others
     db_checked = check_db_axes(fig)
     style.save(fig, "Figure_R4_regions_adult")
@@ -888,7 +901,7 @@ def figure_regions(s, t):
                 "detect_squid_mag_intrinsic+brain",
                 f"{SUMMARY} :: medial_wall.n_targets", f"{SUMMARY} :: arrays.<array>.n_sites, arrays.squid.{{sites, channels}}"],
         description=(
-            "Adult (G2) comparison by brain region with sensor + brain noise, oracle covariance and OPM "
+            "Adult (G2) comparison by brain region with sensor plus brain noise, oracle covariance and OPM "
             f"{c['asd']:g} fT/sqrt(Hz); both hemispheres pooled. Regions: the six Desikan-Killiany lobes of the study's "
             f"grouping (the {medial} medial-wall targets belong to no lobe) and three single parcels emphasised by the "
             "epilepsy literature: precentral, superior temporal ('lateral temporal') and parahippocampal (one of the two "
@@ -899,7 +912,9 @@ def figure_regions(s, t):
             f"{c['n_mag']} magnetometers (b). Lobes: median and 95 % parcel-bootstrap interval from g2_summary.json by_lobe "
             "(2**median_log2; a "
             "bootstrap over the lobe's own parcels: " + ", ".join(f"{r['name'].lower()} {r['parcels']}" for r in lobes)
-            + " parcels, so an interval resting on few parcels is crude). Single parcels: the per-target ratio "
+            + f" parcels; a lobe with fewer than {MIN_CI_PARCELS} parcels, the insula, is drawn without an interval and "
+            "marked 'no interval' with its parcel count, since a bootstrap over so few parcels would be crude). Single "
+            "parcels: the per-target ratio "
             "detect_<array>_opm_intrinsic+brain / detect_squid_<combined|mag>_intrinsic+brain from g2_targets.csv (values "
             "as stored, rounded), unweighted median and interquartile range over the parcel's targets (a spread, not a "
             "confidence interval; a parcel bootstrap is not possible within one parcel). (c) Median depth below the scalp "
@@ -910,20 +925,21 @@ def figure_regions(s, t):
             "lobe medians recomputed from the CSV agree with by_lobe."),
         alt=("Horizontal bar chart of nine brain regions: six lobes, then the precentral, superior temporal and "
              "parahippocampal parcels. For each region two bars give the OPM / Neuromag detectability ratio of the dense "
-             f"and matched arrays, against all {c['n_all']} channels and against the {c['n_mag']} magnetometers; the dense "
-             "array is above 1 in every region; against all channels the matched array is below 1 in "
+             f"and site-matched arrays, against all {c['n_all']} channels and against the {c['n_mag']} magnetometers; the "
+             "dense array is above 1 in every region; against all channels the site-matched array is below 1 in "
              + ", ".join(nm(r) for r in regs if r["v306"]["opm_matched"][0] < 1)
              + f". Two narrow panels give the median depth ({span([r['depth'] for r in regs], '{:.0f}')} mm) and the median "
              f"peak-field ratio ({span([r['peak'] for r in regs], '{:.1f}')}). The ratio axes carry dB scales on top."),
         caption_draft=(
-            f"Figure R4. The adult result by brain region (sensor + brain noise; both hemispheres). (a) Median detectability "
-            f"ratio OPM / Neuromag {c['n_all']}, dense / matched: "
+            f"Figure R4. The adult result by brain region (sensor plus brain noise; both hemispheres). (a) Median "
+            f"detectability ratio OPM / Neuromag ({c['n_all']} channels), dense / site-matched: "
             + ", ".join(f"{r['name'].lower()} {r['v306']['opm_dense'][0]:.2f} / {r['v306']['opm_matched'][0]:.2f}" for r in lobes)
-            + " (lobes, 95 % parcel-bootstrap intervals); "
+            + " (lobes, 95 % parcel-bootstrap intervals; none for the "
+            + ", ".join(f"{r['name'].lower()}, which has {r['parcels']} parcels" for r in lobes if r["name"] in no_ci) + "); "
             + ", ".join(f"{nm(r)} {r['v306']['opm_dense'][0]:.2f} / {r['v306']['opm_matched'][0]:.2f}" for r in parcels)
             + f" (single parcels, interquartile ranges over targets). (b) Against the {c['n_mag']} magnetometers alone: "
             + ", ".join(f"{r['name'].lower()} {r['v102']['opm_dense'][0]:.2f} / {r['v102']['opm_matched'][0]:.2f}" for r in regs)
-            + ". (c, d) Median depth below the scalp and median peak-field ratio OPM dense / magnetometer: "
+            + ". (c, d) Median depth below the scalp and median peak-field ratio dense OPM / magnetometer: "
             + ", ".join(f"{r['name'].lower()} {r['depth']:.1f} mm / {r['peak']:.2f}" for r in regs)
             + ". Targets: " + ", ".join(f"{r['name'].lower()} {r['n']:,}" for r in regs) + ". Top axes of (a), (b) and "
             "(d): the same ratios in dB (20 log10 of the ratio)."),

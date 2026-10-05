@@ -1,6 +1,6 @@
 {
  "provenance": {
-  "commit": "0608f00+dirty"
+  "commit": "13bb30c+dirty"
  },
  "figures": {
   "Figure_S_children_qc": {
@@ -11,8 +11,8 @@
     "$OPMSQUID_CACHE/anatomy/<subject>_fullres.npz (full-resolution white surfaces, opmsquid.anatomy.full_resolution)"
    ],
    "description": "Clean redraw of the MRI quality check of the school-aged children (results/g3b_children_qc/Figure_QC_overlay_*.png and Figure_QC_summary.png, which carry internal labels and whole MRI slices), recomputed with the check's own functions (scripts/study_children_qc.py: load; sample_along, otsu_threshold, head_boundary and consensus, the steps of scalp_vs_mri, over blocks of profiles; corrected_scalp, SignedDistance, near_surface, summarise_offsets, plane_segments) and checked equal to its stored records (see checks). (a) The section planes are this figure's only choice: through the closest white vertex, normal to the MRI-frame axis (x: sagittal, y: coronal) along which the scalp's smoothed outward normal at the scalp vertex nearest to that white vertex has the smaller component; zoom and T1 grey scale as the check's zoom panels (50 mm, 0.2-mm trilinear sampling, 0 to the 99.5th percentile of the non-zero voxels). The MRI head boundary is drawn as the check's surface fitted to it (corrected_scalp), the surface (b) measures against; every section lies above the fiducial plane, where that surface follows the measured offsets (cleaned and smoothed over 10 neighbour rings). (b) The empirical cumulative share (vertices closer than the distance, as the check's counts below 8 and 10 mm, through which the curves pass) on a 0.02-mm grid; the y range is the check's summary figure's (0 to 0.25). (c) The stored quartiles and median of the primary (Otsu) edge over the cap.",
-   "alt": "Three-part figure. (a) Five small grey-scale MRI sections, each 50 mm wide, of the adult, children A to C and the 2-year template, each centred on the white-surface vertex closest to the scalp, with coloured outlines of the scalp used, the MRI head boundary just outside it (inside it for the template), the outer and inner skull and the white surface; the children's closest vertices lie 3.7 to 5.7 mm below the scalp, the adult's 9.7 mm. (b) Line chart of the cumulative share of white-surface vertices (0 to 25 %) against distance (0 to 25 mm): the children's curves rise first, child B's earliest; the dashed curves (to the MRI head boundary) lie to the right of the solid ones (deeper) for the adult and children and to the left for the template. (c) Dot-and-bar chart of the offset of the MRI head boundary from the scalp used: adult and children at +1.34 to +1.48 mm, the template \u22121.64 mm.",
-   "caption_draft": "MRI quality check of the anatomy of the three school-aged children, with the adult and the 2-year (24-month) infant template as references; the scalp, skull and white surfaces as the forward models use them. (a) Sections of 50 \u00d7 50 mm through the white-surface vertex closest to the scalp used (open circle; adult: right rostral middle frontal, 9.7 mm, coronal; child A: right lateral occipital, 3.7 mm, sagittal; child B: right postcentral, 3.7 mm, coronal; child C: left lateral occipital, 5.7 mm, sagittal; 2-year template: left lateral occipital, 9.2 mm, sagittal), sagittal or coronal, whichever contains more of the scalp's outward normal there, so that the section crosses the layers. Grey: T1 intensity. Yellow: the dense MRI scalp used for sensor placement and source depths. Pink: the MRI head boundary, where the T1 falls through the volume's air/tissue (Otsu) level along the scalp's outward normals, drawn as the scalp moved onto it. Light blue and orange: the outer and inner skull of the boundary-element model used (for the children modelled: the inner skull 8 mm below the scalp where the dataset's lay shallower, the outer skull about halfway to the scalp). Dark blue: the white surface. (b) Cumulative share of white-surface vertices against their distance to the scalp used (solid) and to the MRI head boundary (dashed), lowest quarter; dotted lines at the check's thresholds, 8 mm (also the depth of the children's modelled inner skull) and 10 mm. Within 8 mm of the scalp used lie 22.4, 83.4 and 3.6 cm\u00b2 of white surface in children A\u2013C (adult and template: none), within 8 mm of the MRI head boundary 6.8, 28.8 and 0.1 cm\u00b2 (template 0.4 cm\u00b2, adult none). (c) Offset of the MRI head boundary from the scalp used over the head above the fiducial plane, along the scalp's outward normals: median (marker and value) and quartiles (bar); positive where the boundary lies outside the scalp used. Shaded: the adult's median \u00b1 1 mm, the tolerance of the check's verdict (one voxel). The children's scalps lie a median 1.35, 1.48 and 1.34 mm inside their MRI head boundary, as the adult's does (1.35 mm; at the half-maximum edge 0.94, 1.22, 0.36 and 1.08 mm), and the check rates their surfaces usable (frames, white-surface registration and scalp within its tolerances); the template's scalp lies 1.64 mm outside its boundary (verdict: outside). The children's shallow cortex is therefore not the product of a misplaced scalp. Children A\u2013C: OpenNeuro ds005234 (Fadeev et al., 2024; de-identified, data licence CC0); 2-year template: O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database (Richards et al., 2016); adult: MNE sample subject.",
+   "alt": "Three-part figure. (a) Five small grey-scale MRI sections, each 50 mm wide, of the adult, children A to C and the 24-month template, each centred on the white-surface vertex closest to the scalp, with coloured outlines of the scalp used, the MRI head boundary just outside it (inside it for the template), the outer and inner skull and the white surface; the children's closest vertices lie 3.7 to 5.7 mm below the scalp, the adult's 9.7 mm. (b) Line chart of the cumulative share of white-surface vertices (0 to 25 %) against distance (0 to 25 mm): the children's curves rise first, child B's earliest; the dashed curves (to the MRI head boundary) lie to the right of the solid ones (deeper) for the adult and children and to the left for the template. (c) Dot-and-bar chart of the offset of the MRI head boundary from the scalp used: adult and children at +1.34 to +1.48 mm, the template \u22121.64 mm.",
+   "caption_draft": "MRI quality check of the anatomy of the three school-aged children, with the adult and the 24-month infant template as references; the scalp, skull and white surfaces as the forward models use them. (a) Sections of 50 \u00d7 50 mm through the white-surface vertex closest to the scalp used (open circle; adult: right rostral middle frontal, 9.7 mm, coronal; child A: right lateral occipital, 3.7 mm, sagittal; child B: right postcentral, 3.7 mm, coronal; child C: left lateral occipital, 5.7 mm, sagittal; 24-month template: left lateral occipital, 9.2 mm, sagittal), sagittal or coronal, whichever contains more of the scalp's outward normal there, so that the section crosses the layers. Grey: T1 intensity. Yellow: the dense MRI scalp used for sensor placement and source depths. Pink: the MRI head boundary, where the T1 falls through the volume's air/tissue (Otsu) level along the scalp's outward normals, drawn as the scalp moved onto it. Light blue and orange: the outer and inner skull of the boundary-element model used (for the children modelled: the inner skull 8 mm below the scalp where the dataset's lay shallower, the outer skull about halfway to the scalp). Dark blue: the white surface. (b) Cumulative share of white-surface vertices against their distance to the scalp used (solid) and to the MRI head boundary (dashed), lowest quarter; dotted lines at the check's thresholds, 8 mm (also the depth of the children's modelled inner skull) and 10 mm. Within 8 mm of the scalp used lie 22.4, 83.4 and 3.6 cm\u00b2 of white surface in children A\u2013C (adult and template: none), within 8 mm of the MRI head boundary 6.8, 28.8 and 0.1 cm\u00b2 (template 0.4 cm\u00b2, adult none). (c) Offset of the MRI head boundary from the scalp used over the head above the fiducial plane, along the scalp's outward normals: median (marker and value) and quartiles (bar); positive where the boundary lies outside the scalp used. Shaded: the adult's median \u00b1 1 mm, the tolerance of the check's verdict (one voxel). The children's scalps lie a median 1.35, 1.48 and 1.34 mm inside their MRI head boundary, as the adult's does (1.35 mm; at the half-maximum edge 0.94, 1.22, 0.36 and 1.08 mm), and the check rates their surfaces usable (frames, white-surface registration and scalp within its tolerances); the template's scalp lies 1.64 mm outside its boundary (verdict: outside). The children's shallow cortex is therefore not the product of a misplaced scalp. Children A\u2013C: OpenNeuro ds005234 (Fadeev et al., 2024; de-identified, data licence CC0); 24-month template: O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database (Richards et al., 2016); adult: MNE sample subject.",
    "values": {
     "order": [
      "adult",
@@ -26,7 +26,7 @@
      "childA": "Child A (7.8 y)",
      "childB": "Child B (8.3 y)",
      "childC": "Child C (8.7 y)",
-     "infant2yr": "2-year template"
+     "infant2yr": "24-month template"
     },
     "subjects": {
      "adult": "sample",
@@ -902,7 +902,7 @@
      "childC": "usable",
      "infant2yr": "outside"
     },
-    "footnote": "Sections: superior up; sagittal with anterior to the right, coronal with the subject's right to the right; ticks every 10 mm. MRI head boundary: where the T1 falls through the volume's air/tissue (Otsu) level along the scalp's outward normals; in (a) and (b) the scalp moved onto it. (c) Over the head above the fiducial plane; bars: quartiles; shaded: the adult's median \u00b1 1 mm. Data: OpenNeuro ds005234 (Fadeev et al., 2024) for children A\u2013C; 2-year template: O'Reilly et al. (2021); adult: MNE sample data."
+    "footnote": "Sections: superior up; sagittal with anterior to the right, coronal with the subject's right to the right; ticks every 10 mm. MRI head boundary: where the T1 falls through the volume's air/tissue (Otsu) level along the scalp's outward normals; in (a) and (b) the scalp moved onto it. (c) Over the head above the fiducial plane; bars: quartiles; shaded: the adult's median \u00b1 1 mm. Data: OpenNeuro ds005234 (Fadeev et al., 2024) for children A\u2013C; 24-month template: O'Reilly et al. (2021); adult: MNE sample data."
    },
    "checks": {
     "rule": "recomputed with the check's functions and compared value by value with results/g3b_children_qc/children_qc.json (relative tolerance 1e-09); the script stops at the first difference. Not recomputed: the verdicts (read), the closure (remeasured_cap_offset_mm) and the registration checks, which the figure does not show",
@@ -968,7 +968,7 @@
       "curve_mri_at_10mm": 1
      }
     },
-    "qc_results_commit": "10e37b9",
+    "qc_results_commit": "bd70b45",
     "versions": {
      "mne": "1.13.2",
      "numpy": "2.5.3",
@@ -978,13 +978,13 @@
      }
     },
     "runtime_s": {
-     "adult": 76.2,
-     "childA": 68.5,
-     "childB": 56.9,
-     "childC": 66.8,
-     "infant2yr": 43.0
+     "adult": 73.4,
+     "childA": 64.3,
+     "childB": 52.9,
+     "childC": 62.0,
+     "infant2yr": 40.4
     },
-    "peak_memory_gb": 1.32
+    "peak_memory_gb": 1.33
    }
   }
  }

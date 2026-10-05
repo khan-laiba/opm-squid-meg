@@ -7,7 +7,9 @@ continuation lines (one nesting level), pipe tables, fenced code, inline code, b
 links. For the report also: figure blocks (``::: figure {#fig-id}``, then ``![alt](results/....png)``
 lines and the caption, closed by ``:::``), table captions (a line ``Table: caption {#tab-id}``
 before a pipe table), both numbered in order of appearance, cross-references to them (``[@fig-id]``,
-``[@tab-id]``), subscripts (``X~child~``) and superscripts (``cm^2^``). Raw HTML is always escaped.
+``[@tab-id]``), subscripts (``X~child~``) and superscripts (``cm^2^``). Raw HTML is always escaped;
+comments (``<!-- ... -->``, from a line that starts with ``<!--`` to the line that holds ``-->``) are
+dropped, and text after the ``-->`` or a comment never closed is an error, never silently lost.
 
 Two documents can refer to each other's figures and tables (the report and its supplementary text):
 ``md_blocks`` converts a document and returns its labels (with a number prefix, e.g. 'S' for
@@ -98,8 +100,8 @@ def md_to_html(md: str, heading_offset: int = 0, image=None, prefix: str = "", r
     ``image`` maps an image path of a figure block to its published src (e.g. publish_png); without
     it the path is used as written. ``prefix`` goes before the figure and table numbers ('S':
     'Figure S1'); ``refs`` are the figures and tables of another document (see resolve_xrefs).
-    Raises ValueError on a malformed block, a duplicate or invalid id, or a cross-reference to an
-    unknown id.
+    Raises ValueError on a malformed block, a duplicate or invalid id, a cross-reference to an
+    unknown id, or a comment that is not closed or has text after its ``-->`` (the message gives the line).
     """
     return resolve_xrefs(*md_blocks(md, heading_offset, image, prefix), refs)
 
@@ -141,11 +143,18 @@ def md_blocks(md: str, heading_offset: int = 0, image=None, prefix: str = "") ->
             flush()
             i += 1
             continue
-        if line.lstrip().startswith("<!--"):
+        if line.lstrip().startswith("<!--"):  # a comment: dropped up to its '-->', which must end its line
             flush()
-            while i < len(lines) and "-->" not in lines[i]:
-                i += 1
-            i += 1
+            j = i
+            while j < len(lines) and "-->" not in lines[j]:
+                j += 1
+            if j == len(lines):
+                raise ValueError(f"line {i + 1}: comment not closed by '-->' (everything after it would be dropped)")
+            rest = lines[j].split("-->", 1)[1].strip()
+            if rest:
+                raise ValueError(f"line {j + 1}: text after '-->' would be dropped with the comment: "
+                                 f"{rest[:60]!r}{'...' if len(rest) > 60 else ''}; start it on a line of its own")
+            i = j + 1
             continue
         if line.startswith("```"):
             flush()

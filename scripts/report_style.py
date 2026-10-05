@@ -25,11 +25,12 @@ RC = {
     "figure.dpi": DPI,
 }
 
-# arrays (colour) and Neuromag channel sets
+# arrays (colour) and Neuromag channel sets; the labels are the manuscript's terms
 ARRAY_COLOR = {"opm_dense": "#0072B2", "opm_matched": "#56B4E9", "opm204": "#56B4E9",
                "squid": "#000000", "combined": "#000000", "mag": "#999999", "grad": "#555555"}
-ARRAY_LABEL = {"opm_dense": "OPM dense", "opm_matched": "OPM matched", "squid": "Neuromag",
-               "combined": "Neuromag (306)", "mag": "Neuromag magnetometers (102)", "grad": "Neuromag gradiometers (204)"}
+ARRAY_LABEL = {"opm_dense": "dense OPM array", "opm_matched": "site-matched OPM array", "squid": "Neuromag",
+               "combined": "Neuromag (306 channels)", "mag": "Neuromag magnetometers (102)", "grad": "Neuromag gradiometers (204)"}
+ARRAY_SHORT = {"opm_dense": "dense OPM", "opm_matched": "site-matched OPM"}  # the manuscript's short forms
 
 # anatomies, in the order of the pediatric results; class decides the marker
 ANAT_ORDER = ["adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC"]

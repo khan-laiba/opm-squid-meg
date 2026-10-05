@@ -207,6 +207,26 @@ class TestWriterFacts(unittest.TestCase):
         self.assertEqual(self.F["wr_confirm_pilot_p"]["value"], "0.074 and 0.21")
         self.assertEqual(self.F["wr_confirm_pilot_locs_per_band"]["raw"], 18)
 
+    def test_confirmatory_equal_rate_counts_and_rate_cells(self):
+        labels = json.loads((ROOT / "results/g4_confirm/g4_confirm_summary.json").read_text())["anatomies"]
+        per = {a: json.loads((ROOT / f"results/g4_confirm/g4c_{a}_summary.json").read_text()) for a in labels}
+        for thresholds in ("frozen", "matched"):
+            key = f"opm_dense/opm_vs_squid/combined/primary/{thresholds}"
+            low = [a for a in labels
+                   if per[a]["false_event_rate_equality_on_evaluation_null"][key]["conditional_binomial_p"] < 0.05]
+            n = self.F[f"wr_confirm_rate_equality_endpoint_{thresholds}_n_p05"]
+            heads = self.F[f"wr_confirm_rate_equality_endpoint_{thresholds}_heads_p05"]
+            self.assertEqual(n["raw"], len(low))
+            self.assertEqual(n["value"], str(len(low)))
+            self.assertEqual(heads["raw"], low)
+            self.assertEqual(heads["value"], W._name_list([W.HEAD_LABELS[a] for a in low]) if low else "none")
+        self.assertEqual(self.F["wr_confirm_rate_equality_endpoint_frozen_heads_p05"]["value"], "24-month template and child B")
+        self.assertEqual(self.F["wr_confirm_rate_equality_endpoint_matched_heads_p05"]["value"], "school-age size")
+        cells = sum(1 for a in labels for k in per[a]["false_events"] if k.endswith("|primary"))
+        self.assertEqual(self.F["wr_confirm_n_rate_cells"]["raw"], cells)
+        self.assertEqual(cells, 3 * len(labels))
+        self.assertEqual(self.F["wr_confirm_n_rate_cells"]["value"], "27")
+
     def test_count_words_match_the_label_lists(self):
         labels = json.loads((ROOT / "results/g4/g4_pediatric_comparison.json").read_text())["labels"]
         self.assertEqual(self.F["wr_n_smaller_heads_words"]["raw"], len(labels) - 1)
@@ -309,6 +329,127 @@ class TestWriterFacts(unittest.TestCase):
         bins = ns["sweep"]["entries"]["15"]["depth"]["opm_dense/combined/intrinsic+brain"]
         self.assertEqual({b["hi"] - b["lo"] for b in bins}, {self.F["wr_ns_depth_bin_mm"]["raw"]})
         self.assertEqual(self.F["wr_ns_depth_bin_mm"]["value"], "5")
+
+    def test_sweep_list_and_depth_band_words(self):
+        levels = self.g2["config"]["sensors"]["opm_asd_fT_per_rtHz"]
+        self.assertEqual(self.F["wr_opm_asd_sweep_list"]["raw"], [float(x) for x in levels])
+        self.assertEqual(self.F["wr_opm_asd_sweep_list"]["value"], "7, 10, 15, 20 and 30")
+        locs = json.loads((ROOT / "results/g4/g4_adult_summary.json").read_text())["locations"]
+        n = len({l["stratum"][0] for l in locs})
+        self.assertEqual(self.F["wr_n_depth_bands_words"]["raw"], n)
+        self.assertEqual(self.F["wr_n_depth_bands_words"]["value"], "four")
+
+    def test_background_scaling_against_the_unscaled_adult(self):
+        d = json.loads((ROOT / "results/g3b/g3b_summary.json").read_text())
+        adult = d["D_median_dB"]["adult/opm_dense/combined/intrinsic+brain/detect"]
+        heads = ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC")
+        both = []
+        for factor, tok in (("0.5", "x0p5"), ("2", "x2")):
+            vals = [d["sensitivity_median_D_dB"][f"{h}/background_x{factor}/opm_dense/combined/intrinsic+brain"] - adult
+                    for h in heads]
+            f = self.F[f"wr_g3b_smaller_bgonly_{tok}_d_minus_adult_range"]
+            self.assertAlmostEqual(f["raw"][0], min(vals), places=9)
+            self.assertAlmostEqual(f["raw"][1], max(vals), places=9)
+            self.assertEqual(f["value"], f"{min(vals):+.2f} to {max(vals):+.2f}".replace("-", "−"))
+            # the stored 'delta/...' sensitivity scales the adult's background too, so it differs from this difference
+            stored = [d["sensitivity_median_D_dB"][f"delta/{h}/background_x{factor}/opm_dense/combined/intrinsic+brain"]
+                      for h in heads]
+            self.assertNotAlmostEqual(min(stored), min(vals), places=3)
+            self.assertTrue(all(v > 0 for v in vals))
+            both += vals
+        f = self.F["wr_g3b_smaller_bgonly_d_minus_adult_range"]
+        self.assertAlmostEqual(f["raw"][0], min(both), places=9)
+        self.assertAlmostEqual(f["raw"][1], max(both), places=9)
+        self.assertEqual(f["value"], "+0.12 to +1.16")
+
+    def test_maps_heads_colour_limit_and_sphere_depth(self):
+        v = json.loads((ROOT / "results/report/figures_clean.json").read_text())["figures"]["Figure_R13_maps_heads"]["values"]
+        self.assertEqual(self.F["wr_fig_maps_heads_colour_limit_db"]["raw"], v["colour_limit_dB"])
+        self.assertEqual(self.F["wr_fig_maps_heads_colour_limit_db"]["value"], "6")
+        for head in ("infant2yr", "infant12mo"):
+            s = v[head]["share_above_limit"] * 100
+            self.assertEqual(self.F[f"wr_fig_maps_heads_above_limit_pct_{head}"]["value"], f"{s:.1f}%")
+        self.assertEqual(self.F["wr_fig_maps_heads_above_limit_pct_infant2yr"]["value"], "3.1%")
+        self.assertEqual(self.F["wr_fig_maps_heads_above_limit_pct_infant12mo"]["value"], "5.7%")
+        p = json.loads((ROOT / "results/g1a/g1a_benchmark.json").read_text())["parameters"]
+        self.assertEqual(self.F["wr_sphere_brain_depth_mm"]["raw"], p["h_mm"] - p["b_mm"])
+        self.assertEqual(self.F["wr_sphere_brain_depth_mm"]["value"], "15")
+
+    def test_maps_heads_cortical_shares_recomputed_from_the_target_tables(self):
+        import csv
+        v = json.loads((ROOT / "results/report/figures_clean.json").read_text())["figures"]["Figure_R13_maps_heads"]["values"]
+        lim = v["colour_limit_dB"]
+        for head in ("infant2yr", "infant12mo"):
+            with (ROOT / f"results/g3b/g3b_targets_{head}.csv").open() as f:
+                f.readline()  # the provenance comment
+                rows = list(csv.DictReader(f))
+            d = [20 * math.log10(float(r["detect_opm_dense_opm_intrinsic+brain"])
+                                 / float(r["detect_squid_top_combined_intrinsic+brain"])) for r in rows]
+            self.assertEqual(len(rows), v[head]["n_targets"])
+            self.assertAlmostEqual(sum(x > lim for x in d) / len(d), v[head]["share_above_limit"], places=12)
+            cort = [x for r, x in zip(rows, d) if not r["region"].endswith(".unknown")]
+            self.assertEqual(len(cort), v[head]["n_targets"] - v[head]["medial_wall"])
+            share = sum(x > lim for x in cort) / len(cort) * 100
+            f = self.F[f"wr_fig_maps_heads_above_limit_cortical_pct_{head}"]
+            self.assertAlmostEqual(f["raw"], share, places=9)
+            self.assertEqual(f["value"], f"{share:.1f}%")
+            # the cortical share exceeds the all-target share, since no medial-wall target lies above the limit
+            self.assertGreater(f["raw"], self.F[f"wr_fig_maps_heads_above_limit_pct_{head}"]["raw"])
+        self.assertEqual(self.F["wr_fig_maps_heads_above_limit_cortical_pct_infant2yr"]["value"], "3.3%")
+        self.assertEqual(self.F["wr_fig_maps_heads_above_limit_cortical_pct_infant12mo"]["value"], "6.1%")
+
+    def test_projected_fitted_helmet_intervals_spanning_zero(self):
+        d = json.loads((ROOT / "results/g3b_constant_gap/g3b_constant_gap_summary.json").read_text())["delta_same_rule"]
+        n = 0
+        for h in ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC"):
+            lo, hi = d[f"{h}/gap_matched/opm_dense/combined/projected"]["delta"]["ci95"]
+            n += lo <= 0 <= hi
+        f = self.F["wr_cgap_fitted_proj_delta_n_ci_includes_zero_words"]
+        self.assertEqual(f["raw"], n)
+        self.assertEqual(f["value"], W.words(n))
+        self.assertEqual(f["value"], "three")
+
+    def test_anatomies_below_the_adult_depth_ratio_in_the_confirmatory_run(self):
+        bins = json.loads((ROOT / "results/g2/g2_depth_bins.json").read_text())["comparisons"]
+        ref = next(b["ratio"] for b in bins["opm_dense/combined/intrinsic+brain"]["bins"] if b["lo"] == 15 and b["hi"] == 20)
+        labels = json.loads((ROOT / "results/g4_confirm/g4_confirm_summary.json").read_text())["anatomies"]
+        below = []
+        for a in labels:
+            c = json.loads((ROOT / f"results/g4_confirm/g4c_{a}_summary.json").read_text())["comparisons"]
+            if c["opm_dense/opm_vs_squid/combined/practical@1/replicate0"]["s50_ratio_squid_over_opm"]["value"] < ref:
+                below.append(a)
+        f = self.F["wr_cf_dense_practical_ratio_below_adult_depth_heads"]
+        self.assertEqual(f["raw"], below)
+        self.assertEqual(below, ["infant2yr", "childA", "childB", "childC"])
+        self.assertEqual(f["value"], "the 24-month template, child A, child B and child C")
+        # the adult's own ratio lies above its 15-20 mm detectability ratio
+        self.assertNotIn("adult", below)
+
+    def test_exact_sign_flip_enumeration_and_the_endpoint_bound(self):
+        # the enumeration reproduces the stored exact values (20 or fewer non-zero differences) and simple cases
+        self.assertEqual(W.exact_sign_flip_p([]), 1.0)
+        self.assertEqual(W.exact_sign_flip_p([1, 1, 1]), 0.25)  # all three signs alike: 2 of 8 patterns
+        self.assertEqual(W.exact_sign_flip_p([2, -1]), 1.0)  # |sum| = 1 is reached by every pattern
+        labels = json.loads((ROOT / "results/g4_confirm/g4_confirm_summary.json").read_text())["anatomies"]
+        fam = "opm_dense/opm_vs_squid/combined/practical@1/replicate0"
+        exact, stored = {}, {}
+        for a in labels:
+            c = json.loads((ROOT / f"results/g4_confirm/g4c_{a}_summary.json").read_text())["comparisons"][fam]
+            exact[a] = W.exact_sign_flip_p(c["location_differences"])
+            stored[a] = c["location_sign_flip_p"]
+            if sum(1 for v in c["location_differences"] if v != 0) <= 20:
+                self.assertAlmostEqual(exact[a], stored[a], places=12)
+        G4 = _load("report_facts_g4")
+        adj = G4._holm(exact)
+        zeros = [a for a in labels if stored[a] == 0]
+        self.assertTrue(zeros)
+        m = max(adj[a] for a in zeros)
+        f = self.F["wr_cf_endpoint_p_holm_exact_max_mc_zero"]
+        self.assertAlmostEqual(f["raw"], m, places=15)
+        self.assertLess(m, 1e-4)  # every endpoint value printed '<0.0001' is below 0.0001 by exact enumeration
+        self.assertEqual(f["value"], "2.2 × 10⁻⁵")
+        self.assertEqual(W._sci(5e-5), "5.0 × 10⁻⁵")
+        self.assertEqual(W._sci(0.0099), "9.9 × 10⁻³")
 
     def test_registered_last_in_the_merged_facts(self):
         R = _load("report_facts")
