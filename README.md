@@ -129,7 +129,7 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   external-field projection (of all 306 channels jointly), for the matched-site OPM array and for
   extended sources (5-, 10- and 20-mm patches) the sign is the same (for the school-aged children
   below, except child C after the projection).
-- In the templates and size controls the gain comes from the fixed helmet's fit: left at the adult's
+- In the templates and size controls the gain depends on the fixed helmet's fit: left at the adult's
   ear-line position Delta is +1.14 to +2.50 dB; laterally centred or at true 18-mm contact it stays
   +0.44 to +1.09 dB; in a counterfactual helmet scaled with the head, centred laterally, it is -0.21,
   -0.38, -0.30, -0.16 and -0.18 dB (without the lateral centring the off-centre 24- and 18-month
@@ -144,8 +144,10 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   (+0.03 [+0.00, +0.05] dB for the school-age size; every template interval includes 0) and to -0.30
   and -0.39 dB in children A and B (child C +0.01 dB, its helmet limited by clearance); within each of
   these heads the fixed helmet at top contact gives +0.17 to +0.76 dB more than the fitted one (children
-  A and B +0.29 and +0.42, child C -0.12 dB). In this model the fixed helmet's gap, not head size, gives
-  the smaller heads their larger OPM gain.
+  A and B +0.29 and +0.42, child C -0.12 dB). In this model, then, fitting this helmet to the adult's median
+  gap substantially reduces the smaller heads' extra gain; the construction changes gap, placement and
+  coverage together, so it does not isolate the gap as the cause, and the school-aged children are
+  provisional examples (their near-scalp anatomy could not be verified).
 - The child-minus-adult difference of the median D stays positive for OPM noise 7-30 fT/sqrt(Hz),
   background variance x0.5 or x2 and a 1-layer head model (for the school-aged children except at 7
   fT/sqrt(Hz), -0.15 to -0.03 dB); at 30 fT/sqrt(Hz) the adult's D is -0.05 dB (Neuromag slightly
@@ -167,10 +169,10 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   external-field projection +0.03, +0.26 and -0.19 dB. Their cortex is nearly adult-sized
   (1,666-1,869 cm^2 of usable cortex, adult 1,878, school-age size control 1,470), so with the
   background fixed per unit area Neuromag's brain noise stays near the adult's while the closer OPM
-  sees more of it; reweighted to the adult's depth mix their gain is -0.05 to +0.05 dB, and within
-  depth strata it is near zero or negative down to 30 mm and positive only deeper. A scaled adult
-  therefore likely overstates the gain of school-aged heads of its size (point estimates); the 2-year size control and the
-  infant templates, whose cortices are smaller, may too. In a helmet scaled with the head, about the
+  sees more of it in these surfaces (a description of the model, not a tested mechanism); reweighted to the adult's depth mix their gain is -0.05 to +0.05 dB, and within
+  depth strata it is near zero or negative down to 30 mm and positive only deeper. In these three
+  provisional examples a scaled adult overstates the gain of school-aged heads of its size (point
+  estimates); whether this holds for school-aged children generally is not tested here. In a helmet scaled with the head, about the
   laterally centred head, Delta is -0.76, -0.59 and +0.04 dB (centred -0.74, -0.23 and +0.56 dB;
   child C's helmet barely shrinks).
 - At 100 nAm (detectability >= 5, an operational threshold) both systems reach 66 % of the

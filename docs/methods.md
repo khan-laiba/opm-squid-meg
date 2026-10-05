@@ -1034,7 +1034,7 @@ means the 2-year template; the 18- and 12-month templates are named.
   and 23.4 vs 26.2 mm): reweighted to the adult's depth mix the pooled difference falls from +0.34, +0.52
   and +0.19 to -0.04, +0.05 and -0.05 dB, and within depth strata Delta is near zero or negative down to
   30 mm (-0.36 to +0.08 dB; intervals excluding 0 for child A at 20-30 mm, child B at 15-25 mm and child
-  C at 20-25 mm) and positive deeper (30-60 mm: +0.01 to +1.77 dB). Mechanism: with the background
+  C at 20-25 mm) and positive deeper (30-60 mm: +0.01 to +1.77 dB). Noise and signal in these surfaces (a description of the model, not a tested mechanism; their near-scalp anatomy is unverified, D-G3-QC): with the background
   fixed per unit area, their nearly adult-sized cortex keeps Neuromag's brain noise near the adult's
   (magnetometers 194, 168 and 174 fT vs 202 fT; gradiometers 40, 34 and 36 vs 41 fT/cm) and raises the
   closer dense OPM's (711, 751 and 617 fT vs 494 fT) along with its peak signal (293, 326 and 240 fT vs
@@ -1107,12 +1107,12 @@ means the 2-year template; the 18- and 12-month templates are named.
   centred +2.08 and +2.50, top +0.88 and +0.96, laterally centred then top +0.75 and +0.91, 18-mm
   contact +0.85 and +0.85, back +1.49 and +1.68 dB; counterfactual +0.18 [+0.11, +0.47] and -0.02
   [-0.16, +0.11] dB, about the laterally centred head -0.16 [-0.39, +0.03] and -0.18 [-0.37, +0.06]
-  dB. The relative gain of the head-adaptive array in the templates and size controls therefore comes
-  from the fixed helmet's fit; with a helmet that fits as the adult's does, it reverses (about the
+  dB. In the templates and size controls the helmet scaled with the head removes the head-adaptive array's relative gain,
+  and about the laterally centred head reverses it (a construction that changes gap, placement and coverage together, so it does not isolate the gap as the cause; about the
   laterally centred head -0.21 and -0.38 dB for the scaled controls; -0.30, -0.16 and -0.18 dB for the
   templates, whose intervals include 0; school-aged children A and B -0.76 and -0.59 dB, child C level
   at +0.04 [-0.20, +0.20] dB).
-* Mechanism (templates and size controls; for the school-aged children, whose cortex is nearly
+* Signal and noise, a description of the model's quantities rather than a tested mechanism (templates and size controls; for the school-aged children, whose cortex is nearly
   adult-sized, see their bullet above). Both systems' detectability rises in these smaller heads, by
   different routes:
   vertex-wise from the adult, the dense OPM gains +1.10 and +1.67 dB in the two scaled controls,

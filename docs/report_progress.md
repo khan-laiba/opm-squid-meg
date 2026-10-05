@@ -22,7 +22,7 @@ figures and result files CC BY 4.0).
 | 1. Foundations: number provenance, new figures from stored outputs, verified literature table, site integration | done | 31,150 sourced facts; figures R1-R10; 15 studies (14 verified in full text); 197 tests pass |
 | 2. Draft the report as one narrative | done | about 8,500 words of main text, 10 figures, 3 tables, 39 references |
 | 3. Internal verification: numbers, claims against evidence, methods completeness, build, tests, links | done | 166 checker issues resolved; supplementary pages cleaned for publication; 197 tests pass |
-| 4. Referee rounds (both referees, same round) | in progress | round 1: major revisions from both; revision done; round 2 under review |
+| 4. Referee rounds (both referees, same round) | in progress | round 1: major revisions from both; round 2: minor revisions (Fable 5.1), major revisions (GPT-6 Astra); round-3 revision done; round 3 under review |
 | 5. Deploy to GitHub Pages and check the live site | first deployment done | the round-1 version is live; redeploy after acceptance |
 
 ## Referee rounds
@@ -33,7 +33,14 @@ figures and result files CC BY 4.0).
   cardiac/ocular fields as sensitivity analyses); a quality check of the school-aged children's MRI
   surfaces; a helmet fitted to each head at the adult's gap, with placement uncertainty; a confirmatory
   spike run with the endpoint fixed in advance; public code; and a shorter manuscript in its own terms.
-- Round 2 (commit after the revision's clean re-draw): both referees reviewing the revised manuscript, with the round-1 reports and the point-by-point response.
+- Round 2 (commit 1d7230c): **minor revisions** (Claude Fable 5.1) and **major revisions** (GPT-6 Astra).
+  Both again found no number that contradicts its result file and judged the first-round points largely
+  addressed. GPT-6 Astra's two major points: the school-aged children's anatomy cannot carry a mechanism
+  (measured to the MRI head boundary, child B's shallow targets fall from 247 to 47), and the helmet
+  fitted at the adult's gap shows that fitting reduces the smaller heads' extra advantage, not that the
+  advantage needs the wide gap. Fable 5.1 asked for multi-axis clinical arrays to be named, a checkable
+  pre-specification, the excluded cortex per head and a plainer Abstract.
+- Round 3 (the round-3 revision): both referees reviewing, with the round-2 reports and the response.
 
 ## Log
 
@@ -102,3 +109,14 @@ figures and result files CC BY 4.0).
   the remaining recheck findings were fixed and the point-by-point response written directly, its numbers
   checked against the rendered pages. The revision was merged into the main branch, and every export and
   report figure re-drawn at that clean commit (content identical; only the provenance stamps changed).
+- 2026-10-05: round 2 returned: minor revisions (Fable 5.1) and major revisions (GPT-6 Astra), so a third
+  round is needed. The round-3 revision (92c19ac and the commits after it): the three school-aged children
+  are provisional geometric examples throughout, with the two checks that make them so stated in Section
+  2.2 (depth to the MRI boundary; the cortex the source rule leaves out, 3.3-10.0 % in the children against
+  7.2 % in the adult, from the new scripts/study_cortex_exclusion.py); the earlier log's "shallow cortex is
+  genuine" is narrowed to what the check shows (not a scalp or registration error). The helmet result now
+  reads that fitting the helmet to the adult's median gap substantially reduces the smaller heads' extra
+  advantage, without isolating the gap as a cause. Also: multi-axis clinical arrays named, the confirmatory
+  run's commits and dates and its pilot runs in Section 2.5, full-precision adult detectabilities
+  (scripts/export_g2_target_metrics.py), the within-head contrast's aggregation order, a plainer Abstract and
+  Highlights, and a point-by-point response to both round-2 reports.

@@ -70,12 +70,13 @@ C_MEAS, C_HEART, C_NULL = "#000000", "#D55E00", "0.72"  # Neuromag measured, hea
 FS_TITLE, FS_ROW, FS_HEAD, FS_NOTE = 9.0, 7.2, 7.0, 6.8
 ROW_BAND = dict(color="0.91", lw=0, zorder=0)  # the published model's row in (b)
 CI_LINE = dict(lw=1.3, solid_capstyle="butt", zorder=3)
-# (b) the scenarios: letter, key in covariance_validation.json opm_implication.ratios (= its assumptions key), label
-SCENARIOS = (("A", "S1_same_relative_change", "the model's error common\nto both systems"),
-             ("B", "S2_same_variance_excess_both_modelled", "both cortical backgrounds\n× {k} (magnetometer excess)"),
-             ("C", "S3_neuromag_measured_opm_variance_excess", "Neuromag as measured; OPM\nbears the whole excess (bound)"),
-             ("D", "S4_neuromag_measured_opm_as_modelled", "Neuromag as measured;\nOPM as modelled"),
-             ("E", "S5_neuromag_measured_empty_room", "Neuromag's measured empty\nroom, modelled brain noise"))
+# (b) the scenarios: letter, key in covariance_validation.json opm_implication.ratios (= its assumptions key), a short
+# gloss (the caption defines each scenario in full)
+SCENARIOS = (("A", "S1_same_relative_change", "common model error"),
+             ("B", "S2_same_variance_excess_both_modelled", "both backgrounds × {k}"),
+             ("C", "S3_neuromag_measured_opm_variance_excess", "OPM bears the excess (bound)"),
+             ("D", "S4_neuromag_measured_opm_as_modelled", "Neuromag measured, OPM modelled"),
+             ("E", "S5_neuromag_measured_empty_room", "measured empty room"))
 # the phrases of docs/methods.md that define A-E, in this order (the letters must stay those of the methods)
 METHODS_LETTERS = (("A", "the model's error common"), ("B", "both cortical backgrounds scaled"),
                    ("C", "a pessimistic bound, Neuromag as measured"), ("D", "Neuromag as measured, the OPM exactly as modelled"),

@@ -1,6 +1,6 @@
 {
  "provenance": {
-  "commit": "e3212c3+dirty"
+  "commit": "92c19ac+dirty"
  },
  "figures": {
   "Figure_R17_noise_checks": {
@@ -103,7 +103,7 @@
       ]
      },
      "A": {
-      "label": "A  the model's error common to both systems",
+      "label": "A  common model error",
       "opm_dense": [
        1.1406818172925106,
        1.1170108285654663,
@@ -116,7 +116,7 @@
       ]
      },
      "B": {
-      "label": "B  both cortical backgrounds \u00d7 1.86 (magnetometer excess)",
+      "label": "B  both backgrounds \u00d7 1.86",
       "opm_dense": [
        1.1423546711300867,
        1.1180235285713418,
@@ -129,7 +129,7 @@
       ]
      },
      "C": {
-      "label": "C  Neuromag as measured; OPM bears the whole excess (bound)",
+      "label": "C  OPM bears the excess (bound)",
       "opm_dense": [
        0.7986949012315212,
        0.7598633417144931,
@@ -142,7 +142,7 @@
       ]
      },
      "D": {
-      "label": "D  Neuromag as measured; OPM as modelled",
+      "label": "D  Neuromag measured, OPM modelled",
       "opm_dense": [
        1.0338461910231258,
        0.9862671678860623,
@@ -155,7 +155,7 @@
       ]
      },
      "E": {
-      "label": "E  Neuromag's measured empty room, modelled brain noise",
+      "label": "E  measured empty room",
       "opm_dense": [
        1.1298886892956668,
        1.1033293487141593,
