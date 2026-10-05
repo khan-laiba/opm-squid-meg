@@ -493,9 +493,10 @@ def fig_r8(s: dict, keys) -> dict:
         ax.tick_params(axis="x", which="minor", length=2)
     a1.set_ylim(-0.75, 2.55)
     fig.supxlabel("depth below the scalp (mm; points at stratum centres)", fontsize=8.5, y=-0.02)
-    a1.set_ylabel("Δ = D$_\\mathrm{child}$ − D$_\\mathrm{adult}$ in the stratum (dB)")
-    a1.set_title("(a)  Scaled adults and infant templates", loc="left")
-    a2.set_title("(b)  Individual children (95 % CI)", loc="left")
+    a1.set_ylabel("Δ in the stratum: D$_\\mathrm{child}$ − D$_\\mathrm{adult}$\nof the stratum medians (dB)")
+    # panels (e) and (f): the report shows this image below Figure R7's panels (a) to (d)
+    a1.set_title("(e)  Scaled adults and infant templates", loc="left")
+    a2.set_title("(f)  Individual children (95 % parcel-bootstrap intervals)", loc="left")
     footnote(fig, f"Targets per stratum: {min(n_child):,}\u2013{max(n_child):,} (smaller heads), {min(n_adult):,}\u2013"
                   f"{max(n_adult):,} (adult); strata with fewer than {s['config']['strata']['min_n']} in either head omitted. "
                   f"Intervals: 95 %, parcels resampled in each anatomy ({s['config']['strata']['n_boot']:,} resamples).", y=-0.07)
@@ -867,8 +868,9 @@ def provenance(s: dict, keys, v: dict) -> dict:
                  f"for {names(below_2025)}, and {'positive' if deep_pos else 'mixed'} from 30 mm deeper."),
             caption_draft=("Figure R8. Depth-matched comparison with the adult. Delta per depth stratum (dense OPM vs Neuromag 306, "
                            "intrinsic + brain noise, top contact): the area-weighted median D of a head's cortical targets in the "
-                           "stratum minus the adult's in the same stratum. (a) Scaled adults and infant templates. (b) Individual "
-                           "children with 95 % parcel-bootstrap intervals. Strata with fewer than "
+                           "stratum minus the adult's in the same stratum (a difference of the two heads' medians). (e) Scaled "
+                           "adults and infant templates. (f) Individual children with 95 % parcel-bootstrap intervals (panel "
+                           "letters continue those of Figure R7, below which the report shows this image). Strata with fewer than "
                            f"{r8['min_n']} targets in either head are omitted; targets per stratum "
                            f"{r8['n_child_range'][0]:,}-{r8['n_child_range'][1]:,} (smaller heads), "
                            f"{r8['n_adult_range'][0]:,}-{r8['n_adult_range'][1]:,} (adult)."),

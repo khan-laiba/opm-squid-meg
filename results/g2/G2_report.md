@@ -5,7 +5,7 @@ Generated from `results/g2/g2_summary.json` (code commit e53bea8; band supplemen
 ## Common setup
 
 - Anatomy: MNE sample subject, measured head position; 7661 target dipoles (10 nAm, cortical normal, usable oct-6 vertices); background grid of 1755 area-weighted sources.
-- Neuromag geometry: the sample recording's Vectorview sensor positions and transforms with MRN T3 coil types (3024 magnetometers, 3014 planar gradiometers), a representative Neuromag system, not one installation; TRIUX typical noise values from the goal text (the specification image was not available).
+- Neuromag geometry: the sample recording's Vectorview sensor positions and transforms with MRN T3 coil types (3024 magnetometers, 3014 planar gradiometers), a representative Neuromag system, not one installation; the manufacturer's typical noise values (MEGIN TRIUX; not verified against the specification sheet).
 - Band 1-40 Hz (ENBW 35.1 Hz). Intrinsic noise: SQUID magnetometers 20.7 fT, gradiometers 21.3 fT/cm; OPM at 15 fT/sqrt(Hz) 89 fT (RMS in band).
 - Brain noise calibrated on good gradiometers to 37.1 fT/cm (task baseline minus empty room); predicted magnetometer level 192 fT vs 262 fT measured.
 - Room field: explains 94 % (magnetometers) and 1.6 % (gradiometers) of the empty-room variance; model vs measured empty room 115 vs 115 fT, 21.4 vs 20.2 fT/cm.

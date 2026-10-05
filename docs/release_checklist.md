@@ -20,10 +20,12 @@ gh api repos/khan-laiba/opm-squid-meg/pages
 ```
 
 Last checked 2026-10-02: `private: true`, `visibility: private`, `has_pages: false`; the Pages
-endpoint returns 404 (no site). Repository privacy does not establish website privacy: check Pages
-separately after any change. GitHub's documentation (read 2026-10-02, DOC-PAGES in the register)
-allows access-controlled Pages sites only on GitHub Enterprise Cloud; this repository belongs to a
-user account, so a Pages site, if ever enabled, would be public.
+endpoint returns 404 (no site; also verified 2026-10-01). Repository privacy does not establish
+website privacy: check Pages separately after any change. GitHub's documentation
+(docs.github.com/en/pages/getting-started-with-github-pages/changing-the-visibility-of-your-github-pages-site,
+read 2026-10-02; until 2026-10-04 recorded as row DOC-PAGES of the register) allows access-controlled
+(private) Pages sites only on GitHub Enterprise Cloud; this repository belongs to a user account, so
+a Pages site, if ever enabled, would be public.
 
 ## 2. Done in preparation
 
@@ -74,6 +76,15 @@ user account, so a Pages site, if ever enabled, would be public.
    `G4_motion_report.md`, `g4_motion_timecourse_example.csv`, `Figure_G4_motion.png`), and the
    report pages built from them (pediatric, epilepsy, G3B and motion reports, downloads). Confirm
    redistribution; both papers are cited wherever these appear.
+   **Decided 2026-10-04** (owner's instruction: publish the report with all its analyses): these
+   derived results are published. Basis: the templates are distributed publicly by their authors
+   (O'Reilly et al. 2021; J. E. Richards, who created the Neurodevelopmental MRI Database, is a
+   co-author) under LGPL-2.1 through MNE-Python's `fetch_infant_template`, and only derived results
+   are published (no template files), citing O'Reilly et al. (2021) and Richards et al. (2016)
+   wherever they appear. Recorded in the register (D-G3-ANAT) and `docs/methods.md` (section 10);
+   the supplementary pages credit both papers on every page and caption that shows these results,
+   including the G3B and motion report pages (`scripts/build_site.py`); the report's own captions
+   are in `report/report.md`.
 4. **School-aged children's derivatives** (OpenNeuro ds005234, Fadeev et al. 2024): `results/g3b/g3b_targets_child*.csv`,
    `results/g3b/school_subjects_preparation.json`, `results/g3b/school_anatomy_checks.json`, the G3B summary, report
    and figures that include children A-C, `results/g4/*child*`, the pediatric G4 cross-reading summaries and reports
@@ -91,6 +102,12 @@ user account, so a Pages site, if ever enabled, would be public.
 7. **Digitised figure data.** `scripts/digitise_hunold_fig6.py` and its output reproduce a
    waveform digitised from Hunold et al. (2016) Fig. 6; confirm that publishing the digitised
    values is acceptable.
+   **Resolved 2026-10-04** (publication of the report with all its analyses, item 3): the digitised
+   comparison values of Hunold et al. (2016) are published as factual comparison data with
+   attribution: the colour classes digitised from Figs 4a and 5a
+   (re-plotted in `Figure_G1B_vs_paper.png`, compared in the G1B table) and the Fig. 6 values in
+   `g1b_summary.json`. Their source is named where they are shown (S1 caption and table: "values
+   digitised from Hunold et al. (2016), Figs 4a and 5a, for comparison"; the downloads note on S8).
 8. **Local references.** `docs/audit.md` and `goal_condition.txt` name the local working folders,
    and `legacy/realistic_head_output/realistic_head_results.npz` stores the local SUBJECTS_DIR of
    the original run; edit or drop before publication if the folder names should not appear.

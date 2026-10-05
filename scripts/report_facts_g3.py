@@ -298,6 +298,10 @@ def g3a_facts(F: Facts, s: dict) -> None:
 def anatomy_facts(F: Facts, s: dict) -> None:
     an, arr, cfg = s["anatomies"], s["arrays"], s["config"]
     adult_area = an["adult"]["cortical_area_cm2"]
+    for nt, key in (("scaled", "size-only control"), ("templates", "infant template"), ("children", "school-aged child")):
+        ks = [a for a, v in an.items() if key in v["description"]]
+        F.add(f"g3b_n_{nt}_heads", count(len(ks)), len(ks),
+              f"{G3B} :: derived: number of anatomies whose description contains '{key}' ({', '.join(ks)})")
     for a in ANATS:
         t, x = TOK[a], an[a]
         hs = x["head_size"]
@@ -590,6 +594,16 @@ def strata_facts(F: Facts, s: dict) -> None:
     F.add("g3b_children_depth_20_25mm_ci_below_zero_count", count(len(below)), len(below),
           f"{G3B} :: derived: number of children A-C whose comparisons['<anat>/{key}'].delta_by_depth (20-25 mm) ci95 lies "
           f"entirely below 0 ({', '.join(below)})")
+    # the children's shallow strata (10-15 to 25-30 mm): how many child-stratum cells, how many negative, and the
+    # largest lower interval bound (at or below 0 means no interval lies entirely above 0)
+    cells = [(c, r) for c in SCHOOL for r in rows[c] if "delta" in r and 10 <= r["lo"] and r["hi"] <= 30]
+    sh = f"{G3B} :: derived: children A-C and the strata 10-15 to 25-30 mm of comparisons['<anat>/{key}'].delta_by_depth[]"
+    neg = [f"{c} {r['lo']:g}-{r['hi']:g} mm" for c, r in cells if r["delta"] < 0]
+    F.add("g3b_children_depth_10_30mm_cells_n", count(len(cells)), len(cells), f"{sh} (child-stratum cells with a delta)")
+    F.add("g3b_children_depth_10_30mm_delta_negative_count", count(len(neg)), len(neg), f"{sh}.delta < 0 ({', '.join(neg)})")
+    lo_max = max(cells, key=lambda cr: cr[1]["ci95"][0])
+    F.add("g3b_children_depth_10_30mm_ci_lo_max", signed(lo_max[1]["ci95"][0]), lo_max[1]["ci95"][0],
+          f"{sh}.ci95[0], largest lower bound (at {lo_max[0]} {lo_max[1]['lo']:g}-{lo_max[1]['hi']:g} mm)")
 
 
 def other_placement_facts(F: Facts, s: dict) -> None:
@@ -1114,8 +1128,23 @@ def config_facts(F: Facts, s: dict, root: Path) -> None:
           f"{path}.usefulness.primary_reference_nAm (nAm)")
     F.add("g3b_cfg_bg_factors", ", ".join(const(f) for f in cfg["background"]["variance_factors"]),
           cfg["background"]["variance_factors"], f"{path}.background.variance_factors")
+    vf = cfg["background"]["variance_factors"]
+    F.add("g3b_cfg_bg_factor_low", const(min(vf)), min(vf), f"{path}.background.variance_factors (smallest factor)")
+    F.add("g3b_cfg_bg_factor_high", const(max(vf)), max(vf), f"{path}.background.variance_factors (largest factor)")
     st = cfg["strata"]
     F.add("g3b_cfg_depth_edges", ", ".join(const(x) for x in st["depth_edges_mm"]), st["depth_edges_mm"], f"{path}.strata.depth_edges_mm")
+    edges = st["depth_edges_mm"]
+    for lo, hi in zip(edges[:-1], edges[1:]):  # depth strata below each head's scalp, as labels ('20–25')
+        F.add(f"g3b_depth_stratum_{const(lo)}_{const(hi)}_mm", f"{const(lo)}–{const(hi)}", [lo, hi],
+              f"{path}.strata.depth_edges_mm (stratum {const(lo)}-{const(hi)} mm below the scalp)")
+    if edges[1] != 10 or edges[5] != 30:
+        raise ValueError("depth strata changed: the span facts below assume edges 10 and 30 mm")
+    F.add("g3b_depth_span_10_30_mm", f"{const(edges[1])}–{const(edges[5])}", [edges[1], edges[5]],
+          f"{path}.strata.depth_edges_mm (the strata from {const(edges[1])}-{const(edges[2])} to {const(edges[4])}-{const(edges[5])} mm)")
+    F.add("g3b_depth_span_10_20_mm", "10–20", [10, 20],
+          f"{G3B} :: template_depth_checks['<anat>'].area_share_10_20mm (the area share 10-20 mm below the scalp)")
+    F.add("g3b_shallow_target_limit_mm", const(edges[1]), edges[1],
+          f"{path}.strata.depth_edges_mm[1] (the shallowest stratum, {const(edges[0])}-{const(edges[1])} mm)")
     F.add("g3b_cfg_orientation_edges", ", ".join(const(x) for x in st["orientation_edges_deg"]), st["orientation_edges_deg"],
           f"{path}.strata.orientation_edges_deg (deg; 90.1 closes the last stratum at 90)")
     F.add("g3b_cfg_min_n", const(st["min_n"]), st["min_n"], f"{path}.strata.min_n (fewer targets: sparse)")
@@ -1245,6 +1274,84 @@ def region_facts(F: Facts, s: dict, root: Path) -> None:
         F.range(f"regh_children_cfx_vs_{r}_lobes", {f"{c} {lb}": series[("cfx", r, lb)][c] for c in SCHOOL for lb in DK_LOBES},
                 signed, G3B, f"placement_D['<anat>/counterfactual_x-centred/{r}/intrinsic+brain'].by_lobe",
                 "children A-C and the six lobes")
+    # the cells of the regions-by-head table (results/report/Figure_R5_regions_heads.png): the six lobes and four parcel rows
+    # at top contact; the six lobes in the scaled, laterally centred counterfactual helmet
+    rows = list(DK_LOBES) + ["precentral", "superiortemporal", "parahippocampal", "mesial_temporal"]
+    top = {reg: series[("top", "combined", reg)] for reg in rows}
+    files = ", ".join(f"results/g3b/g3b_targets_{a}.csv" for a in ANATS)
+    key = "regh_<anat>_top_vs_combined_<row> (lobes: placement_D by_lobe; parcels and the mesial temporal group: area-weighted medians)"
+    F.range("regh_top_vs_combined_cells", {f"{a} {reg}": top[reg][a] for reg in rows for a in ANATS}, signed, f"{G3B}, {files}",
+            key, "all nine heads and the ten rows (six lobes, precentral, superior temporal, parahippocampal, mesial temporal)")
+    above = sum(top[reg][a] > top[reg]["adult"] for reg in rows for a in SMALLER)
+    src = (f"{G3B}, {files} :: derived: number of cells (smaller head, row) of {key} that exceed the adult's value in the same row, "
+           "over the eight smaller heads and the ten rows")
+    F.add("regh_top_vs_combined_smaller_cells_above_adult_count", count(above), above, src)
+    F.add("regh_top_vs_combined_smaller_cells_n", count(len(rows) * len(SMALLER)), len(rows) * len(SMALLER),
+          f"{G3B}, {files} :: derived: eight smaller heads x ten rows")
+    cfx = {lb: series[("cfx", "combined", lb)] for lb in DK_LOBES}
+    at_or_below = sum(cfx[lb][a] <= cfx[lb]["adult"] for lb in DK_LOBES for a in SMALLER)
+    key = "placement_D['<anat>/counterfactual_x-centred/combined/intrinsic+brain'].by_lobe"
+    F.add("regh_cfx_vs_combined_smaller_lobe_cells_at_or_below_adult_count", count(at_or_below), at_or_below,
+          f"{G3B} :: derived: number of cells (smaller head, lobe) of {key} at or below the adult's value for the same lobe, "
+          "over the eight smaller heads and the six lobes")
+    F.add("regh_cfx_vs_combined_smaller_lobe_cells_n", count(len(DK_LOBES) * len(SMALLER)), len(DK_LOBES) * len(SMALLER),
+          f"{G3B} :: derived: eight smaller heads x six lobes of {key}")
+
+
+# ----------------------------------------------------------------------------------------------
+def extra_facts(F: Facts, s: dict, s3a: dict) -> None:
+    """Anatomy labels as numbers (template ages, sphere ages), the feasible placement families, the NumPy version, Delta
+    and D ranges for the scaled adults and the templates separately, and the lobe cells of the scaled, laterally centred
+    helmet counted against the adult at top contact."""
+    an, cfg = s["anatomies"], s["config"]
+    for a in TEMPLATES:
+        m = re.search(r"ANTS(\d+)-0(Years|Months)3T", an[a]["description"])
+        if not m:
+            raise ValueError(f"{G3B}: template name not found in anatomies['{a}'].description")
+        months = int(m.group(1)) * (12 if m.group(2) == "Years" else 1)
+        F.add(f"g3b_{a}_age_months", str(months), months,
+              f"{G3B} :: anatomies['{a}'].description and config.anatomy.templates (template {m.group(0)}: age in months)")
+        if m.group(2) == "Years":
+            F.add(f"g3b_{a}_age_years", m.group(1), int(m.group(1)),
+                  f"{G3B} :: anatomies['{a}'].description (template {m.group(0)}: age in years; the 2-year size control is "
+                  "the adult scaled to this template's head circumference, anatomies['size2yr'].scale_note)")
+    for head, h in HEAD3A.items():
+        m = re.search(r"\((\d+)-yr\)", head)
+        if m:
+            F.add(f"g3a_{h}_age_years", m.group(1), int(m.group(1)), f"{G3A} :: size_following['{head}'] (the head's age label, years)")
+    inf = s["infeasible_placements"]
+    for a in ANATS:
+        n = len([p for p in FAMILY if p not in inf.get(a, [])])
+        F.add(f"g3b_{TOK[a]}_n_family_feasible", count(n), n,
+              f"{G3B} :: derived: the {len(FAMILY)} family placements minus infeasible_placements['{a}'] ({', '.join(inf.get(a, [])) or 'none'})")
+    F.add("g3b_numpy_version", s["provenance"]["numpy_version"], s["provenance"]["numpy_version"], f"{G3B} :: provenance.numpy_version")
+    comp, dm = s["comparisons"], s["D_median_dB"]
+    for k, kt in (("intrinsic+brain", "ib"), ("projected", "proj")):
+        key = f"opm_dense/combined/{k}/detect"
+        F.group_ranges(f"g3b_{{g}}_dense_vs_combined_{kt}_delta", {c: comp[f"{c}/{key}"]["delta"]["median"] for c in SMALLER},
+                       signed, G3B, f"comparisons['<anat>/{key}'].delta.median", groups=("scaled", "templates"))
+        F.group_ranges(f"g3b_{{g}}_dense_vs_combined_{kt}_d", {a: dm[f"{a}/{key}"] for a in SMALLER}, signed, G3B,
+                       f"D_median_dB['<anat>/{key}']", groups=("scaled", "templates"))
+    plc = s["placement_D"]
+    # the counterfactual helmet with the room field projected out: no Delta estimator is stored for it
+    # (delta_other_placements holds intrinsic + brain only), so the difference of the pooled medians
+    for k, kt in (("projected", "proj"),):
+        key = f"placement_D['<anat>/counterfactual_x-centred/combined/{k}'].median - placement_D['adult/counterfactual_x-centred/combined/{k}'].median"
+        ref = plc[f"adult/counterfactual_x-centred/combined/{k}"]["median"]
+        F.group_ranges(f"g3b_{{g}}_cfx_dense_vs_combined_{kt}_d_minus_adult_cfx",
+                       {a: plc[f"{a}/counterfactual_x-centred/combined/{k}"]["median"] - ref for a in SMALLER}, signed, G3B, key)
+    top = plc["adult/top/combined/intrinsic+brain"]["by_lobe"]
+    val = lambda x: x["median"] if isinstance(x, dict) else x  # noqa: E731
+    key = "placement_D['<anat>/counterfactual_x-centred/combined/intrinsic+brain'].by_lobe"
+    for g, labs in (("smaller", SMALLER), ("templates_scaled", SCALED + TEMPLATES), ("children", SCHOOL)):
+        cells = [(a, lb) for a in labs for lb in DK_LOBES]
+        n = sum(val(plc[f"{a}/counterfactual_x-centred/combined/intrinsic+brain"]["by_lobe"][lb]) <= val(top[lb]) for a, lb in cells)
+        F.add(f"regh_cfx_vs_combined_{g}_lobe_cells_at_or_below_adult_top_count", count(n), n,
+              f"{G3B} :: derived: number of cells ({GROUP_DESC[g]} x six lobes) of {key} at or below the adult's value for the "
+              "same lobe at top contact (placement_D['adult/top/combined/intrinsic+brain'].by_lobe)")
+        if g != "smaller":
+            F.add(f"regh_cfx_vs_combined_{g}_lobe_cells_n", count(len(cells)), len(cells),
+                  f"{G3B} :: derived: {GROUP_DESC[g]} x six lobes of {key}")
 
 
 # ----------------------------------------------------------------------------------------------
@@ -1252,7 +1359,8 @@ def facts(root: Path = ROOT) -> dict:
     """Every G3A, G3B and regions-by-head fact, name -> {"value", "raw", "source"}."""
     root = Path(root)
     F = Facts()
-    g3a_facts(F, json.loads((root / G3A).read_text()))
+    s3a = json.loads((root / G3A).read_text())
+    g3a_facts(F, s3a)
     s = json.loads((root / G3B).read_text())
     anatomy_facts(F, s)
     placement_facts(F, s)
@@ -1269,6 +1377,7 @@ def facts(root: Path = ROOT) -> dict:
     school_check_facts(F, root)
     config_facts(F, s, root)
     region_facts(F, s, root)
+    extra_facts(F, s, s3a)
     return dict(F)
 
 

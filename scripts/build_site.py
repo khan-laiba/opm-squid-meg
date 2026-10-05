@@ -58,6 +58,39 @@ ANAT = {"adult": "adult (sample subject)", "school": "school-age size (scaled ad
 CHILDREN = ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC")
 TEMPLATES = ("infant2yr", "infant18mo", "infant12mo")
 SCHOOL = ("childA", "childB", "childC")  # individual school-aged children (OpenNeuro ds005234)
+# credits, shown wherever the material appears on these pages (the report's own captions are in report/report.md)
+JAS_CREDIT = ('bioRxiv, <a href="https://doi.org/10.64898/2026.08.17.744953">doi:10.64898/2026.08.17.744953</a>, CC BY 4.0 '
+              '(<a href="https://creativecommons.org/licenses/by/4.0/">https://creativecommons.org/licenses/by/4.0/</a>); '
+              "redrawn from our reimplementation of their model.")
+SCHOOL_DOI = "doi:10.18112/openneuro.ds005234.v2.2.0"
+SCHOOL_DOI_LINK = f'<a href="https://doi.org/10.18112/openneuro.ds005234.v2.2.0">{SCHOOL_DOI}</a>'
+HUNOLD_DIGITISED = "values digitised from Hunold et al. (2016), Figs 4a and 5a, for comparison"
+
+
+def jas(fig_no, lead="Adapted"):
+    """Credit line of a figure adapted from Jas et al. (2026), a CC BY 4.0 preprint."""
+    return f"{lead} from Jas et al. (2026), Fig. {fig_no}, {JAS_CREDIT}"
+
+
+def credits(labels, link=True):
+    """Credit of the infant templates (O'Reilly et al. 2021, from Richards et al. 2016) and of the school-aged children
+    (OpenNeuro ds005234) among the anatomy labels shown; '' if none. Plain text with link=False (table captions)."""
+    t, c = [k for k in TEMPLATES if k in labels], [k for k in SCHOOL if k in labels]
+    out = []
+    if t:
+        out.append(("Infant templates" if len(t) > 1 else "Infant template") + ": O'Reilly et al. (2021), built from the "
+                   "Neurodevelopmental MRI Database (Richards et al. 2016).")
+    if c:
+        who = "Children A-C" if len(c) == len(SCHOOL) else ", ".join(ANAT[k].split(" (")[0] for k in c)
+        out.append(f"{who[0].upper()}{who[1:]}: OpenNeuro ds005234 v2.2.0 ({SCHOOL_DOI_LINK if link else SCHOOL_DOI}; "
+                   "Fadeev et al. 2024).")
+    return " ".join(out)
+
+
+def with_credits(caption, labels, link=True):
+    """A caption followed by the credits of the anatomies it shows."""
+    c = credits(labels, link)
+    return f"{caption} {c}" if c else caption
 
 
 def load(rel):
@@ -129,6 +162,11 @@ def page_numbers(facts, used, out):
          "the build.</p>",
          f"<p>The report uses {len(used):,} of the {len(facts):,} facts available"
          + (", listed below in order of first use.</p>" if used else ".</p>")]
+    pediatric = [n for n in used if re.search(r"results/g3b/|results/g4/(g4_pediatric|g4_motion|g4_(infant|child))|infant|child[ABC]",
+                                              str(facts[n]["source"]))]
+    if pediatric and credits(CHILDREN):
+        h.append("<p><strong>Data sources.</strong> The pediatric facts derive from results of the infant templates and the "
+                 f"school-aged children. {credits(CHILDREN)}</p>")
     if used:
         h.append(sb.table(["Fact", "Value as printed", "Source"],
                           [[f"<code>{html.escape(n)}</code>", facts[n]["value"], source(facts[n]["source"])] for n in used],
@@ -150,11 +188,11 @@ def page_summary(d):
     pm = g4["paired"]["opm_matched/opm_vs_squid/combined/practical@1"]
     L = loc["results"]
     status = [("G0 audit, provenance, plan", "-", "done"),
-              ("G1A Jas et al. 2026 analytical benchmark", "REPRO", "done, internally reviewed"),
-              ("G1B Hunold et al. 2016 depth-orientation spike SNR (MEG)", "ADAPT (+ NEW OPM column)", "done, internally reviewed"),
-              ("G1C Goldenholz et al. 2009 cortical SNR maps (MEG)", "ADAPT (+ NEW OPM extension)", "done, internally reviewed"),
-              ("G2 realistic adult OPM vs Neuromag", "NEW", f"done, internally reviewed; frozen as {FROZEN_TAG} before the pediatric "
-               f"outcomes; recomputed with the whole-cell OPM clearance after the final reviews (adult-baseline-v3) and with every "
+              ("G1A Jas et al. 2026 analytical benchmark", "REPRO", "done"),
+              ("G1B Hunold et al. 2016 depth-orientation spike SNR (MEG)", "ADAPT (+ NEW OPM column)", "done"),
+              ("G1C Goldenholz et al. 2009 cortical SNR maps (MEG)", "ADAPT (+ NEW OPM extension)", "done"),
+              ("G2 realistic adult OPM vs Neuromag", "NEW", f"done; frozen as {FROZEN_TAG} before the pediatric "
+               f"outcomes; recomputed with the whole-cell OPM clearance after later checks (adult-baseline-v3) and with every "
                f"anatomy's head surface on its MRI scalp, so that every OPM array has the same standoff, as {CURRENT_TAG}"),
               ("G3A Jas head-size benchmark", "REPRO (+ NEW fixed shell)", "done" if d["g3a"] else "not run"),
               ("G3B pediatric fixed helmet vs head-adaptive OPM", "NEW",
@@ -164,9 +202,9 @@ def page_summary(d):
                ("adult done; pediatric done (" + ", ".join(ANAT[x] for x in d["g4p"]["labels"] if x != "adult") + ")"
                 if d.get("g4p") else "adult done; pediatric in progress")
                + ("; head motion and OPM slippage: bounded extension done" if d.get("motion") else "")),
-              ("G5 software, reproduction, report", "-", "local report (not deployed); 148 tests; a clean clone of the result commit "
-               "passes them (one skip without the lead-field cache); a fresh-environment smoke test passed on 2026-09-30 at an earlier "
-               "commit")]
+              ("G5 software, reproduction, report", "-", "the report and these supplementary pages are built from the stored "
+               "results by scripts/build_site.py, which fails on any missing number or broken link; the unit tests pass on a clean "
+               "clone (one skip without the lead-field cache)")]
     h = ["<p>Simulation study comparing on-scalp optically pumped magnetometers (OPM) with the Neuromag SQUID system: "
          "an analytical benchmark and adaptations of two published adult studies, a realistic adult comparison, a pediatric "
          "fixed-helmet versus head-adaptive extension, and interictal-spike detection and localization examples in both. The "
@@ -344,7 +382,9 @@ def pediatric_findings(d):
                      "50 % detection, dense OPM vs Neuromag combined: " + "; ".join(
                          f"{ANAT[lab]} {s50(lab, 'opm_dense/opm')} vs {s50(lab, 'squid/combined')} nAm" for lab in ["adult"] + labs)
                      + ". Details on the <a href=\"epilepsy.html#pediatric\">epilepsy page</a>.")
+    shown = kids + (list(g4p["labels"]) if g4p else [])
     return ("<h2 id=\"pediatric-findings\">Pediatric findings (G3B), with their conditions</h2>"
+            + (f"<p>{credits(shown)}</p>" if credits(shown) else "")
             + "".join(f'<div class="finding">{x}</div>' for x in items))
 
 
@@ -358,7 +398,7 @@ def page_benchmarks(d, out):
          fig(out, "g1a/fig3/Figure3_replicated.png",
              "Fig. 3 replica (&eta; = 3, adult sphere h = 95 mm, b = 80 mm, 30-nAm tangential dipole; OPM on the scalp, SQUID "
              "18 mm above it). The dotted line is drawn at 27.53 mm by a grid rule fitted to the published raster; the exact "
-             f"Eq. 3 root is {g1a['d_eq_mm']['3']:.3f} mm.", "Replica of Jas et al. Figure 3"),
+             f"Eq. 3 root is {g1a['d_eq_mm']['3']:.3f} mm. " + jas("3"), "Replica of Jas et al. Figure 3"),
          sb.table(["Item", "Printed [mm]", "Drawn [mm]", "Exact [mm]"],
                   [[r["item"], r["printed_mm"], f"{r['drawn_mm']:.2f}", f"{r['exact_mm']:.3f}"] for r in g1a["printed_vs_exact"]
                    if "printed_mm" in r],
@@ -369,9 +409,9 @@ def page_benchmarks(d, out):
          f"{g1a['eta_range_with_crossing'][0]:.4f} &lt; &eta; &lt; {g1a['eta_range_with_crossing'][1]:.4f}; "
          "the equal-SNR depth does not depend on the absolute noise level.</p>",
          fig(out, "g1a/Figure_G1A_fig4.png", "Fig. 4 reproduction: SNR vs depth for several noise ratios &eta; and the equal-SNR "
-             "depth vs &eta; (exact Eq. 3 roots as markers).", "Reproduction of Jas et al. Figure 4"),
+             "depth vs &eta; (exact Eq. 3 roots as markers). " + jas("4"), "Reproduction of Jas et al. Figure 4"),
          fig(out, "g1a/Figure_G1A_toy_fig6.png", "Fig. 6 toy experiment (explanatory only): a target dipole between two noise "
-             "dipoles; SNR as the ratio of peak fields vs sensor standoff.", "Toy experiment"),
+             "dipoles; SNR as the ratio of peak fields vs sensor standoff. " + jas("6"), "Toy experiment"),
          "<h2 id=\"g1b\">G1B: Hunold et al. 2016 depth-orientation spike SNR</h2>"]
     c = g1b["fig6_calibration"]
     h.append(f"<p>3,783 dipoles (600 nAm) and 20-mm&sup2; patches stratified to the paper's per-bin counts; background of "
@@ -389,9 +429,9 @@ def page_benchmarks(d, out):
                                  f"{v['mean_ratio_ours_to_paper']:.2f}", f"{v['mean_ratio_strong_bins']:.2f}", f"{v['mean_ratio_weak_bins']:.2f}",
                                  f"{100 * v['threshold_2p5_agreement']:.0f} %"])
     h.append(sb.table(["Background", "Sources", "Numerator", "Sensor", "r", "Mean ratio ours/paper", "Strong bins", "Weak bins",
-                       "2.5-threshold agreement"], rows, "Per-bin comparison with the digitised maps (Figs 4a and 5a)"))
-    h.append(fig(out, "g1b/Figure_G1B_vs_paper.png", "Our bin means against the paper's digitised colour classes (noise-free "
-                 "peak-to-peak numerator, calibrated background).", "G1B versus paper"))
+                       "2.5-threshold agreement"], rows, f"Per-bin comparison with the paper's maps ({HUNOLD_DIGITISED})"))
+    h.append(fig(out, "g1b/Figure_G1B_vs_paper.png", f"Our bin means against the paper's colour classes ({HUNOLD_DIGITISED}; "
+                 "noise-free peak-to-peak numerator, calibrated background).", "G1B versus paper"))
     h.append(fig(out, "g1b/Figure_G1B_bins_fig6_calibrated_dipole_p2p.png", "Mean SNR per depth x orientation bin for "
                  "magnetometers (MM), gradiometers (GM) and the matched OPM array, with unpaired per-bin tests; dipoles, "
                  "calibrated background.", "G1B dipole bins"))
@@ -495,7 +535,8 @@ def page_pediatric(d, out):
               sb.table(["Head", "h/b [mm]", "d_eq at eta 3 [mm]", "Normalized d_eq", "Printed [%]", "Brain volume with OPM ahead"], rows,
                        "Size-following SQUID shell (h + 18 mm), exact Eq. 3 roots"),
               fig(out, "g3a/Figure_G3A_fig5.png", "Fig. 5 reproduction (A, B), the brain-volume fraction (C) and a NEW idealised "
-                  "contrast with every head concentric in one adult shell (D).", "Head-size benchmark")]
+                  "contrast with every head concentric in one adult shell (D). " + jas("5", "Panels A and B adapted"),
+                  "Head-size benchmark")]
     else:
         h.append("<p>G3A (the Jas et al. head-size benchmark) has not been run yet.</p>")
     g3b = d.get("g3b")
@@ -511,8 +552,10 @@ def page_pediatric(d, out):
     h += [f"<h2 id=\"g3b\">G3B: fixed adult helmet vs head-adaptive OPM {label('NEW')}</h2>",
           "<p>The same Neuromag helmet (sensors, coil types and intrinsic noise unchanged) holds the adult, two size-only controls "
           "(the adult scaled to school-age and to 2-year head size; every vertex homologous to the adult's), the 24-, 18- and "
-          "12-month infant templates of O'Reilly et al. (2021) in their native dimensions and three school-aged children "
-          "(OpenNeuro ds005234, Fadeev et al. 2024; their own cortex and scalp, a modelled skull, fiducials transferred from the adult), at placements chosen from the scalp and helmet geometry only (primary: raised to "
+          "12-month infant templates of O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database (Richards et al. "
+          "2016), in their native dimensions and three school-aged children "
+          f"(OpenNeuro ds005234 v2.2.0, {SCHOOL_DOI_LINK}; Fadeev et al. 2024, J Neurodev Disord 16(1):67; their own cortex and "
+          "scalp, a modelled skull, fiducials transferred from the adult), at placements chosen from the scalp and helmet geometry only (primary: raised to "
           "20-mm contact with the top of the helmet). The OPM arrays are refitted to each head with the adult rules (10-mm cell, "
           "17-mm packing, nothing shrunk). Brain-background variance per unit cortical area, room field and intrinsic noise are "
           "the adult's. D = OPM minus Neuromag known-topography detectability in dB; Delta = D<sub>child</sub> - "
@@ -521,12 +564,14 @@ def page_pediatric(d, out):
           "10 of the <a href=\"methods.html\">methods</a>; full tables in the <a href=\"g3b-report.html\">G3B report</a>.</p>",
           sb.table(["Anatomy", "Construction", "Head circumference [mm]", "Breadth x length [mm]", "Targets", "Usable cortex [cm2]",
                     "OPM dense / matched sites", "Neuromag gap centred / top [mm]"], rows,
-                   "Anatomies and arrays (gap: median magnetometer coil centre to scalp)"),
-          fig(out, "g3b/Figure_G3B_geometry.png", "Sagittal and coronal scalp sections at the centred (grey) and top-contact (black) "
-              "placements in the fixed helmet, the counterfactual helmet scaled with the head (green) and the refitted dense OPM "
-              "sites (blue).", "Pediatric geometry")]
+                   with_credits("Anatomies and arrays (gap: median magnetometer coil centre to scalp).", A, link=False)),
+          fig(out, "g3b/Figure_G3B_geometry.png", with_credits(
+              "Sagittal and coronal scalp sections at the centred (grey) and top-contact (black) placements in the fixed helmet, "
+              "the counterfactual helmet scaled with the head (green) and the refitted dense OPM sites (blue).", A),
+              "Pediatric geometry")]
     rows = []
-    for c in [c for c in CHILDREN if f"{c}/opm_dense/combined/intrinsic+brain/detect" in g3b["comparisons"]]:
+    shown = [c for c in CHILDREN if f"{c}/opm_dense/combined/intrinsic+brain/detect" in g3b["comparisons"]]
+    for c in shown:
         for ref in ("combined", "grad", "mag"):
             r = g3b["comparisons"][f"{c}/opm_dense/{ref}/intrinsic+brain/detect"]
 
@@ -536,20 +581,22 @@ def page_pediatric(d, out):
 
             rows.append([ANAT[c], "Neuromag " + LABEL[ref], f(r["d_child"]), f(r["d_adult"]), f(r["delta"])])
     h += [sb.table(["Child anatomy", "Comparator", "D child [dB]", "D adult [dB]", "Delta [dB]"], rows,
-                   "Dense OPM vs Neuromag, intrinsic + brain noise, primary placement: area-weighted medians with parcel-bootstrap "
-                   "95 % intervals"),
-          fig(out, "g3b/Figure_G3B_depth.png", "D vs depth below the scalp in each anatomy (solid: dense OPM, dashed: matched).",
-              "D vs depth"),
-          fig(out, "g3b/Figure_G3B_delta.png", "Delta per depth stratum (child minus adult) for each comparator.", "Delta vs depth"),
-          fig(out, "g3b/Figure_G3B_placements.png", "D for every source-blind placement and the counterfactual helmet (left) and "
-              "the regional magnetometer-to-scalp gaps (right).", "Placements"),
+                   with_credits("Dense OPM vs Neuromag, intrinsic + brain noise, primary placement: area-weighted medians with "
+                                "parcel-bootstrap 95 % intervals.", shown, link=False)),
+          fig(out, "g3b/Figure_G3B_depth.png", with_credits("D vs depth below the scalp in each anatomy (solid: dense OPM, dashed: "
+                                                            "matched).", A), "D vs depth"),
+          fig(out, "g3b/Figure_G3B_delta.png", with_credits("Delta per depth stratum (child minus adult) for each comparator.", A),
+              "Delta vs depth"),
+          fig(out, "g3b/Figure_G3B_placements.png", with_credits("D for every source-blind placement and the counterfactual helmet "
+                                                                 "(left) and the regional magnetometer-to-scalp gaps (right).", A),
+              "Placements"),
           fig(out, "g3b/Figure_G3B_maps_scaled.png", "D on the adult's inflated cortex (adult and scaled controls).", "Maps, scaled"),
           fig(out, "g3b/Figure_G3B_maps_delta.png", "Delta at every vertex (scaled controls).", "Maps, Delta"),
-          *[fig(out, f"g3b/Figure_G3B_maps_{k}.png", f"D on the {ANAT[k]}'s inflated cortex (derived from O'Reilly et al. "
-                "2021 / Richards et al. 2016).", f"Maps, {ANAT[k]}") for k in TEMPLATES if (RES / "g3b" / f"Figure_G3B_maps_{k}.png").exists()],
+          *[fig(out, f"g3b/Figure_G3B_maps_{k}.png", with_credits(f"D on the {ANAT[k]}'s inflated cortex.", [k]),
+                f"Maps, {ANAT[k]}") for k in TEMPLATES if (RES / "g3b" / f"Figure_G3B_maps_{k}.png").exists()],
           fig(out, "g3b/Figure_G3B_usefulness_adult.png", "Where the dense OPM array, Neuromag, both or neither reach "
               "detectability 5 for a 100-nAm source (operational threshold), adult.", "Usefulness, adult"),
-          *[fig(out, f"g3b/Figure_G3B_usefulness_{k}.png", f"The same for the {ANAT[k]}.", f"Usefulness, {ANAT[k]}")
+          *[fig(out, f"g3b/Figure_G3B_usefulness_{k}.png", with_credits(f"The same for the {ANAT[k]}.", [k]), f"Usefulness, {ANAT[k]}")
             for k in TEMPLATES if (RES / "g3b" / f"Figure_G3B_usefulness_{k}.png").exists()]]
     return "\n".join(h)
 
@@ -655,11 +702,14 @@ def page_epilepsy_pediatric(d, out):
          "<p>The adult detection and localization studies rerun unchanged (configuration, seeds, detectors, operating points) on "
          "the G3B anatomies with Neuromag at the primary placement (top contact) and the refitted OPM arrays; thresholds are "
          "calibrated on each anatomy's own null data. The templates are averages, the school-age and 2-year-size heads scaled "
-         "adults and children A-C three individuals of one dataset; none is a population. Full tables: <code>results/g4/G4_pediatric_report.md</code>.</p>",
-         sb.table(["Anatomy", "Array", *DEPTH_BANDS], rows, "Strength for 50 % detection [nAm], practical detector at 1 false "
-                  "event/min, 95 % interval from a bootstrap over locations"),
-         sb.table(["Anatomy", *DEPTH_BANDS], prow, "Dense OPM vs Neuromag combined on identical events: locations favouring OPM / "
-                  "Neuromag (exact sign-flip p, uncorrected) and the paired strength ratio Neuromag/OPM [95 % CI]")]
+         + with_credits("adults and children A-C three individuals of one dataset; none is a population.", labs)
+         + " Full tables: <code>results/g4/G4_pediatric_report.md</code>.</p>",
+         sb.table(["Anatomy", "Array", *DEPTH_BANDS], rows, with_credits(
+             "Strength for 50 % detection [nAm], practical detector at 1 false event/min, 95 % interval from a bootstrap over "
+             "locations.", labs, link=False)),
+         sb.table(["Anatomy", *DEPTH_BANDS], prow, with_credits(
+             "Dense OPM vs Neuromag combined on identical events: locations favouring OPM / Neuromag (exact sign-flip p, "
+             "uncorrected) and the paired strength ratio Neuromag/OPM [95 % CI].", labs, link=False))]
     rates = [C[k]["1"] for k in C if k.endswith("/heldout_false_per_min") and "1" in C[k]]
     h.append(f"<p>Operating points: the frozen 1-per-minute thresholds give {min(rates):.2f}-{max(rates):.2f} false events per "
              "minute on each anatomy's held-out null data (event-level rates, distinct from the oracle's per-trial false-positive "
@@ -675,7 +725,8 @@ def page_epilepsy_pediatric(d, out):
                           ("localization", "localization errors")):
             png = RES / "g4" / f"Figure_G4_{kind}_{lab}.png"
             if png.exists():
-                h.append(fig(out, f"g4/Figure_G4_{kind}_{lab}.png", f"{ANAT[lab]}: {cap}.", f"{ANAT[lab]} {kind}"))
+                h.append(fig(out, f"g4/Figure_G4_{kind}_{lab}.png", with_credits(f"{ANAT[lab]}: {cap}.", [lab]),
+                             f"{ANAT[lab]} {kind}"))
     return "\n".join(h)
 
 
@@ -731,21 +782,25 @@ def page_motion(d, out):
          "template of the reference geometry is applied to the displaced data. <strong>B.</strong> In-band head rotation moves "
          "the OPM array through the static residual field of the room; the SQUIDs are fixed and see no such term. Results are "
          "per unit field and scale linearly with rotation x field. It does not establish motion robustness; sensor dynamic "
-         "range, gain changes and real head-motion statistics are not modelled. Methods: section 12 of the "
-         "<a href=\"methods.html\">methods</a>; all tables in the <a href=\"motion-report.html\">motion report</a>.</p>",
-         fig(out, "g4/Figure_G4_motion.png", "A: median change in detectability for sustained displacements (dots: template of the "
-             "reference geometry; bars: geometry known). B: OPM detectability vs in-band rotation in a 1-nT uniform field and a "
-             "1-nT/m gradient, when the artefact is not part of the noise model (red: no correction; blue: homogeneous-field "
-             "projection; green: 8-term projection; lighter: larger calibration errors). B': exact rigid motion over a recording.",
+         "range, gain changes and real head-motion statistics are not modelled."
+         + (f" {credits(keys)}" if credits(keys) else "")
+         + " Methods: section 12 of the <a href=\"methods.html\">methods</a>; all tables in the "
+         "<a href=\"motion-report.html\">motion report</a>.</p>",
+         fig(out, "g4/Figure_G4_motion.png", with_credits(
+             "A: median change in detectability for sustained displacements (dots: template of the reference geometry; bars: "
+             "geometry known). B: OPM detectability vs in-band rotation in a 1-nT uniform field and a 1-nT/m gradient, when the "
+             "artefact is not part of the noise model (red: no correction; blue: homogeneous-field projection; green: 8-term "
+             "projection; lighter: larger calibration errors). B': exact rigid motion over a recording.", keys),
              "Motion and slippage"),
-         sb.table(["Anatomy", "System", "Displacement", "Known [dB]", "Mismatched [dB]", "Note"], rows,
-                  "A. Sustained displacement: median change in detectability (dense OPM or Neuromag combined), cortical targets"),
+         sb.table(["Anatomy", "System", "Displacement", "Known [dB]", "Mismatched [dB]", "Note"], rows, with_credits(
+             "A. Sustained displacement: median change in detectability (dense OPM or Neuromag combined), cortical targets.", keys,
+             link=False)),
          sb.table(["Anatomy", "Correction", "Calibration error (axis tilt, gain)", "Unit field", "1-dB loss at [deg RMS]",
-                   "OPM no longer ahead at [deg RMS]", "Oracle loss at 5 deg [dB]"], brows,
+                   "OPM no longer ahead at [deg RMS]", "Oracle loss at 5 deg [dB]"], brows, with_credits(
                   "B. In-band rotation (per axis, RMS, about a pivot 60 mm below the head origin) in a unit field at which the "
                   "dense OPM array loses 1 dB, or falls to Neuromag's static detectability, with the artefact outside the noise "
                   "model (median curve over draws; 10th-90th percentiles of the per-draw thresholds); divide by the field in nT "
-                  "(or nT/m) for another room. Last column: artefact inside the noise model."),
+                  "(or nT/m) for another room. Last column: artefact inside the noise model.", keys, link=False)),
          f"<p>B'. Exact rigid motion over {tc['config']['duration_s']:g} s ({ANAT[tc['config']['anatomy']]}; drift up to "
          f"{tc['config']['drift_deg']:g} deg, in-band jitter {tc['config']['inband_rotation_rms_deg']:g} deg RMS per axis, "
          f"{tc['config']['b0_nT']:g} nT and {tc['config']['gradient_nT_per_m']:g} nT/m): peak field change at a sensor "
@@ -767,6 +822,16 @@ def page_reproduce(out, manifest):
          "<h2 id=\"downloads\">Downloads</h2>",
          "<p>Result files as committed. The commit is the one recorded in the result file; tables and reports carry the commit "
          "of the run that wrote them. The full SHA-256 of every file is in <a href=\"data/MANIFEST.json\">data/MANIFEST.json</a>.</p>",
+         "<p><strong>Data sources.</strong> The pediatric files (names with <code>infant</code> or <code>child</code>; the G3B, "
+         "pediatric G4, matched-rate, fit-failure and motion summaries and reports; <code>report/figures_pediatric.json</code>) hold "
+         "results derived from the 24-, 18- and 12-month infant templates of O'Reilly et al. (2021), built from the "
+         "Neurodevelopmental MRI Database (Richards et al. 2016) and distributed publicly by their authors under LGPL-2.1 "
+         "through MNE-Python's <code>fetch_infant_template</code>, and from three school-aged children of OpenNeuro ds005234 "
+         f"v2.2.0 ({SCHOOL_DOI_LINK}; Fadeev et al. 2024, J Neurodev Disord 16(1):67); only derived quantities are published, "
+         "not the template or MRI files (<code>child_bem_validation.json</code> is a check on the adult). G1A and G3A "
+         "reimplement the model of Jas et al. (2026; bioRxiv, "
+         '<a href="https://doi.org/10.64898/2026.08.17.744953">doi:10.64898/2026.08.17.744953</a>, CC BY 4.0); '
+         "<code>g1b_summary.json</code> includes values digitised from Hunold et al. (2016), Fig. 6, for comparison.</p>",
          sb.table(["File", "Size", "SHA-256 (first 16)", "Code commit"],
                   [[f'<a href="{html.escape(m["href"])}">{html.escape(m["path"])}</a>', m["size"], m["sha256"][:16],
                     m["commit"] + (" (historic diagnosis, not reproducible: see the methods)" if m["commit"].endswith("+dirty") else "")]
@@ -846,16 +911,22 @@ def main(argv=None):
     def md(path):
         return sb.md_to_html(path.read_text(), heading_offset=1, image=lambda p: sb.publish_png(p, RES, out))
 
+    def sources(labels):
+        """A credit line for a generated report that shows results of the infant templates or the school-aged children."""
+        c = credits(labels or ())
+        return f"<p><strong>Data sources.</strong> {c}</p>\n" if c else ""
+
     pages = {
         "index.html": (title, report),
         "benchmarks.html": ("S1. Adult reference benchmarks (G1)", page_benchmarks(d, out)),
         "adult.html": ("S2. Realistic adult comparison (G2)", page_adult(d, out)),
         "g2-report.html": ("G2 report", md(RES / "g2" / "G2_report.md")),
         "pediatric.html": ("S3. Pediatric extension (G3)", page_pediatric(d, out)),
-        "g3b-report.html": ("G3B report", md(RES / "g3b" / "G3B_report.md")
+        "g3b-report.html": ("G3B report", sources(d["g3b"] and d["g3b"]["anatomies"]) + md(RES / "g3b" / "G3B_report.md")
                             if (RES / "g3b" / "G3B_report.md").exists() else "<p>G3B has not been run yet.</p>"),
         "epilepsy.html": ("S4. Epilepsy relevance and head motion (G4)", page_epilepsy(d, out)),
-        "motion-report.html": ("G4 motion and slippage report", md(RES / "g4" / "G4_motion_report.md")
+        "motion-report.html": ("G4 motion and slippage report", sources(d["motion"] and d["motion"]["anatomies"])
+                               + md(RES / "g4" / "G4_motion_report.md")
                                if (RES / "g4" / "G4_motion_report.md").exists() else "<p>The motion extension has not been run yet.</p>"),
         "methods.html": ("S5. Methods, uncertainty and limitations", md(ROOT / "docs" / "methods.md")),
         "register.html": ("S6. Parameters, provenance and assumptions", md(ROOT / "docs" / "provenance_register.md")),

@@ -1,6 +1,6 @@
 {
  "provenance": {
-  "commit": "d7cafa6+dirty"
+  "commit": "bc80ef7+dirty"
  },
  "figures": {
   "Figure_R5_regions_heads": {
@@ -777,7 +777,7 @@
    ],
    "description": "g3b_summary.json comparisons['<anatomy>/opm_dense/combined/intrinsic+brain/detect'].delta_by_depth: per depth stratum (lo-hi below the scalp, each head's own depth), the area-weighted median D of the head's cortical targets minus the adult's (delta), with a 95 % interval from resampling parcels in each anatomy (ci95; drawn for the individual children only). Strata with fewer than 10 targets in either head have no delta and are skipped (0-10 mm: the adult has none). Targets per stratum: 15-1,788 (smaller heads), 26-1,572 (adult). Points at stratum centres (60-90 mm at 75 mm); the children's points are offset by 0.7 mm to keep the intervals apart.",
    "alt": "Two line plots of Delta against depth below the scalp. Scaled adults and infant templates: Delta is positive in every stratum. Individual children: Delta is \u22120.36 to +0.08 dB in the strata shallower than 30 mm, with the interval entirely below zero at 20-25 mm for Child C, Child A, Child B, and positive from 30 mm deeper.",
-   "caption_draft": "Figure R8. Depth-matched comparison with the adult. Delta per depth stratum (dense OPM vs Neuromag 306, intrinsic + brain noise, top contact): the area-weighted median D of a head's cortical targets in the stratum minus the adult's in the same stratum. (a) Scaled adults and infant templates. (b) Individual children with 95 % parcel-bootstrap intervals. Strata with fewer than 10 targets in either head are omitted; targets per stratum 15-1,788 (smaller heads), 26-1,572 (adult).",
+   "caption_draft": "Figure R8. Depth-matched comparison with the adult. Delta per depth stratum (dense OPM vs Neuromag 306, intrinsic + brain noise, top contact): the area-weighted median D of a head's cortical targets in the stratum minus the adult's in the same stratum (a difference of the two heads' medians). (e) Scaled adults and infant templates. (f) Individual children with 95 % parcel-bootstrap intervals (panel letters continue those of Figure R7, below which the report shows this image). Strata with fewer than 10 targets in either head are omitted; targets per stratum 15-1,788 (smaller heads), 26-1,572 (adult).",
    "values": {
     "order": [
      "school",

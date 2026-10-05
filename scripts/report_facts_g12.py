@@ -20,6 +20,7 @@ from __future__ import annotations
 import csv
 import json
 import math
+import re
 from pathlib import Path
 
 import numpy as np
@@ -34,6 +35,7 @@ HSE, NEAR = "results/g2/head_surface_effect.json", "results/g2/near_mesh_check.j
 SKIN, SKIN_V1 = "results/g2/bem_skin_refinement.json", "results/g2/bem_skin_refinement_v1_arrays.json"
 SPHERE, JAS = "results/g2/bem_sphere_check.json", "docs/literature/jas2026.md"
 METHODS, REGISTER, CFG = "docs/methods.md", "docs/provenance_register.md", "configs/g2_adult.toml"
+LITJSON, LITMD = "docs/literature/epilepsy_opm_studies.json", "docs/literature/epilepsy_opm_studies.md"
 
 ARRAYS = {"opm_dense": "dense", "opm_matched": "matched", "opm204": "opm204"}
 COMPS = ("combined", "mag", "grad")
@@ -208,6 +210,8 @@ def lit_facts(F):
     F.add("lit_eta0_printed", "1.7", 1.7, s + "section 3.4, Fig. 4E label eta0 (p. 15)")
     F.add("lit_eta1_printed", "5.3", 5.3, s + "section 3.4, Fig. 4E label eta1 (p. 15)")
     F.add("lit_eta_range", "1 to 6", [1, 6], s + "section 2.3 (p. 9)")
+    F.add("lit_eta_reference", "3", 3, s + "section 7 item 1 and section 3.4: the adult model's eta = 3, at which d_eq is printed "
+          "as 28 mm (Fig. 3, pp. 13-14) and the normalised d_eq of Fig. 5B is labelled (p. 16)")
     table1 = {"newborn": (55, 48), "1yr": (70, 62), "8yr": (85, 73), "adult": (95, 80)}
     for head, (h, b) in table1.items():
         F.add(f"lit_table1_{head}_h_mm", str(h), h, s + "section 3.1, Table 1 head radius h (p. 7)")
@@ -251,6 +255,32 @@ def lit_facts(F):
     F.add("lit_sef_deq_eta4p6_mm", "17.2", 17.2, s + "section 5.6, adult sphere d_eq at eta = 4.6 [derived in the note]")
     F.add("lit_sef_deq_eta4p1_mm", "19.3", 19.3, s + "section 5.6, adult sphere d_eq at eta = 4.1 [derived in the note]")
     F.add("lit_sef_band_range_hz", "4 to 330", [4, 330], s + "section 5.5, 4-Hz high-pass to 330-Hz anti-alias filter")
+
+
+def lit_study_facts(F, root):
+    """Counts of the verified literature table (docs/literature/epilepsy_opm_studies.json, one record per study)."""
+    recs = load(root, LITJSON)
+    s = LITJSON + " :: derived: "
+    n_clin = sum(r["category"] == "clinical" for r in recs)
+    n_model = sum(r["category"] == "modelling" for r in recs)
+    n_full = sum(r["verification_level"] != "abstract_only" for r in recs)
+    F.add("lit_studies_n", count(len(recs)), len(recs), s + "number of records (studies)")
+    F.add("lit_studies_clinical_n", count(n_clin), n_clin, s + "records with category 'clinical'")
+    F.add("lit_studies_modelling_n", count(n_model), n_model, s + "records with category 'modelling'")
+    F.add("lit_studies_full_text_n", count(n_full), n_full, s + "records whose verification_level is not 'abstract_only' (full text "
+          "of the version of record, or of the preprint where only the published abstract was accessible)")
+    n_vor = sum(r["verification_level"] == "full_text" for r in recs)
+    F.add("lit_studies_record_full_text_n", count(n_vor), n_vor, s + "records whose verification_level is 'full_text' (full text of "
+          "the version of record)")
+    md = (Path(root) / LITMD).read_text()
+    m = re.search(r"Searches and reading were done on (\d{4})-(\d{2})-(\d{2})", md)
+    if not m:
+        raise ValueError(f"{LITMD}: search date not found")
+    y, mo, dy = (int(x) for x in m.groups())
+    months = ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November",
+              "December")
+    F.add("lit_search_date", f"{dy} {months[mo - 1]} {y}", m.group(0).rsplit(" ", 1)[1],
+          f"{LITMD} :: introduction ('Searches and reading were done on {m.group(0).rsplit(' ', 1)[1]}')")
 
 
 # ------------------------------------------------------------------------------------------------
@@ -650,8 +680,14 @@ def g2_config_facts(F, d):
     sweep = c["sensors"]["opm_asd_fT_per_rtHz"]
     F.add("g2_opm_asd_sweep", ", ".join(f"{x:g}" for x in sweep), sweep, k + ".sensors.opm_asd_fT_per_rtHz")
     F.span("g2_opm_asd_sweep", sweep, lambda x: f"{x:g}", k + ".sensors.opm_asd_fT_per_rtHz")
+    for x in sweep:  # each level of the sweep, as named in the text (fT/sqrt(Hz))
+        F.add(f"g2_opm_asd_sweep_{tag(x)}", f"{x:g}", x, k + f".sensors.opm_asd_fT_per_rtHz (the level {x:g})")
     gaps = [g for g in c["sensors"]["opm_scalp_gap_mm"] if g > 0]
     F.add("g2_opm_gap_sweep_mm", " and ".join(f"{g:g}" for g in gaps), gaps, k + ".sensors.opm_scalp_gap_mm (0 = primary)")
+    F.add("g2_opm_gap_small_mm", f"{min(gaps):g}", min(gaps), k + ".sensors.opm_scalp_gap_mm (the smaller non-zero scalp gap)")
+    F.add("g2_opm_gap_large_mm", f"{max(gaps):g}", max(gaps), k + ".sensors.opm_scalp_gap_mm (the larger scalp gap)")
+    F.add("g2_ci_level_pct", pct(95), 95, f"{METHODS} :: section 8 ('95 % CIs from a bootstrap over 70 groups'); "
+          f"{G2} :: primary.oracle[*].ci95 (2.5th and 97.5th percentiles of the bootstrap)")
     F.add("g2_bad_channel", c["sensors"]["bads"][0], c["sensors"]["bads"][0], k + ".sensors.bads")
     F.add("g2_focal_nam", num(c["sources"]["focal_nAm"], 0), c["sources"]["focal_nAm"], k + ".sources.focal_nAm")
     F.add("g2_patch_radii_mm", ", ".join(f"{x:g}" for x in c["sources"]["patch_radii_mm"]), c["sources"]["patch_radii_mm"],
@@ -816,6 +852,8 @@ def g2_noise_facts(F, d, band):
     for b, x in band["bands"].items():
         bt = b.lower().replace("-", "_")
         kb = f"{BAND} :: bands['{b}']"
+        lo, hi = b.lower().replace("hz", "").split("-")
+        F.add(f"g2_band_{bt}_label", f"{lo}–{hi}", [float(lo), float(hi)], f"{kb} (the band's key: {lo} to {hi} Hz)")
         for arr, v in x["intrinsic_share_of_variance"].items():
             nm = ARRAYS.get(arr, arr)
             F.add(f"g2_band_{bt}_intrinsic_share_{nm}_pct", pct(100 * v), 100 * v,
@@ -912,6 +950,8 @@ def g2_depth_facts(F, d):
         if b["n"] > 0:
             F.add(f"g2_depth_{b['lo']:.0f}_{b['hi']:.0f}_n", count(b["n"]), b["n"],
                   f"{G2} :: log2_ratio_vs_depth[*][{first.index(b)}].n (targets with depth in [lo, hi) mm)")
+            F.add(f"g2_depth_bin_{b['lo']:.0f}_{b['hi']:.0f}_mm", f"{b['lo']:.0f}–{b['hi']:.0f}", [b["lo"], b["hi"]],
+                  f"{G2} :: log2_ratio_vs_depth[*][{first.index(b)}].lo, .hi (depth bin below the scalp, mm)")
     for key, bins in L.items():
         arr, comp, cond = key.split("/")
         base = f"g2_depth_{ARRAYS[arr]}_vs_{comp}_{CONDS[cond]}"
@@ -926,6 +966,9 @@ def g2_depth_facts(F, d):
             lo, hi, _ = pop[below[0]]
             F.add(f"{base}_below1_from_mm", f"{lo:.0f} to {hi:.0f}", [lo, hi],
                   f"{G2} :: derived: log2_ratio_vs_depth['{key}'], the shallowest bin from which every deeper populated bin has ratio < 1")
+            F.add(f"{base}_below1_from_bin", f"{lo:.0f}–{hi:.0f}", [lo, hi],
+                  f"{G2} :: derived: log2_ratio_vs_depth['{key}'], the shallowest bin from which every deeper populated bin has "
+                  "ratio < 1 (bin label, mm)")
     for arr in ARRAYS:
         for cond in ("intrinsic+brain", "projected"):
             key = f"{arr}/combined/{cond}"
@@ -1268,11 +1311,122 @@ def region_facts(F, root):
 
 
 # ------------------------------------------------------------------------------------------------
+def anatomy_noise_extra_facts(F, d, root):
+    """Neuromag's gradiometer count; the noise budget per channel (variance shares, the brain-noise inflation over the
+    sensor floor, the single-channel noise ratio across the OPM sweep); lobe depths and fields from the per-target CSV;
+    regional fields and within-system contrasts; every Desikan-Killiany parcel; the bridge's agreement window; the
+    cortex the 4-mm rule leaves out."""
+    sq = d["arrays"]["squid"]
+    F.add("g2_squid_grad_channels", str(sq["channels"] - sq["sites"]), sq["channels"] - sq["sites"],
+          f"{G2} :: derived: arrays.squid.channels - arrays.squid.sites (two planar gradiometers per sensor site)")
+    nc = d["noise_composition"]
+    terms = (("intrinsic", "sensor"), ("brain", "brain"), ("env", "room"))
+    for arr, x in nc.items():
+        nm = ARRAYS.get(arr, arr)
+        tot = sum(x[f"{t}_rms"] ** 2 for t, _ in terms)
+        for t, lab in terms:
+            v = 100 * x[f"{t}_rms"] ** 2 / tot
+            F.add(f"g2_noise_share_{nm}_{lab}_pct", pct(v), v,
+                  f"{G2} :: derived: noise_composition.{arr}.{t}_rms**2 over the sum of the squared intrinsic, brain and env RMS "
+                  "(share of the in-band channel variance, each component's median channel variance)")
+        infl = math.sqrt(1 + (x["brain_rms"] / x["intrinsic_rms"]) ** 2)
+        F.add(f"g2_noise_inflation_{nm}_1dp", num(infl, 1), infl,
+              f"{G2} :: derived: sqrt(1 + (noise_composition.{arr}.brain_rms / intrinsic_rms)**2) (in-band noise RMS with brain "
+              "noise over that of sensor noise alone)")
+    infl = {a: math.sqrt(1 + (nc[a]["brain_rms"] / nc[a]["intrinsic_rms"]) ** 2) for a in ("squid_mag", "opm_dense", "opm_matched")}
+    F.ratio("g2_noise_inflation_mag_over_dense", infl["squid_mag"] / infl["opm_dense"],
+            f"{G2} :: derived: the brain-noise inflation of the Neuromag magnetometers over that of the dense OPM channels "
+            "(sqrt(1 + (brain_rms / intrinsic_rms)**2) of noise_composition.squid_mag over the same of opm_dense)")
+    opm_rms = d["noise_validation"]["model"]["intrinsic_rms_opm_fT"]
+    mag = nc["squid_mag"]
+    for asd, v in opm_rms.items():
+        o, vi = nc["opm_dense"], v * 1e-15
+        with_room = math.sqrt(vi ** 2 + o["brain_rms"] ** 2 + o["env_rms"] ** 2) / math.sqrt(
+            sum(mag[f"{t}_rms"] ** 2 for t, _ in terms))
+        no_room = math.sqrt(vi ** 2 + o["brain_rms"] ** 2) / math.sqrt(mag["intrinsic_rms"] ** 2 + mag["brain_rms"] ** 2)
+        src = (f"{G2} :: derived: single-channel in-band noise RMS of a dense-array OPM over a Neuromag magnetometer with the OPM "
+               f"sensor noise noise_validation.model.intrinsic_rms_opm_fT['{asd}'] and noise_composition.opm_dense / squid_mag")
+        F.ratio(f"g2_noise_rms_dense_vs_mag_asd{asd}", with_room, src + " (sensor, brain and room field)")
+        F.ratio(f"g2_noise_rms_dense_vs_mag_noroom_asd{asd}", no_room, src + " (sensor and brain noise)")
+    rows = read_csv(root, TARGETS)
+    parcel = np.array([r["region"].split(".", 1)[1] for r in rows])
+    lobe = np.array([r["lobe"] for r in rows])
+    col = lambda c: np.array([float(r[c]) for r in rows])  # noqa: E731
+    depth, amag, adense = col("depth_mm"), col("amp_squid_mag"), col("amp_opm_dense")
+    dd, dm = col("detect_opm_dense_opm_intrinsic+brain"), col("detect_opm_matched_opm_intrinsic+brain")
+    dc = col("detect_squid_combined_intrinsic+brain")
+    for lb in sorted(set(lobe) - {"other"}):
+        m = lobe == lb
+        what = f"the {int(m.sum())} targets with lobe '{lb}'"
+        F.add(f"g2_lobe_{lb}_depth_mm", num(np.median(depth[m]), 1), float(np.median(depth[m])),
+              f"{TARGETS} :: derived: median depth_mm over {what} (unweighted)")
+        F.add(f"g2_lobe_{lb}_amp_mag_ft", num(1e15 * np.median(amag[m]), 0), float(1e15 * np.median(amag[m])),
+              f"{TARGETS} :: derived: median amp_squid_mag over {what} (peak field of the best magnetometer, 10-nAm dipole, fT)")
+        F.add(f"g2_lobe_{lb}_amp_dense_ft", num(1e15 * np.median(adense[m]), 0), float(1e15 * np.median(adense[m])),
+              f"{TARGETS} :: derived: median amp_opm_dense over {what} (peak field of the best dense-array OPM, 10-nAm dipole, fT)")
+    for g, parcels in REGIONS.items():
+        m = np.isin(parcel, parcels)
+        what = f"targets with region lh./rh.{'|'.join(parcels)}"
+        F.add(f"reg_{g}_amp_mag_ft", num(1e15 * np.median(amag[m]), 0), float(1e15 * np.median(amag[m])),
+              f"{TARGETS} :: derived: median amp_squid_mag over {what} (best magnetometer, 10-nAm dipole, fT)")
+        F.add(f"reg_{g}_amp_dense_ft", num(1e15 * np.median(adense[m]), 0), float(1e15 * np.median(adense[m])),
+              f"{TARGETS} :: derived: median amp_opm_dense over {what} (best dense-array OPM, 10-nAm dipole, fT)")
+    # contrasts within one system (absolute detectability, region over region)
+    ph, st = parcel == "parahippocampal", parcel == "superiortemporal"
+    tl, fl = lobe == "temporal", lobe == "frontal"
+    for nm, x, xn in (("dense", dd, "detect_opm_dense_opm_intrinsic+brain"), ("combined", dc, "detect_squid_combined_intrinsic+brain")):
+        F.ratio(f"reg_parahippocampal_vs_superiortemporal_{nm}_abs", float(np.median(x[ph]) / np.median(x[st])),
+                f"{TARGETS} :: derived: median {xn} over the parahippocampal targets over the same over the superior temporal "
+                "targets (one system's own detectability, region against region)")
+        F.ratio(f"g2_lobe_temporal_vs_frontal_{nm}_abs", float(np.median(x[tl]) / np.median(x[fl])),
+                f"{TARGETS} :: derived: median {xn} over the temporal-lobe targets over the same over the frontal-lobe targets "
+                "(one system's own detectability, lobe against lobe)")
+    # every Desikan-Killiany parcel (the medial wall, 'unknown', is not a parcel)
+    vals = {}
+    for p in sorted(set(parcel) - {"unknown"}):
+        m = parcel == p
+        rd, rm = float(np.median(dd[m] / dc[m])), float(np.median(dm[m] / dc[m]))
+        src = (f"{TARGETS} :: derived: median over the {int(m.sum())} targets of parcel {p} (both hemispheres) of the per-target "
+               "ratio detect_opm_<array>_opm_intrinsic+brain / detect_squid_combined_intrinsic+brain")
+        F.ratio(f"reg_dk_{p}_dense_vs_combined_ib", rd, src)
+        F.ratio(f"reg_dk_{p}_matched_vs_combined_ib", rm, src)
+        F.add(f"reg_dk_{p}_n", count(m.sum()), int(m.sum()), f"{TARGETS} :: derived: targets of parcel {p} (both hemispheres)")
+        vals[p] = (rd, rm)
+    F.add("reg_dk_n_parcels", count(len(vals)), len(vals), f"{TARGETS} :: derived: Desikan-Killiany parcels with targets (medial "
+          "wall excluded)")
+    below = sorted(p for p, (rd, _) in vals.items() if rd < vals["parahippocampal"][0])
+    F.add("reg_dk_dense_vs_combined_ib_below_parahippocampal_count", count(len(below)), len(below),
+          f"{TARGETS} :: derived: parcels whose median dense ratio (reg_dk_<parcel>_dense_vs_combined_ib) is below the "
+          f"parahippocampal parcel's: {', '.join(below)}")
+    mes = np.isin(parcel, ("parahippocampal", "entorhinal"))
+    rmes = float(np.median(dm[mes] / dc[mes]))
+    belowm = sorted(p for p, (_, rm) in vals.items() if rm < rmes and p not in ("parahippocampal", "entorhinal"))
+    F.add("reg_dk_matched_vs_combined_ib_below_mesial_temporal_count", count(len(belowm)), len(belowm),
+          f"{TARGETS} :: derived: parcels outside the mesial temporal group whose median matched ratio is below the group's "
+          f"({rmes:.4f}): {', '.join(belowm)}")
+    # the bridge: the eta window in which the sphere (real standoffs) and both real arrays have an equal-SNR depth
+    b = d["bridge_to_sphere"]
+    sph = b["sphere_d_eq_mm"]["realistic_standoffs"]
+    etas = [e for e in sph if sph[e] is not None and all(b[f"{a}_d_eq_mm"].get(e) is not None for a in ("opm_dense", "opm_matched"))]
+    diffs = [b[f"{a}_d_eq_mm"][e] - sph[e] for a in ("opm_dense", "opm_matched") for e in etas]
+    ev = sorted(float(e) for e in etas)
+    src = (f"{G2} :: derived: bridge_to_sphere.opm_dense_d_eq_mm and opm_matched_d_eq_mm minus sphere_d_eq_mm.realistic_standoffs "
+           "where all three have a crossing")
+    F.add("g2_bridge_common_eta_min", eta_text(ev[0]), ev[0], src + " (smallest eta)")
+    F.add("g2_bridge_common_eta_max", eta_text(ev[-1]), ev[-1], src + " (largest eta)")
+    F.add("g2_bridge_deq_arrays_minus_sphere_real_mm_range", f"{signed(min(diffs), 1)} to {signed(max(diffs), 1)}",
+          [min(diffs), max(diffs)], src + " (mm)")
+    F.add("g2_excluded_vertices_pct_1dp", "8.7%", round(100 - 91.3, 1), f"{METHODS}, {REGISTER} :: section 3 ('The rule removes the "
+          "cortex nearest the skull (8.7 %)'); A-BEM-DIST (91.3 % of the valid vertices are usable)")
+
+
+# ------------------------------------------------------------------------------------------------
 def facts(root: Path) -> dict:
     """Every G1A, G1B, G1C, G2 and adult-region fact, name -> {"value", "raw", "source"}."""
     root = Path(root)
     F = Facts()
     lit_facts(F)
+    lit_study_facts(F, root)
     g1a_facts(F, root)
     g1b_facts(F, root)
     g1c_facts(F, root)
@@ -1287,6 +1441,7 @@ def facts(root: Path) -> dict:
     g2_sensitivity_facts(F, d)
     g2_convergence_facts(F, d, root)
     region_facts(F, root)
+    anatomy_noise_extra_facts(F, d, root)
     return dict(F)
 
 

@@ -19,9 +19,9 @@ yet). The repository stays private; the Pages site is public.
 | Step | Status | Notes |
 |---|---|---|
 | 1. Foundations: number provenance, new figures from stored outputs, verified literature table, site integration | done | 31,150 sourced facts; figures R1-R10; 15 studies (14 verified in full text); 197 tests pass |
-| 2. Draft the report as one narrative | in progress | one writer, then nine checkers and one editor |
-| 3. Internal verification: numbers, claims against evidence, methods completeness, build, tests, links | pending | |
-| 4. Referee rounds (both referees, same round) | pending | |
+| 2. Draft the report as one narrative | done | about 8,500 words of main text, 10 figures, 3 tables, 39 references |
+| 3. Internal verification: numbers, claims against evidence, methods completeness, build, tests, links | done | 166 checker issues resolved; supplementary pages cleaned for publication; 197 tests pass |
+| 4. Referee rounds (both referees, same round) | in progress | round 1 |
 | 5. Deploy to GitHub Pages and check the live site | pending | |
 
 ## Referee rounds
@@ -46,3 +46,8 @@ None yet.
   files and corrected a few of them (e.g. the adult's placement spread is 0.46 dB, not 0.45); ten new figures
   (results/report/Figure_R1-R10) each checked against the result files; the literature table covers 12 clinical
   OPM epilepsy studies and 3 modelling precedents. All 197 tests pass.
+- 2026-10-04: steps 2 and 3 done. One writer drafted the report from the facts, figures and verified literature; nine
+  independent checkers (number provenance x3, claims and statistics, MEG physics, methods, references, flow,
+  publication safety) raised 166 issues, which an editor resolved (two critical contradictions about the pediatric
+  conclusion and the spike result among them). The abstract was shortened, the Introduction now opens from
+  Jas et al. (2026), and the supplementary pages got licence and data credits and lost internal process notes.

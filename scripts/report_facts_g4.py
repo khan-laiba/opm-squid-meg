@@ -252,6 +252,8 @@ def _detection(root: Path, out: dict) -> None:
         _add(out, name, str(val) if name.endswith("_seed") else const(val), val, f"{A} :: config.{key}{same}")
     _add(out, "g4_strength_range", f"{const(ev['strengths_nAm'][0])} to {const(ev['strengths_nAm'][-1])}",
          [ev["strengths_nAm"][0], ev["strengths_nAm"][-1]], f"{A} :: config.events.strengths_nAm (first to last)")
+    for i, s_nam in enumerate(ev["strengths_nAm"]):  # each tested strength, as printed beside per-strength counts
+        _add(out, f"g4_strength_{const(s_nam)}_nam", const(s_nam), s_nam, f"{A} :: config.events.strengths_nAm[{i}]{same}")
     steps = {b / a for a, b in zip(ev["strengths_nAm"][:-1], ev["strengths_nAm"][1:])}
     if len(steps) == 1:
         _add(out, "g4_strength_step_factor", const(steps.pop()), ev["strengths_nAm"],
@@ -530,6 +532,43 @@ def _detection(root: Path, out: dict) -> None:
     _add(out, "g4_deeper_dense_vs_combined_practical_n_cells", count(len(deep)), len(deep), f"{srcd}; derived: 9 anatomies x 3 bands")
     min_deep = min(cell(lab, "opm_dense/opm", "practical@1", b)["location_sign_flip_p"] for lab, b in deep if lab != "adult")
     _add(out, "g4_deeper_dense_vs_combined_practical_min_p_smaller_heads", pval(min_deep), min_deep, f"{srcd}; derived: smallest p, eight smaller heads")
+    # direction of the deeper cells (locations favouring each system), whatever their p
+    lean = {}
+    for lab, b in deep:
+        e = cell(lab, "opm_dense/opm", "practical@1", b)
+        lean[(lab, b)] = (e["locations_favouring_opm"], e["locations_favouring_squid"])
+    srcl = srcd.replace(".location_sign_flip_p", ".locations_favouring_opm, .locations_favouring_squid")
+    for nm, test in (("favour_opm", lambda o, q: o > q), ("tie", lambda o, q: o == q), ("favour_squid", lambda o, q: o < q)):
+        cells_ = [f"{lab} {BANDS[b]}" for (lab, b), (o, q) in lean.items() if test(o, q)]
+        _add(out, f"g4_deeper_dense_vs_combined_practical_n_{nm}", count(len(cells_)), len(cells_),
+             f"{srcl}; derived: cells (anatomy x band 20-70 mm) in which more locations favour "
+             + {"favour_opm": "the dense OPM", "tie": "neither system (equal counts)", "favour_squid": "Neuromag"}[nm]
+             + (": " + ", ".join(cells_) if nm != "favour_opm" else ""))
+    n = sum(lean[x][0] > lean[x][1] for x in sig_deep)
+    _add(out, "g4_deeper_dense_vs_combined_practical_n_sig_favour_opm", count(n), n,
+         f"{srcl}; derived: of the cells with p < 0.05, those in which more locations favour the dense OPM")
+    r2030 = [cell(lab, "opm_dense/opm", "practical@1", 1)["s50_ratio_squid_over_opm"]["value"] for lab in LABELS]
+    n = sum(v is not None and v > 1 for v in r2030)
+    _add(out, "g4_dense_vs_combined_practical_20_30mm_n_ratio_above1", count(n), n,
+         f"{CMPF} :: comparison['<anatomy>/paired/opm_dense/opm_vs_squid/combined/practical@1/depth1'].s50_ratio_squid_over_opm.value; "
+         "derived: anatomies with a point estimate above 1")
+    # Holm over the nine anatomies, band by band, for the deeper bands (the rule of the 10-20 mm endpoint applied per band)
+    passed = []
+    for b in (1, 2, 3):
+        adj_b = _holm({lab: cell(lab, "opm_dense/opm", "practical@1", b)["location_sign_flip_p"] for lab in LABELS})
+        passed += [f"{lab} {BANDS[b]}" for lab, v in adj_b.items() if v < 0.05]
+        if b == 3:
+            _add(out, "g4_holm_45_70mm_adult_p_adj", pval(adj_b["adult"]), adj_b["adult"],
+                 f"{srcd.replace('depth1..3', 'depth3')}; derived: Holm adjustment over the nine anatomies (the adult's value)")
+    _add(out, "g4_holm_deeper_n_pass", count(len(passed)), len(passed),
+         f"{srcd}; derived: cells with Holm-adjusted p < 0.05 when each deeper band is Holm-adjusted over the nine anatomies: "
+         + (", ".join(passed) or "none"))
+    m_ci = [lab for lab in LABELS
+            if (cell(lab, "opm_matched/opm", "practical@1", 0)["s50_ratio_squid_over_opm"]["ci95"] or [None, None])[0] is not None
+            and cell(lab, "opm_matched/opm", "practical@1", 0)["s50_ratio_squid_over_opm"]["ci95"][0] > 1]
+    _add(out, "g4_matched_vs_combined_practical_10_20mm_n_ci_above1", count(len(m_ci)), len(m_ci),
+         f"{CMPF} :: comparison['<anatomy>/paired/opm_matched/opm_vs_squid/combined/practical@1/depth0'].s50_ratio_squid_over_opm.ci95; "
+         "derived: anatomies whose interval lies above 1: " + ", ".join(m_ci))
     for group, labs in (("templates_controls", TEMPLATES_CONTROLS), ("childrenabc", CHILDREN)):
         rest = [(lab, b) for lab in labs for b in (1, 2, 3) if (lab, b) not in sig_deep]
         pr_ = [cell(lab, "opm_dense/opm", "practical@1", b)["location_sign_flip_p"] for lab, b in rest]
@@ -627,7 +666,12 @@ def _detection(root: Path, out: dict) -> None:
     for name, txt, raw, what in (
             ("g4_earlier_v3_matched_vs_combined_45_70mm", "1/9", [1, 9], "v3 matched OPM vs Neuromag 45-70 mm, locations OPM/Neuromag"),
             ("g4_earlier_v3_matched_vs_combined_45_70mm_p", "0.016", 0.016, "v3 matched OPM 45-70 mm sign-flip p"),
-            ("g4_earlier_v2_matched_vs_combined_45_70mm", "0/7", [0, 7], "v2 matched OPM vs Neuromag 45-70 mm, locations OPM/Neuromag")):
+            ("g4_earlier_v2_matched_vs_combined_45_70mm", "0/7", [0, 7], "v2 matched OPM vs Neuromag 45-70 mm, locations OPM/Neuromag"),
+            ("g4_earlier_v3_dense_vs_combined_10_20mm", "8/2", [8, 2], "v3 dense OPM vs Neuromag 10-20 mm, locations OPM/Neuromag "
+             "('v3 ... gave dense 8/2, 5/1, 4/0 and 0/2')"),
+            ("g4_earlier_v3_dense_vs_combined_10_20mm_p", "0.037", 0.037, "v3 dense OPM 10-20 mm sign-flip p ('p = 0.037, ...')"),
+            ("g4_earlier_v3_dense_vs_combined_10_20mm_ratio", "1.29", 1.29, "v3 dense OPM 10-20 mm S50 ratio ('S50 ratio 1.29 "
+             "[1.03-1.51] at 10-20 mm')")):
         _add(out, name, txt, raw, f"{M}: {what}")
 
 
@@ -894,6 +938,9 @@ def _localization(root: Path, out: dict) -> None:
     FF = "results/g4/g4_fit_failures.json"
     ff = _json(root / FF)
     _add(out, "loc_gross_error_threshold_mm", const(ff["criteria"]["gross_error_mm"]), ff["criteria"]["gross_error_mm"], f"{FF} :: criteria.gross_error_mm")
+    _add(out, "loc_joint_threshold_mm", "10", 10.0, "results/g4/g4_localization_summary.json :: results[*].joint_detect_and_dspm_within_10mm, "
+         "joint_detect_and_ecd_within_10mm (the success radius in the stored keys; docs/methods.md section 9 'Detected and "
+         "localized within 10 mm')")
     _add(out, "loc_unconstrained_volume_threshold_cm3", const(ff["criteria"]["unconstrained_volume_cm3"]),
          ff["criteria"]["unconstrained_volume_cm3"], f"{FF} :: criteria.unconstrained_volume_cm3")
     tot = ff["totals"]
@@ -991,6 +1038,10 @@ def _motion(root: Path, out: dict) -> None:
             ("mot_tc_calibration_tilt_deg", tc["calibration"][0], "timecourse.calibration[0]"),
             ("mot_tc_seed", tc["seed"], "timecourse.seed")):
         _add(out, name, str(val) if name.endswith("_seed") else const(val), val, f"{F} :: config.{key} (= configs/g4_motion.toml)")
+    _add(out, "mot_translation_largest_mm", const(max(g["translations_mm"])), max(g["translations_mm"]),
+         f"{F} :: config.geometry.translations_mm (the largest displacement; = configs/g4_motion.toml)")
+    _add(out, "mot_slip_largest_deg", const(max(g["slip_deg"])), max(g["slip_deg"]),
+         f"{F} :: config.geometry.slip_deg (the largest cap slip; = configs/g4_motion.toml)")
     gains = [round(100 * c[1], 6) for c in cb["calibration"]]
     _add(out, "mot_calibration_gain_levels_pct", _join([const(x) + "%" for x in gains]), gains,
          f"{F} :: config.coupling.calibration[*][1] x 100 (RMS gain error; = configs/g4_motion.toml)")

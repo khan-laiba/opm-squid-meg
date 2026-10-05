@@ -14,16 +14,16 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 | Milestone | Label | Status |
 |---|---|---|
 | G0 audit, provenance, plan | - | done |
-| G1A Jas et al. 2026 analytical benchmark | REPRO | done, internally reviewed |
-| G1B Hunold et al. 2016 depth-orientation spike SNR (MEG part) | ADAPT (+ NEW OPM column) | done, internally reviewed |
-| G1C Goldenholz et al. 2009 cortical SNR maps (MEG part) | ADAPT (+ NEW OPM extension) | done, internally reviewed |
-| G2 realistic adult OPM vs Neuromag | NEW | done, internally reviewed; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2`, `adult-baseline-v3` and `adult-baseline-v4` (equal OPM standoff on every head) |
-| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates, three school-aged children of OpenNeuro ds005234 with a modelled skull, and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`, recomputed with the v3 arrays (`adult-baseline-v3`) and with every head surface on its MRI scalp (`adult-baseline-v4`); the 2-year-template pass internally reviewed (approve with notes; fixes re-verified); the 18- and 12-month templates added on 2026-10-01, the school-aged children on 2026-10-03 (v4 only) |
-| G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates, both size controls and three school-aged children); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts internally reviewed |
+| G1A Jas et al. 2026 analytical benchmark | REPRO | done, checked |
+| G1B Hunold et al. 2016 depth-orientation spike SNR (MEG part) | ADAPT (+ NEW OPM column) | done, checked |
+| G1C Goldenholz et al. 2009 cortical SNR maps (MEG part) | ADAPT (+ NEW OPM extension) | done, checked |
+| G2 realistic adult OPM vs Neuromag | NEW | done, checked; frozen as `adult-baseline-v1`, corrected in `adult-baseline-v2`, `adult-baseline-v3` and `adult-baseline-v4` (equal OPM standoff on every head) |
+| G3 pediatric extension | NEW (size benchmark REPRO) | G3A size benchmark done; G3B done (24-, 18- and 12-month infant templates, three school-aged children of OpenNeuro ds005234 with a modelled skull, and two scaled-adult size controls), after the adult freeze `adult-baseline-v2`, recomputed with the v3 arrays (`adult-baseline-v3`) and with every head surface on its MRI scalp (`adult-baseline-v4`); the 2-year-template pass checked (fixes re-verified); the 18- and 12-month templates added on 2026-10-01, the school-aged children on 2026-10-03 (v4 only) |
+| G4 epilepsy detection and localization | NEW | adult done; pediatric done (three templates, both size controls and three school-aged children); head motion and OPM slippage: bounded secondary extension done; adult and 2-year-template parts checked |
 | G5 software, reproduction, report | - | 160 unit tests pass with the v4 results and the school-aged children (a clean clone of 0b57bba, data through `OPMSQUID_DATA`, empty cache: 159 pass, 1 skipped without the stored lead fields); `scripts/run_all.sh` (resumable: `RESUME=1`); result CSVs carry a status line; local report in `site/_build` (link-checked, not deployed); private repository, no Pages; clean-environment smoke test passed on 2026-09-30 at a commit before 81168f3 (87 tests then); release prepared, not executed (`docs/release_checklist.md`) |
 
-"Internally reviewed" means separate review passes by reviewer agents, with fixes re-verified
-(on 2026-10-01 also complete reviews by two other models), not external peer review.
+"Checked" means separate checking passes within the project by reviewer agents, with fixes
+re-verified (on 2026-10-01 also complete passes by two other models); it is not external peer review.
 
 Adult findings so far (`adult-baseline-v4`), conditional on one adult head (MNE sample subject),
 an assumed OPM noise of 15 fT/sqrt(Hz), OPM sensors at the 7-mm standoff with no extra
@@ -92,7 +92,7 @@ caveats in `docs/methods.md` and `results/g2/G2_report.md`:
   (v2): not robust. Differences not detected are not excluded.
 - `adult-baseline-v1` reported 1.21x; that value was inflated by OPM cells reaching into the
   coarse BEM head surface, a numerical error corrected in v2 (see PLAN.md). v2 (1.13x) kept the
-  cells' integration points outside the head surface but not their corners; v3 (final reviews)
+  cells' integration points outside the head surface but not their corners; v3 (after later checks)
   kept the whole cell outside (1.11x), which with the sample's outer skin about 1 mm outside its
   scalp moved most sensors about 1 mm out; v4 puts the outer skin on the scalp (equal standoff
   with the children), which leaves 208 dense and 98 matched sites (1.14x).
@@ -244,10 +244,7 @@ the local cache, then the analytical G1A benchmark, which needs no data):
 ```
 
 Each driver writes `results/<milestone>/` and records the code commit it ran in its JSON.
-On 2026-10-04 the history was rewritten to correct the recorded author identity (file contents
-and dates did not change, every commit hash did): commit hashes recorded before that date, in
-result files and documents, refer to the original history; `docs/commit_map.tsv` maps each of
-them to the current commit.
+Commit hashes in result files identify the code version in the project's private repository.
 
 The sample data must end up in `data/external/MNE-sample-data` (`src/opmsquid/paths.py`;
 override with `OPMSQUID_DATA`). Caches go to `cache/` (`OPMSQUID_CACHE`).
@@ -267,8 +264,11 @@ release (release-ready and publicly deployed are separate statuses).
 - The infant templates (24, 18 and 12 months; O'Reilly et al. 2021, from the Neurodevelopmental
   MRI Database of Richards et al. 2016; LGPL-2.1 repository) are not committed. Figures and tables
   derived from them (every `results/g3b` figure that shows a template, `results/g3b/g3b_targets_infant*`,
-  `results/g4/*infant*` and the motion results) cite both papers; confirm their redistribution with
-  the owner before any public release (the source database has its own terms).
+  `results/g4/*infant*` and the motion results) cite both papers. Publishing these derived results
+  was decided on 2026-10-04 (the owner's instruction to publish the report with all its analyses;
+  `docs/release_checklist.md` item 3): the templates are distributed publicly by their authors
+  (J. E. Richards, who created the database, is a co-author of O'Reilly et al. 2021) under LGPL-2.1
+  through MNE-Python's `fetch_infant_template`, and only derived results are published.
 - The school-aged children (OpenNeuro ds005234, Fadeev et al. 2024; individual, de-identified MRIs of
   typically developing children) are not committed (`data/external/school_subjects/`, fetched by
   `scripts/fetch_school_subjects.py` and listed with S3 object versions, sizes and SHA-256 in
@@ -284,6 +284,11 @@ release (release-ready and publicly deployed are separate statuses).
   and carries its attribution; output summaries no longer record local absolute paths; every
   commit and tag records Laiba Khan with GitHub's no-reply address, and no file in the history
   holds an e-mail address. Still the owner's decisions: a licence (none yet), the earlier
-  font-embedding PDFs that remain in the history, the redistribution of template- and
-  fsaverage-derived figures, and two documents that name local folders.
+  font-embedding PDFs that remain in the history, the redistribution of fsaverage-derived
+  figures, and two documents that name local folders (the template-derived results: decided
+  2026-10-04, above).
+- Commit hashes: on 2026-10-04 the history was rewritten to correct the recorded author identity
+  (file contents and dates did not change, every commit hash did): commit hashes recorded before
+  that date, in result files and documents, refer to the original history; `docs/commit_map.tsv`
+  maps each of them to the current commit.
 - The repository is private. No website is deployed; publication needs explicit owner approval.

@@ -55,8 +55,8 @@ def main():
     L.append(f"- Anatomy: MNE sample subject, measured head position; {d['n_targets']} target dipoles (10 nAm, cortical normal, "
              f"usable oct-6 vertices); background grid of {d['n_background_grid']} area-weighted sources.")
     L.append("- Neuromag geometry: the sample recording's Vectorview sensor positions and transforms with MRN T3 coil types "
-             "(3024 magnetometers, 3014 planar gradiometers), a representative Neuromag system, not one installation; TRIUX "
-             "typical noise values from the goal text (the specification image was not available).")
+             "(3024 magnetometers, 3014 planar gradiometers), a representative Neuromag system, not one installation; the "
+             "manufacturer's typical noise values (MEGIN TRIUX; not verified against the specification sheet).")
     L.append(f"- Band 1-40 Hz (ENBW {d['enbw_hz']:.1f} Hz). Intrinsic noise: SQUID magnetometers "
              f"{v['model']['intrinsic_rms_mag_fT']:.1f} fT, gradiometers {v['model']['intrinsic_rms_grad_fT_cm']:.1f} fT/cm; OPM at "
              "15 fT/sqrt(Hz) " + f"{v['model']['intrinsic_rms_opm_fT']['15']:.0f} fT (RMS in band).")

@@ -68,7 +68,7 @@ every cell is at least 0.986 mm out (child A, matched array; 0.995 mm over the o
 template, dense array; `g3b_summary.json`, sensor distances).
 Sites are moved outward along their axis in 0.5-mm steps by at most 5 mm, otherwise they are
 infeasible and dropped. v2 checked only the
-integration points, which reach +-3.87 mm of the +-5-mm faces: the final review (2026-10-01) found
+integration points, which reach +-3.87 mm of the +-5-mm faces: a check on 2026-10-01 found
 cell corners up to 0.89 mm inside the head surface at 57 dense and 19 matched sites, so v3 applies
 the rule to the whole cell: it moves most sites outward (median 1.0 mm from their v2 positions, the
 matched sites by at most 2.5 mm; measured from the nominal standoff the moved sites sit 0.5-5 mm
@@ -306,7 +306,7 @@ Configuration: `configs/goldenholz_reference.toml`.
   both SQUID sensor types (Eq. 1 median +0.1 dB vs magnetometers, -0.08 dB vs gradiometers).
   With intrinsic noise, OPM vs gradiometers is +1.3 to +2.3 dB (the gradiometer noise floor),
   and OPM vs magnetometers +0.2 dB at 7 fT/sqrt(Hz) to -1.0 dB at 30 fT/sqrt(Hz) (crossing near
-  12 fT/sqrt(Hz)). Equal channel counts or coverage do not explain these differences (review).
+  12 fT/sqrt(Hz)). Equal channel counts or coverage do not explain these differences (checked).
 
 ## 8. Realistic adult OPM vs Neuromag comparison (G2, NEW) — `opmsquid.g2`, `scripts/g2_adult_comparison.py`
 
@@ -490,7 +490,7 @@ Detection design (`scripts/g4_epilepsy_adult.py`)
   95 % interval (0.6-1.5 per minute) matches that held-out spread, and the 0.2-per-minute one on
   about 4. A hit is an emitted event (a local maximum of the scan statistic, events at
   least the 0.25-s refractory period apart, as counted on the null data) above threshold within
-  +/-50 ms of the true spike peak (v3, final review; v2 took the statistic's maximum within the
+  +/-50 ms of the true spike peak (v3, after a check; v2 took the statistic's maximum within the
   window, which also counted peaks that the event rule merges into a nearby higher noise event).
 * Statistics: events share locations (18 per depth band, each with 6 strengths x 3 morphologies),
   so the location is the unit. Paired comparisons count, per location, the events detected by only
@@ -501,7 +501,7 @@ Detection design (`scripts/g4_epilepsy_adult.py`)
   resample is kept: the paired ratio of a resample becomes an interval (one-sided, or unrestricted
   when neither system reaches 50 %), and the 95 % interval takes the 2.5th percentile of the lower
   and the 97.5th of the upper bounds, an end at 0 or infinity being open (`detection.censored_interval`;
-  the first v3 summaries dropped resamples in which neither system reached 50 %, a review finding).
+  the first v3 summaries dropped resamples in which neither system reached 50 %, found by a check).
   The Wilson bands in the figure are event-level and descriptive.
 
 Detection results (v4 arrays, simulated at ed852b2; focal, three morphologies pooled; strength for 50 %
@@ -667,10 +667,14 @@ Neuromag combined, matched OPM, dense OPM)
   adult's, so every comparison with the adult is vertex-wise; areas scale with the square of the
   factor and the 4-mm usable-source rule (A-BEM-DIST) is applied on the scaled meshes. The 24-, 18-
   and 12-month infant templates of O'Reilly et al. (2021; `mne.datasets.fetch_infant_template('2yr'
-  / '18mo' / '12mo')`, averages of many MRIs of each age, LGPL-2.1, cite O'Reilly et al. 2021 and
-  Richards et al. 2016) are used in their native dimensions with their own 3-layer BEMs, dense head
-  surfaces, oct-6 source spaces (whose full white surfaces are the full-resolution cortices),
-  aparc labels and fiducials (head frames from them). The 2-year template is the primary pediatric
+  / '18mo' / '12mo')`; averages of many MRIs of each age, built from the Neurodevelopmental MRI
+  Database of Richards et al. 2016) are used in their native dimensions with their own 3-layer
+  BEMs, dense head surfaces, oct-6 source spaces (whose full white surfaces are the
+  full-resolution cortices), aparc labels and fiducials (head frames from them). The templates are
+  distributed publicly by their authors (O'Reilly et al. 2021; J. E. Richards, who created the
+  database, is a co-author) under LGPL-2.1 through MNE-Python's `fetch_infant_template`; only
+  results derived from them are published, citing O'Reilly et al. (2021) and Richards et al.
+  (2016) wherever they appear. The 2-year template is the primary pediatric
   anatomy (the 2-year size control is scaled to its head circumference); the 18- and 12-month
   templates (added 2026-10-01) show how the results move between averages of one database, not
   between children. They are templates, not individual children: results on them are conditional
@@ -678,11 +682,13 @@ Neuromag combined, matched OPM, dense OPM)
   template's skull is 0.25 mm thick at its thinnest (as distributed; 23 of 2,562 inner-skull
   vertices within 1 mm of the outer skull); the 1-layer BEM check does not depend on it.
 * School-aged children (added 2026-10-03; D-G3-ANAT): three typically developing children of OpenNeuro
-  ds005234 (Fadeev et al. 2024), child A (sub-Z213, 7.8 years), B (sub-Z209, 8.3) and C (sub-Z226, 8.7),
+  ds005234 v2.2.0 (doi:10.18112/openneuro.ds005234.v2.2.0; Fadeev et al. 2024, J Neurodev Disord
+  16(1):67), child A (sub-Z213, 7.8 years), B (sub-Z209, 8.3) and C (sub-Z226, 8.7),
   individual MRIs processed with FreeSurfer by the dataset's authors. Used: their own white and
   sphere surfaces, aparc annotations and dense MRI scalp (lh.seghead), which share each child's
   volume information. The snapshot's file tree shifts each subject's watershed BEM and talairach.xfm
-  into the preceding subject's folder (the S3 objects behind them carry the owner's name; the BEMs
+  into the preceding subject's folder (the S3 objects behind them carry the name of the subject
+  they belong to; the BEMs
   were identified by the same volume information as the child's surfaces). The watershed BEMs put
   the inner skull just below the scalp (a median 0.8-2.5 mm over the upper head, against 9.7 mm in
   the adult and 5.6-8.5 mm in the templates; `scripts/study_school_anatomy.py`,
@@ -723,7 +729,7 @@ Neuromag combined, matched OPM, dense OPM)
   device x and y, pitch it by +-10 deg, roll it by +-5 deg or turn it by +-10 deg (yaw, v4) about the
   head origin, then raise it
   to the same top contact where there is room (an adult head shifted towards the helmet wall
-  stays where it is). After the independent review two variants were added: 'x-centred' shifts the
+  stays where it is). After a later check two variants were added: 'x-centred' shifts the
   centred head along device x until the left and right helmet halves have equal median gaps
   (geometry only), then applies the top contact; 'top-18mm' raises it to true contact at the Dewar
   spacing. A placement is feasible if no
@@ -1012,9 +1018,11 @@ means the 2-year template; the 18- and 12-month templates are named.
   adult results exactly (checked by rerunning the adult through it). Thresholds are calibrated on
   each anatomy's own null data. Locations are stratified by the adult depth and orientation bands;
   a band the anatomy cannot fill gets fewer locations, reported as such.
-* Anatomies: the 2-year template (primary), the 18- and 12-month templates, the two size-only
+* Anatomies: the 2-year (primary), 18- and 12-month templates (O'Reilly et al. 2021, built from
+  the Neurodevelopmental MRI Database of Richards et al. 2016), the two size-only
   controls (scaled adults) and the three school-aged children with individual MRIs (A, B and C:
-  7.8, 8.3 and 8.7 years; OpenNeuro ds005234, with the modelled skull A-BEM-CHILD and the
+  7.8, 8.3 and 8.7 years; OpenNeuro ds005234 v2.2.0, Fadeev et al. 2024, with the modelled skull
+  A-BEM-CHILD and the
   transferred fiducials A-G3-FID, section 10). Templates are averages and three children are not a
   population; the comparison with the adult mixes head size, anatomy and the fixed-helmet fit,
   which G3B separates for detectability.
@@ -1135,12 +1143,13 @@ slightly, which moves some held-out rates by up to 0.05 per minute); the scaled 
   identify an epileptogenic zone or establish surgical benefit.
 
 ## 12. Head motion and OPM slippage (G4, bounded secondary extension; NEW) — `opmsquid.motion`, `scripts/g4_motion.py`
-Static fit is studied first (sections 8-11). GOAL G4 asks for a separate, time-varying analysis of
+Static fit is studied first (sections 8-11). This extension adds a separate, time-varying analysis of
 motion: a head-mounted array keeps its sensor-to-head geometry while its relationship to the residual
 room field changes, and a cap can slip. This section bounds both mechanisms on the G3B arrays and
 noise conventions (Neuromag at top contact; the refitted dense OPM array; intrinsic + brain noise;
 10-nAm cortical-normal dipoles; area-weighted medians over cortical targets) for the adult and the
-24- and 12-month templates. It does not establish motion robustness.
+24- and 12-month templates (O'Reilly et al. 2021, built from the Neurodevelopmental MRI Database of
+Richards et al. 2016). It does not establish motion robustness.
 * A. Sustained displacement (A-MOT-GEOM). The head moves inside the fixed Neuromag helmet by 2, 5
   and 10 mm (down, +-x, +-y) or rotates by +-5 and +-10 deg (pitch, roll, yaw about the head
   origin); a position that brings a magnetometer coil centre within 18 mm of the scalp is
