@@ -1,0 +1,5815 @@
+{
+  "status": "NEW (G4 confirmatory: the declared spike endpoint re-tested with new seeds, newly drawn locations, independent null data, noise replicates and a detector-mismatch variant)",
+  "anatomy": "infant2yr",
+  "context": "infant template ANTS2-0Years3T (O'Reilly et al. 2021; native dimensions); Neuromag helmet at the 'top' placement (magnetometer-to-scalp median 38.5 mm), OPM dense 151 and matched 83 sites (G3B rules); adult background scale per unit area",
+  "confirmatory": true,
+  "test_overrides": null,
+  "endpoint": {
+    "definition": {
+      "anatomies": [
+        "adult",
+        "school",
+        "size2yr",
+        "infant2yr",
+        "infant18mo",
+        "infant12mo",
+        "childA",
+        "childB",
+        "childC"
+      ],
+      "opm": "opm_dense/opm",
+      "comparator": "squid/combined",
+      "detector": "practical",
+      "false_events_per_min": 1.0,
+      "depth_band_mm": [
+        10.0,
+        20.0
+      ],
+      "family": "focal",
+      "replicate": 0,
+      "test": "two-sided exact sign-flip test on the per-location differences in detection counts (detection.sign_flip_p)",
+      "effect": "paired S50 ratio Neuromag / OPM from the location-pooled detection curves, location bootstrap (censored interval)",
+      "multiplicity": "Holm over the nine anatomies",
+      "alpha": 0.05
+    },
+    "comparison": "opm_dense/opm_vs_squid/combined/practical@1/replicate0",
+    "result": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 60,
+      "detected_only_squid": 4,
+      "locations_favouring_opm": 28,
+      "locations_favouring_squid": 2,
+      "location_differences": [
+        3,
+        -1,
+        3,
+        2,
+        3,
+        3,
+        3,
+        2,
+        1,
+        3,
+        2,
+        2,
+        1,
+        2,
+        2,
+        1,
+        3,
+        1,
+        0,
+        5,
+        1,
+        0,
+        0,
+        1,
+        3,
+        0,
+        2,
+        -1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        2,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2819267405874748,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.175462765404934,
+          1.4504915484951544
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    }
+  },
+  "config": {
+    "confirmatory": {
+      "endpoint": {
+        "anatomies": [
+          "adult",
+          "school",
+          "size2yr",
+          "infant2yr",
+          "infant18mo",
+          "infant12mo",
+          "childA",
+          "childB",
+          "childC"
+        ],
+        "opm": "opm_dense/opm",
+        "comparator": "squid/combined",
+        "detector": "practical",
+        "false_events_per_min": 1.0,
+        "depth_band_mm": [
+          10.0,
+          20.0
+        ],
+        "family": "focal",
+        "replicate": 0,
+        "test": "two-sided exact sign-flip test on the per-location differences in detection counts (detection.sign_flip_p)",
+        "effect": "paired S50 ratio Neuromag / OPM from the location-pooled detection curves, location bootstrap (censored interval)",
+        "multiplicity": "Holm over the nine anatomies",
+        "alpha": 0.05
+      },
+      "secondary": {
+        "comparisons": [
+          "opm_matched/opm vs squid/combined (practical detector, frozen thresholds)",
+          "oracle detector (known topography, waveform and time; per-trial false-positive probability oracle_alpha)",
+          "practical detector at thresholds matched to 1 false event per minute on the held-out null, rates evaluated on the independent evaluation null",
+          "detector-mismatch variant (below), frozen and matched thresholds",
+          "Monte Carlo variability: the endpoint in every noise replicate, and pooled over the replicates"
+        ]
+      },
+      "design": {
+        "root_seed": 20261005,
+        "locations_per_stratum": 12,
+        "exclude_original_locations": true,
+        "noise_replicates": 5,
+        "bootstrap_resamples": 1000
+      },
+      "null": {
+        "evaluation_min": 20.0
+      },
+      "variant": [
+        {
+          "name": "mismatch",
+          "template_rule": "geometric_midpoints",
+          "dictionary_conductivity": [
+            0.3
+          ],
+          "coreg_shift_mm": 2.0,
+          "coreg_angle_deg": 2.0
+        }
+      ]
+    },
+    "inherited": {
+      "simulation": {
+        "band_hz": [
+          1.0,
+          40.0
+        ],
+        "decimate": 4,
+        "segment_s": 30.0,
+        "event_spacing_s": 2.0,
+        "opm_asd_fT_per_rtHz": 15.0,
+        "seed": 44
+      },
+      "events": {
+        "n_locations": 72,
+        "strengths_nAm": [
+          10.0,
+          20.0,
+          40.0,
+          80.0,
+          160.0,
+          320.0
+        ],
+        "stretches": [
+          0.75,
+          1.0,
+          1.5
+        ],
+        "patch_radius_mm": 10.0,
+        "waveform": "Hunold et al. 2016 Fig. 2b spike-wave complex (digitised), through the analysis filter"
+      },
+      "detector": {
+        "dictionary": "Poisson-disk grid (dictionary_spacing_mm) on usable vertices, cortical normal; the true sources are other vertices",
+        "dictionary_spacing_mm": 10.0,
+        "refractory_s": 0.25,
+        "hit_tolerance_s": 0.05,
+        "operating_points_per_min": [
+          1.0,
+          0.2
+        ],
+        "oracle_alpha": 0.001,
+        "arrays": [
+          "squid/combined",
+          "squid/grad",
+          "squid/mag",
+          "opm_matched/opm",
+          "opm_dense/opm"
+        ]
+      },
+      "null": {
+        "baseline_min": 10.0,
+        "calibration_min": 20.0,
+        "heldout_min": 20.0
+      }
+    },
+    "config_digest": "3852b9cb546b"
+  },
+  "declared_choices": {
+    "root_seed": 20261005,
+    "noise_replicates": 5,
+    "noise_replicates_run": 5,
+    "evaluation_min": 20.0,
+    "locations_per_stratum": 12,
+    "locations_per_stratum_run": 12,
+    "sign_flip_test": "Monte Carlo, 20,000 sign patterns (detection.sign_flip_p, more than 20 locations)",
+    "variants": {
+      "primary": {
+        "stretches": [
+          0.75,
+          1.0,
+          1.5
+        ],
+        "dictionary": "truth forward model (3-layer BEM, exact coregistration)"
+      },
+      "mismatch": {
+        "stretches": [
+          0.8660254037844386,
+          1.224744871391589
+        ],
+        "nearest_template_offset": {
+          "0.75": 0.15470053837925146,
+          "1": 0.1339745962155614,
+          "1.5": 0.18350341907227408
+        },
+        "n_templates": 2,
+        "dictionary": "1-layer BEM, coregistration error 2 mm / 2 deg"
+      }
+    },
+    "localization_study_reference": {
+      "coreg_shift_mm": 2.0,
+      "coreg_angle_deg": 2.0,
+      "inverse_bem": "1-layer inner skull (truth: 3-layer)"
+    },
+    "note": "a variant is a complete detector: its thresholds are calibrated on the same null data to the same false-event rate, so every detector is compared at the same operating point; a bank with fewer templates searches less and gets a lower threshold, a shift common to the arrays"
+  },
+  "seeds": {
+    "root_seed": 20261005,
+    "declared_root_seed": 20261005,
+    "anatomy_index": 3,
+    "purposes": [
+      "locations",
+      "dictionary",
+      "coregistration",
+      "baseline",
+      "calibration",
+      "oracle",
+      "heldout",
+      "evaluation",
+      "events",
+      "bootstrap"
+    ],
+    "rule": "np.random.SeedSequence(root_seed, spawn_key=(anatomy_index, purpose_index[, replicate or statistic]))"
+  },
+  "simulated_at_commit": "ae458a9",
+  "fs_out": 150.15374755859375,
+  "null_minutes": {
+    "baseline": 10.0,
+    "calibration": 20.0,
+    "heldout": 20.0,
+    "evaluation": 20.0
+  },
+  "n_events_per_replicate": 648,
+  "n_locations": 36,
+  "n_dictionary": 525,
+  "whitener_rank": {
+    "squid/combined": 306,
+    "opm_matched/opm": 83,
+    "opm_dense/opm": 151
+  },
+  "locations": [
+    {
+      "vertex": 4355,
+      "hemi": 0,
+      "depth_mm": 11.927802072836611,
+      "orientation_deg": 13.7037574714854,
+      "lobe": "occipital",
+      "region": "lh.lateraloccipital",
+      "stratum": [
+        0,
+        0
+      ],
+      "nearest_exploratory_location_mm": 23.452800111474296,
+      "nearest_exploratory_location_same_band_mm": 32.48854458662798
+    },
+    {
+      "vertex": 5007,
+      "hemi": 0,
+      "depth_mm": 12.887802870241389,
+      "orientation_deg": 18.46855671174603,
+      "lobe": "parietal",
+      "region": "lh.inferiorparietal",
+      "stratum": [
+        0,
+        0
+      ],
+      "nearest_exploratory_location_mm": 22.266475429258648,
+      "nearest_exploratory_location_same_band_mm": 26.744097809422705
+    },
+    {
+      "vertex": 57776,
+      "hemi": 0,
+      "depth_mm": 12.093900779918584,
+      "orientation_deg": 26.1618836746803,
+      "lobe": "frontal",
+      "region": "lh.caudalmiddlefrontal",
+      "stratum": [
+        0,
+        0
+      ],
+      "nearest_exploratory_location_mm": 17.02144416343593,
+      "nearest_exploratory_location_same_band_mm": 17.902765706028426
+    },
+    {
+      "vertex": 5303,
+      "hemi": 0,
+      "depth_mm": 11.821076629911014,
+      "orientation_deg": 24.499729923192355,
+      "lobe": "occipital",
+      "region": "lh.lateraloccipital",
+      "stratum": [
+        0,
+        0
+      ],
+      "nearest_exploratory_location_mm": 25.566046911746728,
+      "nearest_exploratory_location_same_band_mm": 37.93495753245966
+    },
+    {
+      "vertex": 51104,
+      "hemi": 0,
+      "depth_mm": 10.402327928542045,
+      "orientation_deg": 10.192128644662532,
+      "lobe": "parietal",
+      "region": "lh.postcentral",
+      "stratum": [
+        0,
+        0
+      ],
+      "nearest_exploratory_location_mm": 11.682440970683674,
+      "nearest_exploratory_location_same_band_mm": 11.682440970683674
+    },
+    {
+      "vertex": 17732,
+      "hemi": 1,
+      "depth_mm": 12.365284666707295,
+      "orientation_deg": 14.089940910303842,
+      "lobe": "temporal",
+      "region": "rh.inferiortemporal",
+      "stratum": [
+        0,
+        0
+      ],
+      "nearest_exploratory_location_mm": 13.340936920822468,
+      "nearest_exploratory_location_same_band_mm": 13.340936920822468
+    },
+    {
+      "vertex": 75737,
+      "hemi": 1,
+      "depth_mm": 10.708616783508555,
+      "orientation_deg": 16.446146437733745,
+      "lobe": "frontal",
+      "region": "rh.parstriangularis",
+      "stratum": [
+        0,
+        0
+      ],
+      "nearest_exploratory_location_mm": 9.240339767696181,
+      "nearest_exploratory_location_same_band_mm": 9.240339767696181
+    },
+    {
+      "vertex": 41527,
+      "hemi": 0,
+      "depth_mm": 12.888558209641495,
+      "orientation_deg": 10.95169007482597,
+      "lobe": "frontal",
+      "region": "lh.precentral",
+      "stratum": [
+        0,
+        0
+      ],
+      "nearest_exploratory_location_mm": 14.02540341330892,
+      "nearest_exploratory_location_same_band_mm": 26.677230882884484
+    },
+    {
+      "vertex": 2412,
+      "hemi": 0,
+      "depth_mm": 14.470679605634716,
+      "orientation_deg": 20.20950883572093,
+      "lobe": "occipital",
+      "region": "lh.lateraloccipital",
+      "stratum": [
+        0,
+        0
+      ],
+      "nearest_exploratory_location_mm": 23.283621220333405,
+      "nearest_exploratory_location_same_band_mm": 23.283621220333405
+    },
+    {
+      "vertex": 20051,
+      "hemi": 1,
+      "depth_mm": 12.930381298858954,
+      "orientation_deg": 16.805204515039577,
+      "lobe": "parietal",
+      "region": "rh.inferiorparietal",
+      "stratum": [
+        0,
+        0
+      ],
+      "nearest_exploratory_location_mm": 26.718413769022494,
+      "nearest_exploratory_location_same_band_mm": 26.718413769022494
+    },
+    {
+      "vertex": 56511,
+      "hemi": 1,
+      "depth_mm": 12.287883315187754,
+      "orientation_deg": 27.97113492459119,
+      "lobe": "temporal",
+      "region": "rh.superiortemporal",
+      "stratum": [
+        0,
+        0
+      ],
+      "nearest_exploratory_location_mm": 27.98732585835653,
+      "nearest_exploratory_location_same_band_mm": 32.19386701777841
+    },
+    {
+      "vertex": 34507,
+      "hemi": 0,
+      "depth_mm": 11.452680125971611,
+      "orientation_deg": 8.759149202098099,
+      "lobe": "parietal",
+      "region": "lh.supramarginal",
+      "stratum": [
+        0,
+        0
+      ],
+      "nearest_exploratory_location_mm": 23.28810091473566,
+      "nearest_exploratory_location_same_band_mm": 24.98731214439461
+    },
+    {
+      "vertex": 7452,
+      "hemi": 0,
+      "depth_mm": 12.662501421515625,
+      "orientation_deg": 34.3632975138928,
+      "lobe": "parietal",
+      "region": "lh.inferiorparietal",
+      "stratum": [
+        0,
+        1
+      ],
+      "nearest_exploratory_location_mm": 21.51176893863979,
+      "nearest_exploratory_location_same_band_mm": 21.51176893863979
+    },
+    {
+      "vertex": 54205,
+      "hemi": 1,
+      "depth_mm": 11.95063913677858,
+      "orientation_deg": 45.36591043363829,
+      "lobe": "temporal",
+      "region": "rh.middletemporal",
+      "stratum": [
+        0,
+        1
+      ],
+      "nearest_exploratory_location_mm": 20.474799797136082,
+      "nearest_exploratory_location_same_band_mm": 26.037677396392215
+    },
+    {
+      "vertex": 65650,
+      "hemi": 1,
+      "depth_mm": 18.600230974291456,
+      "orientation_deg": 44.75567354427672,
+      "lobe": "frontal",
+      "region": "rh.parsopercularis",
+      "stratum": [
+        0,
+        1
+      ],
+      "nearest_exploratory_location_mm": 11.87670530375008,
+      "nearest_exploratory_location_same_band_mm": 11.87670530375008
+    },
+    {
+      "vertex": 56861,
+      "hemi": 1,
+      "depth_mm": 14.688173526427365,
+      "orientation_deg": 50.81568984970882,
+      "lobe": "frontal",
+      "region": "rh.superiorfrontal",
+      "stratum": [
+        0,
+        1
+      ],
+      "nearest_exploratory_location_mm": 13.339550563596312,
+      "nearest_exploratory_location_same_band_mm": 13.339550563596312
+    },
+    {
+      "vertex": 27362,
+      "hemi": 1,
+      "depth_mm": 13.347864430372281,
+      "orientation_deg": 59.80497288357577,
+      "lobe": "parietal",
+      "region": "rh.postcentral",
+      "stratum": [
+        0,
+        1
+      ],
+      "nearest_exploratory_location_mm": 12.012202198228003,
+      "nearest_exploratory_location_same_band_mm": 24.722558412947354
+    },
+    {
+      "vertex": 56131,
+      "hemi": 1,
+      "depth_mm": 15.953130338639157,
+      "orientation_deg": 58.32407951174544,
+      "lobe": "frontal",
+      "region": "rh.caudalmiddlefrontal",
+      "stratum": [
+        0,
+        1
+      ],
+      "nearest_exploratory_location_mm": 26.027941182207027,
+      "nearest_exploratory_location_same_band_mm": 26.027941182207027
+    },
+    {
+      "vertex": 27399,
+      "hemi": 1,
+      "depth_mm": 19.081224313515406,
+      "orientation_deg": 48.97638937360515,
+      "lobe": "frontal",
+      "region": "rh.paracentral",
+      "stratum": [
+        0,
+        1
+      ],
+      "nearest_exploratory_location_mm": 9.21432121074609,
+      "nearest_exploratory_location_same_band_mm": 24.197847719074183
+    },
+    {
+      "vertex": 79181,
+      "hemi": 1,
+      "depth_mm": 15.535709051864938,
+      "orientation_deg": 43.08927064512967,
+      "lobe": "frontal",
+      "region": "rh.parsorbitalis",
+      "stratum": [
+        0,
+        1
+      ],
+      "nearest_exploratory_location_mm": 17.232182162001195,
+      "nearest_exploratory_location_same_band_mm": 17.232182162001195
+    },
+    {
+      "vertex": 64188,
+      "hemi": 0,
+      "depth_mm": 16.625596440773208,
+      "orientation_deg": 55.363025101109045,
+      "lobe": "frontal",
+      "region": "lh.caudalmiddlefrontal",
+      "stratum": [
+        0,
+        1
+      ],
+      "nearest_exploratory_location_mm": 3.194631191738358,
+      "nearest_exploratory_location_same_band_mm": 3.194631191738358
+    },
+    {
+      "vertex": 22467,
+      "hemi": 1,
+      "depth_mm": 13.486537004990163,
+      "orientation_deg": 55.018487004842555,
+      "lobe": "temporal",
+      "region": "rh.middletemporal",
+      "stratum": [
+        0,
+        1
+      ],
+      "nearest_exploratory_location_mm": 17.556663071676404,
+      "nearest_exploratory_location_same_band_mm": 17.556663071676404
+    },
+    {
+      "vertex": 52949,
+      "hemi": 1,
+      "depth_mm": 16.3994134506597,
+      "orientation_deg": 42.751166996234225,
+      "lobe": "frontal",
+      "region": "rh.superiorfrontal",
+      "stratum": [
+        0,
+        1
+      ],
+      "nearest_exploratory_location_mm": 7.259426571682317,
+      "nearest_exploratory_location_same_band_mm": 7.259426571682317
+    },
+    {
+      "vertex": 243,
+      "hemi": 1,
+      "depth_mm": 10.995445630020615,
+      "orientation_deg": 38.24443333715306,
+      "lobe": "occipital",
+      "region": "rh.lateraloccipital",
+      "stratum": [
+        0,
+        1
+      ],
+      "nearest_exploratory_location_mm": 22.689882763204615,
+      "nearest_exploratory_location_same_band_mm": 27.63933787973227
+    },
+    {
+      "vertex": 41121,
+      "hemi": 0,
+      "depth_mm": 14.072831522685489,
+      "orientation_deg": 84.23797414583967,
+      "lobe": "parietal",
+      "region": "lh.supramarginal",
+      "stratum": [
+        0,
+        2
+      ],
+      "nearest_exploratory_location_mm": 19.118973622111152,
+      "nearest_exploratory_location_same_band_mm": 19.118973622111152
+    },
+    {
+      "vertex": 40837,
+      "hemi": 0,
+      "depth_mm": 17.40789204649671,
+      "orientation_deg": 73.07748494407588,
+      "lobe": "parietal",
+      "region": "lh.postcentral",
+      "stratum": [
+        0,
+        2
+      ],
+      "nearest_exploratory_location_mm": 9.822787150237284,
+      "nearest_exploratory_location_same_band_mm": 9.822787150237284
+    },
+    {
+      "vertex": 26632,
+      "hemi": 0,
+      "depth_mm": 16.142653840768542,
+      "orientation_deg": 84.21578552743257,
+      "lobe": "temporal",
+      "region": "lh.bankssts",
+      "stratum": [
+        0,
+        2
+      ],
+      "nearest_exploratory_location_mm": 19.637799085290638,
+      "nearest_exploratory_location_same_band_mm": 19.637799085290638
+    },
+    {
+      "vertex": 35342,
+      "hemi": 1,
+      "depth_mm": 16.546850950859554,
+      "orientation_deg": 69.80033260569549,
+      "lobe": "parietal",
+      "region": "rh.supramarginal",
+      "stratum": [
+        0,
+        2
+      ],
+      "nearest_exploratory_location_mm": 19.46006736261439,
+      "nearest_exploratory_location_same_band_mm": 40.0792950632998
+    },
+    {
+      "vertex": 82656,
+      "hemi": 1,
+      "depth_mm": 17.878235513798607,
+      "orientation_deg": 75.20721767720893,
+      "lobe": "frontal",
+      "region": "rh.rostralmiddlefrontal",
+      "stratum": [
+        0,
+        2
+      ],
+      "nearest_exploratory_location_mm": 11.40948733730467,
+      "nearest_exploratory_location_same_band_mm": 14.413450437173315
+    },
+    {
+      "vertex": 32291,
+      "hemi": 1,
+      "depth_mm": 15.26963192707772,
+      "orientation_deg": 85.05877562289918,
+      "lobe": "temporal",
+      "region": "rh.middletemporal",
+      "stratum": [
+        0,
+        2
+      ],
+      "nearest_exploratory_location_mm": 16.457193096787087,
+      "nearest_exploratory_location_same_band_mm": 16.457193096787087
+    },
+    {
+      "vertex": 38264,
+      "hemi": 0,
+      "depth_mm": 17.14483818206951,
+      "orientation_deg": 85.87785108401569,
+      "lobe": "frontal",
+      "region": "lh.precentral",
+      "stratum": [
+        0,
+        2
+      ],
+      "nearest_exploratory_location_mm": 15.690432373628791,
+      "nearest_exploratory_location_same_band_mm": 25.680849437202333
+    },
+    {
+      "vertex": 24044,
+      "hemi": 1,
+      "depth_mm": 14.51348890610705,
+      "orientation_deg": 65.98618204760241,
+      "lobe": "parietal",
+      "region": "rh.superiorparietal",
+      "stratum": [
+        0,
+        2
+      ],
+      "nearest_exploratory_location_mm": 10.21207042876394,
+      "nearest_exploratory_location_same_band_mm": 10.21207042876394
+    },
+    {
+      "vertex": 6267,
+      "hemi": 1,
+      "depth_mm": 13.487916856485757,
+      "orientation_deg": 86.51906470580444,
+      "lobe": "occipital",
+      "region": "rh.lateraloccipital",
+      "stratum": [
+        0,
+        2
+      ],
+      "nearest_exploratory_location_mm": 11.976762223027185,
+      "nearest_exploratory_location_same_band_mm": 31.590600326074586
+    },
+    {
+      "vertex": 51757,
+      "hemi": 1,
+      "depth_mm": 13.399558159863352,
+      "orientation_deg": 68.3429712194496,
+      "lobe": "temporal",
+      "region": "rh.superiortemporal",
+      "stratum": [
+        0,
+        2
+      ],
+      "nearest_exploratory_location_mm": 22.00815079673793,
+      "nearest_exploratory_location_same_band_mm": 35.64202686239722
+    },
+    {
+      "vertex": 74937,
+      "hemi": 0,
+      "depth_mm": 14.711286147515981,
+      "orientation_deg": 61.62217339728386,
+      "lobe": "frontal",
+      "region": "lh.parstriangularis",
+      "stratum": [
+        0,
+        2
+      ],
+      "nearest_exploratory_location_mm": 11.637919793212816,
+      "nearest_exploratory_location_same_band_mm": 11.637919793212816
+    },
+    {
+      "vertex": 47477,
+      "hemi": 0,
+      "depth_mm": 19.031254850493614,
+      "orientation_deg": 79.82343818087575,
+      "lobe": "frontal",
+      "region": "lh.superiorfrontal",
+      "stratum": [
+        0,
+        2
+      ],
+      "nearest_exploratory_location_mm": 13.031039050976199,
+      "nearest_exploratory_location_same_band_mm": 13.031039050976199
+    }
+  ],
+  "location_pools": [
+    {
+      "orientation_deg": [
+        0.0,
+        30.0
+      ],
+      "pool": 652,
+      "pool_without_exploratory": 646,
+      "drawn": 12,
+      "disjoint_from_exploratory": true
+    },
+    {
+      "orientation_deg": [
+        30.0,
+        60.0
+      ],
+      "pool": 822,
+      "pool_without_exploratory": 816,
+      "drawn": 12,
+      "disjoint_from_exploratory": true
+    },
+    {
+      "orientation_deg": [
+        60.0,
+        90.1
+      ],
+      "pool": 1680,
+      "pool_without_exploratory": 1674,
+      "drawn": 12,
+      "disjoint_from_exploratory": true
+    }
+  ],
+  "location_checks": {
+    "n_exploratory_vertices_excluded": 72,
+    "disjoint_from_exploratory": true,
+    "nearest_exploratory_location_mm_min": 3.194631191738358,
+    "nearest_exploratory_location_mm_median": 16.73931863011151,
+    "depth_mm_median": 13.780374189585622
+  },
+  "mismatch_geometry": {
+    "mismatch": {
+      "analyst_head_to_mri": [
+        [
+          0.9999491303329447,
+          -0.0086232506836706,
+          0.005232236045339242,
+          -0.004960741238945467
+        ],
+        [
+          0.009693823283255347,
+          0.9649362678580551,
+          -0.26230522061583345,
+          -0.008201829044253914
+        ],
+        [
+          -0.0027868506491361316,
+          0.2623425976081937,
+          0.9649707741396342,
+          -0.035244420969785376
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "error_rotation_deg": 2.0000000000001297,
+      "error_translation_mm": 1.9999999999999996,
+      "displacement_at_locations_mm_median": 2.9898433481013904,
+      "displacement_at_locations_mm_range": [
+        1.4768485224499064,
+        4.245018832456434
+      ]
+    }
+  },
+  "false_events": {
+    "squid/combined|primary": {
+      "threshold_frozen": 5.2092702990990905,
+      "threshold_matched": 5.279714355295095,
+      "calibration_events_above_frozen": 20,
+      "heldout_frozen": {
+        "count": 35,
+        "minutes": 20.0,
+        "rate_per_min": 1.75,
+        "ci95": [
+          1.218939120125988,
+          2.4338263684541537
+        ]
+      },
+      "evaluation_frozen": {
+        "count": 45,
+        "minutes": 20.0,
+        "rate_per_min": 2.25,
+        "ci95": [
+          1.6411654394117232,
+          3.01067702484794
+        ]
+      },
+      "evaluation_matched": {
+        "count": 29,
+        "minutes": 20.0,
+        "rate_per_min": 1.45,
+        "ci95": [
+          0.9710877568773968,
+          2.08244187192933
+        ]
+      }
+    },
+    "squid/combined|mismatch": {
+      "threshold_frozen": 5.231826513093492,
+      "threshold_matched": 5.222648728447027,
+      "calibration_events_above_frozen": 20,
+      "heldout_frozen": {
+        "count": 20,
+        "minutes": 20.0,
+        "rate_per_min": 1.0,
+        "ci95": [
+          0.6108259792701972,
+          1.5444188951337297
+        ]
+      },
+      "evaluation_frozen": {
+        "count": 21,
+        "minutes": 20.0,
+        "rate_per_min": 1.05,
+        "ci95": [
+          0.6499665492038094,
+          1.6050365367471682
+        ]
+      },
+      "evaluation_matched": {
+        "count": 24,
+        "minutes": 20.0,
+        "rate_per_min": 1.2,
+        "ci95": [
+          0.7688626427343231,
+          1.7855048796876605
+        ]
+      }
+    },
+    "opm_matched/opm|primary": {
+      "threshold_frozen": 5.305065282526039,
+      "threshold_matched": 5.34393723877885,
+      "calibration_events_above_frozen": 20,
+      "heldout_frozen": {
+        "count": 22,
+        "minutes": 20.0,
+        "rate_per_min": 1.1,
+        "ci95": [
+          0.6893641436114806,
+          1.6654132193562614
+        ]
+      },
+      "evaluation_frozen": {
+        "count": 23,
+        "minutes": 20.0,
+        "rate_per_min": 1.15,
+        "ci95": [
+          0.7290013518522339,
+          1.7255646447416517
+        ]
+      },
+      "evaluation_matched": {
+        "count": 16,
+        "minutes": 20.0,
+        "rate_per_min": 0.8,
+        "ci95": [
+          0.45726912268207603,
+          1.2991498798780476
+        ]
+      }
+    },
+    "opm_matched/opm|mismatch": {
+      "threshold_frozen": 5.241896120423582,
+      "threshold_matched": 5.266835600557593,
+      "calibration_events_above_frozen": 20,
+      "heldout_frozen": {
+        "count": 26,
+        "minutes": 20.0,
+        "rate_per_min": 1.3,
+        "ci95": [
+          0.849203160779817,
+          1.9048012041562512
+        ]
+      },
+      "evaluation_frozen": {
+        "count": 25,
+        "minutes": 20.0,
+        "rate_per_min": 1.25,
+        "ci95": [
+          0.8089340923914664,
+          1.8452465848765183
+        ]
+      },
+      "evaluation_matched": {
+        "count": 23,
+        "minutes": 20.0,
+        "rate_per_min": 1.15,
+        "ci95": [
+          0.7290013518522339,
+          1.7255646447416517
+        ]
+      }
+    },
+    "opm_dense/opm|primary": {
+      "threshold_frozen": 5.292890421894647,
+      "threshold_matched": 5.335360830199978,
+      "calibration_events_above_frozen": 20,
+      "heldout_frozen": {
+        "count": 24,
+        "minutes": 20.0,
+        "rate_per_min": 1.2,
+        "ci95": [
+          0.7688626427343231,
+          1.7855048796876605
+        ]
+      },
+      "evaluation_frozen": {
+        "count": 25,
+        "minutes": 20.0,
+        "rate_per_min": 1.25,
+        "ci95": [
+          0.8089340923914664,
+          1.8452465848765183
+        ]
+      },
+      "evaluation_matched": {
+        "count": 23,
+        "minutes": 20.0,
+        "rate_per_min": 1.15,
+        "ci95": [
+          0.7290013518522339,
+          1.7255646447416517
+        ]
+      }
+    },
+    "opm_dense/opm|mismatch": {
+      "threshold_frozen": 5.243756550566904,
+      "threshold_matched": 5.284093951410633,
+      "calibration_events_above_frozen": 20,
+      "heldout_frozen": {
+        "count": 26,
+        "minutes": 20.0,
+        "rate_per_min": 1.3,
+        "ci95": [
+          0.849203160779817,
+          1.9048012041562512
+        ]
+      },
+      "evaluation_frozen": {
+        "count": 24,
+        "minutes": 20.0,
+        "rate_per_min": 1.2,
+        "ci95": [
+          0.7688626427343231,
+          1.7855048796876605
+        ]
+      },
+      "evaluation_matched": {
+        "count": 17,
+        "minutes": 20.0,
+        "rate_per_min": 0.85,
+        "ci95": [
+          0.4951563234803644,
+          1.3609323407953307
+        ]
+      }
+    }
+  },
+  "false_event_rate_equality_on_evaluation_null": {
+    "opm_dense/opm_vs_squid/combined/primary/frozen": {
+      "count_opm": 25,
+      "count_squid": 45,
+      "conditional_binomial_p": 0.022462895492509273,
+      "note": "approximate: the arrays share the background and room noise"
+    },
+    "opm_dense/opm_vs_squid/combined/primary/matched": {
+      "count_opm": 23,
+      "count_squid": 29,
+      "conditional_binomial_p": 0.48845566937989204,
+      "note": "approximate: the arrays share the background and room noise"
+    },
+    "opm_matched/opm_vs_squid/combined/primary/frozen": {
+      "count_opm": 23,
+      "count_squid": 45,
+      "conditional_binomial_p": 0.01033766119369546,
+      "note": "approximate: the arrays share the background and room noise"
+    },
+    "opm_matched/opm_vs_squid/combined/primary/matched": {
+      "count_opm": 16,
+      "count_squid": 29,
+      "conditional_binomial_p": 0.07245426016254441,
+      "note": "approximate: the arrays share the background and room noise"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch/frozen": {
+      "count_opm": 24,
+      "count_squid": 21,
+      "conditional_binomial_p": 0.765991824244793,
+      "note": "approximate: the arrays share the background and room noise"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch/matched": {
+      "count_opm": 17,
+      "count_squid": 24,
+      "conditional_binomial_p": 0.34888887944907765,
+      "note": "approximate: the arrays share the background and room noise"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch/frozen": {
+      "count_opm": 25,
+      "count_squid": 21,
+      "conditional_binomial_p": 0.6587380770236564,
+      "note": "approximate: the arrays share the background and room noise"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch/matched": {
+      "count_opm": 23,
+      "count_squid": 24,
+      "conditional_binomial_p": 1.0,
+      "note": "approximate: the arrays share the background and room noise"
+    }
+  },
+  "oracle": {
+    "squid/combined": {
+      "z_crit": 3.082520997504275,
+      "alpha": 0.001,
+      "heldout_samples": 2160000,
+      "heldout_exceed": 2152,
+      "heldout_false_positive_probability": 0.0009962962962962963,
+      "ci95": [
+        0.0009546626184398383,
+        0.0010392769951688575
+      ]
+    },
+    "opm_matched/opm": {
+      "z_crit": 3.0855393828740323,
+      "alpha": 0.001,
+      "heldout_samples": 2160000,
+      "heldout_exceed": 2122,
+      "heldout_false_positive_probability": 0.0009824074074074073,
+      "ci95": [
+        0.0009410677554060351,
+        0.0010250941862092453
+      ]
+    },
+    "opm_dense/opm": {
+      "z_crit": 3.098530313145391,
+      "alpha": 0.001,
+      "heldout_samples": 2160000,
+      "heldout_exceed": 2017,
+      "heldout_false_positive_probability": 0.0009337962962962963,
+      "ci95": [
+        0.0008935025101349244,
+        0.0009754375913939249
+      ]
+    }
+  },
+  "comparisons": {
+    "opm_dense/opm_vs_squid/combined/oracle/replicate0": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 68,
+      "detected_only_squid": 3,
+      "locations_favouring_opm": 29,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        3,
+        4,
+        4,
+        1,
+        2,
+        1,
+        1,
+        2,
+        3,
+        5,
+        4,
+        0,
+        3,
+        3,
+        0,
+        1,
+        2,
+        2,
+        -1,
+        0,
+        4,
+        2,
+        3,
+        0,
+        2,
+        1,
+        1,
+        1,
+        3,
+        0,
+        0,
+        2,
+        1,
+        1,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.5090253285429978,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.3102719625164794,
+          1.839471407448738
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.005
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/oracle/replicate1": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 52,
+      "detected_only_squid": 2,
+      "locations_favouring_opm": 27,
+      "locations_favouring_squid": 0,
+      "location_differences": [
+        2,
+        2,
+        5,
+        2,
+        2,
+        1,
+        0,
+        2,
+        0,
+        1,
+        3,
+        3,
+        1,
+        1,
+        1,
+        0,
+        2,
+        0,
+        0,
+        3,
+        0,
+        2,
+        1,
+        1,
+        2,
+        1,
+        1,
+        0,
+        4,
+        1,
+        0,
+        0,
+        1,
+        1,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3042232858160252,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1881172766535693,
+          1.5022323942031846
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/oracle/replicate2": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 59,
+      "detected_only_squid": 5,
+      "locations_favouring_opm": 28,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        5,
+        3,
+        4,
+        3,
+        2,
+        0,
+        1,
+        1,
+        0,
+        1,
+        3,
+        2,
+        3,
+        2,
+        1,
+        0,
+        1,
+        2,
+        1,
+        2,
+        3,
+        0,
+        0,
+        2,
+        1,
+        0,
+        0,
+        -1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3472335768656905,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.2117037670327997,
+          1.5379233556424903
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/oracle/replicate3": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 66,
+      "detected_only_squid": 5,
+      "locations_favouring_opm": 29,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        3,
+        1,
+        3,
+        2,
+        5,
+        0,
+        4,
+        1,
+        1,
+        0,
+        2,
+        3,
+        1,
+        2,
+        2,
+        -1,
+        1,
+        0,
+        1,
+        3,
+        4,
+        0,
+        1,
+        1,
+        1,
+        3,
+        1,
+        1,
+        3,
+        3,
+        2,
+        0,
+        1,
+        0,
+        4,
+        2
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.4524228561143244,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.245708680362423,
+          1.6821427258312662
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/oracle/replicate4": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 52,
+      "detected_only_squid": 4,
+      "locations_favouring_opm": 30,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        2,
+        1,
+        1,
+        2,
+        3,
+        1,
+        2,
+        1,
+        2,
+        1,
+        1,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        1,
+        0,
+        2,
+        3,
+        1,
+        1,
+        0,
+        2,
+        2,
+        1,
+        -2,
+        2,
+        1,
+        0,
+        1,
+        1,
+        3,
+        3,
+        3
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.324673904802681,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.2089960439243823,
+          1.4887216904814806
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.001
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/oracle/pooled": {
+      "n": 3240,
+      "n_locations": 36,
+      "detected_only_opm": 297,
+      "detected_only_squid": 19,
+      "locations_favouring_opm": 35,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        15,
+        11,
+        17,
+        10,
+        14,
+        3,
+        8,
+        7,
+        6,
+        8,
+        13,
+        8,
+        9,
+        10,
+        4,
+        1,
+        8,
+        5,
+        1,
+        10,
+        14,
+        5,
+        6,
+        4,
+        8,
+        7,
+        4,
+        -1,
+        13,
+        7,
+        3,
+        4,
+        5,
+        7,
+        15,
+        9
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.380032970543886,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.2708375130976635,
+          1.5344698724516725
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1/replicate0": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 60,
+      "detected_only_squid": 4,
+      "locations_favouring_opm": 28,
+      "locations_favouring_squid": 2,
+      "location_differences": [
+        3,
+        -1,
+        3,
+        2,
+        3,
+        3,
+        3,
+        2,
+        1,
+        3,
+        2,
+        2,
+        1,
+        2,
+        2,
+        1,
+        3,
+        1,
+        0,
+        5,
+        1,
+        0,
+        0,
+        1,
+        3,
+        0,
+        2,
+        -1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        2,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2819267405874748,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.175462765404934,
+          1.4504915484951544
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1/replicate1": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 45,
+      "detected_only_squid": 2,
+      "locations_favouring_opm": 23,
+      "locations_favouring_squid": 0,
+      "location_differences": [
+        4,
+        0,
+        4,
+        1,
+        4,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        2,
+        2,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        2,
+        1,
+        0,
+        0,
+        1,
+        3,
+        3,
+        4,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2055102073057946,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1131755602271274,
+          1.3574134516265197
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1/replicate2": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 43,
+      "detected_only_squid": 3,
+      "locations_favouring_opm": 25,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        3,
+        0,
+        3,
+        1,
+        3,
+        0,
+        -1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        2,
+        2,
+        1,
+        1,
+        0,
+        0,
+        3,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2274822640975656,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1541091400313386,
+          1.3377483627846067
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1/replicate3": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 45,
+      "detected_only_squid": 3,
+      "locations_favouring_opm": 23,
+      "locations_favouring_squid": 2,
+      "location_differences": [
+        4,
+        0,
+        2,
+        2,
+        5,
+        2,
+        -1,
+        3,
+        0,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        2,
+        -1,
+        3,
+        1,
+        1,
+        2,
+        0,
+        1,
+        1,
+        2,
+        0,
+        2,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.209638758356108,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1312807357172439,
+          1.3431300399059312
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1/replicate4": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 56,
+      "detected_only_squid": 3,
+      "locations_favouring_opm": 27,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        3,
+        0,
+        3,
+        2,
+        2,
+        0,
+        1,
+        2,
+        2,
+        3,
+        2,
+        1,
+        2,
+        2,
+        2,
+        1,
+        3,
+        1,
+        0,
+        2,
+        3,
+        0,
+        2,
+        0,
+        3,
+        2,
+        1,
+        0,
+        0,
+        2,
+        -2,
+        0,
+        1,
+        3,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3672216671546993,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.204570237606887,
+          1.5870368757534017
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1/pooled": {
+      "n": 3240,
+      "n_locations": 36,
+      "detected_only_opm": 249,
+      "detected_only_squid": 15,
+      "locations_favouring_opm": 34,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        17,
+        -1,
+        15,
+        8,
+        17,
+        5,
+        3,
+        9,
+        5,
+        10,
+        6,
+        3,
+        6,
+        6,
+        6,
+        6,
+        10,
+        4,
+        1,
+        11,
+        9,
+        1,
+        7,
+        2,
+        9,
+        3,
+        4,
+        5,
+        4,
+        5,
+        0,
+        4,
+        4,
+        13,
+        14,
+        3
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2522836715831922,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1814945928792764,
+          1.3664889574701347
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched/replicate0": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 59,
+      "detected_only_squid": 4,
+      "locations_favouring_opm": 28,
+      "locations_favouring_squid": 2,
+      "location_differences": [
+        3,
+        -1,
+        3,
+        2,
+        3,
+        3,
+        3,
+        2,
+        1,
+        3,
+        2,
+        2,
+        1,
+        1,
+        2,
+        1,
+        3,
+        1,
+        0,
+        5,
+        1,
+        0,
+        0,
+        1,
+        3,
+        0,
+        2,
+        -1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        2,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.273049710026054,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1704442418413852,
+          1.419794192902102
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched/replicate1": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 46,
+      "detected_only_squid": 2,
+      "locations_favouring_opm": 26,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        4,
+        0,
+        4,
+        1,
+        4,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        2,
+        2,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        3,
+        3,
+        4,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2048018829778318,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1022598796949497,
+          1.3695378780334484
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched/replicate2": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 44,
+      "detected_only_squid": 2,
+      "locations_favouring_opm": 26,
+      "locations_favouring_squid": 0,
+      "location_differences": [
+        3,
+        0,
+        3,
+        1,
+        3,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        3,
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        2,
+        2,
+        1,
+        1,
+        0,
+        0,
+        3,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2274822640975656,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1505678324445205,
+          1.3432824703577195
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched/replicate3": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 47,
+      "detected_only_squid": 3,
+      "locations_favouring_opm": 23,
+      "locations_favouring_squid": 2,
+      "location_differences": [
+        4,
+        0,
+        2,
+        1,
+        5,
+        1,
+        -1,
+        4,
+        0,
+        2,
+        3,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        2,
+        -1,
+        3,
+        2,
+        0,
+        2,
+        0,
+        1,
+        1,
+        2,
+        0,
+        3,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2380529320254023,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.142190490763682,
+          1.4142135623730951
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched/replicate4": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 54,
+      "detected_only_squid": 3,
+      "locations_favouring_opm": 27,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        2,
+        0,
+        3,
+        2,
+        2,
+        0,
+        1,
+        2,
+        2,
+        3,
+        1,
+        1,
+        2,
+        2,
+        2,
+        1,
+        3,
+        1,
+        0,
+        2,
+        3,
+        0,
+        2,
+        0,
+        2,
+        2,
+        1,
+        0,
+        0,
+        2,
+        -2,
+        0,
+        1,
+        4,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3631162481860966,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1922602780966076,
+          1.5790872738926691
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched/pooled": {
+      "n": 3240,
+      "n_locations": 36,
+      "detected_only_opm": 250,
+      "detected_only_squid": 14,
+      "locations_favouring_opm": 34,
+      "locations_favouring_squid": 2,
+      "location_differences": [
+        16,
+        -1,
+        15,
+        7,
+        17,
+        4,
+        4,
+        10,
+        5,
+        10,
+        6,
+        5,
+        6,
+        5,
+        6,
+        6,
+        10,
+        4,
+        3,
+        11,
+        9,
+        1,
+        7,
+        2,
+        8,
+        4,
+        3,
+        4,
+        4,
+        6,
+        -1,
+        4,
+        4,
+        15,
+        14,
+        3
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.254245784936947,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1830159096143427,
+          1.3807308314599906
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1/replicate0": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 61,
+      "detected_only_squid": 1,
+      "locations_favouring_opm": 29,
+      "locations_favouring_squid": 0,
+      "location_differences": [
+        3,
+        0,
+        3,
+        3,
+        2,
+        1,
+        3,
+        2,
+        1,
+        2,
+        2,
+        1,
+        3,
+        0,
+        1,
+        0,
+        2,
+        1,
+        2,
+        5,
+        2,
+        1,
+        2,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        2,
+        4,
+        0
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.4179528137975959,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.2560519229410267,
+          1.679314382033311
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1/replicate1": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 47,
+      "detected_only_squid": 2,
+      "locations_favouring_opm": 23,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        3,
+        2,
+        4,
+        0,
+        3,
+        1,
+        1,
+        0,
+        1,
+        2,
+        0,
+        1,
+        0,
+        0,
+        2,
+        2,
+        1,
+        1,
+        1,
+        2,
+        3,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        -1,
+        1,
+        1,
+        1,
+        4,
+        5,
+        0
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2584516872986573,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1192387219450235,
+          1.5029618797039257
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1/replicate2": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 43,
+      "detected_only_squid": 3,
+      "locations_favouring_opm": 25,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        2,
+        -1,
+        2,
+        2,
+        3,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        2,
+        1,
+        0,
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        2,
+        2,
+        1,
+        0,
+        0,
+        1,
+        3,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2340685116460504,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1456612703194908,
+          1.3671441545978744
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1/replicate3": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 47,
+      "detected_only_squid": 2,
+      "locations_favouring_opm": 30,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        1,
+        1,
+        3,
+        1,
+        4,
+        2,
+        0,
+        1,
+        0,
+        0,
+        2,
+        0,
+        2,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        2,
+        1,
+        2,
+        0,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2491669895012547,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1706422408078558,
+          1.3907050279651425
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1/replicate4": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 48,
+      "detected_only_squid": 3,
+      "locations_favouring_opm": 22,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        2,
+        0,
+        3,
+        2,
+        2,
+        1,
+        3,
+        2,
+        2,
+        3,
+        1,
+        0,
+        2,
+        0,
+        1,
+        -1,
+        4,
+        0,
+        0,
+        2,
+        2,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        5,
+        3,
+        0
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3581724438273208,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1695926838546196,
+          1.5807465388146413
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1/pooled": {
+      "n": 3240,
+      "n_locations": 36,
+      "detected_only_opm": 246,
+      "detected_only_squid": 11,
+      "locations_favouring_opm": 36,
+      "locations_favouring_squid": 0,
+      "location_differences": [
+        11,
+        2,
+        15,
+        8,
+        14,
+        6,
+        8,
+        5,
+        5,
+        8,
+        5,
+        3,
+        9,
+        2,
+        5,
+        1,
+        9,
+        5,
+        6,
+        12,
+        11,
+        3,
+        8,
+        4,
+        6,
+        4,
+        3,
+        5,
+        8,
+        2,
+        2,
+        2,
+        5,
+        16,
+        16,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2952648279490513,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1989261468809844,
+          1.455508533126494
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate0": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 58,
+      "detected_only_squid": 2,
+      "locations_favouring_opm": 28,
+      "locations_favouring_squid": 0,
+      "location_differences": [
+        3,
+        0,
+        3,
+        2,
+        2,
+        1,
+        2,
+        2,
+        1,
+        2,
+        2,
+        1,
+        3,
+        0,
+        1,
+        0,
+        2,
+        1,
+        2,
+        5,
+        2,
+        1,
+        2,
+        2,
+        4,
+        1,
+        2,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        2,
+        3,
+        0
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.394743666350406,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.2366623179491927,
+          1.65053443884327
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate1": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 45,
+      "detected_only_squid": 2,
+      "locations_favouring_opm": 22,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        3,
+        2,
+        4,
+        0,
+        3,
+        1,
+        1,
+        0,
+        1,
+        2,
+        0,
+        1,
+        0,
+        0,
+        2,
+        2,
+        0,
+        1,
+        1,
+        2,
+        3,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        -1,
+        1,
+        1,
+        1,
+        4,
+        5,
+        0
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2476144032366945,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1132067407058028,
+          1.4731024905795576
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate2": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 43,
+      "detected_only_squid": 3,
+      "locations_favouring_opm": 25,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        2,
+        -1,
+        2,
+        2,
+        3,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        2,
+        1,
+        0,
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        2,
+        2,
+        1,
+        0,
+        0,
+        1,
+        3,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2340685116460504,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1534168298807483,
+          1.355388620118144
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate3": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 42,
+      "detected_only_squid": 3,
+      "locations_favouring_opm": 29,
+      "locations_favouring_squid": 2,
+      "location_differences": [
+        1,
+        1,
+        2,
+        1,
+        4,
+        2,
+        -1,
+        1,
+        0,
+        0,
+        2,
+        0,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        2,
+        1,
+        2,
+        2,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        2,
+        2,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2091710800272608,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1378724107576097,
+          1.3503499461681903
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate4": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 48,
+      "detected_only_squid": 3,
+      "locations_favouring_opm": 22,
+      "locations_favouring_squid": 1,
+      "location_differences": [
+        2,
+        0,
+        3,
+        2,
+        2,
+        1,
+        3,
+        2,
+        2,
+        3,
+        1,
+        0,
+        2,
+        0,
+        1,
+        -1,
+        4,
+        0,
+        0,
+        2,
+        2,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        5,
+        3,
+        0
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.3581724438273208,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.17995309244599,
+          1.5717307013631239
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched/pooled": {
+      "n": 3240,
+      "n_locations": 36,
+      "detected_only_opm": 236,
+      "detected_only_squid": 13,
+      "locations_favouring_opm": 36,
+      "locations_favouring_squid": 0,
+      "location_differences": [
+        11,
+        2,
+        14,
+        7,
+        14,
+        6,
+        6,
+        5,
+        5,
+        8,
+        5,
+        3,
+        8,
+        2,
+        5,
+        1,
+        8,
+        5,
+        6,
+        12,
+        11,
+        3,
+        8,
+        4,
+        6,
+        4,
+        2,
+        4,
+        7,
+        2,
+        2,
+        2,
+        3,
+        16,
+        15,
+        1
+      ],
+      "location_sign_flip_p": 0.0,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2805333835438428,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.1849386469345293,
+          1.4401975250760586
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/oracle/replicate0": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 38,
+      "detected_only_squid": 11,
+      "locations_favouring_opm": 18,
+      "locations_favouring_squid": 6,
+      "location_differences": [
+        4,
+        3,
+        1,
+        0,
+        3,
+        0,
+        0,
+        0,
+        3,
+        0,
+        1,
+        -1,
+        1,
+        3,
+        0,
+        0,
+        0,
+        2,
+        -1,
+        -1,
+        3,
+        0,
+        2,
+        0,
+        3,
+        0,
+        1,
+        -3,
+        2,
+        1,
+        0,
+        -1,
+        1,
+        -3,
+        2,
+        1
+      ],
+      "location_sign_flip_p": 0.01245,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1703583669219508,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0205455622091724,
+          1.37535411256907
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/oracle/replicate1": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 41,
+      "detected_only_squid": 15,
+      "locations_favouring_opm": 18,
+      "locations_favouring_squid": 8,
+      "location_differences": [
+        3,
+        1,
+        3,
+        3,
+        2,
+        0,
+        -1,
+        0,
+        0,
+        -2,
+        1,
+        3,
+        0,
+        2,
+        0,
+        -2,
+        2,
+        -1,
+        -1,
+        -1,
+        0,
+        2,
+        1,
+        2,
+        2,
+        1,
+        1,
+        -1,
+        3,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.01065,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1420362078908755,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0038582415944752,
+          1.3282990673600832
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/oracle/replicate2": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 38,
+      "detected_only_squid": 7,
+      "locations_favouring_opm": 22,
+      "locations_favouring_squid": 5,
+      "location_differences": [
+        5,
+        1,
+        1,
+        1,
+        2,
+        0,
+        3,
+        -1,
+        0,
+        -1,
+        0,
+        2,
+        1,
+        2,
+        1,
+        0,
+        1,
+        0,
+        -1,
+        0,
+        2,
+        0,
+        1,
+        3,
+        2,
+        0,
+        1,
+        -1,
+        1,
+        2,
+        1,
+        -2,
+        1,
+        0,
+        2,
+        1
+      ],
+      "location_sign_flip_p": 0.00085,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1839731496407937,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0791460347989312,
+          1.3263002457176705
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/oracle/replicate3": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 40,
+      "detected_only_squid": 16,
+      "locations_favouring_opm": 20,
+      "locations_favouring_squid": 8,
+      "location_differences": [
+        3,
+        1,
+        0,
+        2,
+        4,
+        -1,
+        0,
+        -1,
+        1,
+        0,
+        1,
+        3,
+        0,
+        2,
+        1,
+        -1,
+        0,
+        -1,
+        0,
+        1,
+        1,
+        -1,
+        0,
+        1,
+        3,
+        2,
+        1,
+        -3,
+        1,
+        1,
+        3,
+        -2,
+        0,
+        -1,
+        2,
+        1
+      ],
+      "location_sign_flip_p": 0.0175,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1683639876322773,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          0.9972726496347369,
+          1.3406716791349582
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/oracle/replicate4": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 39,
+      "detected_only_squid": 11,
+      "locations_favouring_opm": 22,
+      "locations_favouring_squid": 5,
+      "location_differences": [
+        4,
+        3,
+        1,
+        2,
+        3,
+        -1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        2,
+        -1,
+        1,
+        1,
+        1,
+        0,
+        -1,
+        3,
+        0,
+        1,
+        0,
+        2,
+        1,
+        0,
+        -3,
+        0,
+        1,
+        0,
+        -1,
+        1,
+        1,
+        2,
+        1
+      ],
+      "location_sign_flip_p": 0.00225,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.172157688819252,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0420100572284168,
+          1.3328092183628282
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/oracle/pooled": {
+      "n": 3240,
+      "n_locations": 36,
+      "detected_only_opm": 196,
+      "detected_only_squid": 60,
+      "locations_favouring_opm": 27,
+      "locations_favouring_squid": 9,
+      "location_differences": [
+        19,
+        9,
+        6,
+        8,
+        14,
+        -2,
+        3,
+        -1,
+        5,
+        -3,
+        3,
+        8,
+        2,
+        11,
+        1,
+        -2,
+        4,
+        1,
+        -3,
+        -2,
+        9,
+        1,
+        5,
+        6,
+        12,
+        4,
+        4,
+        -11,
+        7,
+        5,
+        4,
+        -7,
+        3,
+        -3,
+        11,
+        5
+      ],
+      "location_sign_flip_p": 0.0005,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1655401836859776,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.061754453042418,
+          1.2895296272646326
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1/replicate0": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 31,
+      "detected_only_squid": 11,
+      "locations_favouring_opm": 18,
+      "locations_favouring_squid": 6,
+      "location_differences": [
+        3,
+        0,
+        1,
+        1,
+        3,
+        1,
+        -1,
+        0,
+        2,
+        0,
+        1,
+        1,
+        2,
+        2,
+        1,
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        0,
+        2,
+        1,
+        0,
+        2,
+        -1,
+        1,
+        1,
+        0,
+        -3,
+        0,
+        0,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.0167,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0607839556213952,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          0.9509705226343242,
+          1.1676214665301357
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1/replicate1": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 39,
+      "detected_only_squid": 13,
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 8,
+      "location_differences": [
+        1,
+        3,
+        4,
+        1,
+        4,
+        -1,
+        0,
+        0,
+        2,
+        -1,
+        0,
+        1,
+        0,
+        2,
+        1,
+        0,
+        -1,
+        -2,
+        0,
+        -1,
+        3,
+        0,
+        3,
+        1,
+        0,
+        -1,
+        0,
+        -2,
+        1,
+        0,
+        2,
+        -1,
+        3,
+        0,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.0152,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1087654527962094,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          0.9851222047515498,
+          1.2908013384801869
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1/replicate2": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 32,
+      "detected_only_squid": 7,
+      "locations_favouring_opm": 21,
+      "locations_favouring_squid": 5,
+      "location_differences": [
+        2,
+        1,
+        2,
+        2,
+        3,
+        1,
+        -1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        3,
+        2,
+        0,
+        -1,
+        0,
+        0,
+        1,
+        -1,
+        2,
+        1,
+        1,
+        1,
+        0,
+        -1,
+        0,
+        -2,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.00095,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1364443694785042,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0539906501083618,
+          1.2644075355344913
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1/replicate3": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 30,
+      "detected_only_squid": 10,
+      "locations_favouring_opm": 15,
+      "locations_favouring_squid": 7,
+      "location_differences": [
+        3,
+        0,
+        2,
+        3,
+        5,
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        -1,
+        0,
+        1,
+        0,
+        -2,
+        1,
+        0,
+        2,
+        0,
+        2,
+        0,
+        1,
+        -1,
+        0,
+        2,
+        1,
+        0,
+        0,
+        -1,
+        2,
+        1
+      ],
+      "location_sign_flip_p": 0.0303,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0878114914911472,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          0.9972854667889093,
+          1.1969257018304211
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1/replicate4": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 34,
+      "detected_only_squid": 9,
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 7,
+      "location_differences": [
+        2,
+        0,
+        1,
+        3,
+        2,
+        -1,
+        -1,
+        -1,
+        3,
+        0,
+        1,
+        0,
+        2,
+        3,
+        2,
+        0,
+        -1,
+        2,
+        -1,
+        -1,
+        2,
+        1,
+        2,
+        0,
+        2,
+        0,
+        0,
+        -2,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.0069,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2010268625917155,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0639042078605185,
+          1.385378049314486
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1/pooled": {
+      "n": 3240,
+      "n_locations": 36,
+      "detected_only_opm": 166,
+      "detected_only_squid": 50,
+      "locations_favouring_opm": 23,
+      "locations_favouring_squid": 11,
+      "location_differences": [
+        11,
+        4,
+        10,
+        10,
+        17,
+        -1,
+        -4,
+        -1,
+        9,
+        -1,
+        2,
+        2,
+        7,
+        10,
+        4,
+        -3,
+        -2,
+        0,
+        -1,
+        -5,
+        9,
+        2,
+        8,
+        4,
+        5,
+        -2,
+        3,
+        -8,
+        3,
+        5,
+        4,
+        -4,
+        4,
+        0,
+        12,
+        3
+      ],
+      "location_sign_flip_p": 0.0013,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.114775487084984,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0281989631863888,
+          1.2182690914339922
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched/replicate0": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 30,
+      "detected_only_squid": 11,
+      "locations_favouring_opm": 18,
+      "locations_favouring_squid": 7,
+      "location_differences": [
+        3,
+        0,
+        1,
+        1,
+        3,
+        1,
+        -1,
+        0,
+        2,
+        0,
+        1,
+        1,
+        2,
+        2,
+        1,
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        0,
+        2,
+        1,
+        -1,
+        2,
+        -1,
+        1,
+        1,
+        0,
+        -3,
+        0,
+        0,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.024,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0516098291155371,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          0.9409983842941675,
+          1.1658190437710576
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched/replicate1": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 38,
+      "detected_only_squid": 12,
+      "locations_favouring_opm": 19,
+      "locations_favouring_squid": 8,
+      "location_differences": [
+        1,
+        3,
+        4,
+        1,
+        3,
+        -1,
+        0,
+        0,
+        2,
+        -1,
+        0,
+        1,
+        0,
+        2,
+        1,
+        0,
+        -1,
+        -2,
+        1,
+        -1,
+        2,
+        0,
+        3,
+        1,
+        0,
+        -1,
+        0,
+        -2,
+        1,
+        1,
+        2,
+        -1,
+        3,
+        0,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.00945,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1166761848121531,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          0.9849143498430079,
+          1.283113794099343
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched/replicate2": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 31,
+      "detected_only_squid": 6,
+      "locations_favouring_opm": 20,
+      "locations_favouring_squid": 4,
+      "location_differences": [
+        2,
+        1,
+        2,
+        2,
+        3,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        3,
+        2,
+        0,
+        -1,
+        0,
+        0,
+        1,
+        -1,
+        2,
+        0,
+        1,
+        1,
+        0,
+        -1,
+        0,
+        -2,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.001,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.127349088976949,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0495684976874233,
+          1.2534131802552073
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched/replicate3": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 31,
+      "detected_only_squid": 7,
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 5,
+      "location_differences": [
+        3,
+        0,
+        2,
+        3,
+        5,
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        -1,
+        0,
+        0,
+        1,
+        -2,
+        1,
+        0,
+        2,
+        0,
+        2,
+        1,
+        1,
+        -1,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        2,
+        1
+      ],
+      "location_sign_flip_p": 0.00685,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1158534104124578,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.024019491415547,
+          1.2405022652895576
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched/replicate4": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 33,
+      "detected_only_squid": 9,
+      "locations_favouring_opm": 18,
+      "locations_favouring_squid": 8,
+      "location_differences": [
+        2,
+        0,
+        1,
+        3,
+        2,
+        -1,
+        -1,
+        -1,
+        3,
+        0,
+        1,
+        0,
+        2,
+        3,
+        2,
+        0,
+        -1,
+        1,
+        -1,
+        -1,
+        2,
+        1,
+        2,
+        0,
+        2,
+        0,
+        0,
+        -2,
+        0,
+        1,
+        0,
+        -1,
+        0,
+        1,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.0078,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2134937404455473,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0743382393762158,
+          1.3849538426048411
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched/pooled": {
+      "n": 3240,
+      "n_locations": 36,
+      "detected_only_opm": 163,
+      "detected_only_squid": 45,
+      "locations_favouring_opm": 25,
+      "locations_favouring_squid": 10,
+      "location_differences": [
+        11,
+        4,
+        10,
+        10,
+        16,
+        -1,
+        -3,
+        0,
+        9,
+        -1,
+        3,
+        3,
+        7,
+        10,
+        4,
+        -3,
+        -2,
+        -2,
+        1,
+        -5,
+        8,
+        1,
+        8,
+        4,
+        5,
+        -2,
+        3,
+        -8,
+        3,
+        5,
+        4,
+        -5,
+        4,
+        2,
+        12,
+        3
+      ],
+      "location_sign_flip_p": 0.00115,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1200435148873213,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.034334313797613,
+          1.2296015455826115
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1/replicate0": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 38,
+      "detected_only_squid": 7,
+      "locations_favouring_opm": 21,
+      "locations_favouring_squid": 5,
+      "location_differences": [
+        3,
+        1,
+        1,
+        1,
+        2,
+        0,
+        0,
+        0,
+        2,
+        -1,
+        1,
+        1,
+        3,
+        2,
+        1,
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        2,
+        1,
+        2,
+        4,
+        3,
+        0,
+        2,
+        -1,
+        1,
+        1,
+        0,
+        -2,
+        1,
+        0,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.0004,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1885732105067321,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0385137796348827,
+          1.3877141789252017
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1/replicate1": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 40,
+      "detected_only_squid": 8,
+      "locations_favouring_opm": 18,
+      "locations_favouring_squid": 4,
+      "location_differences": [
+        1,
+        3,
+        3,
+        0,
+        4,
+        1,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        0,
+        2,
+        1,
+        0,
+        -1,
+        -2,
+        0,
+        0,
+        3,
+        0,
+        2,
+        1,
+        0,
+        -1,
+        0,
+        0,
+        2,
+        0,
+        2,
+        -1,
+        3,
+        1,
+        4,
+        1
+      ],
+      "location_sign_flip_p": 0.0008,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1723808481864466,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.043281533132164,
+          1.3743731759495676
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1/replicate2": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 31,
+      "detected_only_squid": 9,
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 5,
+      "location_differences": [
+        1,
+        0,
+        1,
+        1,
+        3,
+        0,
+        1,
+        -1,
+        0,
+        -1,
+        0,
+        1,
+        3,
+        2,
+        0,
+        -1,
+        0,
+        0,
+        1,
+        0,
+        2,
+        -1,
+        3,
+        1,
+        0,
+        0,
+        0,
+        -1,
+        1,
+        2,
+        1,
+        0,
+        1,
+        0,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.00385,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1346738960490164,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.045719217177669,
+          1.2737064335968922
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1/replicate3": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 31,
+      "detected_only_squid": 8,
+      "locations_favouring_opm": 18,
+      "locations_favouring_squid": 6,
+      "location_differences": [
+        1,
+        1,
+        3,
+        0,
+        5,
+        0,
+        0,
+        -1,
+        1,
+        -1,
+        0,
+        0,
+        1,
+        2,
+        0,
+        -1,
+        0,
+        0,
+        1,
+        -2,
+        2,
+        1,
+        1,
+        2,
+        2,
+        2,
+        0,
+        -1,
+        0,
+        2,
+        0,
+        -2,
+        1,
+        0,
+        2,
+        1
+      ],
+      "location_sign_flip_p": 0.01205,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.0951287398762062,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          0.9724574017513243,
+          1.2487743594679128
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1/replicate4": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 34,
+      "detected_only_squid": 7,
+      "locations_favouring_opm": 18,
+      "locations_favouring_squid": 5,
+      "location_differences": [
+        2,
+        0,
+        2,
+        2,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        2,
+        1,
+        -2,
+        0,
+        -1,
+        -1,
+        -1,
+        2,
+        1,
+        2,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        2,
+        -1,
+        0,
+        3,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.00135,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2287762375992974,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0438835519403455,
+          1.417914694723881
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1/pooled": {
+      "n": 3240,
+      "n_locations": 36,
+      "detected_only_opm": 174,
+      "detected_only_squid": 39,
+      "locations_favouring_opm": 28,
+      "locations_favouring_squid": 8,
+      "location_differences": [
+        8,
+        5,
+        10,
+        4,
+        16,
+        1,
+        3,
+        -2,
+        7,
+        -3,
+        1,
+        3,
+        9,
+        10,
+        3,
+        -5,
+        -1,
+        -4,
+        1,
+        -3,
+        11,
+        2,
+        10,
+        8,
+        6,
+        1,
+        2,
+        -3,
+        5,
+        5,
+        5,
+        -6,
+        6,
+        4,
+        13,
+        3
+      ],
+      "location_sign_flip_p": 0.00015,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1579435567792253,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0519435379208606,
+          1.305421378261138
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate0": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 38,
+      "detected_only_squid": 7,
+      "locations_favouring_opm": 21,
+      "locations_favouring_squid": 5,
+      "location_differences": [
+        3,
+        1,
+        1,
+        1,
+        2,
+        0,
+        0,
+        0,
+        2,
+        -1,
+        1,
+        1,
+        3,
+        2,
+        1,
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        2,
+        1,
+        2,
+        4,
+        3,
+        0,
+        2,
+        -1,
+        1,
+        1,
+        0,
+        -2,
+        1,
+        0,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.0004,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1885732105067321,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.039841497856969,
+          1.3661452349511478
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate1": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 38,
+      "detected_only_squid": 8,
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 4,
+      "location_differences": [
+        1,
+        3,
+        3,
+        0,
+        4,
+        1,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        0,
+        2,
+        1,
+        0,
+        -1,
+        -2,
+        0,
+        0,
+        3,
+        0,
+        2,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        2,
+        0,
+        2,
+        -1,
+        2,
+        1,
+        4,
+        1
+      ],
+      "location_sign_flip_p": 0.00125,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.163831998428308,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0329797302977823,
+          1.3779539890916663
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate2": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 29,
+      "detected_only_squid": 10,
+      "locations_favouring_opm": 17,
+      "locations_favouring_squid": 6,
+      "location_differences": [
+        1,
+        0,
+        1,
+        1,
+        3,
+        0,
+        1,
+        -1,
+        0,
+        -1,
+        0,
+        1,
+        3,
+        1,
+        0,
+        -1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        -1,
+        3,
+        1,
+        0,
+        0,
+        0,
+        -1,
+        1,
+        2,
+        1,
+        -1,
+        1,
+        0,
+        2,
+        0
+      ],
+      "location_sign_flip_p": 0.01015,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1119215862317493,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.015845818541448,
+          1.2495577382371594
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate3": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 28,
+      "detected_only_squid": 9,
+      "locations_favouring_opm": 18,
+      "locations_favouring_squid": 7,
+      "location_differences": [
+        1,
+        1,
+        2,
+        0,
+        5,
+        0,
+        -1,
+        -1,
+        1,
+        -1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        -1,
+        0,
+        0,
+        1,
+        -2,
+        2,
+        1,
+        1,
+        2,
+        2,
+        1,
+        0,
+        -1,
+        0,
+        2,
+        0,
+        -2,
+        1,
+        0,
+        2,
+        1
+      ],
+      "location_sign_flip_p": 0.0318,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.078731516356068,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          0.9746546091224312,
+          1.194642495835635
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate4": {
+      "n": 648,
+      "n_locations": 36,
+      "detected_only_opm": 34,
+      "detected_only_squid": 7,
+      "locations_favouring_opm": 18,
+      "locations_favouring_squid": 5,
+      "location_differences": [
+        2,
+        0,
+        2,
+        2,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        2,
+        1,
+        -2,
+        0,
+        -1,
+        -1,
+        -1,
+        2,
+        1,
+        2,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        2,
+        -1,
+        0,
+        3,
+        3,
+        1
+      ],
+      "location_sign_flip_p": 0.00135,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.2287762375992974,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.044010654897584,
+          1.4132605900447746
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched/pooled": {
+      "n": 3240,
+      "n_locations": 36,
+      "detected_only_opm": 167,
+      "detected_only_squid": 41,
+      "locations_favouring_opm": 27,
+      "locations_favouring_squid": 8,
+      "location_differences": [
+        8,
+        5,
+        9,
+        4,
+        16,
+        1,
+        2,
+        -2,
+        7,
+        -3,
+        1,
+        3,
+        9,
+        8,
+        3,
+        -5,
+        -1,
+        -4,
+        1,
+        -3,
+        10,
+        2,
+        10,
+        7,
+        6,
+        0,
+        2,
+        -3,
+        5,
+        5,
+        5,
+        -7,
+        5,
+        4,
+        13,
+        3
+      ],
+      "location_sign_flip_p": 0.00015,
+      "s50_ratio_squid_over_opm": {
+        "value": 1.1476688401970496,
+        "value_censored": null,
+        "value_bounds": null,
+        "ci95": [
+          1.0469175736851444,
+          1.305328049687188
+        ],
+        "share_resamples_neither_reached": 0.0,
+        "share_resamples_opm_not_reached": 0.0,
+        "share_resamples_squid_not_reached": 0.0,
+        "share_resamples_reached_at_weakest": 0.0
+      },
+      "p_values": "uncorrected"
+    }
+  },
+  "monte_carlo": {
+    "opm_dense/opm_vs_squid/combined/oracle": {
+      "n_replicates": 5,
+      "s50_ratio": [
+        1.5090253285429978,
+        1.3042232858160252,
+        1.3472335768656905,
+        1.4524228561143244,
+        1.324673904802681
+      ],
+      "n_censored": 0,
+      "s50_ratio_median": 1.3472335768656905,
+      "s50_ratio_range": [
+        1.3042232858160252,
+        1.5090253285429978
+      ],
+      "log2_s50_ratio_sd": 0.09116793775138472,
+      "locations_favouring": [
+        [
+          29,
+          1
+        ],
+        [
+          27,
+          0
+        ],
+        [
+          28,
+          1
+        ],
+        [
+          29,
+          1
+        ],
+        [
+          30,
+          1
+        ]
+      ],
+      "location_sign_flip_p": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_p_below_alpha": 5,
+      "note": "spread over independent noise realizations of the same events (locations, dictionaries and thresholds fixed)"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1": {
+      "n_replicates": 5,
+      "s50_ratio": [
+        1.2819267405874748,
+        1.2055102073057946,
+        1.2274822640975656,
+        1.209638758356108,
+        1.3672216671546993
+      ],
+      "n_censored": 0,
+      "s50_ratio_median": 1.2274822640975656,
+      "s50_ratio_range": [
+        1.2055102073057946,
+        1.3672216671546993
+      ],
+      "log2_s50_ratio_sd": 0.07647464788186718,
+      "locations_favouring": [
+        [
+          28,
+          2
+        ],
+        [
+          23,
+          0
+        ],
+        [
+          25,
+          1
+        ],
+        [
+          23,
+          2
+        ],
+        [
+          27,
+          1
+        ]
+      ],
+      "location_sign_flip_p": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_p_below_alpha": 5,
+      "note": "spread over independent noise realizations of the same events (locations, dictionaries and thresholds fixed)"
+    },
+    "opm_dense/opm_vs_squid/combined/practical@1_matched": {
+      "n_replicates": 5,
+      "s50_ratio": [
+        1.273049710026054,
+        1.2048018829778318,
+        1.2274822640975656,
+        1.2380529320254023,
+        1.3631162481860966
+      ],
+      "n_censored": 0,
+      "s50_ratio_median": 1.2380529320254023,
+      "s50_ratio_range": [
+        1.2048018829778318,
+        1.3631162481860966
+      ],
+      "log2_s50_ratio_sd": 0.06953781041382891,
+      "locations_favouring": [
+        [
+          28,
+          2
+        ],
+        [
+          26,
+          1
+        ],
+        [
+          26,
+          0
+        ],
+        [
+          23,
+          2
+        ],
+        [
+          27,
+          1
+        ]
+      ],
+      "location_sign_flip_p": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_p_below_alpha": 5,
+      "note": "spread over independent noise realizations of the same events (locations, dictionaries and thresholds fixed)"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1": {
+      "n_replicates": 5,
+      "s50_ratio": [
+        1.4179528137975959,
+        1.2584516872986573,
+        1.2340685116460504,
+        1.2491669895012547,
+        1.3581724438273208
+      ],
+      "n_censored": 0,
+      "s50_ratio_median": 1.2584516872986573,
+      "s50_ratio_range": [
+        1.2340685116460504,
+        1.4179528137975959
+      ],
+      "log2_s50_ratio_sd": 0.08777519939546821,
+      "locations_favouring": [
+        [
+          29,
+          0
+        ],
+        [
+          23,
+          1
+        ],
+        [
+          25,
+          1
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          22,
+          1
+        ]
+      ],
+      "location_sign_flip_p": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_p_below_alpha": 5,
+      "note": "spread over independent noise realizations of the same events (locations, dictionaries and thresholds fixed)"
+    },
+    "opm_dense/opm_vs_squid/combined/mismatch@1_matched": {
+      "n_replicates": 5,
+      "s50_ratio": [
+        1.394743666350406,
+        1.2476144032366945,
+        1.2340685116460504,
+        1.2091710800272608,
+        1.3581724438273208
+      ],
+      "n_censored": 0,
+      "s50_ratio_median": 1.2476144032366945,
+      "s50_ratio_range": [
+        1.2091710800272608,
+        1.394743666350406
+      ],
+      "log2_s50_ratio_sd": 0.09119126235958892,
+      "locations_favouring": [
+        [
+          28,
+          0
+        ],
+        [
+          22,
+          1
+        ],
+        [
+          25,
+          1
+        ],
+        [
+          29,
+          2
+        ],
+        [
+          22,
+          1
+        ]
+      ],
+      "location_sign_flip_p": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_p_below_alpha": 5,
+      "note": "spread over independent noise realizations of the same events (locations, dictionaries and thresholds fixed)"
+    },
+    "opm_matched/opm_vs_squid/combined/oracle": {
+      "n_replicates": 5,
+      "s50_ratio": [
+        1.1703583669219508,
+        1.1420362078908755,
+        1.1839731496407937,
+        1.1683639876322773,
+        1.172157688819252
+      ],
+      "n_censored": 0,
+      "s50_ratio_median": 1.1703583669219508,
+      "s50_ratio_range": [
+        1.1420362078908755,
+        1.1839731496407937
+      ],
+      "log2_s50_ratio_sd": 0.019150718769935574,
+      "locations_favouring": [
+        [
+          18,
+          6
+        ],
+        [
+          18,
+          8
+        ],
+        [
+          22,
+          5
+        ],
+        [
+          20,
+          8
+        ],
+        [
+          22,
+          5
+        ]
+      ],
+      "location_sign_flip_p": [
+        0.01245,
+        0.01065,
+        0.00085,
+        0.0175,
+        0.00225
+      ],
+      "n_p_below_alpha": 5,
+      "note": "spread over independent noise realizations of the same events (locations, dictionaries and thresholds fixed)"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1": {
+      "n_replicates": 5,
+      "s50_ratio": [
+        1.0607839556213952,
+        1.1087654527962094,
+        1.1364443694785042,
+        1.0878114914911472,
+        1.2010268625917155
+      ],
+      "n_censored": 0,
+      "s50_ratio_median": 1.1087654527962094,
+      "s50_ratio_range": [
+        1.0607839556213952,
+        1.2010268625917155
+      ],
+      "log2_s50_ratio_sd": 0.06834639544994402,
+      "locations_favouring": [
+        [
+          18,
+          6
+        ],
+        [
+          17,
+          8
+        ],
+        [
+          21,
+          5
+        ],
+        [
+          15,
+          7
+        ],
+        [
+          17,
+          7
+        ]
+      ],
+      "location_sign_flip_p": [
+        0.0167,
+        0.0152,
+        0.00095,
+        0.0303,
+        0.0069
+      ],
+      "n_p_below_alpha": 5,
+      "note": "spread over independent noise realizations of the same events (locations, dictionaries and thresholds fixed)"
+    },
+    "opm_matched/opm_vs_squid/combined/practical@1_matched": {
+      "n_replicates": 5,
+      "s50_ratio": [
+        1.0516098291155371,
+        1.1166761848121531,
+        1.127349088976949,
+        1.1158534104124578,
+        1.2134937404455473
+      ],
+      "n_censored": 0,
+      "s50_ratio_median": 1.1166761848121531,
+      "s50_ratio_range": [
+        1.0516098291155371,
+        1.2134937404455473
+      ],
+      "log2_s50_ratio_sd": 0.0735817517608788,
+      "locations_favouring": [
+        [
+          18,
+          7
+        ],
+        [
+          19,
+          8
+        ],
+        [
+          20,
+          4
+        ],
+        [
+          17,
+          5
+        ],
+        [
+          18,
+          8
+        ]
+      ],
+      "location_sign_flip_p": [
+        0.024,
+        0.00945,
+        0.001,
+        0.00685,
+        0.0078
+      ],
+      "n_p_below_alpha": 5,
+      "note": "spread over independent noise realizations of the same events (locations, dictionaries and thresholds fixed)"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1": {
+      "n_replicates": 5,
+      "s50_ratio": [
+        1.1885732105067321,
+        1.1723808481864466,
+        1.1346738960490164,
+        1.0951287398762062,
+        1.2287762375992974
+      ],
+      "n_censored": 0,
+      "s50_ratio_median": 1.1723808481864466,
+      "s50_ratio_range": [
+        1.0951287398762062,
+        1.2287762375992974
+      ],
+      "log2_s50_ratio_sd": 0.06365910502510828,
+      "locations_favouring": [
+        [
+          21,
+          5
+        ],
+        [
+          18,
+          4
+        ],
+        [
+          17,
+          5
+        ],
+        [
+          18,
+          6
+        ],
+        [
+          18,
+          5
+        ]
+      ],
+      "location_sign_flip_p": [
+        0.0004,
+        0.0008,
+        0.00385,
+        0.01205,
+        0.00135
+      ],
+      "n_p_below_alpha": 5,
+      "note": "spread over independent noise realizations of the same events (locations, dictionaries and thresholds fixed)"
+    },
+    "opm_matched/opm_vs_squid/combined/mismatch@1_matched": {
+      "n_replicates": 5,
+      "s50_ratio": [
+        1.1885732105067321,
+        1.163831998428308,
+        1.1119215862317493,
+        1.078731516356068,
+        1.2287762375992974
+      ],
+      "n_censored": 0,
+      "s50_ratio_median": 1.163831998428308,
+      "s50_ratio_range": [
+        1.078731516356068,
+        1.2287762375992974
+      ],
+      "log2_s50_ratio_sd": 0.07500409009302761,
+      "locations_favouring": [
+        [
+          21,
+          5
+        ],
+        [
+          17,
+          4
+        ],
+        [
+          17,
+          6
+        ],
+        [
+          18,
+          7
+        ],
+        [
+          18,
+          5
+        ]
+      ],
+      "location_sign_flip_p": [
+        0.0004,
+        0.00125,
+        0.01015,
+        0.0318,
+        0.00135
+      ],
+      "n_p_below_alpha": 5,
+      "note": "spread over independent noise realizations of the same events (locations, dictionaries and thresholds fixed)"
+    }
+  },
+  "mismatch": {
+    "mismatch/cost/squid/combined/mismatch@1/replicate0": {
+      "value": 1.1432292659451053,
+      "value_censored": null,
+      "value_bounds": null,
+      "ci95": [
+        1.0525616016839752,
+        1.2891619981372018
+      ],
+      "share_resamples_neither_reached": 0.0,
+      "share_resamples_denominator_not_reached": 0.0,
+      "share_resamples_numerator_not_reached": 0.0,
+      "share_resamples_reached_at_weakest": 0.0
+    },
+    "mismatch/cost/opm_matched/opm/mismatch@1/replicate0": {
+      "value": 1.0203151578642482,
+      "value_censored": null,
+      "value_bounds": null,
+      "ci95": [
+        0.972625762004514,
+        1.0849639136436373
+      ],
+      "share_resamples_neither_reached": 0.0,
+      "share_resamples_denominator_not_reached": 0.0,
+      "share_resamples_numerator_not_reached": 0.0,
+      "share_resamples_reached_at_weakest": 0.0
+    },
+    "mismatch/cost/opm_dense/opm/mismatch@1/replicate0": {
+      "value": 1.0335577830070282,
+      "value_censored": null,
+      "value_bounds": null,
+      "ci95": [
+        0.9813798792023476,
+        1.090507732665258
+      ],
+      "share_resamples_neither_reached": 0.0,
+      "share_resamples_denominator_not_reached": 0.0,
+      "share_resamples_numerator_not_reached": 0.0,
+      "share_resamples_reached_at_weakest": 0.0
+    },
+    "mismatch/ratio_change/opm_dense/opm_vs_squid/combined/mismatch@1/replicate0": {
+      "value": 1.1061106449404305,
+      "value_bounds": null,
+      "ci95": [
+        0.993698425171002,
+        1.2663136445626475
+      ]
+    },
+    "mismatch/ratio_change/opm_matched/opm_vs_squid/combined/mismatch@1/replicate0": {
+      "value": 1.120466805901565,
+      "value_bounds": null,
+      "ci95": [
+        1.0316631369527114,
+        1.242026319035487
+      ]
+    },
+    "mismatch/cost/squid/combined/mismatch@1/pooled": {
+      "value": 1.0826763946003564,
+      "value_censored": null,
+      "value_bounds": null,
+      "ci95": [
+        1.0450773330254088,
+        1.1457542633265843
+      ],
+      "share_resamples_neither_reached": 0.0,
+      "share_resamples_denominator_not_reached": 0.0,
+      "share_resamples_numerator_not_reached": 0.0,
+      "share_resamples_reached_at_weakest": 0.0
+    },
+    "mismatch/cost/opm_matched/opm/mismatch@1/pooled": {
+      "value": 1.0423142804154342,
+      "value_censored": null,
+      "value_bounds": null,
+      "ci95": [
+        1.015898899173207,
+        1.0755070109958225
+      ],
+      "share_resamples_neither_reached": 0.0,
+      "share_resamples_denominator_not_reached": 0.0,
+      "share_resamples_numerator_not_reached": 0.0,
+      "share_resamples_reached_at_weakest": 0.0
+    },
+    "mismatch/cost/opm_dense/opm/mismatch@1/pooled": {
+      "value": 1.0467496231742948,
+      "value_censored": null,
+      "value_bounds": null,
+      "ci95": [
+        1.0120505274052478,
+        1.0896502663095322
+      ],
+      "share_resamples_neither_reached": 0.0,
+      "share_resamples_denominator_not_reached": 0.0,
+      "share_resamples_numerator_not_reached": 0.0,
+      "share_resamples_reached_at_weakest": 0.0
+    },
+    "mismatch/ratio_change/opm_dense/opm_vs_squid/combined/mismatch@1/pooled": {
+      "value": 1.0343222205488956,
+      "value_bounds": null,
+      "ci95": [
+        0.9812385990464934,
+        1.0991445418655494
+      ]
+    },
+    "mismatch/ratio_change/opm_matched/opm_vs_squid/combined/mismatch@1/pooled": {
+      "value": 1.0387235548272784,
+      "value_bounds": null,
+      "ci95": [
+        0.9940311305430147,
+        1.101123264383478
+      ]
+    },
+    "mismatch/cost/squid/combined/mismatch@1_matched/replicate0": {
+      "value": 1.1432292659451053,
+      "value_censored": null,
+      "value_bounds": null,
+      "ci95": [
+        1.048225878570123,
+        1.2749382294413736
+      ],
+      "share_resamples_neither_reached": 0.0,
+      "share_resamples_denominator_not_reached": 0.0,
+      "share_resamples_numerator_not_reached": 0.0,
+      "share_resamples_reached_at_weakest": 0.0
+    },
+    "mismatch/cost/opm_matched/opm/mismatch@1_matched/replicate0": {
+      "value": 1.0114910233319647,
+      "value_censored": null,
+      "value_bounds": null,
+      "ci95": [
+        0.9708904724133414,
+        1.0607659583708762
+      ],
+      "share_resamples_neither_reached": 0.0,
+      "share_resamples_denominator_not_reached": 0.0,
+      "share_resamples_numerator_not_reached": 0.0,
+      "share_resamples_reached_at_weakest": 0.0
+    },
+    "mismatch/cost/opm_dense/opm/mismatch@1_matched/replicate0": {
+      "value": 1.0434804047635469,
+      "value_censored": null,
+      "value_bounds": null,
+      "ci95": [
+        0.9926919438620897,
+        1.0990733144078946
+      ],
+      "share_resamples_neither_reached": 0.0,
+      "share_resamples_denominator_not_reached": 0.0,
+      "share_resamples_numerator_not_reached": 0.0,
+      "share_resamples_reached_at_weakest": 0.0
+    },
+    "mismatch/ratio_change/opm_dense/opm_vs_squid/combined/mismatch@1_matched/replicate0": {
+      "value": 1.0955924622313935,
+      "value_bounds": null,
+      "ci95": [
+        0.9881182715030319,
+        1.2472065387642512
+      ]
+    },
+    "mismatch/ratio_change/opm_matched/opm_vs_squid/combined/mismatch@1_matched/replicate0": {
+      "value": 1.1302416329698906,
+      "value_bounds": null,
+      "ci95": [
+        1.0401194501647022,
+        1.2561030284695747
+      ]
+    },
+    "mismatch/cost/squid/combined/mismatch@1_matched/pooled": {
+      "value": 1.0680177948717662,
+      "value_censored": null,
+      "value_bounds": null,
+      "ci95": [
+        1.0326777797700897,
+        1.1221001405905513
+      ],
+      "share_resamples_neither_reached": 0.0,
+      "share_resamples_denominator_not_reached": 0.0,
+      "share_resamples_numerator_not_reached": 0.0,
+      "share_resamples_reached_at_weakest": 0.0
+    },
+    "mismatch/cost/opm_matched/opm/mismatch@1_matched/pooled": {
+      "value": 1.0423097352063617,
+      "value_censored": null,
+      "value_bounds": null,
+      "ci95": [
+        1.0141785894382238,
+        1.07755972026834
+      ],
+      "share_resamples_neither_reached": 0.0,
+      "share_resamples_denominator_not_reached": 0.0,
+      "share_resamples_numerator_not_reached": 0.0,
+      "share_resamples_reached_at_weakest": 0.0
+    },
+    "mismatch/cost/opm_dense/opm/mismatch@1_matched/pooled": {
+      "value": 1.0460928505810423,
+      "value_censored": null,
+      "value_bounds": null,
+      "ci95": [
+        1.0137080727805141,
+        1.0858824416874289
+      ],
+      "share_resamples_neither_reached": 0.0,
+      "share_resamples_denominator_not_reached": 0.0,
+      "share_resamples_numerator_not_reached": 0.0,
+      "share_resamples_reached_at_weakest": 0.0
+    },
+    "mismatch/ratio_change/opm_dense/opm_vs_squid/combined/mismatch@1_matched/pooled": {
+      "value": 1.0209588893362056,
+      "value_bounds": null,
+      "ci95": [
+        0.9712400140817308,
+        1.0817715583884646
+      ]
+    },
+    "mismatch/ratio_change/opm_matched/opm_vs_squid/combined/mismatch@1_matched/pooled": {
+      "value": 1.0246645107467163,
+      "value_bounds": null,
+      "ci95": [
+        0.9810739395416785,
+        1.0864896485949145
+      ]
+    }
+  },
+  "s50": {
+    "squid/combined/oracle/replicate0": {
+      "value": 18.57828102831689,
+      "ci95": [
+        16.115141941383623,
+        22.68698026885759
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "squid/combined/oracle/pooled": {
+      "value": 18.649793597598297,
+      "ci95": [
+        16.182495257294757,
+        22.41891840294612
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "squid/combined/practical@1/replicate0": {
+      "value": 34.50690894194501,
+      "ci95": [
+        30.94278782925221,
+        40.82383638318346
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "squid/combined/practical@1/pooled": {
+      "value": 35.4199310458265,
+      "ci95": [
+        31.60232921262305,
+        42.771129468056294
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "squid/combined/practical@1_matched/replicate0": {
+      "value": 34.50690894194501,
+      "ci95": [
+        31.013523315550433,
+        41.449405692542946
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "squid/combined/practical@1_matched/pooled": {
+      "value": 35.81156412403844,
+      "ci95": [
+        32.02326340133322,
+        43.31239954861603
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "squid/combined/mismatch@1/replicate0": {
+      "value": 39.44930817973438,
+      "ci95": [
+        34.02607245394264,
+        48.96422303214146
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "squid/combined/mismatch@1/pooled": {
+      "value": 38.34832324168867,
+      "ci95": [
+        33.65356523241047,
+        47.025269632269115
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "squid/combined/mismatch@1_matched/replicate0": {
+      "value": 39.44930817973438,
+      "ci95": [
+        33.9542719649038,
+        49.36850110660188
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "squid/combined/mismatch@1_matched/pooled": {
+      "value": 38.24738774666439,
+      "ci95": [
+        33.70793583299476,
+        47.291493670333
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_matched/opm/oracle/replicate0": {
+      "value": 15.874010519681997,
+      "ci95": [
+        13.968168398559444,
+        18.752464979684106
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_matched/opm/oracle/pooled": {
+      "value": 16.000987232048075,
+      "ci95": [
+        14.230131003781002,
+        18.684255659590352
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_matched/opm/practical@1/replicate0": {
+      "value": 32.5296293925668,
+      "ci95": [
+        28.70021634166375,
+        38.884189657157194
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_matched/opm/practical@1/pooled": {
+      "value": 31.77315204377677,
+      "ci95": [
+        28.40476321591432,
+        37.31102556680246
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_matched/opm/practical@1_matched/replicate0": {
+      "value": 32.813414240305505,
+      "ci95": [
+        28.662545145962465,
+        40.0
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_matched/opm/practical@1_matched/pooled": {
+      "value": 31.973368577238855,
+      "ci95": [
+        28.79581487987732,
+        38.490117292917404
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_matched/opm/mismatch@1/replicate0": {
+      "value": 33.19047394894228,
+      "ci95": [
+        28.649341669715056,
+        41.20564040617648
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_matched/opm/mismatch@1/pooled": {
+      "value": 33.11761010903936,
+      "ci95": [
+        29.25117808105417,
+        38.97766860484588
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_matched/opm/mismatch@1_matched/replicate0": {
+      "value": 33.19047394894228,
+      "ci95": [
+        28.485033080090705,
+        40.0
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_matched/opm/mismatch@1_matched/pooled": {
+      "value": 33.32615333539724,
+      "ci95": [
+        29.647005633049872,
+        39.76380172707101
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_dense/opm/oracle/replicate0": {
+      "value": 12.311444133449166,
+      "ci95": [
+        10.662162799882354,
+        14.028850885925282
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.006
+    },
+    "opm_dense/opm/oracle/pooled": {
+      "value": 13.514020313767004,
+      "ci95": [
+        12.12233846047759,
+        15.392035149489118
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_dense/opm/practical@1/replicate0": {
+      "value": 26.918003852647114,
+      "ci95": [
+        23.294671729369117,
+        31.00863611807968
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_dense/opm/practical@1/pooled": {
+      "value": 28.2842712474619,
+      "ci95": [
+        25.15912323704159,
+        32.30539597883368
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_dense/opm/practical@1_matched/replicate0": {
+      "value": 27.105704255051275,
+      "ci95": [
+        23.705131974992803,
+        30.961243114049516
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_dense/opm/practical@1_matched/pooled": {
+      "value": 28.552269861396223,
+      "ci95": [
+        25.513499090985004,
+        32.930099193651394
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_dense/opm/mismatch@1/replicate0": {
+      "value": 27.82131238491659,
+      "ci95": [
+        25.001279542648785,
+        31.003978227588078
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_dense/opm/mismatch@1/pooled": {
+      "value": 29.606550270040284,
+      "ci95": [
+        26.88747163027578,
+        33.438954103367124
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_dense/opm/mismatch@1_matched/replicate0": {
+      "value": 28.2842712474619,
+      "ci95": [
+        25.650061165863853,
+        31.50896096068496
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    },
+    "opm_dense/opm/mismatch@1_matched/pooled": {
+      "value": 29.868325369867154,
+      "ci95": [
+        27.077198518065565,
+        33.53668369295234
+      ],
+      "share_resamples_not_reached": 0.0,
+      "share_resamples_at_weakest": 0.0
+    }
+  },
+  "timing_s": {
+    "dictionary_s": 151.8022918701172,
+    "baseline_calibration_s": 97.82410597801208,
+    "heldout_s": 64.222571849823,
+    "evaluation_s": 60.39326095581055,
+    "events_s": [
+      70.6578860282898,
+      70.42526006698608,
+      70.44935321807861,
+      72.82859683036804,
+      71.69200682640076
+    ],
+    "simulate_s": 730.4152889251709,
+    "peak_rss_so_far_gb": {
+      "after_context_gb": 5.400444928,
+      "after_dictionaries_gb": 7.609532416,
+      "after_calibration_gb": 7.609532416,
+      "after_heldout_gb": 7.609532416,
+      "after_evaluation_gb": 7.609532416,
+      "after_events_gb": 7.609532416
+    },
+    "context_s": 386.9651391506195,
+    "summarise_s": 1.8478078842163086
+  },
+  "peak_rss_gb": 7.609532416,
+  "provenance": {
+    "commit": "ae458a9",
+    "mne_version": "1.13.2",
+    "numpy_version": "2.5.3"
+  }
+}
