@@ -2,7 +2,7 @@
 
 This note tabulates the published OPM-MEG studies in epilepsy: which brain regions they cover, which sensors, which ages, what they claim about the amplitude and SNR of epileptiform discharges, and against which comparator. Three modelling studies are listed separately as precedents. Every number was checked in the full text where we could read one, with its page, section or table; Section 9 lists what was read for each study. The same content, one record per study, is in `epilepsy_opm_studies.json`.
 
-Searches and reading were done on 2026-10-04.
+Searches and reading were done on 2026-10-04. Two checks were added on 2026-10-05 from `round2_checks.md` (§§1 and 5): access to the full text of Ren et al. (2025), and the frequency band behind each OPM noise figure.
 
 **Conventions**
 
@@ -46,6 +46,14 @@ The table lists every study that recorded epileptiform activity with OPMs, in or
 | Ren 2025, *NeuroImage* | 46 (mean 23.7 y) | not given in the abstract | 128-channel whole-scalp (type not given) | SQUID (not specified) | higher (p < 0.001) | higher (p = 0.003) | abstract only |
 | Schwartz 2025, *Epilepsia Open* | 7 + 1 (22–48 y; 41 y) | 5 focal temporal, 2 generalized; deep mesial (SEEG case) | 4He, 4 on scalp + 1 reference, < 45 fT/√Hz on 2 axes | 4 nearest channels of a 275-channel CTF (4D for the SEEG case) | 2.3× (group), 1.4–5.3× (individuals) | 6.72 vs 8.37 (0.80× [derived]); deep spike 6.8 vs 9.0 | full text |
 | Shen 2026, *Epilepsia* | 68 (6–60 y, mean 28) | 51 temporal, 17 extratemporal | 64 dual-mode (128 channels), < 15 fT/√Hz, rigid spherical helmet | none (concordance with iEEG) | – | – (concordance 80.1 % temporal vs 92.0 % extratemporal) | full text |
+
+**Noise figures and their bands** (checked 2026-10-05; `round2_checks.md` §5). No paper in the table states the frequency band of the noise figure it gives for its own sensors. Bands appear only in the device sources behind some figures, and they start at 1–10 Hz:
+
+- Hillebrand 2023 cites its 7–13 fT/√Hz to Osborne et al. (2018), whose first-generation QuSpin units are typically 10 fT/√Hz over 1–100 Hz. QuSpin's Gen-2 specification is below 15 fT/√Hz over 3–100 Hz.
+- Feys 2023 (*Front Neurosci*) gives bands only for its Introduction's general figures: below 23 fT/√Hz over 3–100 Hz for current Rb-OPMs (QuSpin's Gen-3 triaxial specification) and below 50 fT/√Hz over 1–1,500 Hz for 4He. The figures for its own sensors (15 and 60–65 fT/√Hz) have no band.
+- Vivekananda 2020's white-noise floor of about 10 fT/√Hz cites Boto et al. (2018), who give about 15 fT/√Hz, also without a band.
+- No band was found for the figures of Shen 2026 (< 15 fT/√Hz), Badier 2023 and Schwartz 2025 (4He).
+- For comparison, FieldLine's HEDscan specification sheet gives 8 and 15 fT/√Hz over 10–130 Hz.
 
 ## 2. Overview: modelling precedents
 
@@ -312,8 +320,12 @@ The table lists every study that recorded epileptiform activity with OPMs, in or
   - IED detection did not differ between systems (McNemar). OPM detection accuracy was 91.3 % relative to SQUID-MEG; Gwet AC1 was 0.892.
   - Among the 39 patients with IEDs in both systems, OPM-MEG had a closer sensor–scalp distance (p < 0.001), higher IED amplitude (p < 0.001) and higher SNR (p = 0.003).
   - Source localization was "nearly consistent" at the sublobar level. In 24 patients with single dipole clusters, the cluster centroids were 12.16 ± 5.90 mm apart.
-- **Read:** abstract only (PubMed 40254146; publisher abstract and highlights). We could not access the full text.
+- **Read:** abstract only (PubMed 40254146; publisher abstract and highlights). The article is open access (CC BY 4.0 in the publisher's Crossref record), but its full text could not be read with the tools available: the publisher's site refused automated access, and the article is not in PMC or Europe PMC (checked 2026-10-05; `round2_checks.md` §1).
 - **Note.** Effect sizes, the SNR definition, the comparator channels and any regional breakdown cannot be checked. PubMed's MeSH indexing lists Adolescent, Young Adult and Adult.
+- **Indirect clues** (not the article's text; `round2_checks.md` §1). They point, indirectly, to a MEGIN TRIUX and the 128-channel X-Magtech system, so the systems are at most probable; the entries above do not use them.
+  - PubMed's competing-interest statement: one author (M. Ding) is a board member of Beijing X-Magtech Technology Limited, which makes the Marvel MEG OPM system (Shen 2026 used its 128-channel version). It does not say which system the study used.
+  - A 2024 American Epilepsy Society meeting abstract by the same group (abstract 2.489) names a Neuromag TRIUX and a Marvel MEG. Its 21 patients (median age 35 years) cannot be assumed to be a subset of this cohort.
+  - A Beijing municipal news item (24 July 2024) on the market approval of the 128-channel Marvel MEG places its registration clinical study at Beijing Tiantan Hospital, the authors' institution. It does not cite the article.
 
 ### 3.11 Schwartz et al. 2025, *Epilepsia Open* 10:1660–1672 (doi 10.1002/epi4.70139)
 
@@ -614,7 +626,7 @@ Every entry was read once to extract it, then re-read against its source before 
 | Feys 2023, *Front Neurosci* | PMC full text; Europe PMC XML | full text |
 | Feys 2024 | accepted-manuscript text via the DOI; medRxiv v1 full text | full text |
 | Feys 2025 | local PDF, version of record | full text |
-| Ren 2025 | PubMed and publisher abstract, highlights | abstract only |
+| Ren 2025 | PubMed and publisher abstract, highlights; the open-access full text could not be read (the publisher's site refused automated access, 2026-10-05) | abstract only |
 | Schwartz 2025 | local PDF, version of record | full text |
 | Shen 2026 | local PDF, version of record | full text |
 | Zahran 2022 | PMC full text | full text |

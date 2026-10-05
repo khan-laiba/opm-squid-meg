@@ -606,7 +606,7 @@ def provenance_facts(F: Facts, root: Path) -> None:
     q = quoted(root, REGISTER, "10-mm cube, FieldLine Gen2, single axis, normal component | paper p. 10", "10-mm")
     F.add("meth_prov_cell_mm", "10", 10, f"{REGISTER} :: J-opm-cell ('{q}')")
     q = quoted(root, REGISTER, "Minimum sensing-centre spacing 17 mm (10-mm cell in a ~12-17 mm package)", "17 mm", "12-17")
-    F.add("meth_prov_pack_mm", "17", 17, f"{REGISTER} :: U-OPM-PACK ('{q}'; no verified device data)")
+    F.add("meth_prov_pack_mm", "17", 17, f"{REGISTER} :: U-OPM-PACK ('{q}'; a modelling choice; device footprints in the register row)")
     F.add("meth_prov_package_range_mm", "12 to 17", [12, 17], f"{REGISTER} :: U-OPM-PACK ('{q}')")
     q = quoted(root, REGISTER, "SERF OPMs of this class have ~100-150 Hz bandwidth", "100-150")
     F.add("meth_prov_bw_range_hz", "100 to 150", [100, 150], f"{REGISTER} :: A-OPM-BW ('{q}')")
