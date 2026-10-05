@@ -1,9 +1,6 @@
 {
-  "status": "NEW check (referee round 1): the school-aged children's anatomy against their MRIs (D-G3-ANAT, A-BEM-CHILD, A-G3-FID): frames, cortex near the scalp, scalp vs MRI head boundary, head circumference, overlays, verdict, correction",
-  "requests": {
-    "fable": "verify the children's scalp/white-surface geometry against the MRIs (scalp-to-cortex distance maps; compare to the dataset's T1) and either repair or drop them",
-    "codex": "Provide MRI-based overlays, coordinate-transform checks and quantitative surface/registration quality measures. Correct and rerun affected analyses, or remove those anatomies from substantive conclusions."
-  },
+  "status": "NEW check (revision): the school-aged children's anatomy against their MRIs (D-G3-ANAT, A-BEM-CHILD, A-G3-FID): frames, cortex near the scalp, scalp vs MRI head boundary, head circumference, overlays, verdict, correction",
+  "purpose": "verify the children's scalp and white-surface geometry against their MRIs (scalp-to-cortex distance maps, the T1 head boundary), with MRI overlays, coordinate-transform checks and quantitative surface and registration measures; repair a surface or drop an anatomy that fails",
   "parameters": {
     "profile_mm": [
       -20.0,
@@ -45,7 +42,7 @@
         0.0
       ]
     },
-    "note": "declared analysis choices of this check; thresholds 8 and 10 mm from the referee's request (8 mm also configs/g3b_pediatric.toml child_skull_depth_mm); the adult test displacements are declared test values"
+    "note": "declared analysis choices of this check; thresholds 8 and 10 mm as in the shallow-cortex question (8 mm also configs/g3b_pediatric.toml child_skull_depth_mm); the adult test displacements are declared test values"
   },
   "anatomies": {
     "adult": {
@@ -5216,5 +5213,6 @@
     "commit": "bd70b45",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
-  }
+  },
+  "metadata_revised_at_commit": "453a9c5"
 }

@@ -1,8 +1,8 @@
 {
   "status": "REVISION (noise-model covariance validation against the measured Neuromag noise, MNE sample subject)",
-  "requests": {
-    "codex_major_1": "Extend the checks beyond median channel RMS to held-out channelwise variances, spatial correlations, covariance eigenstructure and spectral behavior where the supplied measurement framework permits. Distinguish quantities fitted to data from independent predictions.",
-    "fable_major_1": "That model is calibrated on one scalar (median Neuromag gradiometer variance), under-predicts the measured magnetometer brain noise by 27 % (0.73x), spans 0.13-0.78 of the measured per-channel variance on the magnetometers"
+  "purpose": {
+    "beyond_median_rms": "Extend the checks beyond the median channel RMS to held-out channelwise variances, spatial correlations, the covariance eigenstructure and the spectral behaviour, as far as the measured data allow, keeping the quantities fitted to the data apart from the model's predictions.",
+    "background_calibration": "Check the cortical background, calibrated on one scalar (the median good gradiometer's variance), against the measured magnetometer brain noise and the measured per-channel variances on the magnetometers."
   },
   "fitted_vs_predicted": [
     {
@@ -17852,5 +17852,6 @@
     "commit": "10e37b9",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
-  }
+  },
+  "metadata_revised_at_commit": "453a9c5"
 }

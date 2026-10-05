@@ -1,5 +1,5 @@
 {
-  "status": "NEW (revision, referee round 1: 95 % parcel-bootstrap intervals of the adult depth curves per 5-mm depth bin, from the stored per-target values; nothing simulated)",
+  "status": "NEW (revision: 95 % parcel-bootstrap intervals of the adult depth curves per 5-mm depth bin, from the stored per-target values; nothing simulated)",
   "inputs": {
     "targets": "results/g2/g2_targets.csv",
     "targets_status": "NEW (realistic adult OPM vs Neuromag comparison, MNE sample subject) | commit e53bea8",
@@ -2272,5 +2272,6 @@
     "commit": "e3212c3",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
-  }
+  },
+  "metadata_revised_at_commit": "453a9c5"
 }

@@ -1,5 +1,5 @@
 {
-  "status": "NEW (referee round 1: adult noise-model sensitivity; Fable major issue 1 (a)-(d), Codex major issue 1)",
+  "status": "NEW (revision: adult noise-model sensitivity; near-skull cortex, coloured OPM noise, far-field sources, noise sweep)",
   "test_run": false,
   "config": {
     "adult": {
@@ -226,10 +226,7 @@
       }
     }
   },
-  "referee_requests": {
-    "fable_major_1": "(a) a sensitivity run with the shallow cortex included in the background; (b) a coloured OPM noise model (1/f + white, with the corner frequency swept) rather than a uniformly worse white sensor; (c) a bounded cardiac/ocular far-field term for both systems, or a quantitative argument that the 8-term projection removes it equally; (d) presenting the primary adult result as the range over the noise sweep",
-    "codex_major_1": "test credible structured and colored noise alternatives and present the resulting range of comparative conclusions. Also quantify sensitivity to the omitted near-skull cortical background."
-  },
+  "purpose": "(a) the near-skull cortex added to the background, to the targets or both; (b) a coloured OPM noise model (1/f plus white, the corner frequency swept) beside a uniformly worse white sensor; (c) bounded cardiac and ocular far-field terms for both systems; (d) the primary adult result over the OPM white-noise sweep; the range of the comparison under these structured and coloured alternatives",
   "conventions": "Median over targets of the paired ratio d_OPM / d_Neuromag (stored as median_log2 and as ratio), 95 % CI from a bootstrap over the Desikan-Killiany parcels and the medial-wall labels (scripts/g2_adult_comparison.compare), share of targets and of parcels with the OPM higher; d = sqrt(s^T C^+ s) with the oracle covariance, 10-nAm cortical-normal dipoles; conditions 'intrinsic+brain' (sensor + cortical background) and 'projected' (sensor + background + room field, 8-term external subspace removed by the same noise-weighted projection for every array); comparators 'combined' (Neuromag 306 channels), 'mag', 'grad' (subsets of the jointly projected data after projection). Depth profiles: median ratio per 5-mm depth bin with a parcel-bootstrap 95 % CI per bin.",
   "setup": {
     "n_targets": 7661,
@@ -15510,7 +15507,7 @@
       "3": 1.2958649382774776,
       "10": 1.9862164609249247
     },
-    "method": "Frequency-resolved whitening: the 1-40 Hz composite filter response is partitioned into the listed sub-bands; in each, every noise term has its own level (OPM: w^2 times the 1/f + white shape integrated over the sub-band; Neuromag: white; brain: the model's spatial covariance scaled to the measured gradiometer brain-noise variance of that sub-band; room field: the 8-term fit to the empty-room recording in that sub-band), and the matched-filter SNR adds over sub-bands: d^2 = sum_k u_k (ENBW_k/ENBW) s^T C_k^+ s with u_k the signal's share of energy in sub-band k. Noise in disjoint frequency bands is uncorrelated, so this is the optimal (spatio-spectral) detector's SNR when the noise spectra are flat within each sub-band; it equals the band detectability of the adult comparison when every noise term is white. The band-variance alternative (spatial whitening only) keeps the adult band covariance and raises the OPM variance by the band-averaged 1/f factor: the penalty a detector that ignores the spectral shapes would pay (an upper bound on the penalty). A uniformly worse white sensor (the white-level sweep) is the referee's contrast.",
+    "method": "Frequency-resolved whitening: the 1-40 Hz composite filter response is partitioned into the listed sub-bands; in each, every noise term has its own level (OPM: w^2 times the 1/f + white shape integrated over the sub-band; Neuromag: white; brain: the model's spatial covariance scaled to the measured gradiometer brain-noise variance of that sub-band; room field: the 8-term fit to the empty-room recording in that sub-band), and the matched-filter SNR adds over sub-bands: d^2 = sum_k u_k (ENBW_k/ENBW) s^T C_k^+ s with u_k the signal's share of energy in sub-band k. Noise in disjoint frequency bands is uncorrelated, so this is the optimal (spatio-spectral) detector's SNR when the noise spectra are flat within each sub-band; it equals the band detectability of the adult comparison when every noise term is white. The band-variance alternative (spatial whitening only) keeps the adult band covariance and raises the OPM variance by the band-averaged 1/f factor: the penalty a detector that ignores the spectral shapes would pay (an upper bound on the penalty). A uniformly worse white sensor (the white-level sweep) is the contrast it is compared with.",
     "squid_measured_rms": [
       {
         "lo_hz": 0.0,
@@ -39888,5 +39885,6 @@
     "commit": "10e37b9",
     "mne_version": "1.13.2",
     "numpy_version": "2.5.3"
-  }
+  },
+  "metadata_revised_at_commit": "453a9c5"
 }
