@@ -129,3 +129,10 @@ figures and result files CC BY 4.0).
   limitation; the excluded cortex for all nine heads; Figure 7 labelled with its paired estimands and Figure 8
   resized to a journal page; S1, S6, S7, the README, the G2 report and the milestone pages brought in line with
   the manuscript. A second pre-check runs before the package goes to both referees.
+- 2026-10-05: second internal pre-check (response accuracy, framing consistency across every page, and two mock
+  referees, both predicting minor revisions). Fixed: the reduction stated against each adult reference, the
+  templates' scalp convention with its direction, point estimates labelled where intervals span the null, scenario C
+  as the most pessimistic assumption rather than a bound, Table 1 with the interaction, the children's skull and
+  fiducial rules stated plainly, Figure 8's legend, S1/S6/S7/README wording, and the review labels removed from the
+  revision scripts and the metadata of four results (scripts/neutralize_review_labels.py; no number changed).
+  Round 3 goes to both referees next.
