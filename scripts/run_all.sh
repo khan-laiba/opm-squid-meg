@@ -65,4 +65,16 @@ step g4_compare $PY scripts/g4_epilepsy_pediatric.py --compare           # G4  p
 step g4_matched $PY scripts/study_g4_matched_rate.py                     # G4  detection at matched held-out false-event rates
 step fit_failures $PY scripts/study_g4_fit_failures.py                   # G4  failed fits under declared criteria (from the event tables)
 step g4_motion $PY scripts/g4_motion.py                                  # G4  head motion and OPM slippage (bounded extension)
-step site $PY scripts/build_site.py                                      # G5   local report in site/_build (not deployed)
+# analyses added for the referees' round-1 requests (2026-10-04); the children's QC needs their T1 and head masks
+# (configs/school_subjects_qc_manifest.json):
+step children_qc $PY scripts/study_children_qc.py                       # G3B  MRI quality check of the school-aged children
+step cov_valid $PY scripts/study_covariance_validation.py               # G2   noise model vs the measured Neuromag covariance
+step noise_sens $PY scripts/study_noise_sensitivity.py                  # G2   near-skull cortex, coloured OPM noise, far-field sources
+step constant_gap $PY scripts/study_g3b_constant_gap.py                 # G3B  counterfactual helmet fitted at the adult's gap
+for _a in adult school size2yr infant2yr infant18mo infant12mo childA childB childC; do
+  step g4c_$_a $PY scripts/g4_confirmatory.py $_a --no-combine          # G4   confirmatory spike run, one anatomy
+done
+step g4c_combine $PY scripts/g4_confirmatory.py --check-endpoint-code --combine-only  # G4  confirmatory endpoint over the nine anatomies
+step report_figures $PY scripts/report_figures_adult.py                 # G5   report figures from stored outputs
+step report_figures_ped $PY scripts/report_figures_pediatric.py         # G5   report figures from stored outputs
+step site $PY scripts/build_site.py                                      # G5   report and supplementary pages in site/_build

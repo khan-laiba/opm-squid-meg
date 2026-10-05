@@ -1,0 +1,56 @@
+# G4 confirmatory spike-detection run (revision after referee round 1; NEW): scripts/g4_confirmatory.py.
+# The spike endpoint that the report names after the exploratory analyses (report Section 2.8; exploratory
+# runs: configs/g4_epilepsy.toml, results/g4) is fixed here before this run and re-tested on new data: new
+# random seeds, newly drawn event locations, separate null data for fitting thresholds and for evaluating
+# false-event rates, Monte Carlo noise replicates, and one declared detector-mismatch variant.
+# Everything not set here is read unchanged from configs/g4_epilepsy.toml ([simulation], [events],
+# [detector], [null]) and, through the anatomy contexts of the exploratory scripts, from configs/g2_adult.toml
+# and configs/g3b_pediatric.toml (anatomies, arrays, placements, noise model and its calibration).
+# Values marked [declared] are new choices of this run, recorded as such in every output JSON.
+
+[endpoint]                        # primary and confirmatory: fixed before the run
+anatomies = ["adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC"]
+opm = "opm_dense/opm"             # the dense OPM array
+comparator = "squid/combined"     # Neuromag, all 306 channels
+detector = "practical"            # scanning detector (unknown time and source), thresholds frozen on the calibration null
+false_events_per_min = 1.0        # the endpoint's operating point (configs/g4_epilepsy.toml operating_points_per_min[0])
+depth_band_mm = [10.0, 20.0]      # g4_epilepsy_adult.DEPTH_BANDS[0]
+family = "focal"
+replicate = 0                     # the first noise realization of every event: the exploratory design (one realization per event)
+test = "two-sided exact sign-flip test on the per-location differences in detection counts (detection.sign_flip_p)"
+effect = "paired S50 ratio Neuromag / OPM from the location-pooled detection curves, location bootstrap (censored interval)"
+multiplicity = "Holm over the nine anatomies"
+alpha = 0.05
+
+[secondary]                       # reported with uncorrected p and, family by family, Holm over the anatomies; not confirmatory
+comparisons = [
+  "opm_matched/opm vs squid/combined (practical detector, frozen thresholds)",
+  "oracle detector (known topography, waveform and time; per-trial false-positive probability oracle_alpha)",
+  "practical detector at thresholds matched to 1 false event per minute on the held-out null, rates evaluated on the independent evaluation null",
+  "detector-mismatch variant (below), frozen and matched thresholds",
+  "Monte Carlo variability: the endpoint in every noise replicate, and pooled over the replicates",
+]
+
+[design]
+root_seed = 20261005              # [declared] new, used by no test run (tests need --seed); every stream is spawned per anatomy and purpose
+                                  # (numpy SeedSequence spawn keys)
+# locations per orientation stratum of the 10-20 mm band = n_locations / 12 strata of configs/g4_epilepsy.toml (6; 18 in the band),
+# unless declared here before the run: locations_per_stratum = <n> (more than 20 locations make the sign-flip test Monte Carlo,
+# 20,000 sign patterns, instead of exact)
+locations_per_stratum = 12        # [declared] 36 locations in the 10-20 mm band, twice the exploratory 18: declared before any
+                                  # confirmatory draw, after two pilot runs on test seeds (child A, 18 locations: 8/1 and 9/4
+                                  # locations, p = 0.074 and 0.21) showed that 18 locations leave single anatomies underpowered
+exclude_original_locations = true # vertex-disjoint from the exploratory locations (results/g4/g4_<anatomy>_summary.json) where a stratum allows
+noise_replicates = 5              # [declared] independent noise realizations (new event order and noise) of every event; replicate 0 is the confirmatory one
+bootstrap_resamples = 1000        # as the exploratory study
+
+[null]                            # baseline, calibration and held-out durations: configs/g4_epilepsy.toml [null]
+evaluation_min = 20.0             # [declared] a fourth, independent null set of the held-out duration: realized false-event rates of the
+                                  # frozen thresholds and of the thresholds matched on the held-out null (fitted there, evaluated here)
+
+[[variant]]                       # [declared] one detector-mismatch variant, applied to the same events and null data as the primary detector
+name = "mismatch"
+template_rule = "geometric_midpoints"   # templates at sqrt(0.75 x 1.0) and sqrt(1.0 x 1.5): no template equals an injected morphology
+dictionary_conductivity = [0.3]         # 1-layer BEM (inner skull) for the candidate topographies, as the localization inverse
+coreg_shift_mm = 2.0                    # coregistration error of the candidate dictionary, as configs/g4_epilepsy.toml [localization]
+coreg_angle_deg = 2.0                   # one draw per anatomy (one session), shared by all arrays

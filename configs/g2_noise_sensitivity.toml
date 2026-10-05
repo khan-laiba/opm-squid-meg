@@ -1,0 +1,66 @@
+# Adult noise-model sensitivity analyses (referee round 1: Fable major issue 1 (a)-(d), Codex major
+# issue 1). Driver: scripts/study_noise_sensitivity.py. Everything not listed here (arrays, targets,
+# background grid, band, room field, conditions, OPM noise sweep) is read from configs/g2_adult.toml,
+# so the variants differ from the published adult comparison only in what is listed below.
+# Tags: [R] requested by a referee or by the revision task, [S] declared sensitivity value (not a
+# measured or device value), [C] numerical choice, [D] taken from the data or the code base.
+
+[general]
+arrays = ["opm_dense", "opm_matched"]           # [R] the 208-site dense and the 98-site matched OPM arrays
+references = ["combined", "mag", "grad"]         # [R] Neuromag 306 channels, magnetometers, gradiometers
+conditions = ["intrinsic+brain", "projected"]    # [R] the adult headline conditions (configs/g2_adult.toml)
+n_boot = 1000                                    # [D] parcel-bootstrap resamples, as the adult primary result
+bootstrap_seed = 2026                            # [C] own generator (the adult run's sources seed), not the adult run's stream
+
+[near_skull]
+# (a) cortex excluded by the 4-mm inner-skull rule (A-BEM-DIST): valid white-surface vertices closer
+# than 4 mm to the 5,120-triangle inner-skull mesh, added at full resolution (every vertex, its own area)
+rule_mm = 4.0                                    # [D] anatomy.MIN_BEM_DISTANCE
+floor_primary_mm = [2.0]                         # [D] primary 3-layer model: the code base's first rule (commit 4ddebf7: no lead-field anomaly beyond 2 mm)
+floor_coarse_check_mm = [2.0, 1.0]               # [C] 1-layer model, 5,120-triangle inner skull
+floor_refined_check_mm = [2.0, 1.0, 0.0]         # [C] 1-layer model, inner skull subdivided once (20,480 triangles; anatomy.refined_inner_skull)
+diagnostic_bands_mm = [0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0]   # [C] distance bands of the accuracy diagnostics
+neighbour_energy_flag = 10.0                     # [D] lead-field energy / median of the mesh neighbours' above which a vertex counts as anomalous (the bulk, 4-6 mm, reaches ~7-30 on the cached 3-layer fields)
+
+[coloured_noise]
+# (b) OPM sensor noise PSD(f) = w^2 (1 + (f_c / f)^exponent): 1/f below the corner f_c, white level w above
+corner_hz = [1.0, 3.0, 10.0]                     # [R] swept corner frequencies
+exponent = 1.0                                   # [S] 1/f power spectrum (PSD); ASD rises as f^-1/2 below the corner
+white_levels_from = "sensors.opm_asd_fT_per_rtHz in configs/g2_adult.toml (7-30 fT/sqrt(Hz), primary 15)"
+# frequency-resolved whitening: the primary 1-40 Hz composite filter response partitioned at these
+# edges (Hz; the last sub-band ends at the Nyquist frequency); brain scale and room field refitted
+# in every sub-band as scripts/g2_band_sensitivity.py does per band
+subband_edges_hz = [0.0, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0, 12.0, 16.0, 24.0, 32.0, 48.0]   # [C]
+partition_check_split = 2                        # [C] convergence check: every sub-band split in this many equal parts (corner 10 Hz, 15 fT/sqrt(Hz))
+signal_spectra = ["flat", "spike-wave"]          # [S] flat in the band (the adult convention generalised) | the G4 spike-wave waveform (ied.ied_waveform)
+
+[far_field]
+# (c) non-cortical sources, isotropic (three orthogonal moments of equal variance), fields through each
+# channel's own coil integration points (as the 8-term room-field basis)
+heart_head_mm = [-30.0, 50.0]                    # [S] x (left -), y (anterior +) of the cardiac source, head frame
+heart_depth_mm = [200.0, 250.0, 300.0]           # [S] distance below the head origin (z = -depth); 250 = the middle value used for the combined source
+heart_models = ["current_dipole", "magnetic_dipole"]   # [S] primary-current field of a current dipole in an unbounded homogeneous medium | magnetic dipole
+eye_models = ["head_bem", "current_dipole"]      # [S] current dipoles at both eye centres, moving together, in a homogeneous head (1-layer BEM on the head surface, 0.3 S/m) | unbounded medium
+# eye centres: centres of the two dark spheres (vitreous) in the sample T1 inside this head-frame
+# search box (mm, mirrored for the right eye); score = mean shell intensity - mean inner intensity
+eye_search_x_mm = [20.0, 46.0]                   # [C] |x|
+eye_search_y_mm = [60.0, 100.0]                  # [C]
+eye_search_z_mm = [-15.0, 25.0]                  # [C]
+eye_inner_radius_mm = 9.0                        # [C] inside the vitreous
+eye_shell_mm = [13.0, 16.0]                      # [C] orbital fat around the globe
+# amplitude calibration: the source's median in-band RMS over the Neuromag magnetometers equals
+levels = ["room_field", "magnetometer_shortfall"]   # [S] the modelled room-field RMS at the magnetometers | sqrt(measured - modelled median magnetometer brain-noise variance)
+combined_share = 0.5                             # [S] cardiac + ocular together: each with this share of the level's variance
+
+[joint]
+# all adverse alternatives at once (frequency-resolved, flat signal spectrum), at every white level of the sweep
+near_skull_floor_mm = 2.0
+corner_hz = 10.0
+far_field = ["cardiac", "ocular"]                # cardiac: current dipole at heart_depth 250 mm; ocular: head BEM; each half the far-field variance
+level = "magnetometer_shortfall"                 # computed per sub-band (an upper bound: everything the cortical model misses on the
+                                                 # magnetometers); a second joint run uses the room-field RMS on the magnetometers per sub-band
+
+[sweep]
+# (d) break-even OPM white level (median ratio = 1) from a fine grid
+grid_fT_per_rtHz = [4.0, 60.0]                   # [C] log-spaced grid limits
+grid_points = 33                                 # [C]

@@ -1,0 +1,51 @@
+{
+ "dataset": "OpenNeuro ds005234 v2.2.0 (Fadeev et al. 2024; doi:10.18112/openneuro.ds005234.v2.2.0)",
+ "license": "metadata: CC0; HowToAcknowledge: CC BY",
+ "purpose": "MRI-based quality control of children A-C (sub-Z213, sub-Z209, sub-Z226): T1 volumes and the mkheadsurf head masks the scalp surfaces were tessellated from",
+ "approved": "owner, 2026-10-04 (6 files, 9,855,337 bytes)",
+ "destination": "data/external/school_subjects/ (not committed)",
+ "files": [
+  {
+   "source": "s3://openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/mri/T1.mgz",
+   "version_id": "wdaYHF16jFj6.HJpnveW4FQF0L.5tzQU",
+   "dest": "sub-Z213/mri/T1.mgz",
+   "size": 2251830,
+   "sha256": "4e2b2d75fb64a891f3949b0f1a7265d8775b076b9a3badc648a2970db7942dca"
+  },
+  {
+   "source": "s3://openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/mri/T1.mgz",
+   "version_id": "1vkxZHQGMCYGYCkpMNtc9iQGiNx2b3kR",
+   "dest": "sub-Z209/mri/T1.mgz",
+   "size": 3633660,
+   "sha256": "f9e3f45c648f70e2795bd26c6ce517d5d6c1f6ba39c6dc19c52a9fb0e13e3960"
+  },
+  {
+   "source": "s3://openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/mri/T1.mgz",
+   "version_id": "uhnrRiVaHHuOWXnaiO2OmLA4_bY1fxM8",
+   "dest": "sub-Z226/mri/T1.mgz",
+   "size": 3649682,
+   "sha256": "3739f0d285b0230009ccb46f11e322b772b12f3651602e1ba884c9a1a5d2ee98"
+  },
+  {
+   "source": "s3://openneuro.org/ds005234/derivatives/freesurfer/sub-Z213/mri/seghead.mgz",
+   "version_id": "2PzBJYkzcZ69NKSRq_YRKm4zNKAnqJz4",
+   "dest": "sub-Z213/mri/seghead.mgz",
+   "size": 88096,
+   "sha256": "a2b0b50d983b6c7a69b7a0239b7f32e28793c56c134b56b5b8bf63e903b14024"
+  },
+  {
+   "source": "s3://openneuro.org/ds005234/derivatives/freesurfer/sub-Z209/mri/seghead.mgz",
+   "version_id": "aTJCfSM9y_vd7bXw7vyCHskkZCTOI7c2",
+   "dest": "sub-Z209/mri/seghead.mgz",
+   "size": 100609,
+   "sha256": "5c75c2a69628d61035a1564ea73cbba150196f07a0a3581831a2b87f13eaabd3"
+  },
+  {
+   "source": "s3://openneuro.org/ds005234/derivatives/freesurfer/sub-Z226/mri/seghead.mgz",
+   "version_id": "Jj96i4uF7udcnrBiOM9M6.iMeMWqwxez",
+   "dest": "sub-Z226/mri/seghead.mgz",
+   "size": 131460,
+   "sha256": "7653c7aeb79fd1aa5c362f43a35b1b5f2c1cd11ab31aeb7047a5d6e5d1add3d7"
+  }
+ ]
+}
