@@ -27,8 +27,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MODULES = ("report_facts_g12", "report_facts_g3", "report_facts_g4", "report_facts_methods", "report_facts_rev",
-           "report_facts_writer")
+MODULES = ("report_facts_g12", "report_facts_g3", "report_facts_g4", "report_facts_methods", "report_facts_rev", "report_facts_confirm", "report_facts_writer")
 
 
 def _load(name: str):
