@@ -89,7 +89,7 @@ def main():
             if a != b:
                 raise ValueError(f"{rel}: parameters other than the note would change")
         text = json.dumps(after)
-        for label in ("Fable", "Codex", "fable", "codex", "referee"):
+        for label in ("referee", "major_1", "major issue"):
             if label in text:
                 raise ValueError(f"{rel}: '{label}' is still present")
         io.write_json(after, path)  # the results' own format; the stored provenance is kept
