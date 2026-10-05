@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>S8. Reproduce and download · OPM vs SQUID MEG</title>
+<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+<header>
+  <p class="banner">Simulation study, built from commit <code>f59f76e</code> (2026-10-04) of the project repository.
+  Every number is read from its result files (see <a href="numbers.html">Number provenance</a>).
+  No author of the reproduced studies has reviewed or endorsed it.</p>
+  <nav aria-label="Sections">
+    <a class="nav-report" href="index.html">Report</a>
+    <span class="nav-group">Supplementary material:</span>
+    <a href="benchmarks.html">S1 Benchmarks</a>
+    <a href="adult.html">S2 Realistic adult</a>
+    <a href="pediatric.html">S3 Pediatric</a>
+    <a href="epilepsy.html">S4 Epilepsy and motion</a>
+    <a href="methods.html">S5 Methods</a>
+    <a href="register.html">S6 Parameters and provenance</a>
+    <a href="numbers.html">S7 Number provenance</a>
+    <a href="reproduce.html" aria-current="page">S8 Reproduce and download</a>
+    <a href="summary.html">Project summary by milestone</a>
+  </nav>
+</header>
+<main>
+<h1>S8. Reproduce and download</h1>
+<h2 id="reproduce">Reproduce</h2>
+<pre><code>python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -c "import mne; mne.datasets.sample.data_path(path='data/external')"  # ~1.6 GB download
+.venv/bin/python -c "import mne; [mne.datasets.fetch_infant_template(a, subjects_dir='data/external/infant_subjects') for a in ('2yr', '18mo', '12mo')]"  # ~1.15 GB (G3B, pediatric G4)
+.venv/bin/python scripts/fetch_school_subjects.py  # ~125 MB: three school-aged children of OpenNeuro ds005234 (G3B, pediatric G4)
+bash scripts/run_all.sh     # tests, then every milestone in order (~11 h on a 10-core laptop: adult ~2 h, eight pediatric G4 runs ~1 h each)</code></pre>
+<p>Smoke run (about 15 min: the unit tests, which skip the full-resolution lead-field check without the local cache, then the analytical G1A benchmark, which needs no data):</p>
+<pre><code>.venv/bin/python -m unittest discover -s tests -t . &amp;&amp; .venv/bin/python scripts/g1a_jas_benchmark.py</code></pre>
+<p>Each driver writes <code>results/&lt;milestone&gt;/</code> and records the code commit it ran in its JSON. Commit hashes in result files identify the code version in the project's private repository.</p>
+<p>The sample data must end up in <code>data/external/MNE-sample-data</code> (<code>src/opmsquid/paths.py</code>; override with <code>OPMSQUID_DATA</code>). Caches go to <code>cache/</code> (<code>OPMSQUID_CACHE</code>).</p>
+<h3 id="run-all">scripts/run_all.sh</h3>
+<pre><code>#!/usr/bin/env bash
+# Reproduce every milestone in order (see README.md). Requires the MNE sample data in
+# data/external/MNE-sample-data. Full-resolution lead fields take ~6 min each; the whole run
+# takes roughly 2 h on a laptop for the adult part (about 40 min of it for the lead fields) and
+# about 9 h for the pediatric part (G3B, eight pediatric G4 runs of about 1 h each, the motion
+# extension). Each driver writes its outputs to results/&lt;milestone&gt;/ with the code commit and
+# package versions in its JSON.
+#
+# Resume: a step that completes leaves a stamp (cache/run_all/&lt;step&gt;.done) holding the code
+# commit it ran at. `RESUME=1 scripts/run_all.sh` skips every step stamped at the current commit
+# and runs the rest in order, so an interrupted run continues where it stopped; a step whose
+# commit differs (code changed since) runs again. Nothing is skipped or stamped on a dirty tree;
+# the commit and the tree state are read again before every step.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+PY=.venv/bin/python
+STAMPS=cache/run_all
+mkdir -p "$STAMPS"
+
+step() {  # step &lt;name&gt; &lt;command...&gt;
+  local name=$1
+  shift
+  COMMIT=$(git rev-parse --short HEAD)
+  DIRTY=$(git status --porcelain -- src scripts configs tests requirements.txt 'legacy/*.py' | wc -l | tr -d ' ')
+  if [ "${RESUME:-0}" = 1 ] &amp;&amp; [ "$DIRTY" = 0 ] &amp;&amp; [ -f "$STAMPS/$name.done" ] &amp;&amp; [ "$(cat "$STAMPS/$name.done")" = "$COMMIT" ]; then
+    echo "[run_all] $name: completed at $COMMIT, skipped"
+    return 0
+  fi
+  echo "[run_all] $name"
+  "$@"
+  if [ "$DIRTY" = 0 ]; then echo "$COMMIT" &gt; "$STAMPS/$name.done"; fi
+}
+
+step tests $PY -m unittest discover -s tests -t .                       # physics, units, metrics, geometry, noise
+step g1a $PY scripts/g1a_jas_benchmark.py                                # G1A  Jas et al. 2026 analytical benchmark (REPRO)
+step fullres $PY scripts/compute_fullres_forwards.py                     # full-resolution lead fields (all jobs; skips existing)
+step g1b $PY scripts/g1b_hunold.py                                       # G1B  Hunold et al. 2016 (ADAPT)
+step g1c $PY scripts/g1c_goldenholz.py                                   # G1C  Goldenholz et al. 2009 (ADAPT)
+step g2 $PY scripts/g2_adult_comparison.py                               # G2   realistic adult OPM vs Neuromag (NEW)
+step g2_bands $PY scripts/g2_band_sensitivity.py                         # G2   frequency band and OPM response
+step bem_sphere $PY scripts/study_bem_sphere_accuracy.py                 # G2   BEM accuracy near a regular surface (exact sphere test)
+step near_mesh $PY scripts/study_opm_near_mesh.py                        # G2   BEM convergence at the OPM cells (head surface 5,120 vs 20,480)
+step bem_skin $PY scripts/study_bem_skin_refinement.py                   # G2   headline vs head-surface refinement and number of layers
+step head_surface $PY scripts/study_head_surface_effect.py               # G2   headline under the v3 and v4 head models (A-BEM-CONFORM)
+step g2_report $PY scripts/g2_report.py                                  # G2   per-configuration report (reads the studies above)
+step g4_adult $PY scripts/g4_epilepsy_adult.py                           # G4   IED detection, adult
+step g4_loc $PY scripts/g4_localization.py                               # G4   bounded localization, adult
+step g4_vs_g2 $PY scripts/study_g4_vs_g2.py                              # G4   detection vs the G2 detectability at the G4 locations
+# after the adult baseline; needs the 12-, 18- and 24-month infant templates and the school-aged
+# children (scripts/fetch_school_subjects.py; README, Reproduce):
+step g3a $PY scripts/g3a_jas_size_benchmark.py                           # G3A  Jas Table 1 / Fig. 5 (REPRO)
+step school_prep $PY scripts/prepare_school_subjects.py                  # G3B  school-aged children: modelled skull, fiducials, source space
+step child_bem $PY scripts/study_child_bem.py                            # G3B  the modelled skull (A-BEM-CHILD) checked on the adult
+step school_checks $PY scripts/study_school_anatomy.py                  # G3B  skull depth, fiducial transfer and talairach checks
+step g3b $PY scripts/g3b_pediatric_helmet.py                             # G3B  fixed adult helmet vs head-adaptive OPM (NEW)
+step g4_infant2yr $PY scripts/g4_epilepsy_pediatric.py infant2yr --detection --localization    # G4  IED detection and localization, 2-year template
+step g4_infant18mo $PY scripts/g4_epilepsy_pediatric.py infant18mo --detection --localization  # G4  the same, 18-month template
+step g4_infant12mo $PY scripts/g4_epilepsy_pediatric.py infant12mo --detection --localization  # G4  the same, 12-month template
+step g4_school $PY scripts/g4_epilepsy_pediatric.py school --detection --localization          # G4  the same, school-age size control
+step g4_size2yr $PY scripts/g4_epilepsy_pediatric.py size2yr --detection --localization        # G4  the same, 2-year size control
+step g4_childA $PY scripts/g4_epilepsy_pediatric.py childA --detection --localization          # G4  the same, school-aged child A
+step g4_childB $PY scripts/g4_epilepsy_pediatric.py childB --detection --localization          # G4  the same, school-aged child B
+step g4_childC $PY scripts/g4_epilepsy_pediatric.py childC --detection --localization          # G4  the same, school-aged child C
+step g4_compare $PY scripts/g4_epilepsy_pediatric.py --compare           # G4  pediatric vs adult comparison and report
+step g4_matched $PY scripts/study_g4_matched_rate.py                     # G4  detection at matched held-out false-event rates
+step fit_failures $PY scripts/study_g4_fit_failures.py                   # G4  failed fits under declared criteria (from the event tables)
+step g4_motion $PY scripts/g4_motion.py                                  # G4  head motion and OPM slippage (bounded extension)
+step site $PY scripts/build_site.py                                      # G5   local report in site/_build (not deployed)
+</code></pre>
+<h2 id="downloads">Downloads</h2>
+<p>Result files as committed. The commit is the one recorded in the result file; tables and reports carry the commit of the run that wrote them. The full SHA-256 of every file is in <a href="data/MANIFEST.json">data/MANIFEST.json</a>.</p>
+<p><strong>Data sources.</strong> The pediatric files (names with <code>infant</code> or <code>child</code>; the G3B, pediatric G4, matched-rate, fit-failure and motion summaries and reports; <code>report/figures_pediatric.json</code>) hold results derived from the 24-, 18- and 12-month infant templates of O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database (Richards et al. 2016) and distributed publicly by their authors under LGPL-2.1 through MNE-Python's <code>fetch_infant_template</code>, and from three school-aged children of OpenNeuro ds005234 v2.2.0 (<a href="https://doi.org/10.18112/openneuro.ds005234.v2.2.0">doi:10.18112/openneuro.ds005234.v2.2.0</a>; Fadeev et al. 2024, J Neurodev Disord 16(1):67); only derived quantities are published, not the template or MRI files (<code>child_bem_validation.json</code> is a check on the adult). G1A and G3A reimplement the model of Jas et al. (2026; bioRxiv, <a href="https://doi.org/10.64898/2026.08.17.744953">doi:10.64898/2026.08.17.744953</a>, CC BY 4.0); <code>g1b_summary.json</code> includes values digitised from Hunold et al. (2016), Fig. 6, for comparison.</p>
+<div class="table-wrap"><table class="downloads"><thead><tr><th>File</th><th>Size</th><th>SHA-256 (first 16)</th><th>Code commit</th></tr></thead><tbody><tr><td><a href="data/g1a/fig3/figure3_data.csv">g1a/fig3/figure3_data.csv</a></td><td>6 kB</td><td>600537cd9864cd61</td><td>ed852b2</td></tr><tr><td><a href="data/g1a/fig3/figure3_summary.json">g1a/fig3/figure3_summary.json</a></td><td>1 kB</td><td>f6a369910aaf2bd0</td><td>ed852b2</td></tr><tr><td><a href="data/g1a/g1a_benchmark.json">g1a/g1a_benchmark.json</a></td><td>5 kB</td><td>b49ee90f1e52208b</td><td>ed852b2</td></tr><tr><td><a href="data/g1a/g1a_curves.csv">g1a/g1a_curves.csv</a></td><td>8 kB</td><td>f08bfce9225847d8</td><td>ed852b2</td></tr><tr><td><a href="data/g1b/g1b_sources.csv">g1b/g1b_sources.csv</a></td><td>1391 kB</td><td>5f0b758a648759d7</td><td>e53bea8</td></tr><tr><td><a href="data/g1b/g1b_summary.json">g1b/g1b_summary.json</a></td><td>382 kB</td><td>1e3f9a2b718e4c5f</td><td>e53bea8</td></tr><tr><td><a href="data/g1c/g1c_oct6_values.csv">g1c/g1c_oct6_values.csv</a></td><td>429 kB</td><td>69ba7c0f1521820c</td><td>e53bea8</td></tr><tr><td><a href="data/g1c/g1c_summary.json">g1c/g1c_summary.json</a></td><td>29 kB</td><td>1585109ec3442f49</td><td>e53bea8</td></tr><tr><td><a href="data/g2/G2_report.md">g2/G2_report.md</a></td><td>21 kB</td><td>2efc1eed2bd23448</td><td>e53bea8</td></tr><tr><td><a href="data/g2/bem_skin_refinement.json">g2/bem_skin_refinement.json</a></td><td>6 kB</td><td>ce78b14284c469ac</td><td>ed852b2</td></tr><tr><td><a href="data/g2/bem_skin_refinement_v1_arrays.json">g2/bem_skin_refinement_v1_arrays.json</a></td><td>6 kB</td><td>406890186fc04eb6</td><td>271a36d+dirty (historic diagnosis, not reproducible: see the methods)</td></tr><tr><td><a href="data/g2/bem_sphere_check.json">g2/bem_sphere_check.json</a></td><td>4 kB</td><td>2eab20552c607546</td><td>81168f3</td></tr><tr><td><a href="data/g2/g2_band_sensitivity.json">g2/g2_band_sensitivity.json</a></td><td>36 kB</td><td>e0d271328001add5</td><td>e53bea8</td></tr><tr><td><a href="data/g2/g2_patch_targets.csv">g2/g2_patch_targets.csv</a></td><td>2002 kB</td><td>56749e42974c391e</td><td>e53bea8</td></tr><tr><td><a href="data/g2/g2_summary.json">g2/g2_summary.json</a></td><td>438 kB</td><td>cdf85534f6e5785d</td><td>e53bea8</td></tr><tr><td><a href="data/g2/g2_targets.csv">g2/g2_targets.csv</a></td><td>2038 kB</td><td>b460727c88f74abf</td><td>e53bea8</td></tr><tr><td><a href="data/g2/head_surface_effect.json">g2/head_surface_effect.json</a></td><td>15 kB</td><td>c86882ff1ef8469f</td><td>236068d</td></tr><tr><td><a href="data/g2/near_mesh_check.json">g2/near_mesh_check.json</a></td><td>8 kB</td><td>0d96343b215b9905</td><td>ed852b2</td></tr><tr><td><a href="data/g2/near_mesh_check_v1_arrays.json">g2/near_mesh_check_v1_arrays.json</a></td><td>9 kB</td><td>980ef530728a5b7d</td><td>271a36d+dirty (historic diagnosis, not reproducible: see the methods)</td></tr><tr><td><a href="data/g3a/g3a_deq.csv">g3a/g3a_deq.csv</a></td><td>23 kB</td><td>d5d3caba2e282eb4</td><td>ed852b2</td></tr><tr><td><a href="data/g3a/g3a_size_benchmark.json">g3a/g3a_size_benchmark.json</a></td><td>12 kB</td><td>9978dababb2dee6d</td><td>ed852b2</td></tr><tr><td><a href="data/g3b/G3B_report.md">g3b/G3B_report.md</a></td><td>57 kB</td><td>287cf9d78dcaca44</td><td>71de176</td></tr><tr><td><a href="data/g3b/child_bem_validation.json">g3b/child_bem_validation.json</a></td><td>20 kB</td><td>65c4da7b044cee67</td><td>71de176</td></tr><tr><td><a href="data/g3b/g3b_summary.json">g3b/g3b_summary.json</a></td><td>7073 kB</td><td>3e75670c72504392</td><td>71de176</td></tr><tr><td><a href="data/g3b/g3b_targets_adult.csv">g3b/g3b_targets_adult.csv</a></td><td>2411 kB</td><td>b0ae3b1b60212cf2</td><td>71de176</td></tr><tr><td><a href="data/g3b/g3b_targets_childA.csv">g3b/g3b_targets_childA.csv</a></td><td>2403 kB</td><td>3c5e83919553dc14</td><td>-</td></tr><tr><td><a href="data/g3b/g3b_targets_childB.csv">g3b/g3b_targets_childB.csv</a></td><td>2338 kB</td><td>60468a946800fa68</td><td>-</td></tr><tr><td><a href="data/g3b/g3b_targets_childC.csv">g3b/g3b_targets_childC.csv</a></td><td>2498 kB</td><td>bbe992f62940fd72</td><td>-</td></tr><tr><td><a href="data/g3b/g3b_targets_infant12mo.csv">g3b/g3b_targets_infant12mo.csv</a></td><td>2538 kB</td><td>239b722d8291c0e8</td><td>71de176</td></tr><tr><td><a href="data/g3b/g3b_targets_infant18mo.csv">g3b/g3b_targets_infant18mo.csv</a></td><td>2506 kB</td><td>f7c36eddd1960fe1</td><td>71de176</td></tr><tr><td><a href="data/g3b/g3b_targets_infant2yr.csv">g3b/g3b_targets_infant2yr.csv</a></td><td>2552 kB</td><td>fe05df508e0f2268</td><td>71de176</td></tr><tr><td><a href="data/g3b/g3b_targets_school.csv">g3b/g3b_targets_school.csv</a></td><td>2361 kB</td><td>87b9c93614657161</td><td>71de176</td></tr><tr><td><a href="data/g3b/g3b_targets_size2yr.csv">g3b/g3b_targets_size2yr.csv</a></td><td>2330 kB</td><td>90b9f932b79caa28</td><td>71de176</td></tr><tr><td><a href="data/g3b/school_anatomy_checks.json">g3b/school_anatomy_checks.json</a></td><td>6 kB</td><td>bd34b81d6d389dc7</td><td>ff6e25c</td></tr><tr><td><a href="data/g3b/school_subjects_preparation.json">g3b/school_subjects_preparation.json</a></td><td>6 kB</td><td>aab39bbe289bbb2c</td><td>71de176</td></tr><tr><td><a href="data/g4/G4_fit_failures_report.md">g4/G4_fit_failures_report.md</a></td><td>9 kB</td><td>f6a59ba6d2d342f4</td><td>011cec1</td></tr><tr><td><a href="data/g4/G4_matched_rate_report.md">g4/G4_matched_rate_report.md</a></td><td>8 kB</td><td>baf3145f7ee0417b</td><td>011cec1</td></tr><tr><td><a href="data/g4/G4_motion_report.md">g4/G4_motion_report.md</a></td><td>29 kB</td><td>d1aacc67957cb611</td><td>ed852b2</td></tr><tr><td><a href="data/g4/G4_pediatric_report.md">g4/G4_pediatric_report.md</a></td><td>24 kB</td><td>06d0ec730b8e1166</td><td>011cec1</td></tr><tr><td><a href="data/g4/g4_adult_events.csv">g4/g4_adult_events.csv</a></td><td>142 kB</td><td>f76abe879a245b60</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_adult_summary.json">g4/g4_adult_summary.json</a></td><td>525 kB</td><td>06f8206989d7a9a3</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_childA_events.csv">g4/g4_childA_events.csv</a></td><td>141 kB</td><td>146062f322738cba</td><td>-</td></tr><tr><td><a href="data/g4/g4_childA_summary.json">g4/g4_childA_summary.json</a></td><td>523 kB</td><td>ed7331d52ff2ee08</td><td>71de176</td></tr><tr><td><a href="data/g4/g4_childB_events.csv">g4/g4_childB_events.csv</a></td><td>141 kB</td><td>224c234f101f59e1</td><td>-</td></tr><tr><td><a href="data/g4/g4_childB_summary.json">g4/g4_childB_summary.json</a></td><td>521 kB</td><td>6c368a5ae13eaa68</td><td>71de176</td></tr><tr><td><a href="data/g4/g4_childC_events.csv">g4/g4_childC_events.csv</a></td><td>141 kB</td><td>023fb23391cb9988</td><td>-</td></tr><tr><td><a href="data/g4/g4_childC_summary.json">g4/g4_childC_summary.json</a></td><td>520 kB</td><td>d23a457fb1b6bb31</td><td>71de176</td></tr><tr><td><a href="data/g4/g4_fit_failures.json">g4/g4_fit_failures.json</a></td><td>30 kB</td><td>958e33b16e2e660f</td><td>011cec1</td></tr><tr><td><a href="data/g4/g4_g2_consistency.json">g4/g4_g2_consistency.json</a></td><td>1 kB</td><td>85b5785d3c7aa690</td><td>9512f1b</td></tr><tr><td><a href="data/g4/g4_infant12mo_events.csv">g4/g4_infant12mo_events.csv</a></td><td>142 kB</td><td>b5d730366e9543a9</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_infant12mo_summary.json">g4/g4_infant12mo_summary.json</a></td><td>522 kB</td><td>b63d592cac20dd47</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_infant18mo_events.csv">g4/g4_infant18mo_events.csv</a></td><td>142 kB</td><td>0d78d04e29e0b3f3</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_infant18mo_summary.json">g4/g4_infant18mo_summary.json</a></td><td>523 kB</td><td>3379bec5a26c65e8</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_infant2yr_events.csv">g4/g4_infant2yr_events.csv</a></td><td>142 kB</td><td>1bc50ef552263f63</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_infant2yr_summary.json">g4/g4_infant2yr_summary.json</a></td><td>520 kB</td><td>cc39a0c7b3325033</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_localization_childA_events.csv">g4/g4_localization_childA_events.csv</a></td><td>114 kB</td><td>e315336084393225</td><td>-</td></tr><tr><td><a href="data/g4/g4_localization_childA_summary.json">g4/g4_localization_childA_summary.json</a></td><td>49 kB</td><td>71882b97db74893c</td><td>71de176</td></tr><tr><td><a href="data/g4/g4_localization_childB_events.csv">g4/g4_localization_childB_events.csv</a></td><td>114 kB</td><td>5a62a2f45dc0c191</td><td>-</td></tr><tr><td><a href="data/g4/g4_localization_childB_summary.json">g4/g4_localization_childB_summary.json</a></td><td>48 kB</td><td>9ce513e2697c1ae9</td><td>71de176</td></tr><tr><td><a href="data/g4/g4_localization_childC_events.csv">g4/g4_localization_childC_events.csv</a></td><td>114 kB</td><td>7f12f1c4ec388b04</td><td>-</td></tr><tr><td><a href="data/g4/g4_localization_childC_summary.json">g4/g4_localization_childC_summary.json</a></td><td>48 kB</td><td>524ffee2def9a3a1</td><td>71de176</td></tr><tr><td><a href="data/g4/g4_localization_events.csv">g4/g4_localization_events.csv</a></td><td>114 kB</td><td>d6c85b358e64d2ed</td><td>e53bea8</td></tr><tr><td><a href="data/g4/g4_localization_infant12mo_events.csv">g4/g4_localization_infant12mo_events.csv</a></td><td>115 kB</td><td>b59ed33455351607</td><td>e53bea8</td></tr><tr><td><a href="data/g4/g4_localization_infant12mo_summary.json">g4/g4_localization_infant12mo_summary.json</a></td><td>48 kB</td><td>713dd8b67c451873</td><td>e53bea8</td></tr><tr><td><a href="data/g4/g4_localization_infant18mo_events.csv">g4/g4_localization_infant18mo_events.csv</a></td><td>115 kB</td><td>5d6a6f0a219f76d9</td><td>e53bea8</td></tr><tr><td><a href="data/g4/g4_localization_infant18mo_summary.json">g4/g4_localization_infant18mo_summary.json</a></td><td>48 kB</td><td>76111dd334d0cb9b</td><td>e53bea8</td></tr><tr><td><a href="data/g4/g4_localization_infant2yr_events.csv">g4/g4_localization_infant2yr_events.csv</a></td><td>114 kB</td><td>5a21b75bebf3c7f4</td><td>e53bea8</td></tr><tr><td><a href="data/g4/g4_localization_infant2yr_summary.json">g4/g4_localization_infant2yr_summary.json</a></td><td>48 kB</td><td>77c8f8025bdab66a</td><td>e53bea8</td></tr><tr><td><a href="data/g4/g4_localization_school_events.csv">g4/g4_localization_school_events.csv</a></td><td>114 kB</td><td>a0ac3c94368b15b6</td><td>e53bea8</td></tr><tr><td><a href="data/g4/g4_localization_school_summary.json">g4/g4_localization_school_summary.json</a></td><td>48 kB</td><td>bed62d4868e42a0a</td><td>e53bea8</td></tr><tr><td><a href="data/g4/g4_localization_size2yr_events.csv">g4/g4_localization_size2yr_events.csv</a></td><td>114 kB</td><td>5172060c7f8510b6</td><td>e53bea8</td></tr><tr><td><a href="data/g4/g4_localization_size2yr_summary.json">g4/g4_localization_size2yr_summary.json</a></td><td>48 kB</td><td>896faf72ef390d67</td><td>e53bea8</td></tr><tr><td><a href="data/g4/g4_localization_summary.json">g4/g4_localization_summary.json</a></td><td>48 kB</td><td>767c6c94ddf749f8</td><td>e53bea8</td></tr><tr><td><a href="data/g4/g4_matched_rate.json">g4/g4_matched_rate.json</a></td><td>159 kB</td><td>fddf119ca3f153ef</td><td>011cec1</td></tr><tr><td><a href="data/g4/g4_motion_summary.json">g4/g4_motion_summary.json</a></td><td>969 kB</td><td>abcfca8847f026a9</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_motion_timecourse_example.csv">g4/g4_motion_timecourse_example.csv</a></td><td>136 kB</td><td>b64c7113d0ad8cde</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_pediatric_comparison.json">g4/g4_pediatric_comparison.json</a></td><td>524 kB</td><td>d7fd00907558b254</td><td>011cec1</td></tr><tr><td><a href="data/g4/g4_school_events.csv">g4/g4_school_events.csv</a></td><td>141 kB</td><td>e5440da671821364</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_school_summary.json">g4/g4_school_summary.json</a></td><td>523 kB</td><td>897fbd0007129e54</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_size2yr_events.csv">g4/g4_size2yr_events.csv</a></td><td>141 kB</td><td>4b57f26657141350</td><td>ed852b2</td></tr><tr><td><a href="data/g4/g4_size2yr_summary.json">g4/g4_size2yr_summary.json</a></td><td>522 kB</td><td>3d36cbcec08de948</td><td>ed852b2</td></tr><tr><td><a href="data/report/figures_adult.json">report/figures_adult.json</a></td><td>20 kB</td><td>81110fbdb887a4f7</td><td>2b5f99e</td></tr><tr><td><a href="data/report/figures_pediatric.json">report/figures_pediatric.json</a></td><td>95 kB</td><td>0fe941839cfa658a</td><td>2b5f99e</td></tr></tbody></table></div>
+</main>
+<footer>
+  <p>Report: Laiba Khan.</p>
+  <p>Generated by <code>scripts/build_site.py</code> from the committed result files; every number on this page is read from them.
+  Result files record the code commit that produced them (see <a href="reproduce.html#downloads">Reproduce and download</a>).</p>
+</footer>
+</body>
+</html>

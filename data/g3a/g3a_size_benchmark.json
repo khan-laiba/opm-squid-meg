@@ -1,0 +1,355 @@
+{
+  "status": "REPRO: Jas et al. 2026 Table 1 and Fig. 5 (size-following SQUID shell, paper definitions); NEW: idealised concentric fixed adult shell",
+  "size_following": {
+    "Infant (newborn)": {
+      "h_mm": 55.0,
+      "b_mm": 48.0,
+      "layer_mm": 6.999999999999999,
+      "xi_squid_mm": 18.0,
+      "eta0": 2.338193839218632,
+      "eta1": 14.841392521482787,
+      "eta2.5": {
+        "d_eq_exact_mm": 42.352719262580464,
+        "d_eq_grid_mm": 42.04,
+        "normalized_exact_pct": 73.6514984637093,
+        "normalized_grid_pct": 73.0,
+        "d_eq_over_b_pct": 88.23483179704262,
+        "volume_fraction_pct": 98.17077231987113
+      },
+      "eta3": {
+        "d_eq_exact_mm": 30.81381696927104,
+        "d_eq_grid_mm": 30.52,
+        "normalized_exact_pct": 49.612118685981336,
+        "normalized_grid_pct": 49.0,
+        "d_eq_over_b_pct": 64.19545201931467,
+        "volume_fraction_pct": 87.20682640003093
+      },
+      "eta4": {
+        "d_eq_exact_mm": 21.385344236833514,
+        "d_eq_grid_mm": 20.92,
+        "normalized_exact_pct": 29.969467160069822,
+        "normalized_grid_pct": 29.000000000000004,
+        "d_eq_over_b_pct": 44.552800493403154,
+        "volume_fraction_pct": 65.65509714511562
+      },
+      "eta6": {
+        "d_eq_exact_mm": 14.24078433145435,
+        "d_eq_grid_mm": 14.199999999999998,
+        "normalized_exact_pct": 15.084967357196563,
+        "normalized_grid_pct": 14.999999999999996,
+        "d_eq_over_b_pct": 29.668300690529893,
+        "volume_fraction_pct": 38.7714827120447
+      }
+    },
+    "Infant (1-yr)": {
+      "h_mm": 70.0,
+      "b_mm": 62.0,
+      "layer_mm": 8.000000000000007,
+      "xi_squid_mm": 18.0,
+      "eta0": 1.986798833819242,
+      "eta1": 11.923640555622663,
+      "eta2.5": {
+        "d_eq_exact_mm": 38.07801102034472,
+        "d_eq_grid_mm": 37.76000000000001,
+        "normalized_exact_pct": 48.51292100055599,
+        "normalized_grid_pct": 48.00000000000001,
+        "d_eq_over_b_pct": 61.41614680700761,
+        "volume_fraction_pct": 86.35119083792077
+      },
+      "eta3": {
+        "d_eq_exact_mm": 29.03401060783198,
+        "d_eq_grid_mm": 28.460000000000004,
+        "normalized_exact_pct": 33.925823561019314,
+        "normalized_grid_pct": 32.99999999999999,
+        "d_eq_over_b_pct": 46.82904936747094,
+        "volume_fraction_pct": 71.15335724627391
+      },
+      "eta4": {
+        "d_eq_exact_mm": 20.546243749621635,
+        "d_eq_grid_mm": 20.40000000000001,
+        "normalized_exact_pct": 20.235877015518756,
+        "normalized_grid_pct": 20.0,
+        "d_eq_over_b_pct": 33.139102821970376,
+        "volume_fraction_pct": 49.25154987097295
+      },
+      "eta6": {
+        "d_eq_exact_mm": 13.82373675214689,
+        "d_eq_grid_mm": 13.580000000000009,
+        "normalized_exact_pct": 9.393123793785298,
+        "normalized_grid_pct": 9.000000000000002,
+        "d_eq_over_b_pct": 22.296349600236923,
+        "volume_fraction_pct": 25.61532440202361
+      }
+    },
+    "Child (8-yr)": {
+      "h_mm": 85.0,
+      "b_mm": 73.0,
+      "layer_mm": 12.00000000000001,
+      "xi_squid_mm": 18.0,
+      "eta0": 1.7793234276409522,
+      "eta1": 6.921439268196252,
+      "eta2.5": {
+        "d_eq_exact_mm": 36.38506004878794,
+        "d_eq_grid_mm": 36.09000000000001,
+        "normalized_exact_pct": 33.4041918476547,
+        "normalized_grid_pct": 33.0,
+        "d_eq_over_b_pct": 49.84254801203828,
+        "volume_fraction_pct": 70.46474800646205
+      },
+      "eta3": {
+        "d_eq_exact_mm": 28.091302768344164,
+        "d_eq_grid_mm": 28.06000000000001,
+        "normalized_exact_pct": 22.042880504581035,
+        "normalized_grid_pct": 21.999999999999996,
+        "d_eq_over_b_pct": 38.48123666896461,
+        "volume_fraction_pct": 52.62302247838435
+      },
+      "eta4": {
+        "d_eq_exact_mm": 20.049590155567255,
+        "d_eq_grid_mm": 20.030000000000005,
+        "normalized_exact_pct": 11.026835829544172,
+        "normalized_grid_pct": 10.999999999999995,
+        "d_eq_over_b_pct": 27.46519199392775,
+        "volume_fraction_pct": 29.566850755359788
+      },
+      "eta6": {
+        "d_eq_exact_mm": 13.564119261909287,
+        "d_eq_grid_mm": 13.460000000000013,
+        "normalized_exact_pct": 2.1426291259031185,
+        "normalized_grid_pct": 2.000000000000004,
+        "d_eq_over_b_pct": 18.580985290286694,
+        "volume_fraction_pct": 6.291145241517306
+      }
+    },
+    "Adult": {
+      "h_mm": 95.0,
+      "b_mm": 80.0,
+      "layer_mm": 15.0,
+      "xi_squid_mm": 18.0,
+      "eta0": 1.6829240414054523,
+      "eta1": 5.308567315180439,
+      "eta2.5": {
+        "d_eq_exact_mm": 35.671437051926276,
+        "d_eq_grid_mm": 34.99999999999999,
+        "normalized_exact_pct": 25.839296314907845,
+        "normalized_grid_pct": 24.999999999999993,
+        "d_eq_over_b_pct": 44.58929631490784,
+        "volume_fraction_pct": 59.21302224113079
+      },
+      "eta3": {
+        "d_eq_exact_mm": 27.665024519081108,
+        "d_eq_grid_mm": 26.999999999999996,
+        "normalized_exact_pct": 15.831280648851385,
+        "normalized_grid_pct": 14.999999999999996,
+        "d_eq_over_b_pct": 34.58128064885138,
+        "volume_fraction_pct": 40.371737048478224
+      },
+      "eta4": {
+        "d_eq_exact_mm": 19.815588574200365,
+        "d_eq_grid_mm": 19.799999999999997,
+        "normalized_exact_pct": 6.019485717750459,
+        "normalized_grid_pct": 5.999999999999998,
+        "d_eq_over_b_pct": 24.76948571775046,
+        "volume_fraction_pct": 16.993242034004634
+      },
+      "eta6": {
+        "d_eq_exact_mm": null,
+        "d_eq_grid_mm": null,
+        "normalized_exact_pct": null,
+        "normalized_grid_pct": null,
+        "d_eq_over_b_pct": null,
+        "volume_fraction_pct": 0.0
+      }
+    }
+  },
+  "fixed_adult_shell": {
+    "Infant (newborn)": {
+      "h_mm": 55.0,
+      "b_mm": 48.0,
+      "layer_mm": 6.999999999999999,
+      "xi_squid_mm": 58.0,
+      "eta0": 8.672558978211873,
+      "eta1": 129.4453609842491,
+      "eta2.5": {
+        "d_eq_exact_mm": null,
+        "d_eq_grid_mm": 54.519999999999996,
+        "normalized_exact_pct": null,
+        "normalized_grid_pct": 99.0,
+        "d_eq_over_b_pct": null,
+        "volume_fraction_pct": 100.0
+      },
+      "eta3": {
+        "d_eq_exact_mm": null,
+        "d_eq_grid_mm": 54.519999999999996,
+        "normalized_exact_pct": null,
+        "normalized_grid_pct": 99.0,
+        "d_eq_over_b_pct": null,
+        "volume_fraction_pct": 100.0
+      },
+      "eta4": {
+        "d_eq_exact_mm": null,
+        "d_eq_grid_mm": 54.519999999999996,
+        "normalized_exact_pct": null,
+        "normalized_grid_pct": 99.0,
+        "d_eq_over_b_pct": null,
+        "volume_fraction_pct": 100.0
+      },
+      "eta6": {
+        "d_eq_exact_mm": null,
+        "d_eq_grid_mm": 54.519999999999996,
+        "normalized_exact_pct": null,
+        "normalized_grid_pct": 99.0,
+        "d_eq_over_b_pct": null,
+        "volume_fraction_pct": 100.0
+      }
+    },
+    "Infant (1-yr)": {
+      "h_mm": 70.0,
+      "b_mm": 62.0,
+      "layer_mm": 8.000000000000007,
+      "xi_squid_mm": 43.0,
+      "eta0": 4.206696793002914,
+      "eta1": 52.784617542151004,
+      "eta2.5": {
+        "d_eq_exact_mm": null,
+        "d_eq_grid_mm": 69.38000000000001,
+        "normalized_exact_pct": null,
+        "normalized_grid_pct": 99.00000000000001,
+        "d_eq_over_b_pct": null,
+        "volume_fraction_pct": 100.0
+      },
+      "eta3": {
+        "d_eq_exact_mm": null,
+        "d_eq_grid_mm": 69.38000000000001,
+        "normalized_exact_pct": null,
+        "normalized_grid_pct": 99.00000000000001,
+        "d_eq_over_b_pct": null,
+        "volume_fraction_pct": 100.0
+      },
+      "eta4": {
+        "d_eq_exact_mm": null,
+        "d_eq_grid_mm": 69.38000000000001,
+        "normalized_exact_pct": null,
+        "normalized_grid_pct": 99.00000000000001,
+        "d_eq_over_b_pct": null,
+        "volume_fraction_pct": 100.0
+      },
+      "eta6": {
+        "d_eq_exact_mm": 39.13541735977913,
+        "d_eq_grid_mm": 39.00000000000001,
+        "normalized_exact_pct": 50.21841509641794,
+        "normalized_grid_pct": 50.0,
+        "d_eq_over_b_pct": 63.12164090286957,
+        "volume_fraction_pct": 87.6630967869509
+      }
+    },
+    "Child (8-yr)": {
+      "h_mm": 85.0,
+      "b_mm": 73.0,
+      "layer_mm": 12.00000000000001,
+      "xi_squid_mm": 27.999999999999996,
+      "eta0": 2.3495167921840014,
+      "eta1": 12.947627584508183,
+      "eta2.5": {
+        "d_eq_exact_mm": 66.22183893768374,
+        "d_eq_grid_mm": 66.02000000000001,
+        "normalized_exact_pct": 74.27649169545717,
+        "normalized_grid_pct": 74.0,
+        "d_eq_over_b_pct": 90.71484785984076,
+        "volume_fraction_pct": 98.29787833782324
+      },
+      "eta3": {
+        "d_eq_exact_mm": 48.032301915964645,
+        "d_eq_grid_mm": 47.77000000000001,
+        "normalized_exact_pct": 49.35931769310224,
+        "normalized_grid_pct": 49.0,
+        "d_eq_over_b_pct": 65.79767385748582,
+        "volume_fraction_pct": 87.0133048642198
+      },
+      "eta4": {
+        "d_eq_exact_mm": 33.30865259078207,
+        "d_eq_grid_mm": 33.17000000000001,
+        "normalized_exact_pct": 29.189935055865835,
+        "normalized_grid_pct": 29.000000000000004,
+        "d_eq_over_b_pct": 45.62829122024941,
+        "volume_fraction_pct": 64.49537106575079
+      },
+      "eta6": {
+        "d_eq_exact_mm": 22.17268054223294,
+        "d_eq_grid_mm": 21.49000000000001,
+        "normalized_exact_pct": 13.935178824976616,
+        "normalized_grid_pct": 12.999999999999998,
+        "d_eq_over_b_pct": 30.37353498936019,
+        "volume_fraction_pct": 36.250466343575575
+      }
+    },
+    "Adult": {
+      "h_mm": 95.0,
+      "b_mm": 80.0,
+      "layer_mm": 15.0,
+      "xi_squid_mm": 18.000000000000004,
+      "eta0": 1.6829240414054523,
+      "eta1": 5.308567315180439,
+      "eta2.5": {
+        "d_eq_exact_mm": 35.671437051926276,
+        "d_eq_grid_mm": 34.99999999999999,
+        "normalized_exact_pct": 25.839296314907845,
+        "normalized_grid_pct": 24.999999999999993,
+        "d_eq_over_b_pct": 44.58929631490784,
+        "volume_fraction_pct": 59.21302224113079
+      },
+      "eta3": {
+        "d_eq_exact_mm": 27.665024519081108,
+        "d_eq_grid_mm": 26.999999999999996,
+        "normalized_exact_pct": 15.831280648851385,
+        "normalized_grid_pct": 14.999999999999996,
+        "d_eq_over_b_pct": 34.58128064885138,
+        "volume_fraction_pct": 40.371737048478224
+      },
+      "eta4": {
+        "d_eq_exact_mm": 19.815588574200365,
+        "d_eq_grid_mm": 19.799999999999997,
+        "normalized_exact_pct": 6.019485717750459,
+        "normalized_grid_pct": 5.999999999999998,
+        "d_eq_over_b_pct": 24.76948571775046,
+        "volume_fraction_pct": 16.993242034004634
+      },
+      "eta6": {
+        "d_eq_exact_mm": null,
+        "d_eq_grid_mm": null,
+        "normalized_exact_pct": null,
+        "normalized_grid_pct": null,
+        "d_eq_over_b_pct": null,
+        "volume_fraction_pct": 0.0
+      }
+    }
+  },
+  "printed_checks": {
+    "Infant (newborn)": {
+      "printed_pct": 50.0,
+      "exact_pct": 49.612118685981336,
+      "grid_pct": 49.0
+    },
+    "Adult": {
+      "printed_pct": 15.0,
+      "exact_pct": 15.831280648851385,
+      "grid_pct": 14.999999999999996
+    }
+  },
+  "notes": [
+    "d_eq is independent of the dipole moment and of the absolute noise; only eta matters.",
+    "Normalized d_eq = (d_eq - (h - b)) / b as plotted in Fig. 5B (U-J4); d_eq / b is listed for the printed wording.",
+    "The fixed-shell panel is an idealised NEW contrast, not a result of the paper."
+  ],
+  "outputs": [
+    "results/g3a/Figure_G3A_fig5.png",
+    "results/g3a/Figure_G3A_fig5.pdf",
+    "results/g3a/g3a_deq.csv"
+  ],
+  "runtime_s": 1.1140568256378174,
+  "provenance": {
+    "commit": "ed852b2",
+    "mne_version": "1.13.2",
+    "numpy_version": "2.5.3"
+  }
+}

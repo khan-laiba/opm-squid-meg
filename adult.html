@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>S2. Realistic adult comparison (G2) · OPM vs SQUID MEG</title>
+<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+<header>
+  <p class="banner">Simulation study, built from commit <code>f59f76e</code> (2026-10-04) of the project repository.
+  Every number is read from its result files (see <a href="numbers.html">Number provenance</a>).
+  No author of the reproduced studies has reviewed or endorsed it.</p>
+  <nav aria-label="Sections">
+    <a class="nav-report" href="index.html">Report</a>
+    <span class="nav-group">Supplementary material:</span>
+    <a href="benchmarks.html">S1 Benchmarks</a>
+    <a href="adult.html" aria-current="page">S2 Realistic adult</a>
+    <a href="pediatric.html">S3 Pediatric</a>
+    <a href="epilepsy.html">S4 Epilepsy and motion</a>
+    <a href="methods.html">S5 Methods</a>
+    <a href="register.html">S6 Parameters and provenance</a>
+    <a href="numbers.html">S7 Number provenance</a>
+    <a href="reproduce.html">S8 Reproduce and download</a>
+    <a href="summary.html">Project summary by milestone</a>
+  </nav>
+</header>
+<main>
+<h1>S2. Realistic adult comparison (G2)</h1>
+<p><span class="label">NEW</span> Realistic adult comparison on the MNE sample subject: Neuromag at the measured head position vs single-axis OPM arrays (10-mm cell, 7-mm standoff). Detectability is the known-topography matched-filter SNR sqrt(s<sup>T</sup> C<sup>+</sup> s). The full generated report is <a href="g2-report.html">here</a>; methods in section 8 of the <a href="methods.html">methods</a>.</p>
+<figure><a href="figures/g2/Figure_G2_arrays.png"><img src="figures/g2/Figure_G2_arrays.png" alt="Sensor arrays" loading="lazy"></a><figcaption>The four arrays on the sample head: Neuromag (306 channels at 102 sites), the matched OPM array (98 of the 102 sites fit the OPM placement rules), the 204-channel budget control and the dense 208-site array.</figcaption></figure>
+<h2 id="headline">Headline comparison</h2>
+<div class="table-wrap"><table class=""><caption>Median detectability ratio over 7,661 targets, 95 % CI from a bootstrap over cortical parcels; OPM 15 fT/sqrt(Hz)</caption><thead><tr><th>Noise condition</th><th>OPM array</th><th>vs Neuromag combined</th><th>Targets OPM higher</th><th>Parcels OPM higher</th><th>vs gradiometers</th><th>vs magnetometers</th></tr></thead><tbody><tr><td>intrinsic</td><td>OPM matched</td><td>0.53x [0.51-0.55]</td><td>0 %</td><td>0 %</td><td>2.29x [2.23-2.34]</td><td>0.55x [0.53-0.57]</td></tr><tr><td>intrinsic</td><td>OPM 204 (channel budget)</td><td>0.73x [0.71-0.76]</td><td>3 %</td><td>1 %</td><td>3.14x [3.06-3.22]</td><td>0.76x [0.73-0.78]</td></tr><tr><td>intrinsic</td><td>OPM dense</td><td>0.74x [0.72-0.77]</td><td>4 %</td><td>1 %</td><td>3.17x [3.08-3.25]</td><td>0.76x [0.74-0.79]</td></tr><tr><td>intrinsic+brain</td><td>OPM matched</td><td>1.01x [0.99-1.03]</td><td>56 %</td><td>47 %</td><td>1.13x [1.11-1.15]</td><td>1.04x [1.01-1.06]</td></tr><tr><td>intrinsic+brain</td><td>OPM 204 (channel budget)</td><td>1.14x [1.12-1.16]</td><td>100 %</td><td>100 %</td><td>1.33x [1.29-1.35]</td><td>1.19x [1.16-1.22]</td></tr><tr><td>intrinsic+brain</td><td>OPM dense</td><td>1.14x [1.12-1.17]</td><td>100 %</td><td>100 %</td><td>1.33x [1.30-1.36]</td><td>1.19x [1.17-1.22]</td></tr><tr><td>intrinsic+brain+env</td><td>OPM matched</td><td>1.01x [0.99-1.03]</td><td>54 %</td><td>47 %</td><td>1.11x [1.08-1.13]</td><td>1.06x [1.05-1.08]</td></tr><tr><td>intrinsic+brain+env</td><td>OPM 204 (channel budget)</td><td>1.14x [1.12-1.16]</td><td>99 %</td><td>100 %</td><td>1.29x [1.26-1.32]</td><td>1.22x [1.20-1.25]</td></tr><tr><td>intrinsic+brain+env</td><td>OPM dense</td><td>1.14x [1.12-1.17]</td><td>99 %</td><td>100 %</td><td>1.29x [1.26-1.32]</td><td>1.23x [1.20-1.26]</td></tr><tr><td>projected</td><td>OPM matched</td><td>0.95x [0.90-0.98]</td><td>36 %</td><td>27 %</td><td>1.02x [0.97-1.07]</td><td>1.00x [0.96-1.03]</td></tr><tr><td>projected</td><td>OPM 204 (channel budget)</td><td>1.11x [1.08-1.14]</td><td>83 %</td><td>87 %</td><td>1.24x [1.21-1.28]</td><td>1.20x [1.17-1.23]</td></tr><tr><td>projected</td><td>OPM dense</td><td>1.12x [1.08-1.15]</td><td>84 %</td><td>87 %</td><td>1.25x [1.21-1.29]</td><td>1.20x [1.17-1.23]</td></tr></tbody></table></div>
+<figure><a href="figures/g2/Figure_G2_depth.png"><img src="figures/g2/Figure_G2_depth.png" alt="Detectability versus depth" loading="lazy"></a><figcaption>Signal amplitude and detectability vs source depth (median and interquartile range over targets).</figcaption></figure>
+<figure><a href="figures/g2/Figure_G2_heatmaps.png"><img src="figures/g2/Figure_G2_heatmaps.png" alt="Depth-orientation heatmaps" loading="lazy"></a><figcaption>Median log2 detectability ratio per depth x orientation bin (at least 10 targets).</figcaption></figure>
+<figure><a href="figures/g2/Figure_G2_maps_intrinsic_brain.png"><img src="figures/g2/Figure_G2_maps_intrinsic_brain.png" alt="Cortical ratio maps" loading="lazy"></a><figcaption>Cortical maps of the log2 detectability ratio with brain noise (red: OPM higher; black contour: ratio 1; grey: medial wall and vertices within 4 mm of the inner skull).</figcaption></figure>
+<figure><a href="figures/g2/Figure_G2_maps_projected.png"><img src="figures/g2/Figure_G2_maps_projected.png" alt="Cortical ratio maps, projected" loading="lazy"></a><figcaption>The same after removing the 8-dimensional external-field subspace from every array.</figcaption></figure>
+<figure><a href="figures/g2/Figure_G2_maps_absolute.png"><img src="figures/g2/Figure_G2_maps_absolute.png" alt="Absolute maps" loading="lazy"></a><figcaption>Absolute detectability of a 10-nAm dipole (log10) per array.</figcaption></figure>
+<figure><a href="figures/g2/Figure_G2_heatmaps_comparators.png"><img src="figures/g2/Figure_G2_heatmaps_comparators.png" alt="Comparator heatmaps" loading="lazy"></a><figcaption>Dense OPM vs each Neuromag channel set, and extended sources.</figcaption></figure>
+<figure><a href="figures/g2/Figure_G2_patches.png"><img src="figures/g2/Figure_G2_patches.png" alt="Patches" loading="lazy"></a><figcaption>Extended sources: geodesic patches of 5, 10 and 20 mm radius (fixed total moment and fixed density).</figcaption></figure>
+<h2 id="sensitivity">Sensitivity and model dependence</h2>
+<figure><a href="figures/g2/Figure_G2_sensitivity.png"><img src="figures/g2/Figure_G2_sensitivity.png" alt="Sensitivity analyses" loading="lazy"></a><figcaption>One-factor-at-a-time sensitivity (OPM noise, correlated background, background calibration, head position, scalp gap) with parcel-bootstrap CIs; these show dependence, they do not bound it.</figcaption></figure>
+<div class="table-wrap"><table class=""><caption>Joint OPM noise x scalp-gap grid, vs Neuromag combined, brain noise</caption><thead><tr><th>Scalp gap, OPM noise [fT/sqrt(Hz)]</th><th>OPM matched</th><th>OPM dense</th></tr></thead><tbody><tr><td>gap 0mm, OPM noise 15fT</td><td>1.01x</td><td>1.14x</td></tr><tr><td>gap 0mm, OPM noise 20fT</td><td>0.98x</td><td>1.08x</td></tr><tr><td>gap 0mm, OPM noise 30fT</td><td>0.93x</td><td>1.01x</td></tr><tr><td>gap 3mm, OPM noise 15fT</td><td>0.99x</td><td>1.09x</td></tr><tr><td>gap 3mm, OPM noise 20fT</td><td>0.96x</td><td>1.03x</td></tr><tr><td>gap 3mm, OPM noise 30fT</td><td>0.89x</td><td>0.97x</td></tr><tr><td>gap 6mm, OPM noise 15fT</td><td>0.96x</td><td>1.04x</td></tr><tr><td>gap 6mm, OPM noise 20fT</td><td>0.91x</td><td>0.99x</td></tr><tr><td>gap 6mm, OPM noise 30fT</td><td>0.84x</td><td>0.92x</td></tr></tbody></table></div>
+<p>Head model: with a 1-layer instead of the 3-layer BEM the dense/Neuromag ratio is 1.13x (3-layer on the same targets: 1.14x); refining the 1-layer mesh changes it by at most 0.002 in log2.</p>
+<figure><a href="figures/g2/Figure_G2_bands.png"><img src="figures/g2/Figure_G2_bands.png" alt="Frequency bands" loading="lazy"></a><figcaption>Frequency bands (brain scale and room field recalibrated per band) and a 100-Hz first-order OPM response.</figcaption></figure>
+<figure><a href="figures/g2/Figure_G2_bridge.png"><img src="figures/g2/Figure_G2_bridge.png" alt="Bridge to the sphere model" loading="lazy"></a><figcaption>Bridge to the analytical benchmark: the realistic OPM/magnetometer peak-field ratio and the equal-SNR depth vs the sphere model with the real standoffs.</figcaption></figure>
+</main>
+<footer>
+  <p>Report: Laiba Khan.</p>
+  <p>Generated by <code>scripts/build_site.py</code> from the committed result files; every number on this page is read from them.
+  Result files record the code commit that produced them (see <a href="reproduce.html#downloads">Reproduce and download</a>).</p>
+</footer>
+</body>
+</html>
