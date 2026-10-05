@@ -1014,9 +1014,16 @@ def facts(root: Path = ROOT) -> dict:
         if name.startswith("cf_") and not name.startswith("cf_exact_") and "exploratory" not in name and any(
                 k in f["source"] for k in ("sign_flip_p", "holm_p", "n_pass", "n_p_below_alpha", "n_replicates_all_pass")):
             files, _, how = f["source"].partition(" :: ")
-            f["source"] = (f"{EXACT}, {files} :: the exact sign-flip p and its Holm adjustment (from the stored "
-                           f"location_differences) for {how}; agreement check: the run's Monte Carlo value in that field "
-                           "gives the same Holm decisions")
+            if "declared_choices" in how:  # the declared test itself (Monte Carlo), not a p value
+                continue
+            if "monte_carlo_summary" in how:  # per-replicate pass counts: the exact file holds them per replicate
+                f["source"] = (f"{EXACT}, {files} :: monte_carlo['replicate<r>'].n_pass of the exact file (exact sign-flip "
+                               f"p, Holm-adjusted over the anatomies) for {how}; agreement check: the run's Monte Carlo "
+                               "counts in that field are the same")
+                continue
+            f["source"] = (f"{EXACT}, {files} :: the exact sign-flip p (Holm-adjusted where the field is a Holm value), "
+                           f"from the stored location_differences, for {how}; agreement check: the run's Monte Carlo value "
+                           "in that field gives the same Holm decisions")
     return dict(F)
 
 

@@ -418,9 +418,14 @@ def confirmatory_facts(F: Facts, root: Path) -> None:
     F.add("wr_confirm_pilot_locs_per_band", n_locs, int(n_locs), src + ": locations per band in the pilot runs")
 
 
+RATE_TEST_P = 0.05  # the conventional uncorrected level at which the approximate equal-rate tests are counted
+
+
 def confirm_rate_facts(F: Facts, root: Path) -> None:
     """The confirmatory run's equal-rate tests of the endpoint's two arrays on the evaluation null, counted over the
     anatomies, and the number of anatomy-and-array combinations with a realized false-event rate."""
+    F.add("wr_confirm_rate_equality_p_level", f"{RATE_TEST_P:g}", RATE_TEST_P, "scripts/report_facts_writer.py :: RATE_TEST_P "
+          "(the conventional uncorrected level at which the counts below are taken; the test is approximate)")
     labels = json.loads((root / CONFIRM_SUMMARY).read_text())["anatomies"]
     per = {a: json.loads((root / CONFIRM_PER.format(anatomy=a)).read_text()) for a in labels}
     for thresholds in ("frozen", "matched"):
@@ -429,12 +434,13 @@ def confirm_rate_facts(F: Facts, root: Path) -> None:
         for a in labels:
             t = per[a]["false_event_rate_equality_on_evaluation_null"][key]
             p = float(t["conditional_binomial_p"] if "conditional_binomial_p" in t else t["exact_conditional_p"])
-            if p < 0.05:
+            if p < RATE_TEST_P:
                 low.append(a)
         src = (f"{CONFIRM_SUMMARY} :: anatomies, each read from {CONFIRM_PER.format(anatomy='<anatomy>')} "
                f"false_event_rate_equality_on_evaluation_null['{key}'].conditional_binomial_p (derived: anatomies with "
                "p < 0.05, uncorrected; the test is approximate, the arrays sharing the background and room noise)")
         F.add(f"wr_confirm_rate_equality_endpoint_{thresholds}_n_p05", count(len(low)), len(low), src + ": count")
+        F.add(f"wr_confirm_rate_equality_endpoint_{thresholds}_n_p05_words", WORDS[len(low)], len(low), src + ": count, in words")
         F.add(f"wr_confirm_rate_equality_endpoint_{thresholds}_heads_p05",
               _name_list([HEAD_LABELS[a] for a in low]) if low else "none", low, src + ": the anatomies")
     cells = sum(1 for a in labels for k in per[a]["false_events"] if k.endswith("|primary"))
