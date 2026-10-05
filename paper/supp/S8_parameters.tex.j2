@@ -1,0 +1,76 @@
+\section{Parameters and analysis choices}\label{sec:S8}
+
+\subsection{Resamples, seeds and time-domain parameters}\label{sec:S8.1}
+
+Table~\ref{tab:S16} gives the number of bootstrap resamples behind every interval family of the study, Table~\ref{tab:S17} the random seed of every simulation and resampling, and Table~\ref{tab:S18} the parameters of the time-domain model of the spike study. The confirmatory run's resample count and seeds are included; its results are in the main text (Section 3.6) and in Section~\ref{sec:S7}.
+
+The per-target result tables of the adult comparison, the smaller heads and the helmet fitted at the adult's gap are accompanied by tables of every target's depth below the scalp at full precision. These give each target's membership of each depth bin, depth stratum, spike depth band and orientation stratum as half-open bins. Every count stated in the text, such as child B's targets shallower than << F.g3b_shallow_target_limit_mm >> mm, can therefore be reproduced exactly; the adult's detectabilities are given per target in the same way.
+
+\begin{table}[tbp]
+\caption{Bootstrap resamples behind each interval family. All intervals are percentile intervals.}\label{tab:S16}
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{L{0.44\textwidth}YL{0.2\textwidth}}
+\toprule
+Intervals & Unit resampled & Resamples \\
+\midrule
+Adult: primary comparisons (all estimators), lobes, triaxial control; OPM-axis decomposition & parcel labels (<< F.meth_boot_g2_parcels >>) & << F.meth_boot_g2 >>; << F.meth_boot_hse >> \\
+Adult: sensitivity analyses (sensor noise, background, Neuromag noise, head position, scalp gap, joint grid); extended sources & parcel labels & << F.meth_boot_g2_sens >>; << F.meth_boot_g2_patch >> \\
+Adult: frequency bands & targets & << F.meth_boot_g2_band >> \\
+Adult: depth, distance and orientation bins; medial wall & parcel labels present in the bin (depth bins); otherwise none (medians only) & << F.rev_db_n_boot >>; none \\
+Smaller heads, top contact, dense array (D, Δ, strata) & parcels of each head & << F.meth_boot_g3b_dense >> \\
+Smaller heads: site-matched array; centered, back, laterally centered and true-contact placements and both helmets scaled with the head; channel-count control & parcels of each head & << F.meth_boot_g3b_matched >>; << F.meth_boot_g3b_placements >>; << F.meth_boot_g3b_channels >> \\
+Smaller heads: peak-channel and mean-power SNR, shifted and rotated placements, sensitivity analyses, patches & --- & none (medians only) \\
+Spikes, exploratory runs and matched-rate re-analysis (S50, paired S50 ratio) & locations & << F.meth_boot_g4 >> \\
+Spikes, confirmatory run & locations & << F.meth_boot_confirm >> \\
+Localization: paired error differences & events & << F.meth_boot_loc >> \\
+Noise-model sensitivity; helmet fitted at the adult's gap; validation against the measured covariance & parcels & << F.meth_boot_noise_sens >>; << F.meth_boot_cgap_primary >> (dense array, primary helmets) or << F.meth_boot_cgap_other >>; << F.meth_boot_covval >> \\
+Motion thresholds & << F.meth_motion_draws >> draws, not resampled & << F.meth_motion_pct_lo >> to << F.meth_motion_pct_hi >> percentiles \\
+\bottomrule
+\end{tabularx}
+\tablenotes{Where a cell lists several families, the resample counts follow in the same order, separated by semicolons. D: OPM detectability relative to Neuromag (dB); Δ: a smaller head's D minus the adult's; OPM: optically pumped magnetometer; S50: the source strength for << F.g4_s50_level >> detection; SNR: signal-to-noise ratio.}
+\end{table}
+
+\begin{table}[tbp]
+\caption{Random seeds of the simulations and resamplings.}\label{tab:S17}
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{YL{0.3\textwidth}}
+\toprule
+Analysis & Seed \\
+\midrule
+Adult comparison: background grid and targets; extended-source bootstrap; convergence subset; frequency bands; OPM-axis decomposition; near-mesh check; BEM-sphere check & << F.meth_seed_g2 >>; << F.rev_seed_g2_patch_boot >>; << F.rev_seed_g2_convergence >>; << F.rev_seed_g2_band >>; << F.rev_seed_g2_hse >>; << F.rev_seed_g2_near_mesh >>; << F.rev_seed_bem_sphere >> \\
+Adult comparison: depth-bin bootstrap & << F.wr_seed_g2_depth_bins >> \\
+Adapted benchmarks: \citet{hunold2016} (sources; noise); \citet{goldenholz2009} & << F.rev_seed_g1b >>; << F.rev_seed_g1b_noise >>; << F.rev_seed_g1c >> \\
+Smaller heads: parcel bootstrap (templates and scaled adults; children); patch centers; usefulness strata; helmet fitted at the adult's gap & << F.meth_seed_g3b_boot >>; << F.meth_seed_g3b_school_boot >>; << F.rev_seed_g3b_patches >>; << F.rev_seed_g3b_useful >>; << F.rev_seed_cgap >> \\
+Noise-model sensitivity and validation against the measured covariance (parcel bootstraps and surrogates) & << F.rev_ns_boot_seed >>; << F.rev_cov_seed >> \\
+Spikes, exploratory runs (the same in all << F.meth_n_anatomies >> anatomies): detection; location bootstrap; localization; the localization study's held-out null data; the localization study's bootstrap of the Neuromag-subset comparisons & << F.meth_seed_g4_detection >>; << F.meth_seed_g4_boot >>; << F.meth_seed_g4_localization >>; << F.meth_seed_loc_heldout >>; << F.meth_seed_loc_secondary >> \\
+Spikes, confirmatory run: root seed, with one stream per anatomy and purpose (<< F.meth_confirm_purposes >> purposes) and the << F.rev_seed_confirm_replicates >> noise replicates of every event spawned from it (key: anatomy, purpose, replicate); sign-flip Monte Carlo (fixed, every anatomy and replicate) & << F.meth_seed_confirm_root >>; << F.rev_seed_signflip_mc >> \\
+Head motion: coupling draws; time course & << F.wr_seed_motion_coupling >>; << F.wr_seed_motion_timecourse >> \\
+\bottomrule
+\end{tabularx}
+\tablenotes{Where a cell lists several analyses, the seeds follow in the same order, separated by semicolons. BEM: boundary element model; OPM: optically pumped magnetometer.}
+\end{table}
+
+\begin{table}[tbp]
+\caption{Time-domain model of the spike study. The settings are the same in every anatomy.}\label{tab:S18}
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{L{0.22\textwidth}Y}
+\toprule
+Element & Setting \\
+\midrule
+Cortical background & independent Gaussian series, power spectrum $1/f^{x}$ ($x = << F.meth_td_exponent >>$) above << F.meth_td_fmin_hz >> Hz and flat below; band-filtered, scaled to $s^2 a_i$ \\
+Room field & the << F.meth_env_terms >> coefficients synthesized from the empty-room cross-spectra (Welch, << F.meth_td_csd_nperseg >>-sample segments), scaled to the fitted covariance; not projected out \\
+Sensor noise & white (OPM << F.meth_td_opm_asd >> fT/√Hz); no OPM frequency response (a first-order << F.meth_opm_bw_corner_hz >>-Hz response only in the band analysis) \\
+Filter, sampling & << F.meth_band_lo_hz >>–<< F.meth_band_hi_hz >> Hz, Butterworth of order << F.meth_filter_order >>, zero phase, also applied to the spike templates; simulated at << F.meth_td_fs_sim_hz >> Hz, every << F.meth_td_decimate >>th sample kept (no further anti-aliasing filter): << F.meth_td_fs_out_hz >> Hz \\
+Segments & << F.meth_td_segment_s >> s, generated << F.meth_td_pad_s >> s longer at each end and cropped; one realization shared by all arrays; a spike every << F.meth_td_event_spacing_s >> s \\
+Candidate field patterns & << F.meth_td_dictionary_mm >>-mm grid without the true sources: << F.meth_td_candidates_adult >> (adult); << F.meth_td_candidates_school >>, << F.meth_td_candidates_size2yr >> (scaled adults); << F.meth_td_candidates_infant2yr >>, << F.meth_td_candidates_infant18mo >>, << F.meth_td_candidates_infant12mo >> (templates, oldest first); << F.meth_td_candidates_childa >>, << F.meth_td_candidates_childb >>, << F.meth_td_candidates_childc >> (children A--C) \\
+Null data & detection: whitener << F.meth_null_whitener_min >> min, thresholds << F.meth_null_calibration_min >> min (then frozen), held-out << F.meth_null_heldout_min >> min, confirmatory evaluation << F.meth_null_evaluation_min >> min; localization: covariance << F.meth_loc_cov_min >> min, thresholds << F.meth_loc_threshold_min >> min, held-out << F.meth_loc_heldout_min >> min \\
+\bottomrule
+\end{tabularx}
+\tablenotes{$s^2 a_i$: the moment variance of background source $i$, the variance per unit area $s^2$ times the area $a_i$ of the source's cortical cell (Section~\ref{sec:S3}). OPM: optically pumped magnetometer.}
+\end{table}
+
+\subsection{Analysis choices made after results were known}\label{sec:S8.2}
+
+Two noise conditions were named in the analysis configuration before any simulation: sensor plus brain noise, the primary condition, and the room field projected out. Whole-cortex results are reported in both conditions and regional results with sensor plus brain noise. No endpoint, test or margin of the original study was declared before its analyses. The exploratory spike endpoint (the dense array against Neuromag's << F.g2_squid_channels >> channels at << F.g4_band_10_20mm >> mm with the practical detector) was chosen from << F.g4_family_per_opm_array >> comparisons per OPM array (Section~\ref{sec:S7}). The regions were chosen from the epilepsy literature (Section~\ref{sec:S4}), and rankings among them are exploratory. Top contact, the primary placement of the fixed helmet, was chosen after the adult's whole-cortex results were known. The laterally centered placement and the helmet scaled about the laterally centered head were added after the first pediatric results were known, to remove the templates' lateral offset; the << F.g3b_n_family_placements >> source-blind placements bound the first choice (Section~\ref{sec:S5}). Further analyses were added after the main results were known, without changing the model: the check of the noise model against the measured Neuromag covariance and the sensitivity analyses (Section~\ref{sec:S3}), the MRI quality check of the school-aged children (Section~\ref{sec:S4}) and the helmet fitted at the adult's gap (Section~\ref{sec:S5}). Each reproduces the results it builds on to within rounding. The confirmatory spike run was designed before it was run (main text, Section 2.5) and is the only pre-specified test of the study.
+
+The model also changed while results were known. Earlier versions took the OPM sensitive axes from the adult's stored outer-skin normals, which are nearly radial, and placed the adult's head surface outside its MRI scalp, by a median of << F.g2_conform_median_mm >> mm; they also differed in how the OPM cell's clearance from the head was checked. The final model puts every head's surface on its MRI scalp, so that the clearance rule moves only the sites the anatomy demands and the OPM standoff is the same (<< F.g3b_all_dense_standoff_2dp_range >> mm) above every head's own MRI scalp (the templates' scalp convention differs from the adult's; Section~\ref{sec:S4}). It takes the sensitive axes from that surface's own triangles (Section~\ref{sec:S3}). This change to equal OPM standoff was made after the pediatric results were known. It lowered Δ by << F.g3b_v3_v4_delta_drop_range >> dB in the scaled adults and templates (the school-aged children exist only in the final model). It raised the adult's projected dense ratio (<< F.g2_hse_v3_dense_vs_combined_proj_ratio_3dp >> with the earlier construction, << F.g2_hse_v4sites_v3axes_dense_vs_combined_proj_ratio_3dp >> with the final sites and the earlier axes, << F.g2_dense_vs_combined_proj_ratio_3dp >> in the final model). It made the laterally centered scaled-helmet Δ of the scaled adults and templates negative. It strengthened the adult's exploratory spike result at << F.g4_band_10_20mm >> mm (earlier << F.g4_earlier_v3_dense_vs_combined_10_20mm >> locations favoring the OPM/Neuromag, p = << F.g4_earlier_v3_dense_vs_combined_10_20mm_p >>, S50 ratio << F.g4_earlier_v3_dense_vs_combined_10_20mm_ratio >>; final << F.g4_adult_dense_vs_combined_practical_10_20mm_locs_opm >>/<< F.g4_adult_dense_vs_combined_practical_10_20mm_locs_squid >> and << F.g4_adult_dense_vs_combined_practical_10_20mm_ratio >>). Every array change redraws the noise, because an array's channel count changes the random stream. The dense array's advantage at << F.g4_band_10_20mm >> mm held in every version, but which deeper cells reach p < << F.wr_p_exploratory_threshold >> did not. The site-matched array's deficit at << F.g4_band_45_70mm >> mm in two earlier versions (<< F.g4_earlier_v2_matched_vs_combined_45_70mm >> and << F.g4_earlier_v3_matched_vs_combined_45_70mm >> locations, the latter with p = << F.g4_earlier_v3_matched_vs_combined_45_70mm_p >>) does not reach p < << F.wr_p_exploratory_threshold >> in the final model (<< F.g4_adult_matched_vs_combined_practical_45_70mm_locs_opm >>/<< F.g4_adult_matched_vs_combined_practical_45_70mm_locs_squid >> locations, p = << F.g4_adult_matched_vs_combined_practical_45_70mm_p >>). Results that depend on these choices are post hoc, the earlier results are not part of the stored results, and persistence across versions is not replication. The main text states the post hoc caveat once (Section 2.6) and reports every exploratory result as such.

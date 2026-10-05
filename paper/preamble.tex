@@ -1,0 +1,37 @@
+% Shared preamble of the manuscript and the supplementary material (elsarticle, XeLaTeX via tectonic).
+\usepackage{fontspec}
+\setmainfont{texgyretermes}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+\setsansfont{texgyreheros}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+\usepackage{amsmath}
+\usepackage{unicode-math}
+\setmathfont{texgyretermes-math.otf}
+\usepackage{graphicx}
+\graphicspath{{../figures/}{../../figures/}}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage{xcolor}
+\usepackage{setspace}
+\usepackage{lineno}
+\usepackage[labelsep=period,labelfont=bf,font=small,justification=justified,singlelinecheck=false]{caption}
+\usepackage{placeins}
+\usepackage[hidelinks]{hyperref}
+% citation links inside floats are misplaced by the PDF driver (xdvipdfmx): floats carry no links
+\usepackage{etoolbox}
+\AtBeginEnvironment{figure}{\NoHyper}
+\AtBeginEnvironment{table}{\NoHyper}
+% references as the journal prints them: DOIs as https://doi.org/..., no 'URL:' prefix, URLs in the text font
+\urlstyle{same}
+\providecommand{\DOIprefix}{}\renewcommand{\DOIprefix}{}
+\providecommand{\URLprefix}{}\renewcommand{\URLprefix}{}
+\providecommand{\doi}[1]{}\renewcommand{\doi}[1]{\url{https://doi.org/#1}}
+\renewcommand{\figurename}{Fig.}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\setlength{\tabcolsep}{4pt}
+\setlength{\emergencystretch}{3em}  % fewer overfull lines in the justified text
+% notes set below a table body
+\newcommand{\tablenotes}[1]{\par\smallskip{\footnotesize\raggedright #1\par}}

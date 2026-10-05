@@ -1,0 +1,74 @@
+{
+ "Figure_1": {
+  "width": 518.47,
+  "height": 773.72,
+  "parts": [
+   {
+    "part": "Figure_R15_arrays",
+    "width": 516.669,
+    "height": 366.046,
+    "top": 0.0
+   },
+   {
+    "part": "Figure_R12_geometry",
+    "width": 518.472,
+    "height": 398.18,
+    "top": 375.54
+   }
+  ]
+ },
+ "Figure_4": {
+  "width": 522.48,
+  "height": 721.37,
+  "parts": [
+   {
+    "part": "Figure_R1_adult_depth",
+    "width": 516.72,
+    "height": 444.72,
+    "top": 0.0
+   },
+   {
+    "part": "Figure_R11_maps_adult",
+    "width": 522.483,
+    "height": 267.152,
+    "top": 454.218
+   }
+  ]
+ },
+ "Figure_6": {
+  "width": 522.48,
+  "height": 512.43,
+  "parts": [
+   {
+    "part": "Figure_R6_pediatric_D",
+    "width": 502.773,
+    "height": 239.792,
+    "top": 0.0
+   },
+   {
+    "part": "Figure_R13_maps_heads",
+    "width": 522.483,
+    "height": 263.138,
+    "top": 249.292
+   }
+  ]
+ },
+ "Figure_S5": {
+  "width": 583.23,
+  "height": 1139.61,
+  "parts": [
+   {
+    "part": "Figure_noise_sensitivity",
+    "width": 571.977,
+    "height": 719.044,
+    "top": 0.0
+   },
+   {
+    "part": "Figure_noise_sensitivity_depth",
+    "width": 583.232,
+    "height": 411.07,
+    "top": 728.54
+   }
+  ]
+ }
+}

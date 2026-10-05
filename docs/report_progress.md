@@ -211,9 +211,9 @@ return accept or minor revisions in the same round.
 |---|---|---|
 | 1. Reference papers and Guide for Authors | done | ten NeuroImage papers (PMC Open Data author manuscripts: PDF, XML, text, figures; 102 files, 75.8 MB, checksums verified) and the Guide for Authors (saved by the owner) in `refs/`, which is not committed |
 | 2. Style sheet | done | `paper/style_sheet.md`, one page, from eleven parallel analyses and a synthesis |
-| 3. Figures at print resolution | pending | vector PDFs exported from the stored results |
-| 4. Manuscript and supplementary material | pending | LaTeX templates filled from the facts (`paper/build_paper.py`) |
-| 5. Internal checks | pending | numbers, style-sheet compliance, claims |
+| 3. Figures at print resolution | done | `paper/export_figures.py`: 8 main and 15 supplementary figures as vector PDFs (raster layers at 600 dpi) from the stored results; bold capital panel letters; American spelling; explanatory notes and figure titles moved out of the images into the captions |
+| 4. Manuscript and supplementary material | drafted | `paper/manuscript.tex.j2` and `paper/supplementary.tex.j2` (+ `paper/supp/`), filled from the facts by `paper/build_paper.py`, which also checks highlights (3-5, at most 85 characters) and the abstract (at most 250 words); 454 facts in the main text, 2,261 in the supplementary material |
+| 5. Internal checks | in progress | style audit (mean sentence 25.8 words); fidelity to the report, style sheet, claims, figures |
 | 6. Referee rounds | pending | both referees, same round |
 
 ## Manuscript log
@@ -225,3 +225,7 @@ return accept or minor revisions in the same round.
   Termes. Title page and declarations as decided by the owner: Laiba Khan (Lexington High School) and Mainak Jas
   (Martinos Center, MGH/HMS; corresponding author); no specific funding; no competing interests; CRediT roles; a
   generative-AI declaration.
+- 2026-10-05: manuscript drafted. Main text written to the style sheet from the report (structure 1-5, Discussion with
+  an unnumbered summary and the limitations in one paragraph, no bullet lists, no provenance material); the
+  supplementary material converted section by section by four parallel writers, each fragment checked to compile
+  alone. Sentences split to a mean of 25.8 words. Floats carry no hyperlinks (the PDF driver misplaces them).

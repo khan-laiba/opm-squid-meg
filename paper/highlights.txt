@@ -1,0 +1,7 @@
+Highlights
+
+- Sensor noise and array design decide whether on-scalp OPMs outperform SQUID MEG
+- Measured SQUID noise shifts detectability as much as the modeled OPM lead
+- Fitting the helmet to the adult's gap removed most of the smaller heads' extra gain
+- A dense OPM array detected weaker superficial simulated spikes in all anatomies
+- A site-matched OPM array fell behind SQUIDs on ventral and polar cortex

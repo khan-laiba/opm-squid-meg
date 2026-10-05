@@ -1,0 +1,999 @@
+\documentclass[preprint,12pt,authoryear,a4paper]{elsarticle}
+% Shared preamble of the manuscript and the supplementary material (elsarticle, XeLaTeX via tectonic).
+\usepackage{fontspec}
+\setmainfont{texgyretermes}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+\setsansfont{texgyreheros}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+\usepackage{amsmath}
+\usepackage{unicode-math}
+\setmathfont{texgyretermes-math.otf}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage{xcolor}
+\usepackage{setspace}
+\usepackage{lineno}
+\usepackage[labelsep=period,labelfont=bf,font=small,justification=justified,singlelinecheck=false]{caption}
+\usepackage{placeins}
+\usepackage[hidelinks]{hyperref}
+% citation links inside floats are misplaced by the PDF driver (xdvipdfmx): floats carry no links
+\usepackage{etoolbox}
+\AtBeginEnvironment{figure}{\NoHyper}
+\AtBeginEnvironment{table}{\NoHyper}
+% references as the journal prints them: DOIs as https://doi.org/..., no 'URL:' prefix, URLs in the text font
+\urlstyle{same}
+\providecommand{\DOIprefix}{}\renewcommand{\DOIprefix}{}
+\providecommand{\URLprefix}{}\renewcommand{\URLprefix}{}
+\providecommand{\doi}[1]{}\renewcommand{\doi}[1]{\url{https://doi.org/#1}}
+\renewcommand{\figurename}{Fig.}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\setlength{\tabcolsep}{4pt}
+\setlength{\emergencystretch}{3em}  % fewer overfull lines in the justified text
+% notes set below a table body
+\newcommand{\tablenotes}[1]{\par\smallskip{\footnotesize\raggedright #1\par}}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\theequation}{S\arabic{equation}}
+\begin{document}
+\begin{center}
+{\Large\bfseries Supplementary material}\\[2mm]
+{\large Brain region, head size and helmet fit in on-scalp and cryogenic magnetoencephalography: a simulation study from adults to children}\\[2mm]
+Laiba Khan and Mainak Jas
+\end{center}
+\linenumbers
+\section{Estimands and conventions}\label{sec:S1}
+
+The primary metric is the known-topography detectability
+\begin{equation}
+d = \sqrt{s^{\mathsf{T}} C^{-1} s},
+\label{eq:S-detectability}
+\end{equation}
+where $s$ is the field pattern of a source across an array's channels and $C$ is that array's noise covariance; $d$ is the output signal-to-noise ratio (SNR) of the optimal matched filter for a source of known topography. We computed it with the true (oracle) covariance and rank-aware whitening for every target and every array, and compared arrays target by target. The adult comparison reports the median over targets of the paired ratio $d_{\mathrm{OPM}}/d_{\mathrm{Neuromag}}$, not the ratio of the two systems' median detectabilities.
+
+The same quantity in decibels is $D = 20\log_{10}(d_{\mathrm{OPM}}/d_{\mathrm{Neuromag}})$, positive when the optically pumped magnetometer (OPM) array is ahead. $D$ does not depend on the dipole moment. Unless stated otherwise, the comparator is all 306 channels of the Neuromag system, a magnetoencephalography (MEG) system of superconducting quantum interference devices (SQUIDs).
+
+The adult analyses report the unweighted median over all 7,661 targets, the 558 on the medial wall included. The smaller heads use an area-weighted median over cortical targets with the medial wall excluded, because their cortices differ in size and their targets in density. Both medians summarize the same metric. At the adult's measured head position, the dense array's ratio is 1.144 unweighted over all targets, 1.148 without the medial wall and 1.158 area-weighted without it. Its $D$ is +1.17~dB under the adult convention and +1.27~dB under the pediatric one. A 1\,\% change of the ratio is 0.086~dB, and 1~dB is a ratio of 1.122. Table~\ref{tab:S1} gives the adult's primary comparison in both forms, and Table~\ref{tab:S2} lists every estimand of the study, its definition, its interval and what that interval covers.
+
+\begin{table}[tbp]
+\caption{The adult's primary comparison as a ratio and in decibels. Median over all 7,661 targets of the paired ratio OPM/Neuromag (306 channels), with 95\,\% parcel-bootstrap intervals in brackets; OPM white noise 15~fT/√Hz; the adult at its measured head position.}\label{tab:S1}
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{L{3.1cm}>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X}
+\toprule
+Array and form & Sensor noise only & Sensor plus brain noise (primary) & Room field projected out \\
+\midrule
+Dense, ratio & 0.742 [0.717, 0.768] & 1.144 [1.121, 1.168] & 1.115 [1.081, 1.149] \\
+Dense, $D$ (dB) & −2.59 [−2.89, −2.30] & +1.17 [+0.99, +1.35] & +0.95 [+0.68, +1.21] \\
+Site-matched, ratio & 0.531 [0.512, 0.551] & 1.009 [0.994, 1.027] & 0.948 [0.899, 0.977] \\
+Site-matched, $D$ (dB) & −5.50 [−5.82, −5.18] & +0.08 [−0.05, +0.23] & −0.46 [−0.92, −0.20] \\
+\bottomrule
+\end{tabularx}
+\tablenotes{Dense, the dense OPM array; site-matched, the site-matched OPM array; $D = 20\log_{10}$ of the ratio.}
+\end{table}
+
+\begin{table}[p]
+\caption{Estimands of the study in full. $d$, known-topography detectability with the oracle covariance; $D = 20\log_{10}(d_{\mathrm{OPM}}/d_{\mathrm{Neuromag}})$; Neuromag means all 306 channels unless stated. Every parcel bootstrap is a percentile interval over the parcels of one anatomy; it describes spatial variation within that anatomy and excludes placement, construction and between-subject variability.}\label{tab:S2}
+\centering\scriptsize
+\begin{tabularx}{\textwidth}{L{2.1cm}YL{3.6cm}L{1.6cm}}
+\toprule
+Estimand & Definition & Interval and what it covers & Used in (section) \\
+\midrule
+Adult ratio & Median over all 7,661 targets (medial wall included) of the paired ratio $d_{\mathrm{OPM}}/d_{\mathrm{Neuromag}}$, or $D$; conditions: sensor noise only, sensor plus brain noise (primary), with the room field, projected & 95\,\% bootstrap over the adult's 70 labels (atlas parcels and the two medial-wall labels) & 3.1--3.3; \ref{sec:S2}, \ref{sec:S3} \\
+Scenario ratio & The adult ratio with sensor, brain and room noise (Neuromag's 305 good channels) under one of five stated assumptions about how each system's real noise departs from the model, informed by Neuromag's measured covariance (scenarios A--E) & Parcel bootstrap over the same labels & 3.2; \ref{sec:S3} \\
+Break-even noise & The OPM white-noise level at which the adult ratio equals 1, found on a grid of 33 levels over 4–60~fT/√Hz & Parcel bootstrap of the crossing & 3.1, 3.2; \ref{sec:S3} \\
+Depth-bin ratio & Median of the paired ratio over the targets of one 5-mm depth bin & Bootstrap over the parcel labels present in the bin & 3.3 \\
+Regional ratio & Median of the paired ratio over a lobe's or a parcel's targets & Lobes: bootstrap over the lobe's parcels; single parcels: the interquartile range over targets, a spread rather than a confidence interval & 3.3 \\
+$D$ of a head & Area-weighted median of $D$ over a head's cortical targets, medial wall excluded, in a named helmet and placement & Parcel bootstrap within the head & 3.4, 3.5; \ref{sec:S5}, \ref{sec:S6} \\
+$\Delta$ & $D_{\mathrm{head}} - D_{\mathrm{adult}}$, the adult placed by the same helmet rule: vertex-wise for the scaled adults (the same cortical vertex); for the templates and children, which have no vertex correspondence, the adult-area-weighted median of parcel-level differences & Parcel bootstrap & 3.4, 3.5; \ref{sec:S5} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[p]
+\ContinuedFloat
+\caption[]{Estimands of the study in full (continued).}
+\centering\scriptsize
+\begin{tabularx}{\textwidth}{L{2.1cm}YL{3.6cm}L{1.6cm}}
+\toprule
+Estimand & Definition & Interval and what it covers & Used in (section) \\
+\midrule
+$\Delta$ within a depth stratum & The difference of the two heads' area-weighted medians within one stratum of depth below each head's own scalp (edges at 0, 10, 15, 20, 25, 30, 40, 50, 60, 90~mm), for every head including the scaled adults; strata with fewer than 10 targets in either head are not summarized & Parcels resampled in each head independently & \ref{sec:S5} \\
+Depth-reweighted difference & The difference of pooled medians after weighting each head's targets to the adult's depth distribution; not the same estimand as $\Delta$ & None (point estimate) & \ref{sec:S5} \\
+Within-head contrast & The area-weighted median over one head's targets of the target-wise difference $D$(fixed helmet at top contact) $-$ $D$(fitted helmet), not the difference of the two medians; the OPM array is the same in both, so it is a property of Neuromag alone & Parcel bootstrap & 3.5; \ref{sec:S5} \\
+Interaction & The within-head contrast of the smaller head minus that of the adult; at every vertex of a scaled adult it equals $\Delta$(fixed) $-$ $\Delta$(fitted), but the area-weighted medians are not additive & Parcel bootstrap & 3.5, 4.2, 5; \ref{sec:S5} \\
+$\Delta$ at equal OPM site count & $\Delta$ with the adult's dense array subsampled by farthest-point sampling to the smaller head's dense site count, the adult in the same helmet rule & Parcel bootstrap & 3.5; \ref{sec:S5} \\
+Placement band & $\Delta$ at each of the 12 source-blind placements of the fixed helmet (each head against the adult at the same placement), as a difference of area-weighted medians; the crossed band pairs any feasible placement of the head with any of the adult & The range over placements, no interval & 3.4; \ref{sec:S5} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[p]
+\ContinuedFloat
+\caption[]{Estimands of the study in full (continued).}
+\centering\scriptsize
+\begin{tabularx}{\textwidth}{L{2.1cm}YL{3.6cm}L{1.6cm}}
+\toprule
+Estimand & Definition & Interval and what it covers & Used in (section) \\
+\midrule
+Peak-channel SNR & Each system's largest ratio of a channel's noise-free signal to that channel's own in-band noise standard deviation; OPM over Neuromag (best of all channels, or of the magnetometers) & Parcel bootstrap (adult); medians only (smaller heads) & 3.1, 4.3; \ref{sec:S2}, \ref{sec:S3}, \ref{sec:S6} \\
+Mean-power SNR & $10\log_{10}$ of the channel mean of the squared SNRs \citep{goldenholz2009}, compared as an amplitude ratio & Parcel bootstrap & 3.1 \\
+Plug-in detectability & The output SNR under the true covariance of the matched filter built from a Ledoit--Wolf estimate from 780 or 4,680 independent samples (twice the time-bandwidth product of 10 and 60~s in this band), drawn for all arrays from one common noise realization & Parcel bootstrap & 3.1; \ref{sec:S3} \\
+S50 & The strength at which a depth band's focal detection rate reaches 50\,\%, interpolated linearly in log strength; the band's locations (18 per band in the exploratory run, 36 in the confirmatory run) and 3 morphologies are pooled & Bootstrap over locations (1,000 resamples); open at one end when resamples do not reach half detection within the tested strengths & 3.6; \ref{sec:S7} \\
+Paired S50 ratio & S50\textsubscript{Neuromag}/S50\textsubscript{OPM}, a ratio of the two pooled S50 estimates, above 1 when the OPM needs less strength; each bootstrap resample draws locations with replacement and recomputes both S50 values on the same locations, so the ratio is paired by location and is not a median of location-specific ratios & Location bootstrap, as S50 & 3.6; \ref{sec:S7} \\
+Detection-count difference & Per location, the number of events detected by one array minus the other, tested with the two-sided sign-flip test over locations; every p-value reported is exact over all sign patterns & None; a p-value & 3.6; \ref{sec:S7} \\
+Localization error & Distance from the true source (a patch's center) to the fitted dipole or to the dSPM peak, read at the true peak sample through the perturbed transform & Paired differences: bootstrap over events; Wilcoxon signed-rank p-value & 3.6; \ref{sec:S7} \\
+Joint success & Detection by the practical detector with a localization error of at most 10~mm; paired differences tested with an exact McNemar test & None; a p-value & \ref{sec:S7} \\
+\bottomrule
+\end{tabularx}
+\tablenotes{Sections numbered 3.1--5 are those of the main text; sections S2--S7 are those of this supplementary material. dSPM, dynamic statistical parametric mapping \citep{dale2000}; SNR, signal-to-noise ratio.}
+\end{table}
+
+Every $\Delta$ is taken against the adult placed by the same rule, because the adult's own $D$ depends on the placement. It is +1.27~dB at its measured head position, +1.00~dB at top contact and +1.01~dB laterally centered and raised to contact. It is +0.87~dB at true contact, +1.27 and +1.28~dB in its own helmets scaled with the head (centered and laterally centered; their scale factor is 1.000), and +1.28~dB in the helmet fitted at its own gap. Where a difference of two pooled medians is used instead of $\Delta$, the text says so. $\Delta$ is reported descriptively, without a test or a margin.
+
+Peak-channel SNR lets magnetometers and gradiometers compete on equal terms, because each channel is divided by its own noise. It is the closest analogue of the sensor-level SNRs of the clinical studies, with one difference: a clinical baseline standard deviation holds physiological noise as well as sensor and room noise, whereas the model's holds only what the noise model contains. Mean-power SNR is the channel-averaged SNR of \citet{goldenholz2009}, also used by \citet{matsubara2026}.
+
+The plug-in filter is built from a Ledoit--Wolf covariance estimate \citep{ledoit2004} and evaluated under the true covariance, so it cannot exceed the oracle value. The estimate used 780 or 4,680 independent samples, the time-bandwidth equivalents of 10 and 60~s of data in this band, drawn for all arrays from one common noise realization. The estimate from 4,680 samples is the declared 60-s scenario; its samples are independent, which does not establish the effective sample size of a measured colored-noise baseline. The estimate from 780 samples shows how a short baseline penalizes the array with more channels.
+
+Neighboring cortical targets are correlated, so no interval resamples targets as if they were independent. The one exception is the adult's frequency-band comparison, which resamples targets and therefore has narrower intervals than the primary comparison. All intervals are percentile intervals. In the spike study the location is the statistical unit: S50 ratios carry location-bootstrap intervals, and detection differences are tested with the sign-flip test on per-location differences in detection counts, reported exactly over all sign patterns (Section~\ref{sec:S7}). Table~\ref{tab:S16} gives the resample count of every interval family.
+
+\section{The spherical benchmark}\label{sec:S2}
+
+We reimplemented the analytical model of \citet{jas2026} with their definitions. A tangential current dipole of 30~nAm sits in a spherical conductor (head radius 95~mm, brain radius 80~mm), and point magnetometers measure the radial field on the scalp (OPM) and 18~mm above it (SQUID). The single-channel SNR is the peak field over the noise standard deviation $\sigma$, and $\sigma_{\mathrm{OPM}} = \eta\,\sigma_{\mathrm{SQUID}}$. The equal-SNR depth is the exact root of the preprint's Eq.~3. We checked the peak field against the full Sarvas field maximized over the sensor sphere (largest relative difference 4.7 $\times 10^{-15}$) and against the sphere model of MNE-Python \citep[5.4 $\times 10^{-8}$;][]{gramfort2013}.
+
+The reimplementation reproduced the preprint. At $\eta$~=~3 the exact equal-SNR depth is 27.665~mm. The preprint prints 28~mm in its text and caption, and its figure draws 27.53~mm; the difference reflects the preprint's rounding and grid, not a difference of model. A crossing exists only for $\eta$ between 1.683 and 5.309 (printed as 1.7 and 5.3). Only $\eta$ enters the equal-SNR depth: scaling both noises together leaves it at 27.665~mm.
+
+On the real head, the peak field at the best OPM over that at the best Neuromag magnetometer falls with depth as the sphere predicts, once the sphere is given the real median standoffs: 7.0~mm for the OPMs and 29.8~mm for the magnetometers. For the dense array this ratio fell from 5.41 in the 10–15~mm bin to 2.28 at 55–60~mm, against 5.26 and 2.09 for the sphere.
+
+The bridge between the two models uses the sphere's own metric: peak-channel SNR against the magnetometers, with sensor noise only. With it, the realistic equal-SNR depth at $\eta$~=~3 was 29.6~mm for the site-matched array and 31.8~mm for the dense array, against 29.0~mm for the sphere with the real standoffs. For $\eta$ from 2.5 to 4.5, the real arrays' depths lay within −0.8 to +5.4~mm of the sphere's (Fig.~\ref{fig:S1}B). Outside that window they differed.
+
+The OPMs were ahead at every depth for $\eta \le$ 2.25, where the sphere still predicts a deep crossing (48.8~mm at $\eta$~=~2.25). The reason is that the real peak-field ratio levels off at depth (2.35 at 60–65~mm), while the sphere's keeps falling (2.02). Neuromag's magnetometers were ahead at every depth for $\eta \ge$ 5.0 (site-matched) or 5.5 (dense). The sphere is therefore right about the geometry of magnetometers near its reference $\eta$.
+
+Against Neuromag's 204 planar gradiometers, the ratio with sensor noise only barely changed with depth, so the sphere describes only the magnetometer part of the comparison. What it leaves open is $\eta$ itself, which the explicit noise model of Section~\ref{sec:S3} replaces.
+
+For head size, we placed the newborn, 1-year, 8-year and adult spheres of the preprint in a SQUID shell that follows each head at 18~mm, as in the preprint. As an additional contrast, we placed all of them in the adult shell of radius 113~mm. With the size-following shell, the equal-SNR depth at $\eta$~=~3 hardly moved from adult to newborn (27.7–30.8~mm). The normalized depth, however, rose from 15.8\,\% to 49.6\,\%, because the brain and the extracerebral layer (7–15~mm in the preprint's heads) shrink.
+
+With one adult shell for every head, size and fit are confounded. The OPM was then ahead at every depth of the newborn and 1-year brains up to $\eta$~=~8.7 and 4.2, respectively. The sphere's prediction for children is thus conditional on a shell that follows the head at a constant gap.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{Figure_S1.pdf}
+\caption{The spherical benchmark and its transfer to a real head. (A) The spherical head of \citet{jas2026}, reimplemented: the equal-SNR depth below the scalp against the noise ratio $\eta = \sigma_{\mathrm{OPM}}/\sigma_{\mathrm{SQUID}}$ for a point magnetometer on the scalp (OPM) and one 18~mm above it (SQUID). Dots, exact roots of the preprint's Eq.~3 at selected noise ratios; diamond, the value the preprint prints, 28~mm at $\eta$~=~3; dotted line, the brain surface, 15~mm below the scalp (head radius 95~mm minus brain radius 80~mm); shaded, the OPM's single-channel SNR is higher. Panel A is adapted from \citet{jas2026}, Fig.~4E (CC BY 4.0, \url{https://creativecommons.org/licenses/by/4.0/}), redrawn from our reimplementation of their model. (B) The same on the realistic adult head with the sphere's own metric, peak-channel SNR against the Neuromag magnetometers with sensor noise only, for the site-matched array (98 sites, squares) and the dense array (208 sites, circles), drawn at the noise ratios at which each array has a crossing. Dashed, the sphere at the real median standoffs (7.0~mm for the OPMs, 29.8~mm for the magnetometers). For $\eta \le$ 2.25 both arrays are ahead at every depth; Neuromag's magnetometers are ahead at every depth for $\eta \ge$ 5.0 (site-matched) and $\eta \ge$ 5.5 (dense). This bridge is a single-channel quantity against magnetometers only, not the primary endpoint.}
+\label{fig:S1}
+\end{figure}
+
+\section{The noise model: components, calibration, validation and sensitivity analyses}\label{sec:S3}
+
+\subsection{Components and calibration}\label{sec:S3.1}
+
+Every array saw identical noise sources in one analysis band of 1–40~Hz (zero-phase Butterworth filter of order 4; equivalent noise bandwidth 35.1~Hz). The noise had three components: sensor noise, the cortical background and the room field.
+
+Sensor noise was white: 3.5~fT/√Hz for the Neuromag magnetometers and 3.6~fT/(cm\,√Hz) for the gradiometers, the typical values of the TRIUX datasheet \citep{elekta_triux}, and 15~fT/√Hz for the OPMs in the primary analysis, swept over 7–30~fT/√Hz. The OPM value is a declared parameter, not a measured device value. It is the middle of the sweep and lies within the range of sensor noise quoted by the clinical OPM studies, although those studies state no band for these figures and the device specifications behind them begin at 1~Hz or above \citep{osborne2018}. The top of the sweep is close to the empty-room floor read from the recording of \citet{jas2026}, a reading of its Fig.~9 that assumes its unstated dB reference is 1~fT²/Hz. We report the comparisons across the sweep.
+
+The cortical background consisted of 1,755 independent dipoles normal to the cortex on a 7-mm grid, weighted by cortical area. Like the targets, it omitted the cortex within 4~mm of the inner skull (8.7\,\% of the vertices), which holds the sources nearest to every sensor; Section~\ref{sec:S3.6} adds that cortex back. One scale was fitted so that the median good gradiometer's in-band variance equaled the measured brain noise of the sample recording (main text, Section 2.4). This brain noise is the in-band variance of the pre-stimulus windows of its 320 stimuli minus that of the empty-room recording, the channel marked bad excluded. The windows begin soon after the previous stimulus, so they hold task-related rather than only resting activity. Spatially correlated variants used correlation lengths of 5 and 10~mm. The room field was an external field of 8 terms (uniform plus linear gradient), fitted to the empty-room recording and passed through each array's coil integration.
+
+Each array's oracle covariance was computed in closed form, without sampling:
+\begin{equation}
+C = \Sigma_{s} + s^{2} L_{\mathrm{bg}} A L_{\mathrm{bg}}^{\mathsf{T}} + E\,\Sigma_{e} E^{\mathsf{T}},
+\label{eq:S-covariance}
+\end{equation}
+where $\Sigma_{s}$ is diagonal, each entry being a channel's squared white-noise spectral density times the filter's equivalent noise bandwidth (35.1~Hz); $L_{\mathrm{bg}}$ holds the array's lead fields of the 1,755 background dipoles; $A = \mathrm{diag}(a_i)$, $a_i$ being the area of source $i$'s Voronoi cell on the cortex; $E$ holds the array's responses to the external-field terms; and $\Sigma_{e}$ is their coefficient covariance. The background dipoles are independent and cortex-normal, a greedy Poisson-disk subset of the usable white-surface vertices with 7-mm minimum spacing (seed 2026). Their Voronoi cells partition the 1,878~cm² of usable cortex (107~mm² on average).
+
+Source $i$'s moment variance is $s^{2} a_i$, with $s^{2}$~=~0.0354~nAm² per mm². Its standard deviation is 0.188~nAm~×~√($a_i$/mm²), or 1.95~nAm root-mean-square (RMS) over the sources. The scale $s^{2}$ was fitted once, so that the good gradiometers' median modeled variance equals their median measured brain noise (37.1~fT/cm RMS), and was kept per unit area on every head. The matrix $E$ is computed through each array's own coil integration points, for 8 external-field terms (3 uniform and 5 linear-gradient, about (0, 0, 40)~mm in the head frame); $\Sigma_{e}$ was fitted to the band-filtered empty-room recording. Plug-in covariances are Ledoit--Wolf estimates from 780 or 4,680 independent samples, twice the time-bandwidth product of 10 and 60~s.
+
+The room field is removed by the projection
+\begin{equation}
+P = I - E\left(E^{\mathsf{T}} W E\right)^{-1} E^{\mathsf{T}} W,
+\label{eq:S-projection}
+\end{equation}
+where $W = \Sigma_{s}^{-1}$. It is applied to topographies and covariance alike ($Ps$, $PCP^{\mathsf{T}}$), by the same rule for every array. For Neuromag it acts on all 306 channels jointly, so its magnetometer and gradiometer comparisons after projection use subsets of jointly projected data. The retained ranks were 298 of 306 for Neuromag (99 of 102 magnetometers, 204 of 204 gradiometers), 200 of 208 for the dense array and 90 of 98 for the site-matched array. Whitening drops eigenvalues of the correlation-normalized covariance below $10^{-10}$ of the largest. Relative to the room-field condition without projection, the projection cost Neuromag 0.48\,\% of its detectability, the dense array 2.5\,\% and the site-matched array 6.0\,\%.
+
+Each OPM's sensitive axis was the normal of the boundary-element-method (BEM) head surface, placed on the MRI scalp with normals from its own triangles, averaged within 15~mm of the site. It deviated from a plane fitted to the dense MRI scalp by a median 1.2° (95th percentile 4.9° site-matched, 7.4° dense). An alternative construction took the adult's stored outer-skin normals, which lie within 5° of the radial direction. With those axes at the same sites, the projected dense ratio was 1.073 [1.017, 1.115] instead of 1.115, and 0.82 instead of 0.98 at 45--70~mm. Nearly radial axes make room-field patterns resemble those of deep sources, so the projection removes more of their signal. With sensor plus brain noise and no projection, the two constructions gave 1.130 against 1.144.
+
+The Neuromag model combines the sample recording's VectorView geometry (102 magnetometers, 204 planar gradiometers) and the T3 coil definitions of MNE-Python (types 3014 and 3024; accurate integration over 8 points per gradiometer and 16 per magnetometer). Its white noise is the manufacturer's typical value for the TRIUX system, 3.5~fT/√Hz and 3.6~fT/(cm\,√Hz) (20.7~fT and 21.3~fT/cm in the band), with the 18-mm coil-to-helmet spacing. These three values are the typical values of the TRIUX datasheet \citep{elekta_triux}: they describe a representative Neuromag system, not one installation. Noise from the measured empty-room spectrum (25.9~fT, 20.0~fT/cm) is a sensitivity analysis. No signal-space separation is applied.
+
+In the band sensitivity analysis (1–10, 8–30 and 30–80~Hz), the brain scale and the room field were refitted in each band, with and without a first-order 100-Hz OPM response. The dense ratio with sensor plus brain noise was 1.15 at 1–10~Hz, 1.14 at 8–30~Hz and 1.11 at 30–80~Hz (1.07 with the OPM response), against 1.14 in the analysis band. The site-matched ratio was 1.00, 1.01 and 0.99. Sensor noise was 1.3\,\% of a dense-array channel's variance at 1–10~Hz and 23\,\% at 30–80~Hz, and 9.3\,\% and 74\,\% of a Neuromag channel's. We chose a 1--40~Hz band because the matched filter's gain rests on the lower frequencies, where the brain noise sits.
+
+In a 3–70~Hz band, typical of clinical spike review, the dense ratio with sensor plus brain noise was 1.137 (1.130 with the OPM response) and the site-matched ratio 1.011, against 1.144 and 1.009 in the analysis band. Their target-bootstrap intervals, [1.133, 1.141] and [1.009, 1.013], are narrower than the parcel bootstrap of the primary comparison (Section~\ref{sec:S1}). With the room field projected out, the two ratios were 1.108 and 0.945. In that band, sensor noise was 5.6\,\% of a dense-array channel's variance and 34\,\% of a Neuromag channel's.
+
+\subsection{What is fitted, calibrated, checked and predicted}\label{sec:S3.2}
+
+Four kinds of agreement must be kept apart (Fig.~\ref{fig:S2}). For the magnetometers, the room field was fitted to the empty-room recording. With the manufacturer's sensor noise it reproduced their empty-room level (114.9 against 115.2~fT measured) and explained 94\,\% of their empty-room variance. For the gradiometers the room field explained only 1.6\,\% of that variance. Their empty-room agreement (21.4 against 20.2~fT/cm measured) is therefore an independent check of the model's sensor-noise term, the datasheet's typical value, against this one recording, whose level it slightly exceeds. The gradiometer brain noise is calibrated: 37.1~fT/cm, equal to the measurement by construction.
+
+The magnetometer brain noise is the one independent prediction of the background at the level of a median, and it fell short: 192~fT modeled against 262~fT measured (0.73 times). The measured value is the excess of the task baseline over the empty room, which also holds non-cortical physiological fields that the model omits by design. The shortfall is thus not purely an error of the cortical background; Section~\ref{sec:S3.4} separates the heart's part. Nothing about the OPM noise was measured: its sensor noise is declared, and its brain and room noise are the Neuromag-calibrated model seen through the OPM arrays' own lead fields.
+
+Two published simulation studies check shape and level. The depth-orientation maps of \citet{hunold2016}, adapted to this anatomy, correlated with the published dipole maps at r~=~0.96–0.98 but reached only 0.74–0.79 times their level (patch maps: r~=~0.93–0.94, 0.79–0.85 times), even with a background scale fitted to the paper's example traces. The calibration rule of \citet{goldenholz2009} gave a noise-source amplitude within their published range once normalized to their number of sources (1.77 against 1.6–1.9~nAm; 2.68~nAm on our grid). Each adaptation keeps its paper's design rather than this study's model. For \citet{hunold2016} these are 600-nAm spike-wave sources over a background of randomly placed cortical dipoles, conductivities of 0.33, 0.0042, 0.33~S/m and their peak-to-peak SNR. For \citet{goldenholz2009} they are 10-nAm dipoles, channel-averaged power SNR and a cortical background calibrated on recorded noise.
+
+Both adaptations already show the dependence on metric that the main text examines. With brain noise only, the best single channel of a site-matched OPM array in our adaptation of the dipole maps of \citet{hunold2016} reached only 0.70–0.84 times the SNR of the planar gradiometers in every depth row. It reached 0.89–1.37 times that of the magnetometers, falling with depth. With the channel-averaged SNR of \citet{goldenholz2009}, by contrast, the OPM was within about 0.1~dB of both (point estimates: −0.08~dB against the gradiometers and +0.09~dB against the magnetometers).
+
+In this model brain noise dominates both kinds of magnetometer channel. It was 92\,\% of a dense-array OPM channel's in-band variance (room field 4.9\,\%, sensor noise 3.0\,\%) and 74\,\% of a Neuromag magnetometer's (room field 25\,\%, sensor noise 0.9\,\%), whereas sensor noise was 25\,\% of a gradiometer's (Fig.~\ref{fig:S2}A and C). In RMS terms, a dense-array channel carried 494~fT of brain noise, 114~fT of room field and 89~fT of sensor noise in the band, against 192, 113 and 21~fT at the magnetometers.
+
+The implied single-channel noise ratio OPM/magnetometer, the analogue of $\eta$, was about 2.6 in the 1–40~Hz band with sensor plus brain noise, the primary condition (2.3 with the room field added). In the recording of \citet{jas2026} it is about 4.6, over a much wider band (4–330~Hz). Approximate readings of the preprint's spectra, not results of this study, locate the difference. Where brain activity dominates, the OPM/SQUID ratio of the spectral peaks is about 2.0, somewhat below the model's 2.6. The measured OPM, however, has an empty-room floor of about 28–35~fT/√Hz and a distance-independent low-frequency component of about 200–224~fT/√Hz at its peak. On this reading, the model lacks the OPM's own floor and a non-brain low-frequency component, which would explain why the measured OPM noise barely fell when the sensors were lifted. The ratio of the spectral peaks and the floor are uncertain readings of the preprint's Fig.~9, and the preprint (version 1) has not been peer reviewed.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{Figure_S2.pdf}
+\caption{The noise budget and what is fitted, checked, calibrated and predicted. (A) Modeled in-band (1–40~Hz) RMS noise per channel by component, the square root of each component's median channel variance (RMS values do not add): sensor noise (15~fT/√Hz for the OPMs, the TRIUX datasheet's typical values for Neuromag), cortical background and room field, for the dense OPM array (208 sites), the site-matched OPM array (98 sites) and Neuromag's 102 magnetometers; the 204 gradiometers on their own fT/cm axis. No OPM noise was measured: the OPM bars are model only. (B) The measured quantities of the Neuromag recording against the model. Magnetometers: the empty-room level, a fit (the room field explains 94\,\% of its variance), and the brain noise, the task baseline minus the empty room, a prediction (0.73 times the measurement). Gradiometers: the empty-room level, a check of the datasheet's sensor noise (the room field explains 1.6\,\%), and the brain noise, calibrated and therefore equal by construction. The labels under the panels give the 5th to 95th percentiles over channels, and the median, of the modeled-to-measured brain-noise variance per channel, for the 102 magnetometers and 204 gradiometers of the adult comparison; the covariance check of Section~\ref{sec:S3.4} leaves the bad channel out, so its gradiometer range differs slightly. (C) The sensor-noise share of the in-band variance with brain noise and room field, for the two OPM arrays and for Neuromag's magnetometers and gradiometers. RMS, root-mean-square.}
+\label{fig:S2}
+\end{figure}
+
+\subsection{Why the ratio falls with depth, and the other adult conditions}\label{sec:S3.3}
+
+Against Neuromag's 306 channels, the fall of the dense ratio with depth was already present with sensor noise alone, from 1.00 to 0.64. Neuromag's detectability with sensor noise only rests on its magnetometers, and the peak-field ratio OPM/magnetometer fell from 5.41 in the shallowest bin to 2.28 at 55–60~mm. The detectability ratio fell with it, though less steeply, since the whole-array measure draws on the field at many channels.
+
+Against the 204 gradiometers alone, the ratio with sensor noise only barely changed with depth (3.56 at 10–15~mm, 3.08 at 20–25~mm and 3.44 at 60–65~mm). With brain noise, however, it fell from 1.88 to 1.17 at 35–40~mm. Here the depth dependence comes from brain noise, which costs every array most for deep sources.
+
+Against all 306 channels, adding brain noise multiplied the dense array's ratio by a nearly constant factor in every depth bin (1.51–1.68). For the site-matched array the factor rose with depth (1.69–2.09) and partly offset the geometric fall. The size of the factor follows the per-channel noise budget rather than better whitening by the denser array. Brain noise multiplied the in-band noise of a Neuromag magnetometer about 9.3-fold over its sensor floor but that of an OPM only about 5.7-fold (a ratio of 1.65), and the sparser site-matched array had the larger factor.
+
+With sensor plus brain noise, the dense array was behind Neuromag at 4 of the 7,661 targets. They lie on the left medial orbitofrontal (3) and left medial wall (1), 26.5–35.1~mm below the scalp, with ratios of 0.956–0.997. Pooled over both hemispheres, 12 atlas parcels had a smaller dense lead than the parahippocampal cortex (1.12): posterior cingulate (1.03), precuneus (1.05), caudal anterior cingulate (1.05), transverse temporal (1.06), lingual (1.06), pericalcarine (1.06), paracentral (1.07), rostral anterior cingulate (1.07), isthmus cingulate (1.07), insula (1.09), medial orbitofrontal (1.12) and banks of the superior temporal sulcus (1.12).
+
+A covariance estimated from 780 samples cost Neuromag more than the OPMs (15\,\% of the oracle detectability, against 9.1\,\% for the dense array and 5.1\,\% for the site-matched array). It raised the dense ratio to 1.23 and the site-matched ratio to 1.12. With 4,680 samples, the declared 60-s scenario, the penalty was small for every array (main text, Fig.~2). The site-matched array's interval lay above 1 at an OPM white noise of 10~fT/√Hz (1.049 [1.032, 1.068]) and below 1 at 20~fT/√Hz (0.983 [0.967, 0.997]).
+
+As a triaxial control, three axes with the same noise on every axis at the 98 site-matched sites (294 channels) raised the ratio from 1.01 to 1.12 (1.17 projected). This is close to the dense array's 1.14 from 208 single-axis sites. If the tangential axes are twice as noisy, the triaxial ratio is 1.05.
+
+\subsection{The model against the measured Neuromag covariance}\label{sec:S3.4}
+
+The measured brain noise is the covariance of the sample recording's 320 pre-stimulus windows in the 1–40~Hz band minus that of the empty-room recording. As in the adult comparison, the bad channel (MEG 2443) was left out and no signal-space projection was applied; 305 channels remain (102 magnetometers, 203 gradiometers). Two quantities of the model are fitted to this dataset: the one scalar of the cortical background (the median good-gradiometer brain variance) and the room field's 8~×~8 coefficient covariance (the empty room). Everything else was compared as an independent prediction. This covers the magnetometers' brain-noise amplitude and channel pattern, the gradiometer level at held-out sites, the spatial correlations against inter-sensor distance, the eigenvalue spectra and dominant subspaces, the sub-band spectra, and Neuromag's detectability with the measured covariance.
+
+Where a sample covariance is compared with an exact one, the comparison is calibrated on surrogates. An exact model ``measured'' the same way (phase-randomized records recolored to the model, with the same number of samples) gives the range that an exact model would show. A value outside that range is therefore a real departure of the measured noise from the model.
+
+The model predicted the magnetometers' median brain-noise amplitude at 0.73 of the measured; an exact model would give 0.98–1.03. For the gradiometers, the scale fitted on half the sites predicted the other half's median amplitude to 1.00 [0.93, 1.09] over 1,000 random halves (Fig.~\ref{fig:S3}B). Fitted on the inferior half, it predicted the superior half to 1.34, and the other way round to 0.75: the model's spatial distribution of brain noise is too flat from bottom to top.
+
+The per-channel pattern was poorly predicted (Fig.~\ref{fig:S3}A, C). The Pearson correlation of the log variances, model against measured, was 0.14 for the magnetometers and 0.43 for the gradiometers, against a split-half reliability of the measurement of 0.93 and 0.97. The per-channel model/measured variance spanned 0.13–0.78 for the magnetometers (5th to 95th percentile) and 0.19–1.90 for the gradiometers, where an exact model would give about 0.95–1.06. The correlation pattern between channels agreed better: the measured and modeled correlation matrices correlated at r~=~0.88 (magnetometers) and 0.76 (gradiometers).
+
+Against inter-sensor distance, the modeled magnetometer correlations followed the measured ones at 25–50~mm (0.85 against 0.90) and fell faster beyond (Fig.~\ref{fig:S3}D). At 50–75~mm the model gave 0.59 against 0.74 measured, at 100–125~mm 0.20 against 0.46, and at 200–225~mm −0.30 against 0.00. Spatially correlated backgrounds (correlation lengths of 5 and 10~mm) did not change this, because the measured long-range correlation is a far-field pattern, not a cortical one. The gradiometers' median signed correlations agreed at every distance (0.36 against 0.34 at 25–50~mm; Fig.~\ref{fig:S3}E).
+
+The measured magnetometer brain noise is more concentrated than the model's (Fig.~\ref{fig:S3}G, H). Its leading five components held 82\,\% of the variance against 72\,\% in the model (participation ratio 5.5 against 7.4), whereas the gradiometer spectra agreed (49\,\% against 48\,\%). The magnetometers' excess over the model was itself concentrated: its leading three components held 91\,\% of it. Of its leading component, 91\,\% lay in the 8-dimensional far-field subspace of the room-field terms, against 7.8\,\% for a random direction.
+
+A cardiac-locked average over 282 beats (heart rate 62 per minute) added 127~fT RMS to the median magnetometer's baseline windows. This is 25\,\% of the measured magnetometer brain variance and 51\,\% of the model's shortfall, and its leading component lies 91\,\% in the far-field subspace. With the heart's field removed, the magnetometer prediction was 0.89 of the measured amplitude, and the correlation of the log variances rose to 0.76 (magnetometers) and 0.66 (gradiometers). The heart therefore explains about half of the shortfall and much of the pattern error. The rest is concentrated in far-field components, consistent with distant or non-cortical sources, or with cortical activity correlated over longer distances than the 5 and 10~mm tested.
+
+With the background scale refitted per band on the gradiometers, the magnetometer prediction fell with frequency (Fig.~\ref{fig:S4}C): 0.97 at 1–4~Hz, 0.93 at 4–8~Hz, 0.85 at 8–13~Hz, 0.72 at 13–20~Hz, 0.57 at 20–30~Hz and 0.33 at 30–40~Hz. The measured magnetometer excess over the gradiometer-calibrated model grew from 1.07 to 9.28 in variance over the same bands. The band variances close on the whole band: the six sub-bands sum to 0.98 (magnetometers) and 0.95 (gradiometers) of the 1–40~Hz baseline variance. The magnetometers' empty-room level was predicted per band to 0.75 at 1–4~Hz and 0.98–1.01 from 8–13~Hz up.
+
+Detectability with a sample covariance is biased upward by the finite number of samples. The bias, computed on the surrogates, was 1.03 for the 305 channels, and every ratio below is divided by it target by target. Uncorrected, Neuromag's detectability with the measured covariance was 1.18 [1.12, 1.24] times its modeled value; corrected, it was 1.14 [1.08, 1.20], where an exact model measured the same way gives about 1. The magnetometers alone gave 1.059 [1.003, 1.119] and the gradiometers 1.12 [1.07, 1.18]. With the heart's field removed, the ratio was 1.15. With the measured empty room and the modeled brain noise it was 1.01, so the departure comes from the brain-noise part, not from the room.
+
+By lobe, the measured-over-modeled ratio was 1.40 for the cingulate, 1.25 frontal, 1.06 insula, 1.07 occipital, 1.19 parietal and 0.89 temporal. By depth, the median ratio was 1.19 at 10–15~mm, lowest (1.09) at 40–45~mm and highest (1.42) at 60–65~mm. The real noise is thus more favorable to Neuromag than the modeled noise, most for deep and cingulate sources. This is because the measured excess is concentrated in a few far-field components, which the whitening removes at little cost.
+
+\begin{figure}[tbp]
+\centering\captionsetup{font=footnotesize}
+\includegraphics[width=\textwidth,height=0.55\textheight,keepaspectratio]{Figure_S3.pdf}
+\caption{Structure of the measured and modeled Neuromag brain noise (task baseline minus empty room, 1–40~Hz, the sample recording). (A) Modeled against measured brain noise per channel (RMS; magnetometers in fT, gradiometers in fT/cm, logarithmic axes; the diagonal is equality). (B) The model's median amplitude over the measured one when the background scale is fitted on half the sites: the random halves (1,000 splits, dot and 95\,\% range) and the six directional halves (ticks: left and right, front and back, upper and lower), for the magnetometers and for the held-out gradiometers. (C) The 5th to 95th percentile over channels of the modeled-to-measured variance per channel (black) against the range an exact model would show when measured the same way (gray). (D) Median correlation between magnetometers against their distance: measured (both halves of the recording), the model with independent background sources and the model with correlation lengths of 5 and 10~mm. (E) The same for the gradiometers as the median absolute correlation; the first point is the two gradiometers of one site. (F) Agreement of the correlation patterns (Pearson r over the channel pairs of each distance bin) between model and measurement (black; circles, magnetometers; squares, gradiometers) and between the two halves of the measurement (orange, dotted), with the exact-model band (gray). (G, H) Eigenvalue spectra of the brain-noise covariance as shares of the variance: measured (dots), model (line) and the model as it would be measured (dashed). (I) Overlap (mean squared cosine) between the dominant subspaces of model and measurement against the subspace dimension, with the two halves of the measurement (orange), the exact-model band (gray) and random subspaces (thin gray lines). RMS, root-mean-square.}
+\label{fig:S3}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{Figure_S4.pdf}
+\caption{The prediction by sub-band (1–4, 4–8, 8–13, 13–20, 20–30 and 30–40~Hz; the model's cortical background rescaled in each band on the gradiometers). (A) Magnetometers: median amplitude spectral density of the measured and modeled empty room (black) and of the measured and modeled brain noise (blue), the brain noise being the prediction. (B) Gradiometers: the measured brain noise and the model fitted to it per band (blue), and the measured empty room against the model's band-independent sensor noise (black). (C) The magnetometer brain-noise prediction per band, model over measured (median RMS), falling from 0.97 at 1–4~Hz to 0.33 at 30–40~Hz. Dashed, the whole-band value 0.73; gray, the range an exact model would give when measured the same way. RMS, root-mean-square.}
+\label{fig:S4}
+\end{figure}
+
+\subsection{Scenarios A--E: what the check implies for the OPM}\label{sec:S3.5}
+
+The OPM's covariance cannot be measured here. We therefore computed the implied OPM/Neuromag ratio with sensor, brain and room noise under five stated assumptions about the OPM's real noise. The comparison is like for like with the measured covariance, which holds the room field, and uses Neuromag's 305 good channels. In scenario A, the model's error is common to both systems: the OPM's real covariance changes its detectability by the same factor, target by target, as the measured covariance changes Neuromag's, so the ratio is the model's own. In scenario B, both systems' cortical backgrounds are scaled by the measured magnetometer variance excess, $k$~=~1.86, with the model's structure kept.
+
+Scenario C is the most pessimistic: Neuromag has its measured covariance, and the OPM bears the whole magnetometer variance excess as cortical noise and none of its measured structure. In scenario D, Neuromag has its measured covariance and the OPM is exactly as modeled, so the model's error is specific to Neuromag. In scenario E, Neuromag has its measured empty room and the modeled brain noise and the OPM is as modeled; this isolates the sensor and room part of Neuromag's noise.
+
+Table~\ref{tab:S3} gives the ratios. Scenarios A, B and E left the primary model's ratios nearly unchanged. Scenario D took the dense array to 1.034 [0.986, 1.083], no established advantage, and the site-matched array below 1. By depth, scenario D left the dense array's median at 1.35 and 1.20 in the 10–15 and 15–20~mm bins and took it below 1 from the 25–30~mm bin (point estimates over the per-target values, room field included). Scenario C put both arrays well below 1. Which scenario holds depends on how the OPM's real noise departs from the model, which no measurement here constrains; the noise model is validated in part for Neuromag, not for the OPM arrays.
+
+\begin{table}[tbp]
+\caption{The implied OPM/Neuromag ratio under scenarios A--E. Median over the 7,661 targets; sensor, brain and room noise, unprojected; Neuromag's 305 good channels; 95\,\% parcel-bootstrap intervals in brackets for selected cells; $k$~=~1.86.}\label{tab:S3}
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{YL{3.6cm}L{2.6cm}}
+\toprule
+Assumption & Dense OPM array & Site-matched OPM array \\
+\midrule
+Both systems as modeled, with sensor, brain and room noise (all 306 channels) & 1.140 [1.117, 1.171] & 1.007 \\
+A: the model's error common to both systems & 1.141 & 1.007 \\
+B: both cortical backgrounds scaled by $k$ & 1.142 & 1.003 \\
+C: Neuromag as measured; the OPM bears the whole excess (most pessimistic) & 0.799 [0.760, 0.842] & 0.675 \\
+D: Neuromag as measured; the OPM as modeled & 1.034 [0.986, 1.083] (uncorrected 1.001) & 0.888 [0.855, 0.921] \\
+E: Neuromag's measured empty room with the modeled brain noise & 1.130 & 1.000 \\
+\bottomrule
+\end{tabularx}
+\tablenotes{$k$, the measured magnetometer variance excess over the model. Uncorrected, before division by the finite-sample bias of the measured covariance (Section~\ref{sec:S3.4}).}
+\end{table}
+
+\subsection{Sensitivity analyses}\label{sec:S3.6}
+
+Each analysis changed one element of the adult model and recalibrated the cortical background on the measured gradiometer brain noise, as the adult comparison does; the joint runs changed them together. Intervals are from 1,000 parcel-bootstrap resamples of one anatomy. The spike simulations were not repeated under these alternatives.
+
+The primary model omits the cortex within 4~mm of the inner skull: 27,059 white-surface vertices, 8.7\,\% of the valid ones and 145~cm² of cortex (7.1\,\%). The lead fields of sources closer than about 2~mm to the inner-skull mesh are not converged. The primary variants therefore add the cortex from 2~mm outward, as additional background noise, as additional targets (463 of the 532 near-skull targets), or both. Removing near-skull sources from the background and removing them from the targets have opposite effects, so the exclusion is not conservative by construction.
+
+The dense ratio was 1.137 [1.117, 1.160] with the near-skull cortex as noise, 1.152 [1.127, 1.181] with it as targets and 1.144 [1.121, 1.171] with both. The site-matched ratio was 1.008, 1.009 and 1.009, against 1.144 (dense) and 1.009 (site-matched) in the primary model. On the near-skull targets themselves, the dense array was ahead by 1.40 [1.36, 1.45]. A refined single-compartment model, whose lead fields converge nearer the skull, repeated the check down to the inner skull itself with the same result (Fig.~\ref{fig:S5}B).
+
+We gave the OPM sensor noise a 1/f component with corners at 1, 3 and 10~Hz on top of the white level, at every level of the sweep. Two detectors were compared: the band-variance detector of the primary model, which whitens spatially only, and a frequency-resolved matched filter, which also whitens in frequency, with a flat signal spectrum (the reference) or the spike-wave spectrum. Under the frequency-resolved detector, the dense ratio at 15~fT/√Hz was 1.127 with white noise. With corners at 1, 3 and 10~Hz it was 1.122, 1.111 and 1.083 (−3.9\,\% against white noise under the same detector; Fig.~\ref{fig:S5}C, D). The site-matched ratio fell from 1.005 (white) to 0.980 (10-Hz corner). The frequency-resolved detector with white noise lies a little below the primary model's band-variance ratio because it also whitens Neuromag's colored brain noise in frequency.
+
+We added idealized cardiac and ocular sources to the primary model. The cardiac source was a current dipole 200, 250 and 300~mm below the head origin or a magnetic dipole at 250~mm. The ocular sources were current dipoles at the two eye centers located in the sample MRI, in the head model or in an unbounded conductor, with three orthogonal moments each. Their level was set either to the room field's level at the median magnetometer or to the level that fills the magnetometer brain-noise shortfall, and they were either added to the cortical background or recalibrated with it.
+
+After the 8-term projection, a cardiac source at 250~mm left 1.0\,\% of its field energy at the dense array, 0.6\,\% at the site-matched array and 1.2\,\% at Neuromag (Fig.~\ref{fig:S5}E). Within Neuromag, it left 1.0\,\% at the magnetometers and 52\,\% at the gradiometers, whose response to a distant source is small to begin with. The eyes left 22\,\%, 11\,\% and 11\,\%. With sensor plus brain noise, unprojected, the ratios changed by −1.6\,\% to +1.6\,\% for the dense array and −1.3\,\% to −0.2\,\% for the site-matched array over all calibrations (Fig.~\ref{fig:S5}F), because every array sees the added far field in a similar proportion to its brain noise. After the projection they changed by −0.9\,\% to +1.9\,\% and −1.6\,\% to +0.2\,\%.
+
+The joint runs placed the near-skull cortex in the background, leaving out its targets, which favor the OPM, and added a 10-Hz corner under the frequency-resolved detector. The dense ratio at 15~fT/√Hz was then 1.080 [1.058, 1.106]. With the heart and eyes added at the level that fills the magnetometer shortfall it was 1.091 [1.064, 1.122] (site-matched 0.980 and 0.965; Fig.~\ref{fig:S5}A).
+
+Over the 40 configurations of the sensitivity analysis (Table~\ref{tab:S4}), the dense ratio with sensor plus brain noise spanned 1.262–1.315 at 7~fT/√Hz and 1.072–1.152 at 15~fT/√Hz. The lowest value at 15~fT/√Hz came from the band-variance detector with the 10-Hz corner, so the joint run above is not the lowest configuration at every level. At 30~fT/√Hz the dense ratio spanned 0.930–1.008, and the site-matched ratio spanned 0.965–1.009 at 15~fT/√Hz.
+
+With the primary model, the dense ratio fell from 1.298 at 7~fT/√Hz through 1.144 at 15~fT/√Hz to 1.008 at 30~fT/√Hz, and the site-matched ratio from 1.084 to 0.933. We found the white level at which the median ratio equals 1 on 33 log-spaced levels over 4–60~fT/√Hz, for every comparator in both conditions named in advance (Table~\ref{tab:S4}).
+
+\begin{table}[tbp]
+\caption{Break-even OPM white-noise levels. The level at which the median ratio OPM/comparator equals 1, with 95\,\% parcel-bootstrap intervals in brackets, with sensor plus brain noise and after the 8-term projection. The last two rows give dimensionless ratios: the range of the dense and site-matched ratios over the 40 configurations of the sensitivity analysis (the primary model at five white levels, the near-skull, colored-noise and combined heart-and-eyes variants and the joint runs), in both conditions.}\label{tab:S4}
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{YL{3.9cm}L{3.9cm}}
+\toprule
+Array and comparator & Sensor plus brain noise & Projected \\
+\midrule
+\multicolumn{3}{l}{\textit{Break-even level (fT/√Hz)}} \\
+Dense OPM against Neuromag (306 channels) & 31.5 [28.5, 34.9] & 26.0 [22.3, 29.5] \\
+Dense OPM against the magnetometers & 37.4 [34.0, 41.2] & 33.1 [30.0, 36.9] \\
+Dense OPM against the gradiometers & 54.2 [51.9, 56.9] & 39.2 [33.9, 43.3] \\
+Site-matched OPM against Neuromag (306 channels) & 16.7 [14.0, 19.4] & 8.9 [5.6, 12.4] \\
+Site-matched OPM against the magnetometers & 21.6 [17.8, 24.7] & 14.8 [11.1, 18.8] \\
+Site-matched OPM against the gradiometers & 34.2 [32.8, 36.1] & 17.8 [12.8, 22.7] \\
+\midrule
+\multicolumn{3}{l}{\textit{Range of the ratio over the configurations, at 7 / 15 / 30~fT/√Hz}} \\
+Dense OPM against Neuromag & 1.262–1.315 / 1.072–1.152 / 0.930–1.008 & 1.242–1.300 / 1.044–1.136 / 0.855–0.971 \\
+Site-matched OPM against Neuromag & 1.076–1.123 / 0.965–1.009 / 0.820–0.933 & 1.019–1.061 / 0.890–0.950 / 0.706–0.833 \\
+\bottomrule
+\end{tabularx}
+\tablenotes{The heart or the eyes alone change the dense ratio by −1.6\,\% to +1.6\,\% (Section~\ref{sec:S3.6}).}
+\end{table}
+
+\begin{figure}[p]
+\centering\captionsetup{font=footnotesize}
+\includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio,trim=5.63bp 420.57bp 5.63bp 0.00bp,clip]{Figure_S5.pdf}
+\caption{Sensitivity of the adult comparison to the noise model's alternatives. Median over the 7,661 targets of the paired ratio OPM/Neuromag (306 channels) for the dense OPM array (208 sites, blue) and the site-matched OPM array (98 sites, green), with 95\,\% parcel-bootstrap bands or bars. Filled circles (B, F), sensor plus brain noise; open squares (B, F), with the room field, after the 8-term projection. (A) The ratio against the OPM white-noise level (7, 10, 15, 20 and 30~fT/√Hz): the primary model with sensor plus brain noise (solid, band) and after the projection (dashed); the near-skull cortex with a 10-Hz 1/f corner under the frequency-resolved detector (dotted, inverted triangles); and the same with the heart and eyes at the magnetometer-shortfall level (dash-dotted, triangles). (B) The cortex within 4~mm of the inner skull added to the primary three-layer model as noise, as sources or both (from 2~mm outward), and the same check with a refined single-compartment model down to the inner skull. (C, D) Colored OPM noise at 15~fT/√Hz against the 1/f corner frequency, with sensor plus brain noise (C) and after the projection (D): the frequency-resolved detector with a flat signal spectrum (circles, band) and with the spike-wave spectrum (triangles), the band-variance detector of the primary model (squares, dotted) and the frequency-resolved detector with Neuromag's noise taken from the empty-room recording (open diamonds). (E) The share of a far-field source's field energy left after the projection, for cardiac dipoles 200, 250 and 300~mm below the head origin, a magnetic dipole at 250~mm and ocular dipoles in the head model or an unbounded conductor, at the dense array, the site-matched array, Neuromag's 306 channels, its magnetometers and its gradiometers (logarithmic axis). (F) The ratio with these sources added to the primary model at the room field's level and at the magnetometer-shortfall level.}
+\label{fig:S5}
+\end{figure}
+
+\begin{figure}[p]
+\ContinuedFloat
+\centering
+\includegraphics[width=\textwidth,trim=-0.00bp -0.00bp -0.00bp 728.54bp,clip]{Figure_S5.pdf}
+\caption[]{(Continued.) (G--J) The ratio against depth below the scalp (5-mm bins) for the dense (G, H) and site-matched (I, J) arrays, with sensor plus brain noise (G, I) and after the projection (H, J). Lines show the primary model at 15~fT/√Hz (black, with its band), at 7~fT/√Hz (dotted) and at 30~fT/√Hz (dashed); the near-skull cortex as noise and as sources; the 10-Hz corner under the frequency-resolved detector; the heart and eyes filling the magnetometer shortfall; and the near-skull cortex with the 10-Hz corner at 15~fT/√Hz.}
+\end{figure}
+
+\section{Head models and the MRI check}\label{sec:S4}
+
+\subsection{The adult and the three classes of smaller head}\label{sec:S4.1}
+
+The adult is the MNE sample subject \citep{gramfort2013}, with FreeSurfer surfaces and atlas labels \citep{desikan2006,fischl2012} and a three-layer boundary-element model (BEM) whose outer surface lies on the magnetic resonance imaging (MRI) scalp. Its usable cortex is 1,878 cm². The smaller heads belong to three classes, which are not independent subjects (main text, Section 2.2).
+
+The two scaled adults are copies of the adult scaled by one factor, so they differ from it in size only. The school-age size control is 0.895 times the adult, and the 2-year size control has the head circumference of the 24-month template. Both keep the adult's vertices, so $\Delta$ is taken vertex by vertex.
+
+The three infant templates at 24, 18 and 12 months \citep{oreilly2021} average many MRIs of the Neurodevelopmental MRI Database \citep{richards2016} and have smooth cortices. Their usable cortex is 1,062, 975 and 895 cm², 48–57\,\% of the adult's, which lowers their total background power and their patch cancellation. They were used at their native size with their own three-layer BEMs, oct-6 source spaces, atlas labels and fiducials.
+
+The three school-aged children A, B and C (7.8–8.7 years; subjects sub-Z213, sub-Z209 and sub-Z226) are typically developing children of the OpenNeuro dataset ds005234 \citep{fadeev2024,fadeev2025}, which is de-identified and released under a CC0 license. Their own MRIs were processed by the dataset's authors. We used their white and sphere surfaces, atlas annotations and dense MRI scalp as distributed; these share each child's volume information. The dataset's boundary-element surfaces were also taken from the file tree as distributed, in which each subject's watershed surfaces sit in the preceding subject's folder. We matched these files to each child by the volume information they share with the child's own surfaces, and the storage objects behind them carry the name of the subject they belong to.
+
+These watershed surfaces put the inner skull implausibly close to the scalp, a median 0.8–2.5 mm below it over the upper head, with an outer skull crossing it. We therefore modeled the children's skull. The inner skull was moved inward to 8 mm below the scalp wherever the dataset's lay shallower, with no vertex within 2 mm of a white-surface vertex. The surface between vertices comes within 0.9–1.3 mm of the white surface, and no white vertex lies outside it. The outer skull was placed about halfway between the inner skull and the scalp. Over the upper head, the modeled inner skull lies a median 5.7–7.8 mm below the scalp. On the adult, whose segmented skull is known, the same procedure applied to a degraded inner skull changed the primary ratio by at most 0.003 over the modeled skull depths. As for every head, the head surface of the forward model is the watershed outer skin placed on the MRI scalp.
+
+The dataset provides no fiducials. The children's fiducials define the head frame and hence the centered placement, the origin of every scaled helmet and the coverage region of the optically pumped magnetometer (OPM) arrays. They were transferred from the adult by a similarity fit of the cortices and moved to the nearest scalp vertex. On the templates, which have their own fiducials, this transfer reproduced the fiducials to within 1.6–14.4 mm and the head frames to within 3.2–5.9°. The largest error, 14.4 mm, was at the nasion of the 18-month template, which lies farthest from the cortex.
+
+Frame rotations of this size (total angles, their axis not resolved) are of the order of the rotations of the placement family (pitch ±10°, yaw ±10°, roll ±5°; Section~\ref{sec:S5.1}). This comparison indicates rather than bounds their effect on the children's placements, and the transferred fiducials were not checked on the children's own MRIs. We did not use fiducials derived from Montreal Neurological Institute (MNI) coordinates: on the adult, such fiducials land 10.0–27.4 mm from the digitized ones.
+
+Every head uses the adult's conductivities (0.3, 0.006 and 0.3 S/m). A single-compartment BEM (0.3 S/m inside the inner skull) needs no skull or scalp conductivity. With it, the difference of medians from the adult was +0.19 to +1.13 dB, against +0.19 to +1.14 dB with three layers. Across all smaller heads, that difference changed by −0.06 to +0.01 dB.
+
+As distributed, the skull of the 12-month template is 0.25 mm thick at its thinnest: 23 of its 2,562 inner-skull vertices lie within 1 mm of the outer skull. The single-compartment BEM has no skull and is unaffected by this. With it, the template's $D$ was +2.03 dB, against +2.04 dB with three layers, and its difference from the adult was +1.06 dB, against +1.05 dB. The thin skull therefore does not carry the template's result.
+
+\subsection{Regions}\label{sec:S4.2}
+
+Regions are the lobes of the Desikan--Killiany atlas \citep{desikan2006}, grouped as follows. Frontal: superior, rostral middle and caudal middle frontal, pars opercularis, triangularis and orbitalis, lateral and medial orbitofrontal, precentral, paracentral and frontal pole. Parietal: superior and inferior parietal, supramarginal, postcentral and precuneus. Temporal: superior, middle and inferior temporal, banks of the superior temporal sulcus, fusiform, transverse temporal, entorhinal, temporal pole and parahippocampal. Occipital: lateral occipital, lingual, cuneus and pericalcarine. Cingulate: rostral and caudal anterior, posterior and isthmus. The sixth region is the insula. The medial wall belongs to no region, and both hemispheres are pooled.
+
+We also report single parcels that the epilepsy literature emphasizes: precentral, superior temporal (``lateral temporal'' in the figures) and parahippocampal, with a mesial temporal group of the parahippocampal and entorhinal parcels; ``mesial temporal'' always means this group. All sources lie on the cortical surface, and the hippocampus and amygdala are not modeled. The parahippocampal and entorhinal cortex, 26.8–28.7 mm below the scalp in the adult (median over targets), are therefore the nearest proxies for mesial temporal generators. The regions were chosen from the literature, and rankings among them are exploratory.
+
+\subsection{The MRI quality check of the school-aged children and the infant templates}\label{sec:S4.3}
+
+The children's white surfaces come within 3.7–5.7 mm of the scalp surface used for sensor placement and source depths. Child B has 247 cortical targets shallower than 10 mm, and the adult has none. Child B's head is the size of the 24-month template's (head circumference 48.6 against 49.5 cm; cap volume 1,795 against 1,802 cm³), while its cortex is much larger (1,666 against 1,062 cm²). Both observations pointed to a scalp surface lying inside the true scalp, or misregistered relative to the white surface. We therefore ran an MRI quality check on the three children, with the adult and the 24-month template as references, using the surfaces exactly as the forward models use them. The same check was then run on the 18- and 12-month templates.
+
+Along the outward normal of every vertex of the dense scalp, the T1 intensity was sampled from −20 to 20 mm in 0.25-mm steps. The MRI head boundary is where this profile falls through the volume's air/tissue threshold (Otsu's method; the primary edge), with the half-maximum edge and the steepest gradient as secondary definitions. The signed offset of this boundary from the scalp used, positive outward, was summarized over the cap (the head above the plane of the fiducials) by its median, quartiles and 5th to 95th percentiles. It was also decomposed into a uniform offset, a translation and a rotation.
+
+The frames were checked by comparing the volume geometry of every surface with the T1 header. The registration of the white surface to the T1 was checked by the white/gray contrast across it: the rigid shift that maximizes this contrast was searched coarsely and then finely, and we report the contrast gain of the best shift. The head circumference was measured both on the MRI head boundary and on the scalp used. Targets below 8 and 10 mm were counted against both surfaces.
+
+A head is classed as misregistered if a surface's header differs from the T1 by more than the header tolerance, or if the white surface's realigning shift, edge translation or rotation displacement exceeds 1 mm. It is classed as inside or outside if the cap median of the boundary's offset exceeds, or falls short of, the adult's by more than 1 mm (one voxel) at both the Otsu and the half-maximum edge. Otherwise it is classed as usable.
+
+We tested the check on the adult. A declared inward displacement of the adult's scalp by 4 mm was recovered as 4.0 mm, and a 2-mm translation as 2.03 mm, with 97\,\% of the offset pattern explained by a translation. A 2-mm shift of the adult's white surface raised the T1 contrast at the surface by 65\,\% when the shift was undone, so a misregistered white surface would be found.
+
+Every surface's header matched its T1, with corner displacements of at most 2.7 $\times 10^{-5}$ mm in the children (Fig.~\ref{fig:S6}). The children's white surfaces were registered: the best realigning shift was 0.0 mm, the edge translation at most 0.01 mm and the rotation displacement at most 0.02 mm. The contrast gain was 0\,\%, 0\,\% and 0\,\% for children A, B and C.
+
+In the children, the scalp used lay a median 1.3–1.5 mm inside the MRI head boundary at the Otsu edge (0.4–1.2 mm at the half-maximum edge), against 1.3 mm and 1.1 mm in the adult (Fig.~\ref{fig:S6}C). A FreeSurfer scalp thus sits just inside the T1 edge in every individual head, the adult's included. The scalp of the 24-month template lay 1.6 mm outside its boundary (verdict: outside), which is consistent with an average template whose scalp is smoothed outward. The scalps of the 18- and 12-month templates lay 1.6 and 1.3 mm outside theirs (2.3 and 1.6 mm at the half-maximum edge, against 1.6 mm for the 24-month template).
+
+The verdict for the 12-month template was outside, and for the 18-month template misregistered. The white surface of the 18-month template fitted the T1's white/gray contrast best after a rigid shift of 2.3 mm, which raised the contrast by 41\,\%, against 0.5 mm in the other two templates. The T1 edge across it showed a translation of 1.7 mm; both values exceed the 1-mm tolerance. This is a fit over the whole surface, which single sections do not show; the template's white-surface vertex closest to the scalp used lies 7.3 mm below it. Whether the misfit reflects a displaced surface or the weaker contrast of an average image was not settled. No template surface was repaired, and an offset of that size was not propagated to the template's results.
+
+The head circumference on the MRI boundary minus that on the scalp used was +8.9 to +10.7 mm in the children (49.7–54.5 against 48.6–53.5 cm) and +9.9 mm in the adult (59.6 against 58.6 cm). Measured from the MRI boundary instead of the scalp used, the median target depth changed by +1.3 to +1.5 mm in the children, +1.3 mm in the adult and −1.7 to −1.4 mm in the templates, whose scalps lie outside their boundaries. The children's medians thus shifted as the adult's did, but their shallowest targets did not, as follows.
+
+The shallow cortex is not an artifact of scalp placement or registration. The closest white-surface vertex lay 3.7, 3.7 and 5.7 mm below the scalp used in children A, B and C (4.6–7.5 mm below the MRI boundary), against 9.7 mm in the adult and 9.2 mm in the 24-month template (Fig.~\ref{fig:S6}A). The 5th percentile of the white surface's depth was 7.9–12.0 mm in the children, against 14.5 mm in the adult and 11.8 mm in that template. This is a comparison with the adult; no pediatric norm is applied. In no child does the T1 head mask reach a face of the volume other than the inferior one. It reaches that face at the neck in children B and C, as in the adult, so the field of view does not cut the head above the neck.
+
+Within 8 mm of the scalp used lay 22.4, 83.4 and 3.6 cm² of white surface in children A, B and C, and within 8 mm of the MRI boundary 6.8, 28.8 and 0.1 cm² (adult: none; Fig.~\ref{fig:S6}B). Of the cortical targets, 3, 18 and 0 lay below 8 mm, and 43, 247 and 11 below 10 mm (adult: 0; counted from the full-precision depths). Measured to the MRI head boundary instead of the scalp used, child B's targets less than 10 mm deep fell from 247 to 47. The verdicts were child A usable, child B usable and child C usable (3 of 3 usable). No surface was repaired, and no analysis needed rerunning.
+
+The children's shallow cortex, and child B's small head around a near-adult cortex, are therefore not explained by their scalp surfaces or registration. One explanation the data leave open is a head boundary that the T1 images themselves place too deep. Such a boundary would bring the FreeSurfer scalp, which follows the image's edge, toward the cortex together with the dataset's watershed surfaces (inner skull a median 0.8–2.5 mm below the scalp; Section~\ref{sec:S4.1}), and a check against the same images cannot detect it. An independent measurement of the scalp and skull over the upper head, from another sequence or modality, would test it.
+
+The check cannot settle whether the white surface is anatomically correct within a few millimeters of the scalp, where the modeled scalp-and-skull layer is thinner than the adult's, nor whether three children of one dataset represent their age. The verdicts test registration and the scalp's position against the T1. They do not test anatomical plausibility, such as tissue thicknesses against norms or head circumference against centiles for age.
+
+The source rule (no source within 4 mm of the inner skull) left out 7.3\,\%, 10.0\,\% and 3.3\,\% of the white-surface area of children A, B and C, against 7.2\,\% in the adult. The adult's share is the 7.1\,\% of Section~\ref{sec:S3.6} plus the little cortex outside the inner skull, 0.05 cm² of it within 10 mm of the scalp. The rule left out 9.3–10.6\,\% in the scaled adults and 0.8–2.6\,\% in the templates. In the children, the excluded area includes 94–100\,\% of the cortex within 8 mm of the scalp: of child B's 14,761 white-surface vertices there, 570 pass the source rule. For these reasons, the main text treats the children's results as provisional geometric examples.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{Figure_S6.pdf}
+\caption{MRI quality check of the school-aged children's anatomy, with the adult and the 24-month template as references. The surfaces are those the forward models use. (A) Sections of 50 × 50 mm through the white-surface vertex closest to the scalp used (open circle; 9.7 mm below the scalp in the adult, 3.7, 3.7 and 5.7 mm in children A, B and C, and 9.2 mm in the 24-month template), sagittal or coronal, whichever contains more of the scalp's outward normal at that vertex. Gray: T1 intensity; yellow: the dense MRI scalp used for sensor placement and source depths; pink: the MRI head boundary, where the T1 intensity falls through the volume's air/tissue (Otsu) level along the scalp's outward normals; light blue and orange: the outer and inner skull of the BEM used (the children's inner skull modeled 8 mm below the scalp where the dataset's lay shallower); dark blue: the white surface. (B) Cumulative share of white-surface vertices against their distance to the scalp used (solid) and to the MRI head boundary (dashed), lowest quarter, with the check's thresholds at 8 and 10 mm (dotted). (C) Offset of the MRI head boundary from the scalp used over the head above the fiducial plane: median and quartiles, positive where the boundary lies outside the scalp; shaded: the adult's median ± 1 mm, the tolerance of the verdict. The children's scalps lie a median 1.3–1.5 mm inside their MRI head boundary, as the adult's does (1.3 mm), and the 24-month template's lies 1.6 mm outside it. Children A--C: OpenNeuro ds005234 \citep{fadeev2024,fadeev2025}; template: \citet{oreilly2021}, from the Neurodevelopmental MRI Database \citep{richards2016}; adult: MNE sample data. BEM, boundary-element model; MRI, magnetic resonance imaging.}
+\label{fig:S6}
+\end{figure}
+
+\section{Helmet constructions}\label{sec:S5}
+
+\subsection{The fixed adult helmet and its placements}\label{sec:S5.1}
+
+We used the same Neuromag superconducting quantum interference device (SQUID) sensors and the same noise for every head. The centered placement puts each head's own head frame where the adult's lies in the sample recording (the recording's device-to-head transform), so that the ear line stays where the adult's was. The primary placement is top contact: the head is raised from the centered pose until the nearest magnetometer coil center is 20 mm from the scalp, the 18-mm Dewar spacing plus a margin. This is a best-fit assumption rather than documented practice. A child in an adult helmet may be placed centrally and repositioned toward the expected source \citep{gaetz2008}, and a small child's shoulders can stop the head short of the top \citep{tesan2010}. Top contact therefore favors Neuromag, and the other placements bound this choice.
+
+A family of 12 placements chosen from the geometry alone (source-blind) tests the sensitivity to placement; for child C, one lateral shift was infeasible, leaving 11. The family comprises top contact, back contact, shifts of ±5 mm left--right and front--back, and rotations of ±10° pitch, ±5° roll and ±10° yaw, each raised to the same contact. Three further placements are the centered pose itself, a laterally centered pose raised to contact (the head moved sideways to the helmet's midline before the raise) and true contact at the Dewar spacing.
+
+The adult's own $D$ depends on the placement: +1.27 dB at its measured pose, +1.00 dB at top contact, +1.01 dB laterally centered at contact and +0.87 dB at true contact. Over its 12 source-blind placements, the adult's $D$ spanned +0.98 to +1.43 dB (a spread of 0.46 dB), with top contact at rank 2 from the lowest. In the fixed helmet, each smaller head was compared with the adult placed by the same rule. Their $\Delta$ was +0.76 to +2.50 dB at the centered pose, +0.17 to +1.07 dB at top contact, +0.09 to +1.06 dB laterally centered at contact and +0.17 to +1.09 dB at true contact.
+
+With sensor plus brain noise, the point estimates had the same sign against the gradiometers (+0.11 to +1.49 dB), against the magnetometers (+0.25 to +0.98 dB) and for the site-matched array (+0.08 to +1.10 dB). With the room field projected out, $\Delta$ was unchanged in the scaled adults (+0.44 to +1.09 dB, against +0.44 to +1.07 dB) and lower in the templates (+0.42 to +0.83 dB, against +0.73 to +0.96 dB). In the children it was small: +0.03 [−0.17, +0.22], +0.26 [+0.04, +0.39] and −0.19 [−0.38, +0.18] dB for children A, B and C, child C's point estimate negative with an interval spanning zero. The site-matched arrays gave −0.06, −0.17 and −0.10 dB, every interval including 0.
+
+The adult's placement spread exceeded $\Delta$ in 4 of the 8 smaller heads. Each child's own $D$ varied by 0.24, 0.57 and 0.86 dB (A, B and C) over the same family. Against each head's family median instead of top contact, the difference of pooled medians from the adult shrank by 0.05–0.20 dB.
+
+The optically pumped magnetometer (OPM) arrays were refitted to each head with the adult's rules: 144–174 dense and 80–91 site-matched sites on the smaller heads, at a median standoff of 6.99–7.00 mm above every head's own magnetic resonance imaging (MRI) scalp. They are the same in every helmet. Sensor noise, room field and analysis band were unchanged. The cortical background variance per unit cortical area was calibrated once on the adult, so a smaller cortex carries less total background; as a sensitivity analysis, this variance was multiplied by 0.5 and by 2.
+
+In the realistic heads, fit and head size can act on $D$ through at least four routes. A wider SQUID gap and a shallower cortex would raise it, whereas fewer OPM sites and, in the school-aged children, a near-adult cortex close to the OPMs would lower it. The constructions below vary these routes together in different combinations, and none isolates one route (main text, Section 3.5). The last route rests on the children's unverified near-scalp anatomy (Section~\ref{sec:S4.3}).
+
+\subsection{The helmet scaled with the head}\label{sec:S5.2}
+
+Every coil center is scaled about the head origin by the child-to-adult ratio of head circumferences, keeping coil size, orientation and noise. The factor is raised in steps until no coil is within 18 mm of the scalp. The helmet is thus scaled in proportion to the head, gaps included, unlike the constant gap of the sphere (Section~\ref{sec:S2}). It was computed about the centered head and, as a variant, about the laterally centered head; this variant was added after the first pediatric results were known, to remove the templates' lateral offset. The construction asks what the adult's fit would give at a child's size; it is not a model of a pediatric SQUID device. The main text treats it as a secondary construction, because it also brings the sensors closer than the adult's own fit (see below).
+
+In the helmet scaled about the laterally centered head, $\Delta$ was −0.76 to +0.04 dB against the adult in its own scaled helmet. The highest upper interval bound, child C's, was +0.20 dB (parcel-bootstrap intervals, which exclude placement and construction uncertainty). Only child C, whose scaled helmet keeps a median gap of 33.1 mm against the adult's 29.6 mm, was not negative (+0.04 [−0.20, +0.20] dB, an interval that also contains its fixed-helmet $\Delta$). With the room field projected out, the difference of medians from the adult in its own scaled helmet was −0.92 to −0.10 dB (−0.67 to +0.05 dB with sensor plus brain noise).
+
+Scaled about the centered head instead, the helmet left residual gains in the heads that sit off-center: the 24- and 18-month templates and child C (+0.24, +0.18 and +0.56 dB; $\Delta$ −0.74 to +0.56 dB overall). The OPM's absolute advantage remained in the scaled helmet ($D$ +0.62 to +1.33 dB in the smaller heads), but the additional child--adult contrast is no longer established.
+
+Three checks qualify this result. First, part of the drop comes from the reference: against the adult at top contact rather than in its own scaled helmet, the difference of medians was −0.38 to +0.33 dB (child C +0.33 dB, above its fixed-helmet $\Delta$). Second, scaling the helmet also scales the gap, which shrank below the adult's 29.6 mm in 7 of the 8 smaller heads (25.1–28.0 mm). This helmet therefore fits most smaller heads more tightly than the adult's helmet fits the adult, which favors Neuromag; the helmet fitted at the adult's gap (Section~\ref{sec:S5.3}) avoids this confound. Third, the smaller heads carry fewer OPM sites (144–174 against 208). The adult's array subsampled to those counts lost 0.27–0.53 dB, so at an equal OPM site count $\Delta$ in the fixed helmet would be +0.43 to +1.43 dB.
+
+\subsection{The helmet fitted at the adult's gap}\label{sec:S5.3}
+
+The Neuromag helmet is scaled about the head origin of each head's laterally centered pose until the median gap from magnetometer coil center to scalp equals the adult's. We used two targets: 29.6 mm, the adult's median gap in its own helmet about its laterally centered head (scale factor 1.000), and, as a variant, 28.4 mm, the adult's gap at top contact in the fixed helmet. Coil size, orientation, integration points and noise are kept. No coil center may come within the 18-mm Dewar spacing of the scalp or lie inside the head. In child C, this clearance binds before the target is reached: the helmet stops at a gap of 32.8 mm, 3.3 mm above the target, with a scale factor of 0.941 instead of the 0.920 that the target would need.
+
+The OPM arrays are those of the fixed-helmet analysis, unchanged. A within-head contrast, the median over a head's targets of the target-wise difference between $D$ at top contact in the fixed helmet and $D$ in the fitted helmet, is therefore a property of Neuromag alone and is the same whichever OPM array is compared. Table~\ref{tab:S5} gives the gaps and scale factors of every helmet per head. Intervals use 1,000 parcel-bootstrap resamples for the dense array in the fixed helmet and in the helmet fitted at 29.6 mm, and 200 elsewhere. This helmet is a geometric control at the adult's median gap, not at its gap distribution, placement or coverage, and it is not a pediatric SQUID system.
+
+\begin{table}[tbp]
+\caption{The helmets per head. Median gap from magnetometer coil center to scalp in the fixed adult helmet at top contact, in the helmet scaled with the head about the laterally centered head, and in the helmet fitted at the adult's gap (29.6 mm) with its scale factor $k$; and $k$ for the variant fitted at the adult's top-contact gap (28.4 mm).}
+\label{tab:S5}
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{L{2.7cm}YYYYY}
+\toprule
+Head & Gap, fixed helmet (mm) & Gap, scaled with the head (mm) & Gap, fitted at the adult's gap (mm) & $k$, fitted & $k$, fitted at the top-contact gap \\
+\midrule
+Adult & 28.4 & 29.6 & 29.6 & 1.000 & 0.991 \\
+School-age size & 34.1 & 26.6 & 29.6 & 0.916 & 0.908 \\
+2-year size & 39.1 & 25.1 & 29.6 & 0.876 & 0.868 \\
+24-month template & 38.5 & 27.0 & 29.6 & 0.881 & 0.873 \\
+18-month template & 38.9 & 27.2 & 29.6 & 0.880 & 0.872 \\
+12-month template & 40.4 & 27.7 & 29.6 & 0.855 & 0.846 \\
+Child A & 35.2 & 26.1 & 29.6 & 0.921 & 0.913 \\
+Child B & 38.4 & 28.0 & 29.6 & 0.877 & 0.867 \\
+Child C & 32.6 & 33.1 & 32.8$^{a}$ & 0.941 & 0.941 \\
+\bottomrule
+\end{tabularx}
+\tablenotes{$^{a}$ Clearance-bound: the helmet stops at the 18-mm Dewar spacing before the target gap is reached. Gap: median over the magnetometer coil centers of the distance to the nearest scalp point; $k$: scale factor of the helmet about the head origin.}
+\end{table}
+
+Table~\ref{tab:S6} gives, per head, $\Delta$ at the adult's gap for the dense and site-matched arrays, $\Delta$ with the room field projected out, $\Delta$ at the adult's top-contact gap, the within-head contrast, the interaction and $\Delta$ at equal OPM site count. At the adult's gap, $\Delta$ was +0.02 to +0.03 dB in the scaled adults, +0.04 to +0.15 dB in the templates and −0.39 to +0.01 dB in the children. The intervals included zero in 5 heads (2-year size, 24-month template, 18-month template, 12-month template and child C), lay below zero in 2 (child A and child B) and above zero in 1 (school-age size; its lower bound rounds to 0.00 from above). The site-matched array gave −0.45 to +0.13 dB, the projected condition −0.67 to −0.05 dB, and the variant at the top-contact gap −0.36 to +0.13 dB.
+
+Against the adult at top contact in the fixed helmet, rather than in its fitted helmet, the heads fitted at the adult's top-contact gap differed from it by +0.10 to +0.23 dB in the scaled adults and templates (4 of 5 intervals above zero). In the children they differed by −0.11 [−0.40, +0.06], −0.22 [−0.35, +0.01] and +0.30 [−0.02, +0.61] dB. This residual depends on how the adult is placed. The interaction (below), which places the adult by the same rule in both helmets, was +0.40 to +1.10 dB in the scaled adults and templates at the adult's gap and +0.40 to +1.11 dB at its top-contact gap. The dense array kept its absolute advantage in every head in the fitted helmet ($D$ +0.97 to +1.32 dB over the nine heads). The site-matched array's $D$ in the fitted helmet was −0.09 to +0.33 dB with sensor plus brain noise and −0.96 to −0.10 dB projected.
+
+\begin{landscape}
+\begin{table}[p]
+\caption{The helmet fitted at the adult's gap, per head. Dense OPM array against Neuromag (306 channels) with sensor plus brain noise unless stated; values in dB; brackets: 95\,\% parcel-bootstrap intervals within the head.}
+\label{tab:S6}
+\centering
+\footnotesize
+\begin{tabularx}{\linewidth}{L{2.3cm}YL{1.6cm}L{1.6cm}L{1.9cm}YYY}
+\toprule
+Head & $\Delta$, dense (dB) & $\Delta$, site-matched (dB) & $\Delta$, dense, projected (dB) & $\Delta$, dense, at the top-contact gap (dB) & Within-head contrast (dB) & Interaction (non-additivity) (dB) & $\Delta$ at equal OPM site count (dB) \\
+\midrule
+School-age size & +0.03\newline [0.00, +0.05] & +0.03 & −0.05 & +0.02 & +0.17\newline [+0.08, +0.28] & +0.40\newline [+0.30, +0.50]\newline (+0.02) & +0.20\newline [+0.16, +0.24] \\
+2-year size & +0.02\newline [−0.02, +0.06] & +0.12 & −0.07 & +0.01 & +0.76\newline [+0.64, +0.90] & +1.10\newline [+0.97, +1.21]\newline (−0.05) & +0.30\newline [+0.24, +0.35] \\
+24-month template & +0.04\newline [−0.06, +0.19] & +0.02 & −0.25 & +0.02 & +0.34\newline [+0.20, +0.54] & +0.54\newline [+0.44, +0.73]\newline (+0.15) & +0.42\newline [+0.29, +0.68] \\
+18-month template & +0.15\newline [−0.08, +0.33] & −0.02 & −0.21 & +0.13 & +0.42\newline [+0.27, +0.61] & +0.70\newline [+0.45, +0.83]\newline (+0.03) & +0.42\newline [+0.22, +0.69] \\
+12-month template & +0.05\newline [−0.09, +0.24] & −0.07 & −0.25 & +0.02 & +0.55\newline [+0.38, +0.78] & +0.66\newline [+0.56, +0.99]\newline (+0.24) & +0.49\newline [+0.33, +0.81] \\
+Child A & −0.30\newline [−0.48, −0.22] & −0.26 & −0.67 & −0.27 & +0.29\newline [+0.19, +0.40] & +0.53\newline [+0.44, +0.70]\newline (+0.08) & +0.16\newline [−0.12, +0.23] \\
+Child B & −0.39\newline [−0.54, −0.17] & −0.45 & −0.50 & −0.36 & +0.42\newline [+0.27, +0.61] & +0.71\newline [+0.58, +0.77]\newline (+0.09) & +0.16\newline [−0.10, +0.41] \\
+Child C & +0.01\newline [−0.23, +0.18] & +0.13 & −0.27 & +0.11 & −0.12\newline [−0.20, −0.02] & +0.04\newline [−0.11, +0.19]\newline (+0.13) & +0.48\newline [+0.14, +0.62] \\
+\bottomrule
+\end{tabularx}
+\tablenotes{$\Delta$: against the adult in its own fitted helmet ($D$ = +1.28 dB). Projected: room field projected out. Within-head contrast: the area-weighted median over the head's targets of the target-wise difference, $D$ in the fixed helmet at top contact minus $D$ in the fitted helmet (the adult's own is −0.23 dB). Interaction: the difference of the two heads' within-head contrasts, taken like $\Delta$ (per vertex for the scaled adults, per parcel for the templates and children) and summarized by its area-weighted median; it is therefore not the difference of the medians in the previous column. In parentheses: the non-additivity, $\Delta$(fixed) − $\Delta$(fitted) − interaction, of the area-weighted medians. $\Delta$ at equal OPM site count: $\Delta$ with the adult's dense array subsampled to the head's dense site count. OPM, optically pumped magnetometer.}
+\end{table}
+\end{landscape}
+
+The within-head contrast measures what Neuromag loses, in a given head, to the fit, gap and placement of the fixed helmet together. It was +0.17 to +0.76 dB in the scaled adults, +0.34 to +0.55 dB in the templates and −0.12 to +0.42 dB in the children. The adult's own contrast was −0.23 dB, because its laterally centered pose in its own helmet is looser than top contact. Child C's contrast was negative although its fixed-helmet gap (32.6 mm) and its clearance-bound fitted gap (32.8 mm) nearly coincide. The fitted construction itself is worth −0.11 [−0.15, −0.08] dB in the adult at an equal median gap, so this contrast is one of construction, not of gap.
+
+The interaction, the smaller head's contrast minus the adult's, is the extra that the fixed helmet gives a smaller head beyond what it gives the adult. It was +0.40 to +1.10 dB in the scaled adults, +0.54 to +0.70 dB in the templates and +0.04 to +0.71 dB in the children. At every vertex of a scaled adult, the interaction equals $\Delta$(fixed) − $\Delta$(fitted), because the same vertex is compared in both helmets. The area-weighted medians of these quantities are not additive, so $\Delta$(fixed) − $\Delta$(fitted) − interaction leaves a residual (Table~\ref{tab:S6}). The within-head and interaction estimates are therefore reported in their own right rather than derived from the $\Delta$ values.
+
+To equalize OPM site counts, the adult's dense array was subsampled by farthest-point sampling to each smaller head's dense site count (144–174 sites), with the adult in the same fitted helmet. At the adult's gap, $\Delta$ was then +0.16 to +0.49 dB: +0.20 to +0.30 dB in the scaled adults, +0.42 to +0.49 dB in the templates and +0.16 to +0.48 dB in the children (the intervals of children A and B include zero). At the adult's median gap and equal OPM site count, a smaller head's dense array thus gains a little. One possibility, which these controls do not test, is that its cortex lies closer to the OPMs. In the scaled adults and templates, the fewer sites take about that much back. In children A and B, whose intervals at equal OPM site count include zero, the fewer sites take back more, and what else lowers their $\Delta$ is not settled by these controls (the children are provisional examples; Sections~\ref{sec:S4.3} and \ref{sec:S5.5}).
+
+As a measure of placement uncertainty, $\Delta$ in the fixed helmet was computed at each of the 12 source-blind placements, each head against the adult at the same placement, as a difference of the area-weighted medians (Table~\ref{tab:S7}). In the scaled adults, the band was +0.20 to +0.67 dB at its lowest and +1.12 to +1.61 dB at its highest; in the children, −0.10 to +0.19 dB at its lowest and +0.37 to +0.70 dB at its highest. It was positive at every placement in every head except child C. The crossed band, which pairs any feasible placement of the head with any placement of the adult, is wider and includes zero in the children. Top contact was not an extreme of any band (Table~\ref{tab:S7}, rank).
+
+\begin{table}[tbp]
+\caption{Placement bands of $\Delta$ in the fixed adult helmet. Dense OPM array against Neuromag (306 channels), sensor plus brain noise.}
+\label{tab:S7}
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{L{2.6cm}cYcYYY}
+\toprule
+Head & $n$ & Band (dB) & Span (dB) & Rank of top contact & Crossed band (dB) & $\Delta$ at top contact (dB) \\
+\midrule
+School-age size & 12 & +0.20 to +1.12 & 0.92 & 9 & +0.03 to +1.58 & +0.44\newline [+0.34, +0.56] \\
+2-year size & 12 & +0.67 to +1.61 & 0.94 & 8 & +0.26 to +2.07 & +1.07\newline [+0.91, +1.18] \\
+24-month template & 12 & +0.48 to +1.38 & 0.90 & 7 & +0.32 to +1.53 & +0.73\newline [+0.46, +0.98] \\
+18-month template & 12 & +0.54 to +1.36 & 0.82 & 11 & +0.37 to +1.51 & +0.88\newline [+0.54, +1.05] \\
+12-month template & 12 & +0.75 to +1.66 & 0.92 & 10 & +0.55 to +1.82 & +0.96\newline [+0.61, +1.51] \\
+Child A & 12 & +0.06 to +0.37 & 0.30 & 10 & −0.18 to +0.52 & +0.30\newline [+0.11, +0.38] \\
+Child B & 12 & +0.19 to +0.63 & 0.44 & 9 & −0.03 to +0.99 & +0.41\newline [+0.28, +0.54] \\
+Child C & 11 & −0.10 to +0.70 & 0.80 & 5 & −0.38 to +0.94 & +0.17\newline [−0.07, +0.34] \\
+\bottomrule
+\end{tabularx}
+\tablenotes{Band: $\Delta$ at each of the source-blind placements, each head against the adult at the same placement, as a difference of area-weighted medians; $n$: feasible placements; rank: the rank of top contact from the lowest $\Delta$ of the band; crossed band: any feasible placement of the head against any placement of the adult. Last column: the primary $\Delta$ at top contact with its 95\,\% parcel-bootstrap interval, for comparison. OPM, optically pumped magnetometer.}
+\end{table}
+
+\subsection{Depth matching}\label{sec:S5.4}
+
+Depth is the route of head size that the sphere describes (Section~\ref{sec:S2}). The cortex of the templates and children is shallower than the adult's: area-weighted median depths were 20.6–23.2 mm (templates) and 20.0–23.4 mm (children), against 26.2 mm. Of the cortical area, 36–46\,\% (templates) and 35–47\,\% (children) lay 10–20 mm below the scalp, against 21\,\% in the adult. In the fixed helmet, reweighting each head's targets to the adult's depth distribution lowered the difference of pooled medians from the adult. In the templates it fell from +0.85 to +1.05 dB pooled to +0.29 to +0.53 dB reweighted, and in the children from +0.19 to +0.52 dB to −0.05 to +0.05 dB.
+
+Within depth strata, where $\Delta$ is the difference of the two heads' area-weighted medians, $\Delta$ was positive in every stratum of the scaled adults and templates (+0.11 to +1.62 dB; Fig.~\ref{fig:S7}A). For the individual children, it was negative in 11 of the 12 child-strata at 10–30 mm depth (−0.36 to +0.08 dB). No interval there lay above zero, the largest lower bound being −0.25 dB, and $\Delta$ was positive deeper (+0.01 to +1.77 dB; Fig.~\ref{fig:S7}B). In this decomposition, the children's fixed-helmet gain is matched by their shallower cortex. The depths are measured from the scalp used, which is unverified near the scalp in the children (Section~\ref{sec:S4.3}). Measured from the MRI boundary instead, they would shift by +1.3 to +1.5 mm in the children, +1.3 mm in the adult and −1.7 to −1.4 mm in the templates. The decomposition describes the model's surfaces, not a tested mechanism.
+
+In the helmet fitted at the adult's gap, the children's strata were negative throughout the depths that hold most of their cortex. For child A, $\Delta$ at the adult's gap was −1.70 dB at 10–15 mm, −0.91 dB at 20–25 mm and −0.20 dB at 30–40 mm, and its intervals included zero only from the 40–50 mm stratum down. The two decompositions, fitting the helmet and matching depth, are not additive, and neither apportions the routes exactly. The fitted helmet is the main control because it matches the adult's median gap, although it changes the gap distribution, the placement and the coverage with it.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{Figure_S7.pdf}
+\caption{$\Delta$ within depth strata in the fixed adult helmet. $\Delta$ within strata of depth below each head's own scalp, as the difference of the two heads' area-weighted medians in the stratum (points at the stratum centers). (A) Scaled adults and infant templates. (B) School-aged children, with 95\,\% intervals from parcels resampled in each anatomy independently (1,000 resamples). Strata with fewer than 10 targets in either head are omitted. Fixed adult helmet at top contact, dense optically pumped magnetometer (OPM) array against Neuromag (306 channels), sensor plus brain noise.}
+\label{fig:S7}
+\end{figure}
+
+\subsection{Noise in the smaller heads and the share of cortex where the OPM is ahead}\label{sec:S5.5}
+
+The noise differs between the classes of head under the convention that the background variance per unit cortical area is the adult's. In the fixed helmet, Neuromag's magnetometer brain noise fell from 202 fT in the adult at top contact (192 fT at its measured pose) to 98–150 fT in the templates and scaled adults. Both their wider gap and their smaller cortex contribute, and their shares were not separated: moving the school-age size control from its centered pose up to top contact raised this noise from 131 to 150 fT. A smaller cortex with the same background per unit area does not lower the field at sensors that stay close, as the OPMs show (525 and 537 fT in the scaled adults, against 494 fT in the adult).
+
+The children's cortex is nearly adult-sized (1,666–1,869 cm²). Neuromag's brain noise therefore stayed at 168–194 fT in the children. The OPMs, close to a near-adult cortex that lies near the scalp in these surfaces (unverified there; Section~\ref{sec:S4.3}), saw more of it (617–751 fT).
+
+The share of cortex on which the OPM is ahead, the kind of metric used by \citet{jas2026}, is saturated for the dense array (99.6\,\% of cortical area in the adult). For the site-matched array, it was 49\,\% in the adult at top contact (against 56\,\% of all targets at the measured pose) and 58–89\,\% in the smaller heads in the fixed helmet (Fig.~\ref{fig:S8}C).
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{Figure_S8.pdf}
+\caption{The helmet scaled with the head and the routes of head size. Dense OPM array against Neuromag (306 channels), sensor plus brain noise; $D$ is the area-weighted median over cortical targets; heads as in the legend, ordered by class and head circumference. (A) $D$ under five helmet conditions: the fixed adult helmet at the centered pose, at top contact (primary) and laterally centered at top contact, and the helmet scaled with the head about the centered and about the laterally centered head. Dashed lines: the adult at top contact (+1.00 dB) and in its own scaled, laterally centered helmet (+1.28 dB); gray band: the adult over its 12 source-blind placements (+0.98 to +1.43 dB). (B) Median gap from magnetometer coil to scalp at top contact (filled) and in the scaled, laterally centered helmet (open); dotted: the 18-mm gap of the spherical benchmark \citep{jas2026}. (C) Share of cortical area with $D > 0$ in the fixed adult helmet at top contact, for the site-matched array (filled: sensor plus brain noise; open: room field projected out) and the dense array (faint). (D) Dense OPM sites per head (numbers) and the adult's $D$ with its array subsampled to each count, from the adult's +1.00 dB with all 208 sites. The helmet fitted at the adult's gap is shown in the main text (Fig. 7). OPM, optically pumped magnetometer.}
+\label{fig:S8}
+\end{figure}
+
+\section{Regions and the noise floor across heads}\label{sec:S6}
+
+This section gives the regional results for every head and the dependence of the comparison on the noise of the optically pumped magnetometers (OPMs). Throughout, D is the detectability of the dense OPM array relative to Neuromag, the 306-channel superconducting quantum interference device (SQUID) system, in dB (Section~\ref{sec:S1}). D is the area-weighted median over a region's cortical targets in both hemispheres, with sensor plus brain noise. The helmet constructions are described in Section~\ref{sec:S5}.
+
+\subsection{Regions by head}\label{sec:S6.1}
+
+In the fixed adult helmet at top contact, the dense array was ahead in every region of every head (D +0.25 to +3.06 dB over the cells of Fig.~\ref{fig:S9}A). A smaller head exceeded the adult's value for the same region in 72 of 80 cells. Of the six lobes, the temporal lobe gained most in the infant templates (+2.63, +2.88 and +3.02 dB at 24, 18 and 12 months, against +1.17 dB in the adult).
+
+The parahippocampal and mesial temporal rows were the adult's lowest temporal rows (+0.74 and +0.74 dB), and both were higher in every template and scaled adult. The mesial temporal group reached +1.16 to +2.79 dB in the templates and scaled adults but +0.46 to +1.77 dB in the children, with child C (+0.46 dB) below the adult. The cingulate was the lowest row in every head (+0.25 dB in the adult, +0.26 to +0.61 dB in the smaller heads).
+
+The peak-channel signal-to-noise ratio (SNR) gave a different picture (sensor plus brain noise). Against the magnetometers alone, the dense array's peak-channel SNR was ahead in every head (D +1.84 dB in the adult at top contact, +2.05 to +2.71 dB in the smaller heads). Against Neuromag's best channel, Neuromag led in the adult (−1.11 dB) and in 4 of the 8 smaller heads (−0.85 to +0.79 dB). The children were among them (−0.64, −0.28 and −0.85 dB in children A, B and C).
+
+In the helmet scaled with the head, the regional gain was smaller, and how much smaller depended on the reference (lobes only; Fig.~\ref{fig:S9}B). Against the adult in its own scaled helmet, 39 of the 48 lobe cells of the smaller heads were at or below the adult's. Against the adult at top contact, 28 were (17 of 30 for the templates and scaled adults, 11 of 18 for the children). These counts compare point estimates without a tolerance. The children's lobes ranged from +0.17 to +1.62 dB in the scaled helmet.
+
+Table~\ref{tab:S8} gives the regional D in the helmet fitted at the adult's gap. The adult's ordering, with frontal, precentral and lateral temporal cortex highest and cingulate and insula lowest, held in the scaled adults. The cingulate was the lowest row in every head except the children, where the insula lay just below it. The templates and children, however, reordered the upper rows. The parahippocampal and mesial temporal rows were high in the 24- and 18-month templates and in child B, and the occipital lobe was highest in child C.
+
+The children differed from the adult by region in both directions. Child B was below the adult in the frontal lobe (−0.81 dB) and the precentral gyrus (−0.63 dB) but above it in the parahippocampal (+0.86 dB) and occipital (+0.23 dB) cortex. Child C was below the adult in the entorhinal cortex (−1.02 dB) but above it in the occipital lobe (+0.64 dB).
+
+The cortical maps (Fig.~\ref{fig:S10}; main text, Fig. 6C) show where D is largest: on the lateral convexity, most on gyral crowns, with medial surfaces near zero. Region by region, then, the ordering changed with the helmet; the relative weight of helmet and region was not quantified. Heat maps and cortical maps show point estimates, and the pediatric intervals represent within-anatomy resampling only.
+
+\begin{table}[tbp]
+\caption{Regional D in the helmet fitted at the adult's gap. Dense OPM array against Neuromag (306 channels), sensor plus brain noise; area-weighted median over the region's cortical targets, both hemispheres; point estimates.}\label{tab:S8}
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+ & \multicolumn{9}{c}{D (dB)} \\
+\cmidrule(l){2-10}
+Region & Adult & School & 2-y & 24 mo & 18 mo & 12 mo & Child A & Child B & Child C \\
+\midrule
+Frontal & +1.82 & +1.80 & +1.77 & +1.89 & +2.05 & +2.19 & +1.22 & +1.01 & +1.52 \\
+Parietal & +1.15 & +1.34 & +1.22 & +1.05 & +0.97 & +1.02 & +0.74 & +0.89 & +1.53 \\
+Temporal & +1.32 & +1.28 & +1.20 & +1.40 & +1.50 & +1.35 & +1.13 & +1.21 & +1.03 \\
+Occipital & +0.95 & +0.93 & +0.85 & +0.82 & +0.79 & +0.74 & +1.18 & +1.18 & +1.58 \\
+Cingulate & +0.40 & +0.41 & +0.39 & +0.56 & +0.50 & +0.46 & +0.30 & +0.37 & +0.41 \\
+Insula & +0.71 & +0.66 & +0.67 & +1.08 & +0.96 & +0.74 & +0.28 & +0.32 & +0.40 \\
+Precentral & +1.79 & +1.70 & +1.57 & +1.56 & +1.73 & +1.91 & +1.10 & +1.16 & +1.56 \\
+Superior temporal & +1.39 & +1.50 & +1.22 & +1.09 & +1.27 & +1.11 & +0.96 & +0.71 & +0.94 \\
+Parahippocampal & +0.88 & +0.87 & +1.01 & +1.97 & +2.25 & +0.88 & +0.81 & +1.74 & +1.49 \\
+Mesial temporal & +0.91 & +0.82 & +0.93 & +1.80 & +2.01 & +1.10 & +0.37 & +1.32 & +0.76 \\
+\bottomrule
+\end{tabular}
+\tablenotes{Mesial temporal: parahippocampal and entorhinal cortex together. School and 2-y: the school-age and 2-year size controls (scaled adults); 24, 18 and 12 mo: the infant templates; Child A--C: the school-aged children. D: OPM detectability relative to Neuromag; OPM: optically pumped magnetometer.}
+\end{table}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{Figure_S9.pdf}
+\caption{Brain regions that favor the OPM at each head size. Area-weighted median D, dense OPM array minus Neuromag (306 channels), sensor plus brain noise, by lobe and for the precentral, superior temporal, parahippocampal and mesial temporal (parahippocampal and entorhinal) cortex; both hemispheres; medial wall excluded. The numbers at right give the targets per row (range over heads). Heads are grouped by class and ordered by head circumference (46.9–58.6 cm). (A) The fixed adult helmet at top contact. (B) The helmet scaled with the head, laterally centered; the parcel rows are hatched because per-target values were not computed for this helmet (the helmet fitted at the adult's gap gives them; Table~\ref{tab:S8}). The color scale is shared and centered at 0 dB; every cell is a point estimate. D: OPM detectability relative to Neuromag; OPM: optically pumped magnetometer.}\label{fig:S9}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{Figure_S10.pdf}
+\caption{D on the cortex of the adult and the scaled adults. D of the dense OPM array against Neuromag (306 channels) at top contact in the fixed adult helmet, sensor plus brain noise, on the inflated cortex, in lateral and medial views of both hemispheres. (A) The adult (208 dense sites; area-weighted median D +1.00 dB). (B) The school-age size control (174 sites; +1.50 dB). (C) The 2-year size control (155 sites; +2.13 dB). The size controls share the adult's vertices. Red: the OPM's detectability is higher; the color scale is that of the cortical maps of the main text. Light gray: medial wall; dark gray: cortex within 4 mm of the inner skull, not simulated. D: OPM detectability relative to Neuromag; OPM: optically pumped magnetometer.}\label{fig:S10}
+\end{figure}
+
+\subsection{The noise floor across heads}\label{sec:S6.2}
+
+D fell with the OPM's sensor noise in every head (Fig.~\ref{fig:S11}). At 30 fT/√Hz, about the empty-room floor read from the recording of \citet{jas2026}, the dense array's D was −0.05 dB in the adult and +0.27 to +0.97 dB in the smaller heads. The site-matched array's D was negative in every head except the 2-year size control (−0.79 dB in the adult, −0.41 to +0.18 dB in the smaller heads).
+
+The difference from the adult itself depended on the noise. At 7 fT/√Hz the individual children were slightly below the adult (−0.15 to −0.03 dB, difference of medians), and at 30 fT/√Hz they were above it (+0.32 to +0.77 dB). A plausible reading, not tested here, is that the children's OPM channels, dominated by brain noise, lose less to a noisier sensor than the adult's. A noisier OPM thus leaves the adult without an established advantage first, while the smaller heads in the fixed helmet keep part of theirs.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{Figure_S11.pdf}
+\caption{The OPM noise level across heads. D (OPM minus Neuromag, 306 channels; sensor plus brain noise; fixed adult helmet at top contact; area-weighted median over cortical targets) against the OPM's white sensor noise (7, 10, 15, 20 and 30 fT/√Hz), with Neuromag's noise unchanged, for the adult and the eight smaller heads. (A) Dense OPM array. (B) Site-matched OPM array. Solid vertical line: the primary 15 fT/√Hz. Dotted line: 30 fT/√Hz, about the OPM empty-room floor read from the spectra of \citet{jas2026}, a broadband value not matched to the 1–40 Hz band. D: OPM detectability relative to Neuromag; OPM: optically pumped magnetometer.}\label{fig:S11}
+\end{figure}
+
+\section{The spike study: design, results and localization}\label{sec:S7}
+
+\subsection{The exploratory design}\label{sec:S7.1}
+
+The detection study ran the noise model in the time domain (Table~\ref{tab:S18}). The background moments had a 1/f spectrum, the room field had the cross-spectra of the empty-room recording, and the sensor noise was white. Each component was scaled so that its in-band covariance equaled that of the adult model, and the room field was not projected out. The data were filtered to 1–40 Hz and decimated to 150.2 Hz, with one noise realization per 30-s segment shared by all arrays. The spike was the spike-wave complex of \citet{hunold2016}, digitized, stretched in time by 0.75, 1 and 1.5 (3 morphologies) and passed through the same filter.
+
+Spikes were placed at 72 locations stratified by depth below the scalp (10–20, 20–30, 30–45 and 45–70 mm; 18 locations per band) and by orientation (3 bands from radial to tangential; 6 locations per depth and orientation stratum). Each location received 18 focal-dipole events, at 6 strengths of 10, 20, 40, 80, 160 and 320 nAm, each with every morphology. It also received patch events of 10 mm radius, which carried the same total moments with the unstretched morphology. This gave 1,296 focal and 432 patch events, 1,728 per anatomy, injected in random order one every 2 s and identically in every array. The adult's locations lay 24 in the frontal lobe, 14 in the parietal, 14 in the temporal, 12 in the cingulate, 6 in the insula and 2 in the occipital lobe, at median depths of 16.9, 26.0, 36.8 and 51.7 mm in the four bands.
+
+Every array was read by two detectors, and Neuromag was also read by its magnetometers alone and by its gradiometers alone, giving 5 sensor sets per anatomy, each read by both detectors. Both detectors whitened the data with a Ledoit--Wolf covariance \citep{ledoit2004} from 10 min of null data and filtered them with the spike templates. The oracle detector knows the source and the time. It tests the whitened, template-filtered projection on the true field pattern at the true peak (one-sided) against a threshold set for a per-trial false-positive probability of 0.001.
+
+The practical detector knows neither the source nor the time. At every sample it takes the largest normalized output over the 3 templates and 441–716 candidate field patterns on a 10-mm cortical grid that excludes the true sources. Its local maxima at least 0.25 s apart are events. A spike counts as detected when an event above threshold lies within ±50 ms of its peak, and the same events are counted as false on null data. The templates are the simulated morphologies and the candidates' field patterns come from the true forward model, which makes the practical detector idealized for every array. Whether it is equally idealized for every array was not tested in the exploratory run; the confirmatory run's mismatch variant tests one departure (Section~\ref{sec:S7.5}), and focal on-scalp patterns may be more sensitive to forward-model and coregistration error.
+
+The practical detector's thresholds for 1 false event per minute were set on 20 min of independent null data and frozen. On 20 min of held-out null data they gave 0.40–1.55 false events per minute across sensor sets and anatomies (Table~\ref{tab:S9}). In the adult, the practical detector needed 1.83–2.08 times the oracle's strength for half detection at 10–20 mm.
+
+\begin{table}[tbp]
+\caption{Held-out false-event rates of the exploratory run. False events per minute on the 20 min of held-out null data at the frozen thresholds of the practical detector, which were set for 1 false event per minute on 20 min of calibration null data.}\label{tab:S9}
+\centering\footnotesize
+\begin{tabular}{lccc}
+\toprule
+Head & Neuromag (306 channels) & Site-matched OPM array & Dense OPM array \\
+\midrule
+Adult & 1.30 & 0.70 & 0.95 \\
+School-age size & 1.40 & 0.50 & 1.05 \\
+2-year size & 0.40 & 0.65 & 1.20 \\
+24-month template & 0.70 & 1.55 & 1.30 \\
+18-month template & 0.90 & 1.45 & 1.10 \\
+12-month template & 1.20 & 0.95 & 0.85 \\
+Child A & 0.90 & 1.35 & 0.75 \\
+Child B & 0.80 & 1.55 & 0.70 \\
+Child C & 1.20 & 0.70 & 0.75 \\
+\bottomrule
+\end{tabular}
+\tablenotes{OPM, optically pumped magnetometer. The adult sits at its measured head position, the other heads at top contact in the fixed adult helmet.}
+\end{table}
+
+S50 is the strength at which the detection rate of a band's focal events reaches 50\,\%, interpolated linearly in log strength between the tested strengths. A band holds 324 focal events: the morphologies pooled over the band's 18 locations. The patch events enter neither S50 nor the paired tests. The paired ratio S50\textsubscript{Neuromag}/S50\textsubscript{OPM} is above 1 when the optically pumped magnetometer (OPM) array needs less strength (Section~\ref{sec:S1}). The adult sits at its measured pose and the smaller heads at top contact. The measured pose gives the adult a detectability ratio $D$ 0.28 dB higher than top contact does, so the adult's spike results are not placed by the same rule as those of the smaller heads.
+
+No exploratory endpoint was named before the analyses. The endpoints, chosen after the analyses, were three. The first was the dense array's detectability ratio against Neuromag's 306 channels in the adult. The second was Δ of the dense array against the same comparator at top contact in the fixed helmet and in the helmet scaled with the head about the laterally centered head, each against the adult placed by the same rule, reported descriptively. The third, for the spikes, was the dense array against Neuromag's 306 channels in the 10–20 mm band with the practical detector. It was tested with the two-sided exact sign-flip test on per-location differences in detection counts, Holm-adjusted \citep{holm1979} over the 9 anatomies, with the paired S50 ratio and its location-bootstrap interval as the effect size.
+
+This band, array and detector were chosen from the 24 comparisons per OPM array of each anatomy, a selection that the correction over anatomies does not control. The detection family has 48 comparisons per anatomy: two OPM arrays against Neuromag's 306 channels, its gradiometers and its magnetometers, with both detectors, in 4 depth bands. The localization family has 40: two OPM arrays; focal and patch sources at two strengths; and the dipole error, the two errors of dynamic statistical parametric mapping (dSPM), and joint detection and localization with the study's dSPM or with the dipole.
+
+The sign-flip test uses the locations whose difference in detection counts is not zero, and p is smallest when all of them favor one array. With a band's 18 locations that smallest p is 7.6 $\times 10^{-6}$, and p < 0.05 needs at least 6 such locations. With equal differences the test is the exact sign test. Of 18 locations, 14 must then favor one array for p < 0.05 (p = 0.031; with 13, p = 0.096), and 16 for the first Holm step over 9 anatomies, p < 0.0056 (p = 0.0013). Of the confirmatory 36 locations (12 per orientation stratum), 25 are needed (p = 0.029) and 27 for the first Holm step (p = 0.0039).
+
+Unequal differences can move p either way: the adult's 11 locations favoring the OPM against 1 favoring Neuromag gave p = 0.0039, against 0.0063 had the differences been equal. Beyond 20 non-zero locations the run estimated p from 20,000 random sign patterns (resolution 5 $\times 10^{-5}$); the p values reported for the confirmatory run are exact (Section~\ref{sec:S7.5}). These values follow from the design alone. Power, and a minimal detectable S50 ratio, depend on how detection varies between locations and were not computed. Two pilot runs on test seeds (child A, 18 locations) gave 8/1 and 9/4 locations favoring the OPM/Neuromag, p = 0.074 and 0.21, and their outputs were not kept. The confirmatory declaration describes 18 locations as underpowered, a reading we do not adopt. The pilot runs prompted doubling the locations to 36 but do not estimate power.
+
+\subsection{Results of the exploratory run}\label{sec:S7.2}
+
+The exploratory run had one noise realization per event and an endpoint chosen after the analyses. It is superseded as evidence by the confirmatory run (main text, Section 3.6; Section~\ref{sec:S7.5}) and is reported here in full. In the adult, focal spikes 10–20 mm below the scalp needed 47 nAm for half detection with Neuromag's 306 channels and 34 nAm with the dense array, a paired S50 ratio of 1.36 [1.10, 1.58]. Every anatomy's point estimate favored the dense array in this band (S50 ratios 1.18–1.65; Fig.~\ref{fig:S12}A; Table~\ref{tab:S10}). So did the per-location counts under a Holm correction over the 9 anatomies (largest adjusted p 0.022, child A, whose S50 interval spans 1).
+
+The anatomies are not independent replications, and the correction does not cover the choice of the endpoint from 24 comparisons per OPM array (below). The site-matched array showed no consistent advantage. The dense array's deeper spikes leaned the same way, with an established difference in only 1 of 27 deeper band-and-anatomy cells (Holm within each band; Fig.~\ref{fig:S12}B). The gain lay in the weakest detected spikes.
+
+Table~\ref{tab:S10} gives the superficial band in every anatomy, with the oracle's S50 ratio beside the practical detector's. The oracle is the quantity most directly tied to the detectability metric. Its ratios were larger than the practical detector's in 7 of the 9 anatomies (not in the 18-month template and child C), as expected where the oracle's advantage is not diluted by the scan over times and candidates. The adult's detection curves are shown in Fig.~\ref{fig:S13}.
+
+\FloatBarrier
+\begin{landscape}
+\centering
+\captionof{table}{Detection of simulated spikes 10–20 mm below the scalp in the exploratory run. Practical detector with thresholds frozen at 1 false event per minute, 18 locations per anatomy. The endpoint was chosen after the analyses.}\label{tab:S10}
+\footnotesize
+\begin{tabularx}{\linewidth}{L{3.0cm}L{2.0cm}YL{2.2cm}L{1.4cm}L{1.4cm}YY}
+\toprule
+Head & S50 (nAm), Neuromag / dense & Ratio, dense & Locations, OPM / Neuromag & p & Holm p & Ratio, site-matched & Ratio, dense, oracle \\
+\midrule
+Adult & 47 / 34 & 1.36 [1.10, 1.58] & 11 / 1 & 0.0039 & 0.015 & 1.16 [0.88, 1.44] & 1.55 [1.22, 1.74] \\
+School-age size & 53 / 33 & 1.60 [1.31, 1.87] & 13 / 0 & 0.00024 & 0.0017 & 1.27 [0.99, 1.52] & 1.62 \\
+2-year size & 61 / 37 & 1.65 [1.41, 1.87] & 17 / 0 & <0.0001 & 0.00014 & 1.60 [1.21, 1.82] & 1.69 \\
+24-month template & 43 / 30 & 1.44 [1.20, 1.65] & 14 / 2 & 0.0015 & 0.0076 & 1.22 [1.00, 1.42] & 1.51 \\
+18-month template & 36 / 27 & 1.33 [1.16, 1.62] & 16 / 0 & <0.0001 & 0.00024 & 1.10 [1.02, 1.28] & 1.30 \\
+12-month template & 43 / 29 & 1.46 [1.21, 1.84] & 14 / 1 & 0.00049 & 0.0029 & 1.28 [1.09, 1.46] & 1.89 \\
+Child A & 61 / 48 & 1.27 [0.93, 1.63] & 11 / 4 & 0.022 & 0.022 & 1.05 [0.75, 1.40] & 1.53 \\
+Child B & 65 / 55 & 1.18 [1.02, 1.51] & 12 / 3 & 0.0085 & 0.017 & 1.06 [0.87, 1.35] & 1.31 \\
+Child C & 52 / 36 & 1.43 [1.06, 1.62] & 14 / 2 & 0.0037 & 0.015 & 1.08 [0.92, 1.31] & 1.36 \\
+\bottomrule
+\end{tabularx}
+\tablenotes{S50: strength for half detection (Neuromag 306 channels / dense OPM array). Ratio: paired S50 ratio Neuromag/OPM with its bootstrap interval over locations. Locations: those with more events detected by the OPM / by Neuromag. p: exact sign-flip test on per-location differences in detection counts, uncorrected and Holm-adjusted over the anatomies. Oracle: the paired S50 ratio of the dense array with the oracle detector. The adult sits at its measured head position, the other heads at top contact. OPM, optically pumped magnetometer.}
+\end{landscape}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{Figure_S12.pdf}
+\caption{Simulated interictal spikes, exploratory run. Paired S50 ratio Neuromag (306 channels) / OPM on identical simulated spikes, practical detector with thresholds frozen at 1 false event per minute; logarithmic axis with a line at 1 (above 1: the OPM detects at a lower strength). (A) Spikes 10–20 mm below the scalp, with the locations favoring each system and the location sign-flip p Holm-adjusted over the 9 anatomies for each array separately; this endpoint was chosen after the analyses. (B) The deeper bands. Dark markers: dense OPM array; light markers: site-matched OPM array. Lines: 95\,\% bootstrap intervals over the 18 locations per band and anatomy (324 focal events). Arrows: open interval ends (resamples outside the tested 10–320 nAm); dotted lines: intervals open at both ends; open markers: censored point estimates (an open marker with a dashed arrow: Neuromag does not reach half detection, so the ratio lies above the bound); ``neither reaches 50\,\%'': no estimate. Dagger: the adult at its measured head position; the other heads at top contact. Infant templates: \citet{oreilly2021}, from the Neurodevelopmental MRI Database \citep{richards2016}; children A--C: OpenNeuro ds005234 \citep{fadeev2024,fadeev2025}. OPM, optically pumped magnetometer.}\label{fig:S12}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{Figure_S13.pdf}
+\caption{Detection curves of the adult, exploratory run. Probability of detecting a focal spike against its strength (10–320 nAm, logarithmic axis; 54 events per point: 18 locations and 3 morphologies pooled) in the four depth bands, for Neuromag (306 channels), the dense OPM array (208 sites) and the site-matched OPM array (98 sites), with Neuromag's gradiometers (dashed) and magnetometers (dotted) alone as secondary comparators. (A) The oracle detector, which knows source, waveform and peak time (false-positive probability 0.001 per trial). (B) The practical detector, which scans all times, 3 templates and 716 candidate sources, at 1 false event per minute. Its thresholds were frozen; on the held-out null data they gave 1.30, 0.95, 0.70, 1.20 and 0.65 false events per minute for Neuromag, the dense array, the site-matched array, the gradiometers and the magnetometers. Shaded: Wilson 95\,\% intervals at the event level, descriptive only, because the events of a point share locations; the paired comparisons treat the location as the unit. Gray horizontal line: half detection. At 10–20 mm the strength for half detection is 16, 22 and 25 nAm with the oracle and 34, 40 and 47 nAm with the practical detector (dense, site-matched, Neuromag). The adult sits at its measured head position; the noise is shared by all systems in each simulated segment. OPM, optically pumped magnetometer.}\label{fig:S13}
+\end{figure}
+
+The individual children are the least certain. Their S50 ratios were 1.27 [0.93, 1.63], 1.18 [1.02, 1.51] and 1.43 [1.06, 1.62] for A, B and C, the interval for child A including 1. Because the endpoint was chosen from 24 comparisons per OPM array, a Bonferroni correction over them (threshold 0.0021) is the stricter test. 5 of the 9 anatomies passed it, the scaled adults and the templates, while the adult (p = 0.0039) and the three children did not. Over all 48 comparisons per anatomy (threshold 0.0010), 4 passed.
+
+The frozen thresholds gave unequal false-event rates on the held-out null data (Table~\ref{tab:S9}). As a check, every detector's threshold was reset to 1 false event per minute on the held-out null data and the stored simulations were re-evaluated. The thresholds were fitted and evaluated on the same data, so this check is in-sample for the rate and does not establish equal operating points on new data; the confirmatory run uses separate evaluation null data for that. The dense array's ratios at 10–20 mm stayed above 1 in every anatomy (1.21–1.63). In the adult the ratio was 1.40 [1.12, 1.59] (12 locations favoring the OPM, 1 Neuromag, p = 0.0022), against 1.36 at the frozen thresholds.
+
+The site-matched array's S50 interval lay above 1 in 4 anatomies (bounds printed as 1.00 are counted by their unrounded values). Its detection counts, however, differed (uncorrected p < 0.05) in only 2, the 2-year size control and the 18-month template, and not in the adult (p = 0.40) or any child.
+
+Deeper spikes leaned the same way less consistently. The location counts favored the dense array in 25 of the 27 deeper band-and-anatomy cells (1 tie, 1 against), and the S50 point estimates at 20–30 mm were above 1 in 9 of 9 anatomies. Of the 6 cells with p < 0.05, 6 favored the OPM. None of these survived the Bonferroni correction over the 24 comparisons per OPM array. With the endpoint's rule, a Holm correction over the anatomies band by band, 1 survived: the adult's 45–70 mm band (adjusted p 0.035). Which deeper cells reach p < 0.05 varied between the versions of the model run before the results were frozen.
+
+Of the adult's 324 superficial focal events (54 per strength), 19 were detected only by the dense array (6, 12 and 1 at 20, 40 and 160 nAm) and 1 only by Neuromag (at 40 nAm). The dense array and Neuromag detected 7 and 1 events at 20 nAm and 33 and 22 at 40 nAm. From 80 nAm up they detected nearly the same numbers (45 and 45, 50 and 49, 51 and 51). The OPM's gain was concentrated on weak superficial spikes. Its weight in a clinical recording depends on how many real discharges are that weak, which the strength grid of the design cannot tell.
+
+At the adult's 18 locations of each band, the median detectability ratio of the dense array was 1.45, 1.16, 1.09 and 1.05 from the shallowest to the deepest band. The oracle's paired S50 ratio was 1.55, 1.29, 1.09 and 1.20. The two agreed in direction in every band, and closely at 30–45 mm. The oracle ratio exceeded the detectability ratio most in the deepest band, whose interval ([1.00, 1.42]) lies just above 1 because few events are detected at the lower strengths and S50 is interpolated from them. The detectability ratio is a median of per-location ratios, whereas the S50 ratio pools the band's detection curves, so exact agreement is not expected. The oracle is the better-behaved of the two spike quantities, and the confirmatory run reports it beside the practical detector (Table~\ref{tab:S11}).
+
+\subsection{Localization}\label{sec:S7.3}
+
+Localization was examined at 24 locations with focal and patch sources of 80 and 320 nAm, one event per source type and strength at each location (24 per condition, unstretched morphology), in independent null data. The inverse used a single-compartment boundary-element model (BEM), whereas the simulation used three layers. It also used one of 8 coregistration-error draws of 2 mm and 2° per location, the same for every array. This error displaced the adult's sources by a median of 2.9 mm, and by 2.1–3.2 mm over the anatomies. The noise covariance was a Ledoit--Wolf estimate from 5 min of null data, and the source grid had fixed orientations at 5-mm spacing (2,114–3,821 sources) and excluded the true source vertices.
+
+Equivalent current dipoles (ECDs) were fitted with MNE-Python \citep{gramfort2013} at least 5 mm inside the inner skull. dSPM \citep{dale2000}, with depth weighting 0.8 and a regularization set by an assumed signal-to-noise ratio (SNR) of 3, was computed in the study's implementation and in MNE-Python's, at the true peak sample. The error is the distance from the true source (a patch's center) to the dipole or to the dSPM peak, read on the MRI through the perturbed transform. Joint success is detection by the practical detector (thresholds from 10 min of null data) with an error of at most 10 mm. Paired error differences were tested with the Wilcoxon signed-rank test and joint success with an exact McNemar test.
+
+Both dSPM implementations use fixed orientations on the same grid, the same noise covariance, a depth exponent of 0.8, λ² = 1/9, a source covariance scaled to the whitened rank and dSPM normalization. They differ in the depth weighting. The study's implementation uses the whitened gains of all of an array's channels, without a limit. MNE-Python's is limited at its default of 10 and uses the unwhitened gains of the gradiometers, or of the magnetometers where there are none (the OPM arrays). Both are reported, because the paired dSPM differences depend on this choice.
+
+Dipole fits of detected 320-nAm focal spikes had median errors of 3.7–7.6 mm in every array and anatomy. Of 360 paired comparisons, 65 had p < 0.05, where 18 would be expected by chance. Most of them concerned dSPM errors (21 with the study's implementation, 27 with MNE-Python's); 6 concerned dipole errors and 11 joint detection and dSPM localization within 10 mm. Of these, 61 favored an OPM array, 3 had a zero median difference and 1 favored Neuromag. 28 concerned mostly undetected 80-nAm sources, and the two dSPM implementations share their events.
+
+In all, 8 comparisons survived a Bonferroni correction within anatomy and array, 6 of them at 80 nAm, where most sources go undetected, and 0 survived one over all 360. The adult's dSPM gain for 320-nAm patches depended on the implementation: −5.6 mm (p = 0.054) with the study's estimator and −1.0 mm (p = 0.22) with MNE-Python's.
+
+Fig.~\ref{fig:S14} shows every paired error difference with its interval. Of the 216 error comparisons, 54 had p < 0.05 (6 for the dipole fit, 27 for MNE-Python's dSPM, 21 for the study's). 8 fell below 0.0025, the Bonferroni threshold for the 20 comparisons of one anatomy and OPM array. At 320 nAm the dipole-fit differences lay within a few millimeters of zero in every anatomy, and the dSPM differences were negative or zero. At 80 nAm all 108 estimates rest mostly on undetected events, whose errors are those of noise, and their intervals are wide.
+
+20 medians were exactly zero, because the dSPM peaks of both systems often fall on the same vertex of the shared 5-mm grid, and 30 were positive (Neuromag closer). The errors include every event, detected or not, because selecting on detection would select on each system's own noise. Fig.~\ref{fig:S15} gives the share of injected events that each system both detected and localized within 10 mm. Of the 72 paired comparisons per method, 0 with the dipole fit and 11 with the study's dSPM had p < 0.05 (exact McNemar, uncorrected), all favoring the OPM array; none survived a correction. Joint success assumes the event time is known, because localization is read at the true peak sample.
+
+Every event received a dipole. Under declared criteria, a dipole or dSPM error above 30 mm is gross, and a dipole confidence volume above 10 cm³ is unconstrained. Over the 864 events per system, Neuromag had 332 gross dipole errors (27 among its 456 detected events). The dense array had 310 (44 among 501 detected) and the site-matched array 325 (38 among 475), that is, 5.9–8.8\,\% of detected events. Gross errors of the study's dSPM among detected events numbered 77 for Neuromag (17\,\%), 39 for the dense array (7.8\,\%) and 36 for the site-matched array (7.6\,\%).
+
+Of all gross errors (dipole and the study's dSPM, three arrays), 87\,\% belonged to undetected events and 73\,\% to 80-nAm events. The denominators differ between arrays because each array detects different events, so these rates are described, not compared. The spike study does not test the fitted helmet, so it does not show that fit causes a detection benefit in children. No localization difference was established in any anatomy.
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{Figure_S14.pdf}
+\caption{Localization effect sizes, exploratory run. Median over the 24 events of a condition of the OPM array's localization error minus Neuromag's (306 channels), paired on identical simulated spikes, with 95\,\% bootstrap intervals over events (2,000 resamples); negative: the OPM array localizes closer to the true source. Columns: the equivalent-current-dipole (ECD) fit, dSPM through MNE-Python and dSPM through the study's implementation. (A--C) 320 nAm. (D--F) 80 nAm, where the errors are mostly those of undetected events. Dark blue: dense OPM array; light blue: site-matched OPM array; circles: focal dipoles; squares: 10-mm patches; filled markers: both systems detected at least half of the events (practical detector, thresholds frozen at 1 false event per minute); open markers: fewer. Stars beside an interval: p < 0.05 (one) and p < 0.0025 (two), Wilcoxon signed-rank, uncorrected; the second threshold is 0.05 over the 20 comparisons of one anatomy and OPM array. The x axes differ between strengths and between the dipole and dSPM columns. The errors are read at the true peak sample for every event, detected or not; dSPM peaks lie on the 5-mm grid, so paired errors often tie and medians at exactly zero are common. Dagger: the adult at its measured head position; the other heads at top contact in the adult helmet. dSPM, dynamic statistical parametric mapping; OPM, optically pumped magnetometer.}\label{fig:S14}
+\end{figure}
+
+\begin{figure}[tbp]
+\centering
+\includegraphics[width=\textwidth]{Figure_S15.pdf}
+\caption{Joint detection and localization, exploratory run. For each anatomy, system (Neuromag with 306 channels, the dense OPM array, the site-matched OPM array) and condition (focal dipole or 10-mm patch at 320 and 80 nAm), the bar's end is the share of the 24 injected events detected by the practical detector. Its dark part is the share both detected and localized within 10 mm, and the pale part is detected but localized farther away; both shares have the injected events as their denominator. (A) The equivalent-current-dipole (ECD) fit. (B) dSPM through MNE-Python. (C) dSPM through the study's implementation. Stars: the paired OPM minus Neuromag difference in joint success with p < 0.05 (exact McNemar, uncorrected; stored for the dipole fit and the study's dSPM only). Thresholds were set for 1 false event per minute on 10 min of null data and frozen (0.2–1.9 per minute on the localization study's held-out null data over the nine anatomies and three systems). Localization is read at the true peak sample, so joint success assumes the event time is known. Dagger: the adult at its measured head position; the other heads at top contact in the adult helmet. dSPM, dynamic statistical parametric mapping; OPM, optically pumped magnetometer.}\label{fig:S15}
+\end{figure}
+
+\subsection{Head motion}\label{sec:S7.4}
+
+Head motion and slippage of the OPM cap were bounded rather than simulated in time, on the adult and on the 24- and 12-month templates at top contact. The head was displaced in the fixed helmet by up to 10 mm or rotated about the head origin, and the dense OPM cap was rotated on the head by up to 3°, with sensors that would enter the scalp lifted. Each case was evaluated with the matched filter of the reference geometry (uncompensated) and with the displaced geometry known. A sustained 10-mm drop in the fixed helmet cost Neuromag 1.64–1.72 dB uncompensated and 0.36–0.39 dB with the displaced geometry known. The latter is comparable to an uncompensated 3° slip of the OPM cap (0.12–0.46 dB). A 60-s time course of exact rigid motion checked the field-artifact model only; motion in the spike simulations, and its interaction with detection thresholds, was not simulated.
+
+\subsection{The confirmatory run}\label{sec:S7.5}
+
+\FloatBarrier
+\begin{landscape}
+\centering
+\captionof{table}{The confirmatory spike run per head. Focal spikes 10–20 mm below the scalp at 36 newly drawn locations per anatomy (648 focal events of 10–320 nAm; the first of 5 noise replicates).}\label{tab:S11}
+\footnotesize
+\begin{tabularx}{\linewidth}{L{3.2cm}L{1.7cm}YL{1.9cm}L{1.3cm}YYY}
+\toprule
+Head & S50 (nAm), Neuromag / dense & Ratio, dense & Locations, OPM : Neuromag & Holm p & Oracle, ratio & Mismatch, ratio & Site-matched, ratio (Holm p) \\
+\midrule
+Adult & 50 / 35 & 1.45 [1.21, 1.68] & 24 : 0 & <0.0001 & 1.39 [1.22, 1.55] & 1.50 [1.30, 1.67] & 1.30 [1.10, 1.46] (0.035) \\
+School-age size & 45 / 31 & 1.44 [1.26, 1.58] & 25 : 1 & <0.0001 & 1.61 [1.46, 1.76] & 1.39 [1.23, 1.52] & 1.28 [1.10, 1.43] (0.048) \\
+2-year size & 54 / 37 & 1.47 [1.24, 1.62] & 27 : 1 & <0.0001 & 1.62 [1.40, 1.78] & 1.49 [1.26, 1.67] & 1.16 [1.05, 1.35] (0.0031) \\
+24-month template & 35 / 27 & 1.28 [1.18, 1.45] & 28 : 2 & <0.0001 & 1.51 [1.31, 1.84] & 1.42 [1.26, 1.68] & 1.06 [0.95, 1.17] (0.067) \\
+18-month template\textsuperscript{a} & 41 / 29 & 1.43 [1.26, 1.61] & 30 : 1 & <0.0001 & 1.62 [1.41, 1.90] & 1.44 [1.25, 1.65] & 1.30 [1.15, 1.48] (<0.0001) \\
+12-month template & 41 / 29 & 1.39 [1.25, 1.56] & 29 : 1 & <0.0001 & 1.48 [1.30, 1.84] & 1.43 [1.25, 1.60] & 1.30 [1.15, 1.48] (0.0084) \\
+Child A & 51 / 40 & 1.27 [1.07, 1.38] & 14 : 3 & 0.010 & 1.29 [1.09, 1.52] & 1.23 [1.06, 1.41] & 0.99 [0.84, 1.14] (1.0) \\
+Child B & 57 / 42 & 1.35 [1.15, 1.56] & 21 : 2 & <0.0001 & 1.27 [1.11, 1.52] & 1.23 [1.02, 1.48] & 1.08 [0.99, 1.20] (1.0) \\
+Child C & 50 / 39 & 1.30 [1.15, 1.43] & 25 : 2 & <0.0001 & 1.34 [1.17, 1.55] & 1.34 [1.18, 1.50] & 1.10 [1.00, 1.27] (0.15) \\
+\bottomrule
+\end{tabularx}
+\tablenotes{S50: strength for 50\,\% detection, Neuromag (306 channels) / dense OPM array, in whole nAm (the ratios use the unrounded values), practical detector with thresholds frozen for a nominal 1 false event per minute. Ratio: S50\textsubscript{Neuromag}/S50\textsubscript{OPM}, a ratio of the two location-pooled estimates with its 95\,\% interval from paired location resampling (1,000 resamples); above 1, the OPM detects at a lower strength. Locations: those at which the OPM/Neuromag detected more events (the others are ties). Holm p: two-sided sign-flip test on the per-location differences in detection counts, exact over all sign patterns, Holm-adjusted over the nine anatomies within each column's family (the run's own Monte Carlo estimates give the same decisions in all 25 families; Section~\ref{sec:S7.5}). ``<0.0001'': an exact p below the printed precision. Interval bounds printed as 1.00 are classed by their unrounded values (child C's site-matched interval, printed [1.00, 1.27], has the lower bound 0.9997 and spans 1). The dense array's practical-detector columns are the declared endpoint, the others secondary. Oracle: the oracle detector (known source, waveform and time). Mismatch: the declared mismatched detector (templates between the simulated morphologies, candidate patterns from a single-compartment model with a 2-mm / 2° coregistration error; thresholds set for the same rate). Site-matched: the site-matched OPM array with the practical detector. The adult at its measured head position, the other heads at top contact in the fixed adult helmet. Infant templates: \citet{oreilly2021}, from the Neurodevelopmental MRI Database \citep{richards2016}; children A--C: OpenNeuro ds005234 \citep{fadeev2024,fadeev2025}. OPM, optically pumped magnetometer. \textsuperscript{a}The 18-month template is classed misregistered by the MRI check (a possibly misaligned white surface, or the weak contrast of an average image; main text, Section 2.2).}
+\end{landscape}
+
+The confirmatory design was fixed before the run and declared in a configuration file of the code repository (main text, Section 2.5). Its primary result is given in the main text (Section 3.6; Fig. 8) and in Table~\ref{tab:S11}. This subsection gives the declarations in full, the design as run, the Monte Carlo replicates, the realized false-event rates, the mismatch costs, the site-matched array and the results pooled over the replicates.
+
+The declaration fixed seven elements. The seeds derive from a root seed (20261005), from which one stream per anatomy and purpose is spawned. The 36 locations per anatomy are newly drawn in the 10–20 mm band (12 per orientation stratum), vertex-disjoint from the exploratory ones where a stratum allows. The test is the two-sided sign-flip test, exact up to 20 non-zero location differences and otherwise estimated from 20,000 random sign patterns. The effect size is the paired S50 ratio with a location-bootstrap interval of 1,000 resamples.
+
+The null data are separate segments for the whitener, for fitting the thresholds, for the held-out check and for a 20-min evaluation of the false-event rates of the frozen and the rate-matched thresholds. Each event has 5 noise replicates, the first confirmatory and the others measuring Monte Carlo variability. The mismatched detector has templates at the geometric midpoints between the injected morphologies, candidate patterns from a single-compartment BEM, and a coregistration error of 2 mm and 2° shared by all arrays.
+
+The run was made at a single code version with the configuration as declared and is complete in all nine anatomies. Every random stream was spawned from the root seed 20261005 by anatomy and purpose (10 purposes), and the noise replicates of an event from its event stream. The exception is the random sign patterns of the sign-flip test, which use the fixed seed 0 of the test's implementation in every anatomy, family and replicate (Table~\ref{tab:S17}). The 36 locations per anatomy (12 in each of the 3 orientation strata) were drawn from pools of 109–2,249 candidate vertices per stratum. The 72 exploratory locations had been left out of the pools, so that no stratum shares a vertex with the exploratory run.
+
+The nearest exploratory location lay 2.7 mm away at the closest and a median 13.6–18.6 mm away over the anatomies. The locations' median depth was 12.9–17.4 mm; the adult's locations lay 17 in the frontal lobe, 10 in the parietal, 8 in the temporal and 1 in the occipital lobe. Each location received 18 focal events per replicate (6 strengths of 10–320 nAm, morphologies stretched by 0.75, 1 and 1.5). This gave 648 events per replicate, 3,240 per anatomy over the five replicates and 29,160 in all.
+
+The null data were 10 min for the whitener, 20 min for the thresholds (20 events above each frozen threshold), 20 min held out and 20 min of evaluation null, 70 min in all. The practical detector's dictionary held 452–728 candidate patterns over the anatomies. The S50 intervals use 1,000 location resamples. The oracle's realized per-trial false-positive probability on the held-out null was 0.00093–0.0011 over the anatomies and arrays, against the declared 0.001.
+
+With more than 20 non-zero location differences, the run estimated each sign-flip p from 20,000 random sign patterns (resolution 5 $\times 10^{-5}$), and an estimate was zero where no sampled pattern reached the observed statistic. The differences are integer counts, so the exact p over all $2^{n}$ sign patterns follows from the distribution of the signed sum. We computed it from the stored differences for all 540 cells of anatomy and comparison; the 47 cells that the run had enumerated itself were reproduced exactly. Every p reported here and in the main text is this exact value. The run's estimates differ from it by at most 0.0073 and give the same Holm decision for every anatomy in all 25 families. Where an estimate was zero, the exact Holm-adjusted value reaches 0.00040.
+
+Before the run, the confirmatory endpoint code was applied to the exploratory run's stored states. It reproduced the exploratory location counts, p values and S50 ratios exactly in all 36 comparisons (nine anatomies, both OPM arrays, both detectors).
+
+The mismatch variant's templates sit at the geometric midpoints of the injected stretches (0.87 and 1.22: 2 templates), each injected morphology lying 13–18\,\% away from the nearest template. Its candidate patterns come from a 1-layer BEM. One coregistration error per anatomy (2 mm, 2°), shared by all arrays, displaced the candidate dictionary by a median of 1.6–4.9 mm at the spike locations over the anatomies (0.7–5.9 mm over all locations). Its thresholds were set for a nominal 1 false event per minute on the calibration null and frozen. Like the primary detector's, they were also re-fitted on the held-out null as a secondary analysis.
+
+In each of the five Monte Carlo replicates the endpoint passed in all nine anatomies (45 of 45 anatomy-replicate cells; Table~\ref{tab:S12}). Over the replicates the ratio ranged from 1.15 to 1.49. Its SD within an anatomy was 0.041–0.089 in log\textsubscript{2} units, that is, 2.9–6.4\,\% from replicate to replicate. Pooled over the replicates (3,240 events per anatomy), the ratios were 1.22–1.44 with a Holm-adjusted p of at most 0.0013. The oracle's pooled ratios were 1.35–1.60 and the mismatched detector's 1.23–1.45, each family passing in all nine anatomies. The confirmatory ratio was 0.89–1.14 times the exploratory one, below it in 6 of the 9 anatomies, and the exploratory point estimate lay within the confirmatory interval in 6.
+
+\FloatBarrier
+\begin{landscape}
+\centering
+\captionof{table}{Replicates of the confirmatory endpoint. The declared endpoint in every noise replicate: dense OPM array against Neuromag's 306 channels, practical detector, thresholds frozen for a nominal 1 false event per minute, focal spikes 10–20 mm below the scalp at 36 locations per anatomy.}\label{tab:S12}
+\footnotesize
+\begin{tabularx}{\linewidth}{L{3.0cm}L{4.6cm}L{1.0cm}L{1.3cm}L{2.0cm}YL{1.8cm}L{1.4cm}}
+\toprule
+Head & Ratio per replicate & SD (\%) & Largest p & Confirmatory / exploratory & Pooled ratio & Pooled locations & Pooled Holm p \\
+\midrule
+Adult & 1.45, 1.46, 1.36, 1.39, 1.41 & 2.9\,\% & <0.0001 & 1.06 & 1.41 [1.22, 1.56] & 33 / 0 & <0.0001 \\
+School-age size & 1.44, 1.36, 1.49, 1.49, 1.39 & 4.2\,\% & <0.0001 & 0.90 & 1.44 [1.32, 1.53] & 35 / 0 & <0.0001 \\
+2-year size & 1.47, 1.38, 1.44, 1.43, 1.34 & 3.7\,\% & <0.0001 & 0.89 & 1.42 [1.25, 1.53] & 34 / 1 & <0.0001 \\
+24-month template & 1.28, 1.21, 1.23, 1.21, 1.37 & 5.4\,\% & <0.0001 & 0.89 & 1.25 [1.18, 1.37] & 34 / 1 & <0.0001 \\
+18-month template & 1.43, 1.30, 1.32, 1.49, 1.46 & 6.2\,\% & <0.0001 & 1.07 & 1.39 [1.30, 1.53] & 35 / 0 & <0.0001 \\
+12-month template & 1.39, 1.27, 1.31, 1.32, 1.30 & 3.6\,\% & <0.0001 & 0.95 & 1.31 [1.22, 1.46] & 33 / 2 & <0.0001 \\
+Child A & 1.27, 1.16, 1.24, 1.26, 1.19 & 4.0\,\% & 0.031 & 0.99 & 1.22 [1.09, 1.33] & 26 / 7 & 0.0013 \\
+Child B & 1.35, 1.33, 1.25, 1.15, 1.29 & 6.4\,\% & 0.0011 & 1.14 & 1.27 [1.12, 1.44] & 26 / 6 & <0.0001 \\
+Child C & 1.30, 1.24, 1.27, 1.35, 1.25 & 3.5\,\% & 0.00011 & 0.90 & 1.28 [1.17, 1.38] & 30 / 2 & <0.0001 \\
+\bottomrule
+\end{tabularx}
+\tablenotes{Ratio: the paired S50 ratio Neuromag/OPM in each of the 5 noise replicates (replicate 0, the confirmatory one, first), the same events with independent noise. SD: the replicate-to-replicate spread of the ratio in percent, $2^{s}-1$ with $s$ the SD of the log\textsubscript{2} ratio. Largest p: the largest uncorrected sign-flip p over the replicates. Confirmatory / exploratory: replicate 0's ratio over the exploratory run's. Pooled: all 5 replicates together (3,240 events), with its 95\,\% location-bootstrap interval, the locations favoring the OPM/Neuromag, and the sign-flip p Holm-adjusted over the anatomies. OPM, optically pumped magnetometer; SD, standard deviation.}
+\end{landscape}
+
+The frozen thresholds were set for a nominal 1 false event per minute on the calibration null (Table~\ref{tab:S13}). Over the 27 anatomy-and-array combinations they realized 0.65–1.75 per minute on the held-out null and 0.65–2.25 on the evaluation null, the exact Poisson interval excluding the target in 5 and 5 of them. The thresholds matched on the held-out null realized 0.45–2.05 per minute on the evaluation null (4 excluding the target).
+
+Between the endpoint's two arrays, an approximate equal-rate test gave p < 0.05 in 2 of the 9 anatomies with the frozen thresholds, the 24-month template and child B, once in each direction. In the 24-month template Neuromag had 2.25 against the dense array's 1.25 per minute, and in child B 0.70 against 1.40. With the matched thresholds the test gave p < 0.05 in 1 (school-age size). The test is a conditional binomial test on the two event counts and only indicative, because the arrays share the background and room noise. Over all 72 such tests (two OPM arrays, two detectors, two threshold rules, nine anatomies), 9 had p < 0.05. With the matched thresholds the endpoint's ratios were 1.27–1.50 (Holm-adjusted p at most 0.010; pooled over the replicates 1.20–1.49), against 1.27–1.47 with the frozen ones.
+
+\begin{table}[tbp]
+\caption{Realized false-event rates in the confirmatory run. False events per minute, practical detector: at the frozen thresholds (set for a nominal 1 per minute on 20 min of calibration null) on the 20 min of held-out null and on the 20 min of evaluation null, and at the thresholds matched to 1 per minute on the held-out null, evaluated on the evaluation null, which no threshold saw.}\label{tab:S13}
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{L{2.9cm}YYYL{2.2cm}}
+\toprule
+Head & Neuromag (306 channels) & Dense OPM array & Site-matched OPM array & Equal-rate p, dense vs Neuromag (frozen; matched) \\
+\midrule
+Adult & 1.20 / 1.05 / 0.95 & 1.10 / 1.20 / 1.20 & 1.20 / 1.30 / 1.05 & 0.77; 0.54 \\
+School-age size & 1.60 / 1.35 / 0.70 & 0.90 / 1.25 / 1.60 & 1.00 / 0.65 / 0.70 & 0.89; 0.011 \\
+2-year size & 1.15 / 1.45 / 1.25 & 1.40 / 1.40 / 1.00 & 1.30 / 1.55 / 1.15 & 1.0; 0.55 \\
+24-month template & 1.75 / 2.25 / 1.45 & 1.20 / 1.25 / 1.15 & 1.10 / 1.15 / 0.80 & 0.022; 0.49 \\
+18-month template & 0.75 / 0.80 / 1.15 & 0.65 / 1.15 / 1.25 & 1.25 / 1.00 / 0.70 & 0.34; 0.89 \\
+12-month template & 1.35 / 1.05 / 0.90 & 0.75 / 1.00 / 1.40 & 1.15 / 0.75 / 0.45 & 1.0; 0.18 \\
+Child A & 0.95 / 0.75 / 0.80 & 1.15 / 0.90 / 0.90 & 1.40 / 1.35 / 1.05 & 0.73; 0.86 \\
+Child B & 0.70 / 0.70 / 1.35 & 1.55 / 1.40 / 1.05 & 1.65 / 1.55 / 1.20 & 0.044; 0.47 \\
+Child C & 1.10 / 1.40 / 1.35 & 1.60 / 2.15 / 1.50 & 0.75 / 1.65 / 2.05 & 0.096; 0.79 \\
+\bottomrule
+\end{tabularx}
+\tablenotes{Each array's entries: held-out, frozen / evaluation, frozen / evaluation, matched. Last column: the approximate equal-rate test between the dense array and Neuromag on the evaluation null, p with the frozen and with the matched thresholds. OPM, optically pumped magnetometer.}
+\end{table}
+
+Each system's S50 with the mismatched detector over its S50 with the primary one was 1.02–1.14 for Neuromag, 1.01–1.12 for the dense array and 0.98–1.13 for the site-matched array (Table~\ref{tab:S14}). The interval lay above 1 in 5, 2 and 4 of the 9 anatomies, respectively (bounds printed as 1.00 are counted by their unrounded values). The change of the S50 ratio, Neuromag's cost over the dense array's, was 0.91–1.11, every interval spanning 1 (0.96–1.03 pooled over the replicates). No differential cost was established, which does not show that the two costs are equal.
+
+The mismatched detector's ratios were 1.23–1.50 with its frozen thresholds (Holm-adjusted p at most 0.026). With thresholds re-fitted on the held-out null they were 1.16–1.51. Child B then did not pass in replicate 0 (Holm-adjusted p 0.072) but did pass pooled over the replicates (9 of 9 anatomies passing).
+
+\FloatBarrier
+\begin{landscape}
+\centering
+\captionof{table}{The declared detector-mismatch variant. Dense OPM array against Neuromag's 306 channels, replicate 0.}\label{tab:S14}
+\footnotesize
+\begin{tabularx}{\linewidth}{L{3.0cm}YL{1.6cm}L{1.3cm}YYYY}
+\toprule
+Head & Ratio, mismatched detector & Locations, OPM / Neuromag & Holm p & Cost, Neuromag & Cost, dense array & Ratio change & Re-fitted thresholds: ratio (Holm p) \\
+\midrule
+Adult & 1.50 [1.30, 1.67] & 27 / 0 & <0.0001 & 1.09 [1.01, 1.22] & 1.05 [0.99, 1.17] & 1.03 [0.91, 1.16] & 1.48 [1.27, 1.64] (<0.0001) \\
+School-age size & 1.39 [1.23, 1.52] & 28 / 2 & <0.0001 & 1.03 [0.97, 1.11] & 1.07 [0.99, 1.14] & 0.97 [0.89, 1.05] & 1.42 [1.26, 1.54] (<0.0001) \\
+2-year size & 1.49 [1.26, 1.67] & 29 / 0 & <0.0001 & 1.06 [1.02, 1.14] & 1.05 [0.99, 1.13] & 1.01 [0.93, 1.09] & 1.51 [1.28, 1.69] (<0.0001) \\
+24-month template & 1.42 [1.26, 1.68] & 29 / 0 & <0.0001 & 1.14 [1.05, 1.29] & 1.03 [0.98, 1.09] & 1.11 [0.99, 1.27] & 1.39 [1.24, 1.65] (<0.0001) \\
+18-month template & 1.44 [1.25, 1.65] & 28 / 1 & <0.0001 & 1.03 [0.98, 1.09] & 1.02 [0.96, 1.10] & 1.01 [0.93, 1.09] & 1.38 [1.21, 1.58] (<0.0001) \\
+12-month template & 1.43 [1.25, 1.60] & 28 / 2 & <0.0001 & 1.04 [0.97, 1.10] & 1.01 [0.97, 1.06] & 1.02 [0.95, 1.10] & 1.43 [1.26, 1.63] (<0.0001) \\
+Child A & 1.23 [1.06, 1.41] & 15 / 4 & 0.026 & 1.06 [1.01, 1.12] & 1.10 [1.01, 1.17] & 0.97 [0.89, 1.08] & 1.26 [1.10, 1.43] (0.010) \\
+Child B & 1.23 [1.02, 1.48] & 20 / 7 & 0.0089 & 1.02 [0.93, 1.11] & 1.12 [1.00, 1.25] & 0.91 [0.79, 1.06] & 1.16 [1.01, 1.39] (0.072) \\
+Child C & 1.34 [1.18, 1.50] & 26 / 4 & <0.0001 & 1.08 [1.02, 1.15] & 1.05 [0.94, 1.15] & 1.03 [0.94, 1.16] & 1.27 [1.15, 1.44] (<0.0001) \\
+\bottomrule
+\end{tabularx}
+\tablenotes{Ratio: the paired S50 ratio Neuromag/OPM with the mismatched detector at its frozen thresholds, with its 95\,\% location-bootstrap interval, the locations favoring the OPM/Neuromag and the sign-flip p Holm-adjusted over the anatomies. Cost: each system's S50 with the mismatched detector over its S50 with the primary detector (above 1: the mismatch costs that system strength). Ratio change: Neuromag's cost over the dense array's, the factor by which the mismatch changes the S50 ratio. Re-fitted: the ratio with the mismatched detector's thresholds re-fitted to a nominal 1 false event per minute on the held-out null, with its Holm-adjusted p. OPM, optically pumped magnetometer.}
+\end{landscape}
+
+With the practical detector, the site-matched array's S50 ratios were 0.99–1.30 (Table~\ref{tab:S15}). The interval lay above 1 in 5 anatomies and spanned 1 in 4 (bounds printed as 1.00 are counted by their unrounded values). Holm over the anatomies passed in 5 (the adult, school-age size, 2-year size, 18-month template and 12-month template) and not in the 24-month template, child A, child B and child C. With re-fitted thresholds 5 anatomies passed, with the oracle 4 (ratios 0.99–1.43) and with the mismatched detector 6 (ratios 1.03–1.36).
+
+Pooled over the replicates, 7 anatomies passed with the practical detector (ratios 1.06–1.27; failing: child A and child B), 7 with the oracle and 6 with the mismatched detector. In the school-aged children the site-matched array's advantage was not established in replicate 0 under any detector (ratios 0.99–1.10 with the practical detector). Pooled over the replicates, child C passed with the practical detector and the oracle but not with the mismatched detector.
+
+\FloatBarrier
+\begin{landscape}
+\centering
+\captionof{table}{The site-matched OPM array in the confirmatory run. Site-matched OPM array against Neuromag's 306 channels (secondary family), focal spikes 10–20 mm below the scalp.}\label{tab:S15}
+\footnotesize
+\begin{tabularx}{\linewidth}{L{3.0cm}YL{1.6cm}L{1.3cm}YYYY}
+\toprule
+Head & Practical: ratio & Locations, OPM / Neuromag & Holm p & Re-fitted: ratio (Holm p) & Oracle: ratio (Holm p) & Mismatched: ratio (Holm p) & Pooled: ratio (Holm p) \\
+\midrule
+Adult & 1.30 [1.10, 1.46] & 17 / 5 & 0.035 & 1.32 [1.13, 1.45] (0.017) & 1.21 [1.02, 1.34] (0.23) & 1.26 [1.08, 1.40] (0.0038) & 1.26 [1.11, 1.36] (0.00066) \\
+School-age size & 1.28 [1.10, 1.43] & 20 / 7 & 0.048 & 1.32 [1.15, 1.45] (0.0097) & 1.43 [1.26, 1.57] (0.00015) & 1.22 [1.09, 1.33] (0.0033) & 1.27 [1.13, 1.37] (0.0015) \\
+2-year size & 1.16 [1.05, 1.35] & 19 / 2 & 0.0031 & 1.12 [1.03, 1.29] (0.0097) & 1.18 [1.09, 1.33] (0.00013) & 1.13 [1.06, 1.25] (0.00085) & 1.19 [1.10, 1.35] (<0.0001) \\
+24-month template & 1.06 [0.95, 1.17] & 18 / 6 & 0.067 & 1.05 [0.94, 1.17] (0.10) & 1.17 [1.02, 1.38] (0.066) & 1.19 [1.04, 1.39] (0.0038) & 1.11 [1.03, 1.22] (0.0054) \\
+18-month template & 1.30 [1.15, 1.48] & 23 / 2 & <0.0001 & 1.30 [1.14, 1.47] (0.00024) & 1.27 [1.10, 1.44] (<0.0001) & 1.36 [1.21, 1.51] (<0.0001) & 1.26 [1.15, 1.40] (<0.0001) \\
+12-month template & 1.30 [1.15, 1.48] & 20 / 4 & 0.0084 & 1.29 [1.14, 1.48] (0.017) & 1.25 [1.04, 1.49] (0.011) & 1.27 [1.12, 1.44] (0.0075) & 1.21 [1.13, 1.34] (0.00062) \\
+Child A & 0.99 [0.84, 1.14] & 8 / 8 & 1.0 & 0.99 [0.85, 1.14] (1.0) & 1.01 [0.85, 1.20] (1.0) & 1.03 [0.88, 1.18] (1.0) & 1.06 [0.95, 1.19] (0.39) \\
+Child B & 1.08 [0.99, 1.20] & 13 / 6 & 1.0 & 1.05 [0.95, 1.20] (1.0) & 0.99 [0.87, 1.11] (1.0) & 1.07 [0.97, 1.19] (1.0) & 1.11 [1.01, 1.22] (0.24) \\
+Child C & 1.10 [1.00, 1.27] & 15 / 6 & 0.15 & 1.12 [1.01, 1.28] (0.10) & 1.12 [1.00, 1.28] (0.55) & 1.06 [0.98, 1.18] (0.23) & 1.12 [1.02, 1.26] (0.038) \\
+\bottomrule
+\end{tabularx}
+\tablenotes{Ratio: the paired S50 ratio Neuromag/OPM with its 95\,\% location-bootstrap interval. Locations: those favoring the OPM/Neuromag. Holm p: the sign-flip p Holm-adjusted over the anatomies within the column's family; all Holm p values are exact (Section~\ref{sec:S7.5}). Practical: thresholds frozen for a nominal 1 false event per minute. Re-fitted: thresholds matched on the held-out null. Oracle: known source, waveform and time. Mismatched: the declared mismatch variant at its frozen thresholds. Pooled: the practical detector over all 5 noise replicates. OPM, optically pumped magnetometer.}
+\end{landscape}
+
+The confirmatory run does not test the fitted helmet, the deeper bands, localization, the noise-model alternatives of Section~\ref{sec:S3} or a covariance mismatch of the detector. Its detector remains idealized in the ways named in the main text (Section 4.4), and the mismatch variant is one declared departure, not a model of clinical review.
+
+\section{Parameters and analysis choices}\label{sec:S8}
+
+\subsection{Resamples, seeds and time-domain parameters}\label{sec:S8.1}
+
+Table~\ref{tab:S16} gives the number of bootstrap resamples behind every interval family of the study, Table~\ref{tab:S17} the random seed of every simulation and resampling, and Table~\ref{tab:S18} the parameters of the time-domain model of the spike study. The confirmatory run's resample count and seeds are included; its results are in the main text (Section 3.6) and in Section~\ref{sec:S7}.
+
+The per-target result tables of the adult comparison, the smaller heads and the helmet fitted at the adult's gap are accompanied by tables of every target's depth below the scalp at full precision. These give each target's membership of each depth bin, depth stratum, spike depth band and orientation stratum as half-open bins. Every count stated in the text, such as child B's targets shallower than 10 mm, can therefore be reproduced exactly; the adult's detectabilities are given per target in the same way.
+
+\begin{table}[tbp]
+\caption{Bootstrap resamples behind each interval family. All intervals are percentile intervals.}\label{tab:S16}
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{L{0.44\textwidth}YL{0.2\textwidth}}
+\toprule
+Intervals & Unit resampled & Resamples \\
+\midrule
+Adult: primary comparisons (all estimators), lobes, triaxial control; OPM-axis decomposition & parcel labels (70) & 1,000; 1,000 \\
+Adult: sensitivity analyses (sensor noise, background, Neuromag noise, head position, scalp gap, joint grid); extended sources & parcel labels & 200; 200 \\
+Adult: frequency bands & targets & 200 \\
+Adult: depth, distance and orientation bins; medial wall & parcel labels present in the bin (depth bins); otherwise none (medians only) & 1,000; none \\
+Smaller heads, top contact, dense array (D, Δ, strata) & parcels of each head & 1,000 \\
+Smaller heads: site-matched array; centered, back, laterally centered and true-contact placements and both helmets scaled with the head; channel-count control & parcels of each head & 200; 200; 200 \\
+Smaller heads: peak-channel and mean-power SNR, shifted and rotated placements, sensitivity analyses, patches & --- & none (medians only) \\
+Spikes, exploratory runs and matched-rate re-analysis (S50, paired S50 ratio) & locations & 1,000 \\
+Spikes, confirmatory run & locations & 1,000 \\
+Localization: paired error differences & events & 2,000 \\
+Noise-model sensitivity; helmet fitted at the adult's gap; validation against the measured covariance & parcels & 1,000; 1,000 (dense array, primary helmets) or 200; 1,000 \\
+Motion thresholds & 32 draws, not resampled & 10th to 90th percentiles \\
+\bottomrule
+\end{tabularx}
+\tablenotes{Where a cell lists several families, the resample counts follow in the same order, separated by semicolons. D: OPM detectability relative to Neuromag (dB); Δ: a smaller head's D minus the adult's; OPM: optically pumped magnetometer; S50: the source strength for 50\,\% detection; SNR: signal-to-noise ratio.}
+\end{table}
+
+\begin{table}[tbp]
+\caption{Random seeds of the simulations and resamplings.}\label{tab:S17}
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{YL{0.3\textwidth}}
+\toprule
+Analysis & Seed \\
+\midrule
+Adult comparison: background grid and targets; extended-source bootstrap; convergence subset; frequency bands; OPM-axis decomposition; near-mesh check; BEM-sphere check & 2026; 1; 2; 2026; 2026; 11; 5 \\
+Adult comparison: depth-bin bootstrap & 2026 \\
+Adapted benchmarks: \citet{hunold2016} (sources; noise); \citet{goldenholz2009} & 2016; 7; 2009 \\
+Smaller heads: parcel bootstrap (templates and scaled adults; children); patch centers; usefulness strata; helmet fitted at the adult's gap & 7; 8; 2027; 0; 2026 \\
+Noise-model sensitivity and validation against the measured covariance (parcel bootstraps and surrogates) & 2026; 2026 \\
+Spikes, exploratory runs (the same in all 9 anatomies): detection; location bootstrap; localization; the localization study's held-out null data; the localization study's bootstrap of the Neuromag-subset comparisons & 44; 7; 45; 46; 47 \\
+Spikes, confirmatory run: root seed, with one stream per anatomy and purpose (10 purposes) and the 5 noise replicates of every event spawned from it (key: anatomy, purpose, replicate); sign-flip Monte Carlo (fixed, every anatomy and replicate) & 20261005; 0 \\
+Head motion: coupling draws; time course & 2027; 2028 \\
+\bottomrule
+\end{tabularx}
+\tablenotes{Where a cell lists several analyses, the seeds follow in the same order, separated by semicolons. BEM: boundary element model; OPM: optically pumped magnetometer.}
+\end{table}
+
+\begin{table}[tbp]
+\caption{Time-domain model of the spike study. The settings are the same in every anatomy.}\label{tab:S18}
+\centering\footnotesize
+\begin{tabularx}{\textwidth}{L{0.22\textwidth}Y}
+\toprule
+Element & Setting \\
+\midrule
+Cortical background & independent Gaussian series, power spectrum $1/f^{x}$ ($x = 1$) above 0.5 Hz and flat below; band-filtered, scaled to $s^2 a_i$ \\
+Room field & the 8 coefficients synthesized from the empty-room cross-spectra (Welch, 4,096-sample segments), scaled to the fitted covariance; not projected out \\
+Sensor noise & white (OPM 15 fT/√Hz); no OPM frequency response (a first-order 100-Hz response only in the band analysis) \\
+Filter, sampling & 1–40 Hz, Butterworth of order 4, zero phase, also applied to the spike templates; simulated at 600.6 Hz, every 4th sample kept (no further anti-aliasing filter): 150.2 Hz \\
+Segments & 30 s, generated 2 s longer at each end and cropped; one realization shared by all arrays; a spike every 2 s \\
+Candidate field patterns & 10-mm grid without the true sources: 716 (adult); 536, 447 (scaled adults); 517, 478, 441 (templates, oldest first); 702, 623, 671 (children A--C) \\
+Null data & detection: whitener 10 min, thresholds 20 min (then frozen), held-out 20 min, confirmatory evaluation 20 min; localization: covariance 5 min, thresholds 10 min, held-out 10 min \\
+\bottomrule
+\end{tabularx}
+\tablenotes{$s^2 a_i$: the moment variance of background source $i$, the variance per unit area $s^2$ times the area $a_i$ of the source's cortical cell (Section~\ref{sec:S3}). OPM: optically pumped magnetometer.}
+\end{table}
+
+\subsection{Analysis choices made after results were known}\label{sec:S8.2}
+
+Two noise conditions were named in the analysis configuration before any simulation: sensor plus brain noise, the primary condition, and the room field projected out. Whole-cortex results are reported in both conditions and regional results with sensor plus brain noise. No endpoint, test or margin of the original study was declared before its analyses. The exploratory spike endpoint (the dense array against Neuromag's 306 channels at 10–20 mm with the practical detector) was chosen from 24 comparisons per OPM array (Section~\ref{sec:S7}). The regions were chosen from the epilepsy literature (Section~\ref{sec:S4}), and rankings among them are exploratory. Top contact, the primary placement of the fixed helmet, was chosen after the adult's whole-cortex results were known. The laterally centered placement and the helmet scaled about the laterally centered head were added after the first pediatric results were known, to remove the templates' lateral offset; the 12 source-blind placements bound the first choice (Section~\ref{sec:S5}). Further analyses were added after the main results were known, without changing the model: the check of the noise model against the measured Neuromag covariance and the sensitivity analyses (Section~\ref{sec:S3}), the MRI quality check of the school-aged children (Section~\ref{sec:S4}) and the helmet fitted at the adult's gap (Section~\ref{sec:S5}). Each reproduces the results it builds on to within rounding. The confirmatory spike run was designed before it was run (main text, Section 2.5) and is the only pre-specified test of the study.
+
+The model also changed while results were known. Earlier versions took the OPM sensitive axes from the adult's stored outer-skin normals, which are nearly radial, and placed the adult's head surface outside its MRI scalp, by a median of 1.1 mm; they also differed in how the OPM cell's clearance from the head was checked. The final model puts every head's surface on its MRI scalp, so that the clearance rule moves only the sites the anatomy demands and the OPM standoff is the same (6.99–7.00 mm) above every head's own MRI scalp (the templates' scalp convention differs from the adult's; Section~\ref{sec:S4}). It takes the sensitive axes from that surface's own triangles (Section~\ref{sec:S3}). This change to equal OPM standoff was made after the pediatric results were known. It lowered Δ by 0.11–0.27 dB in the scaled adults and templates (the school-aged children exist only in the final model). It raised the adult's projected dense ratio (1.048 with the earlier construction, 1.073 with the final sites and the earlier axes, 1.115 in the final model). It made the laterally centered scaled-helmet Δ of the scaled adults and templates negative. It strengthened the adult's exploratory spike result at 10–20 mm (earlier 8/2 locations favoring the OPM/Neuromag, p = 0.037, S50 ratio 1.29; final 11/1 and 1.36). Every array change redraws the noise, because an array's channel count changes the random stream. The dense array's advantage at 10–20 mm held in every version, but which deeper cells reach p < 0.05 did not. The site-matched array's deficit at 45–70 mm in two earlier versions (0/7 and 1/9 locations, the latter with p = 0.016) does not reach p < 0.05 in the final model (3/6 locations, p = 0.40). Results that depend on these choices are post hoc, the earlier results are not part of the stored results, and persistence across versions is not replication. The main text states the post hoc caveat once (Section 2.6) and reports every exploratory result as such.
+
+\bibliographystyle{elsarticle-harv}
+\bibliography{references}
+\end{document}
