@@ -513,7 +513,7 @@ at e53bea8; medians over the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 1
   which on-scalp sensors also see more strongly, it shrinks to about 1.14x overall and to 1.05-1.07x
   for deep sources.
 
-Revision results (run at 10e37b9 after referee round 1; dense | matched OPM vs Neuromag combined,
+Revision results (run at 10e37b9 in the revision; dense | matched OPM vs Neuromag combined,
 intrinsic + brain noise, OPM 15 fT/sqrt(Hz) unless stated; parcel-bootstrap 95 % intervals)
 * Per-depth-bin intervals (`noise_sensitivity_summary.json`, the sweep at 15 fT/sqrt(Hz), which
   reproduces the stored G2 medians exactly): dense 1.60 [1.55, 1.65] at 10-15 mm, 1.13 [1.12, 1.14] at
@@ -1185,7 +1185,7 @@ means the 2-year template; the 18- and 12-month templates are named.
   intervals contain no between-subject variability. Delta measures a change in relative
   performance under these matching assumptions, not a clinical benefit.
 
-Revision results (run at 10e37b9 after referee round 1; comparisons: dense OPM vs Neuromag combined,
+Revision results (run at 10e37b9 in the revision; comparisons: dense OPM vs Neuromag combined,
 intrinsic + brain noise, area-weighted medians without the medial wall, parcel-bootstrap 95 % intervals)
 * MRI quality check: children A-C are usable. Their surfaces share the T1's frame (within 0.0001 mm),
   their white surfaces are registered to the T1 (no rigid shift raises the white/grey contrast; the T1

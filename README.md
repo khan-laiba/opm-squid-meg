@@ -55,7 +55,7 @@ caveats in `docs/methods.md` and `results/g2/G2_report.md`:
   noise at low frequencies (white noise assumed); and the measured brain noise's spatial pattern,
   which the cortical background matches only in its median gradiometer level (per channel the
   model/measured ratio spans 0.16-1.90).
-- Noise-model checks added after referee round 1 (`docs/methods.md` section 8; detectability only):
+- Noise-model checks added in the revision (`docs/methods.md` section 8; detectability only):
   near-skull cortex, coloured (1/f + white) OPM noise and cardiac and ocular sources leave the dense
   ratio between 1.07 and 1.16 at 15 fT/sqrt(Hz); it reaches 1 at an OPM white noise of 31.5 [28.5,
   34.9] fT/sqrt(Hz) (matched 16.7). Against the measured Neuromag noise the model predicts 0.73 of the
@@ -111,8 +111,8 @@ caveats in `docs/methods.md` and `results/g2/G2_report.md`:
 Pediatric findings (G3B, NEW), conditional on one adult head, three average infant templates of
 one database (24, 18 and 12 months; O'Reilly et al. 2021), three individual school-aged children of
 one dataset (7.8-8.7 years; OpenNeuro ds005234, Fadeev et al. 2024; their skull modelled because the
-dataset's segmentation failed, their fiducials transferred from the adult; an MRI quality check after
-referee round 1 found their surfaces registered to their MRIs and their scalps on the MRI head boundary
+dataset's segmentation failed, their fiducials transferred from the adult; an MRI quality check in
+the revision found their surfaces registered to their MRIs and their scalps on the MRI head boundary
 as the adult's is) and two scaled copies of
 the adult; the same Neuromag helmet, sensors and noise for every head; OPM arrays refitted to each head with the
 adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report.md`:
@@ -139,7 +139,7 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   with the head, laterally centred), the SQUID gains at least as much. The children's arrays also
   have fewer OPM sites (174, 155, 151, 157 and 144; school-aged children 155, 153 and 167; adult
   208); at an equal site count Delta would be larger.
-- A helmet fitted to each head at the adult's own gap (29.55 mm; added after referee round 1,
+- A helmet fitted to each head at the adult's own gap (29.55 mm; added in the revision,
   `results/g3b_constant_gap/`) brings Delta to +0.02 to +0.15 dB in the size controls and templates
   (+0.03 [+0.00, +0.05] dB for the school-age size; every template interval includes 0) and to -0.30
   and -0.39 dB in children A and B (child C +0.01 dB, its helmet limited by clearance); within each of
@@ -254,7 +254,7 @@ python3.12 -m venv .venv
 .venv/bin/python -c "import mne; mne.datasets.sample.data_path(path='data/external')"  # ~1.6 GB download
 .venv/bin/python -c "import mne; [mne.datasets.fetch_infant_template(a, subjects_dir='data/external/infant_subjects') for a in ('2yr', '18mo', '12mo')]"  # ~1.15 GB (G3B, pediatric G4)
 .venv/bin/python scripts/fetch_school_subjects.py  # ~135 MB: three school-aged children of OpenNeuro ds005234 (G3B, pediatric G4) and their MRI quality-check inputs
-bash scripts/run_all.sh     # tests, then every milestone in order, then the report figures and the site (~11 h on a 10-core laptop: adult ~2 h, eight pediatric G4 runs ~1 h each; the analyses added after referee round 1, among them nine confirmatory spike runs, add to this)
+bash scripts/run_all.sh     # tests, then every milestone in order, then the report figures and the site (~11 h on a 10-core laptop: adult ~2 h, eight pediatric G4 runs ~1 h each; the analyses added in the revision, among them nine confirmatory spike runs, add to this)
 ```
 
 The MRI quality check of the school-aged children (`scripts/study_children_qc.py`) also needs their T1
