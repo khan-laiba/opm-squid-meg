@@ -11,8 +11,8 @@ and figure resolving, and two independent referees, Claude Fable 5.1 (maximum ef
 subagent) and GPT-6 Astra (maximum reasoning, Codex CLI), each return "accept" or "minor
 revisions" in the same round. Each referee sees only the files.
 
-**Site:** https://khan-laiba.github.io/opm-squid-meg/ (served from the `gh-pages` branch; the round-1
-version is live, and the revised version will replace it). The repository is public (code MIT; report,
+**Site:** https://khan-laiba.github.io/opm-squid-meg/ (served from the `gh-pages` branch; the final
+version replaces the round-1 version). The repository is public (code MIT; report,
 figures and result files CC BY 4.0).
 
 ## Status
@@ -22,8 +22,8 @@ figures and result files CC BY 4.0).
 | 1. Foundations: number provenance, new figures from stored outputs, verified literature table, site integration | done | 31,150 sourced facts; figures R1-R10; 15 studies (14 verified in full text); 197 tests pass |
 | 2. Draft the report as one narrative | done | about 8,500 words of main text, 10 figures, 3 tables, 39 references |
 | 3. Internal verification: numbers, claims against evidence, methods completeness, build, tests, links | done | 166 checker issues resolved; supplementary pages cleaned for publication; 197 tests pass |
-| 4. Referee rounds (both referees, same round) | done | round 1: major revisions from both; round 2: minor revisions (Fable 5.1), major revisions (GPT-6 Astra); round 3: minor revisions from both |
-| 5. Deploy to GitHub Pages and check the live site | first deployment done | the round-1 version is live; redeploy after acceptance |
+| 4. Referee rounds (both referees, same round) | done | round 1: major revisions from both; round 2: minor revisions (Fable 5.1), major revisions (GPT-6 Astra); round 3: minor revisions from both; their minor points applied, and the final version sent to both for confirmation (round 4) |
+| 5. Deploy to GitHub Pages and check the live site | in progress | the final version is deployed from the commit that applies the round-3 minor points; live check follows |
 
 ## Referee rounds
 
@@ -47,7 +47,9 @@ figures and result files CC BY 4.0).
   comparison no longer read as selective compatibility, the template-convention bias stated as possible rather than
   certain, the 4,680-sample covariance described as the declared 60-s scenario, a pointer from Figure 7 to the
   interaction in Table S6, child C's within-head contrast attributed to the construction, the children's depth-strata
-  count, and 'an independent prediction' for the magnetometer brain noise.
+  count, and 'an independent prediction' for the magnetometer brain noise (fb7fd2f). The referees' remaining minor
+  points were then applied in a final pass (log, 2026-10-05), and the final version goes to both referees once more
+  as a confirmation round (round 4).
 
 ## Log
 
@@ -143,3 +145,21 @@ figures and result files CC BY 4.0).
   fiducial rules stated plainly, Figure 8's legend, S1/S6/S7/README wording, and the review labels removed from the
   revision scripts and the metadata of four results (scripts/neutralize_review_labels.py; no number changed).
   Round 3 goes to both referees next.
+- 2026-10-05: round 3 (fabd710) returned minor revisions from both referees, the acceptance condition; their wording
+  corrections were applied at once (fb7fd2f; 316 tests pass).
+- 2026-10-05: final pass on the referees' remaining minor points. Section 3.5 and the Abstract now lead with what fitting the
+  helmet restores within each head and what remains against the adult at top contact, each residual tied to its helmet
+  construction; the interaction stays in the main text with its per-head table. Section 2.2 is split, with the children's
+  skull, fiducials and MRI check as a list and the specific reason their anatomy is in doubt. The MRI check was run on the
+  18- and 12-month templates as well (`results/g3b_templates_qc/`, at fb7fd2f): their scalps lie 1.6 and 1.3 mm outside
+  their MRI head boundaries, like the 24-month template's, and the 18-month template is classed misregistered (its white
+  surface fits its T1 best after a 2.3-mm shift); this is stated in Sections 2.2, 3.5 and 4.3 and S1 D.3, with the two
+  scaled adults shown to carry the fitted-helmet result without the templates. Also: the OPM coverage rule and the three
+  adult gaps (Section 2.3); the spike detectors' whitener, the oracle's false-positive probability, the S50 rule and the
+  exact p (Section 2.5); 7,657 of 7,661 targets; scenario B's factor in the main text; Table 4's Feys et al. (2022)
+  analogue on the school-age scaled adult; keywords; the sample dataset's terms quoted with their source; the history
+  rewrite moved to Data and code availability; one phrase for the equal-site-count control. Four independent checkers
+  (numbers, referee coverage, coherence, code and docs) found no wrong number; their wording findings were fixed. Left to
+  the author: funding, competing-interests and contributions statements, an archive DOI, print-resolution figure files,
+  and confirming the sample dataset's terms with its providers. Next: deploy, check the live site, and a confirmation
+  round with both referees on the deployed version.

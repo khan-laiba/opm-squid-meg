@@ -867,7 +867,8 @@ Neuromag combined, matched OPM, dense OPM)
 * MRI quality check of the school-aged children (revision; `scripts/study_children_qc.py`,
   `results/g3b_children_qc/children_qc.json`, overlays `Figure_QC_*.png`; D-G3-QC): children A-C with the
   adult (whose dense scalp the same FreeSurfer tool made) and the 2-year template as references, the
-  surfaces exactly as G3B and G4 load them. Checks: the coordinate frames of every surface against each
+  surfaces exactly as G3B and G4 load them; afterwards the same check on the 18- and 12-month templates
+  (`--anatomies infant18mo infant12mo --skip-tests --out results/g3b_templates_qc`). Checks: the coordinate frames of every surface against each
   other and the T1 header; the white surface's registration to the T1 (the T1 edge across it, decomposed
   into a uniform offset, a translation and a rotation, and the rigid shift that maximises the white/grey
   contrast); the cortex near the scalp (white-surface area within 8 and 10 mm of the dense scalp and of
@@ -1198,7 +1199,11 @@ intrinsic + brain noise, area-weighted medians without the medial wall, parcel-b
   0.94, 1.22 and 0.36 mm), as the adult's does (1.35 mm; 1.08 mm). Their shallow cortex is therefore
   not the product of a misplaced scalp: the white surface lies within 8 mm of the scalp over 22, 83 and
   3.6 cm^2 (within 8 mm of the MRI head boundary over 6.8, 29 and 0.1 cm^2; adult none). The 2-year template's
-  scalp lies 1.64 mm outside its boundary (half-maximum edge 1.62 mm; verdict 'outside').
+  scalp lies 1.64 mm outside its boundary (half-maximum edge 1.62 mm; verdict 'outside'); the 18- and
+  12-month templates' scalps (run at fb7fd2f) lie 1.63 and 1.29 mm outside theirs (half-maximum edge 2.27
+  and 1.62 mm; verdicts 'misregistered' and 'outside': the 18-month template's white surface fits its T1
+  best after a 2.3-mm shift, contrast +41 %, against 0.5 mm in the other templates, with an edge
+  translation of 1.7 mm, both above the 1-mm tolerance; not repaired, not propagated).
 * Helmet fitted at the adult's gap: scale factors 0.855-0.921 (child C 0.941, clearance-bound). At the
   adult's gap Delta is +0.03 [+0.00, +0.05] dB (school-age size), +0.02 [-0.02, +0.06] dB (2-year size),
   +0.04 [-0.06, +0.19], +0.15 [-0.08, +0.33] and +0.05 [-0.09, +0.24] dB (24-, 18- and 12-month

@@ -1,5 +1,6 @@
 """Facts added by the writers of the revised report (scripts/report_facts_writer.py): the prefix, the source form, the
 existence of every source file, and every value recomputed from the stored result files and the register."""
+import csv
 import importlib.util
 import json
 import math
@@ -485,6 +486,61 @@ class TestWriterFacts(unittest.TestCase):
         self.assertEqual(self.F["wr_cgap_scaled_templates_fittedtop_vs_top_n_ci_above0"]["raw"],
                          sum(x["ci95"][0] > 0 for x in top))
         self.assertRegex(self.F["wr_build_commit"]["value"], r"^([0-9a-f]{7,}(\+dirty)?|\(not a git checkout\))$")
+
+    def test_round3c_facts_against_their_files(self):
+        qt = json.loads((ROOT / "results/g3b_templates_qc/children_qc.json").read_text())
+        q24 = json.loads((ROOT / "results/g3b_children_qc/children_qc.json").read_text())
+        self.assertEqual(set(qt["anatomies"]), {"adult", "infant18mo", "infant12mo"})
+        self.assertEqual(qt["anatomies"]["adult"]["scalp_vs_mri"], q24["anatomies"]["adult"]["scalp_vs_mri"])
+        out = {k: -q["anatomies"][k]["scalp_vs_mri"]["offsets"]["cap"]["otsu"]["median_mm"]
+               for k, q in (("infant2yr", q24), ("infant18mo", qt), ("infant12mo", qt))}
+        self.assertTrue(all(v > 0 for v in out.values()))
+        self.assertEqual(self.F["wr_qc_templates_offset_outside_otsu_mm_range"]["raw"], [min(out.values()), max(out.values())])
+        self.assertEqual(self.F["wr_qc_infant18mo_offset_outside_otsu_mm"]["raw"], out["infant18mo"])
+        adult = q24["anatomies"]["adult"]["scalp_vs_mri"]["offsets"]["cap"]["otsu"]["median_mm"]
+        self.assertEqual(self.F["wr_qc_template_adult_convention_mm_range"]["raw"],
+                         [adult + min(out.values()), adult + max(out.values())])
+        self.assertEqual(self.F["wr_qc_infant18mo_verdict"]["value"], qt["verdicts"]["infant18mo"]["class"])
+        self.assertEqual(self.F["wr_qc_infant12mo_verdict"]["value"], qt["verdicts"]["infant12mo"]["class"])
+        self.assertEqual(self.F["wr_qc_infant18mo_white_best_shift_mm"]["raw"],
+                         qt["anatomies"]["infant18mo"]["white_vs_t1"]["best_shift_norm_mm"])
+        with open(ROOT / "results/g2/g2_targets_metrics.csv", newline="") as fh:  # per-target flags, independent of the summary
+            rows = [r for r in csv.DictReader(line for line in fh if not line.startswith("#"))]
+        self.assertEqual(self.F["wr_g2_ahead_n"]["raw"], sum(int(r["ahead_dense_intrinsic+brain"]) for r in rows))
+        self.assertEqual(self.F["wr_g2_ahead_n"]["value"], "7,657")
+        self.assertEqual(self.F["wr_cover_brow_offset_mm"]["raw"], 30.0)
+        ci = json.loads((ROOT / "results/g4_confirm/g4c_childC_summary.json").read_text())["comparisons"][
+            "opm_matched/opm_vs_squid/combined/practical@1/replicate0"]["s50_ratio_squid_over_opm"]["ci95"]
+        self.assertLess(self.F["wr_cf_childc_matched_practical_ci_lo_4dp"]["raw"], 1)
+        self.assertEqual(self.F["wr_cf_childc_matched_practical_ci_lo_4dp"]["raw"], ci[0])
+        cg = json.loads((ROOT / "results/g3b_constant_gap/g3b_constant_gap_summary.json").read_text())["interaction"]
+        it = {h: cg[f"{h}/gap_matched/combined/intrinsic+brain"]["interaction"]["median"]
+              for h in ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo")}
+        tm = [it[h] for h in ("infant2yr", "infant18mo", "infant12mo")]
+        self.assertEqual(self.F["wr_cgap_templates_interaction_range"]["raw"], [min(tm), max(tm)])
+        lo, hi = self.F["wr_cgap_templates_interaction_range"]["raw"]
+        self.assertTrue(min(it["school"], it["size2yr"]) <= lo <= hi <= max(it["school"], it["size2yr"]))
+        self.assertEqual(self.F["wr_cgap_templates_interaction_range"]["value"], "+0.54 to +0.70")
+        # the remaining template-check facts, and printed values
+        for key, q in (("infant18mo", qt), ("infant12mo", qt), ("infant2yr", q24)):
+            cap = q["anatomies"][key]["scalp_vs_mri"]["offsets"]["cap"]
+            self.assertEqual(self.F[f"wr_qc_{key}_offset_outside_halfmax_mm"]["raw"], -cap["half_max"]["median_mm"])
+        self.assertEqual(self.F["wr_qc_infant12mo_offset_outside_otsu_mm"]["raw"],
+                         -qt["anatomies"]["infant12mo"]["scalp_vs_mri"]["offsets"]["cap"]["otsu"]["median_mm"])
+        w18 = qt["anatomies"]["infant18mo"]["white_vs_t1"]
+        self.assertEqual(self.F["wr_qc_infant18mo_white_contrast_gain_pct"]["raw"], 100 * w18["contrast_gain_share"])
+        self.assertEqual(self.F["wr_qc_infant18mo_white_contrast_gain_pct"]["value"], "41%")
+        self.assertEqual(self.F["wr_qc_infant18mo_white_edge_translation_mm"]["raw"],
+                         qt["anatomies"]["infant18mo"]["verdict"]["checks"]["white_edge_translation_mm"])
+        self.assertGreater(w18["best_shift_norm_mm"], qt["parameters"]["tolerance_mm"])
+        self.assertEqual(self.F["wr_qc_templates_other_white_best_shift_mm"]["raw"],
+                         [q24["anatomies"]["infant2yr"]["white_vs_t1"]["best_shift_norm_mm"],
+                          qt["anatomies"]["infant12mo"]["white_vs_t1"]["best_shift_norm_mm"]])
+        dch = [q["anatomies"][k]["g3b_targets"]["depth_change_to_mri_boundary_mm"]["p50"]
+               for k, q in (("infant2yr", q24), ("infant18mo", qt), ("infant12mo", qt))]
+        self.assertEqual(self.F["wr_qc_templates_targets_depth_change_p50_mm_range"]["raw"], [min(dch), max(dch)])
+        self.assertEqual(self.F["wr_cf_childc_matched_practical_ci_lo_4dp"]["value"], "0.9997")
+        self.assertEqual(self.F["wr_qc_template_adult_convention_mm_range"]["value"], "2.6 to 3.0")
 
     def test_registered_last_in_the_merged_facts(self):
         R = _load("report_facts")

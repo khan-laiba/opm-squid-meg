@@ -73,6 +73,20 @@ Read only; nothing is re-run. Every fact is computed from unrounded stored value
   wr_cf_endpoint_p_holm_exact_max_mc_zero  the largest Holm-adjusted sign-flip p of the declared endpoint, by exact
                                   enumeration of the stored per-location differences, over the anatomies whose stored
                                   Monte Carlo p is zero (printed '<0.0001')
+  wr_qc_infant18mo_*, wr_qc_infant12mo_*, wr_qc_templates_*, wr_qc_infant2yr_offset_outside_halfmax_mm  the same MRI
+                                  check run on the 18- and 12-month templates (results/g3b_templates_qc/children_qc.json; the
+                                  24-month template's from the children's run): cap-median offsets of the scalp outside the
+                                  MRI head boundary, the verdicts, the 18-month white surface's realigning shift, edge
+                                  translation and contrast gain, and the median change of target depth measured to the MRI
+                                  boundary; wr_qc_template_adult_convention_mm_range the difference of the templates' and the
+                                  adult's scalp conventions
+  wr_g2_ahead_n                   the adult's targets at which the dense array's detectability exceeds Neuromag's
+  wr_cover_brow_offset_mm         the height above the nasion of the point that, with the preauricular points, defines the
+                                  OPM coverage plane (src/opmsquid/opm.py; register A-OPM-COVER)
+  wr_cf_childc_matched_practical_ci_lo_4dp  the unrounded lower bound of child C's site-matched S50-ratio interval in the
+                                  confirmatory run, the one interval bound printed as 1.00 in the confirmatory table
+  wr_cgap_templates_interaction_range  the templates' interaction at the adult's gap; checked to lie within the two scaled
+                                  adults' values, which set the range over the scaled adults and templates
 Formats as scripts/report_facts_g12.py (whose helpers are imported): dB signed with 2 decimals, intervals "[lo, hi]",
 U+2212 for negatives, counts with thousands separators.
 
@@ -94,6 +108,7 @@ REGISTER = "docs/provenance_register.md"
 METHODS = "docs/methods.md"
 FIGS_SUPP = "results/report/figures_supplement.json"
 QC = "results/g3b_children_qc/children_qc.json"
+TEMPLATES_QC = "results/g3b_templates_qc/children_qc.json"  # the same check on the 18- and 12-month templates
 COVVAL = "results/g2_covariance_validation/covariance_validation.json"
 G3B = "results/g3b/g3b_summary.json"
 CGAP = "results/g3b_constant_gap/g3b_constant_gap_summary.json"
@@ -928,6 +943,123 @@ def round3b_facts(F: Facts, root: Path) -> None:
           "if the sources the pages are built from have uncommitted changes, as the page header)")
 
 
+def round3c_facts(F: Facts, root: Path) -> None:
+    """Facts added in the final minor revision: the MRI check of the 18- and 12-month templates (the children's check run on
+    them, results/g3b_templates_qc/children_qc.json) beside the 24-month template's; the adult's count of targets at which
+    the dense array is ahead; the offset of the OPM coverage plane above the nasion; the unrounded interval bound printed as
+    1.00 in the confirmatory table; and the templates' interaction against the scaled adults'."""
+    q24 = json.loads((root / QC).read_text())
+    qt = json.loads((root / TEMPLATES_QC).read_text())
+    a24 = q24["anatomies"]["adult"]["scalp_vs_mri"]["offsets"]["cap"]
+    at = qt["anatomies"]["adult"]["scalp_vs_mri"]["offsets"]["cap"]
+    if any(float(a24[e]["median_mm"]) != float(at[e]["median_mm"]) for e in ("otsu", "half_max")):
+        raise ValueError(f"{TEMPLATES_QC}: the adult reference differs from that of {QC}")
+    recs = {"infant2yr": (QC, q24), "infant18mo": (TEMPLATES_QC, qt), "infant12mo": (TEMPLATES_QC, qt)}
+    src = "{} :: anatomies['{}'].scalp_vs_mri.offsets.cap.{}.median_mm (MRI head boundary minus the scalp used, along its " \
+          "outward normal; derived: the magnitude, the scalp lying outside the boundary)"
+    outside = {}
+    for key, (path, q) in recs.items():
+        for edge, tok in (("otsu", "otsu"), ("half_max", "halfmax")):
+            v = float(q["anatomies"][key]["scalp_vs_mri"]["offsets"]["cap"][edge]["median_mm"])
+            if v >= 0:
+                raise ValueError(f"{path}: the {key} scalp is not outside its MRI head boundary at the {edge} edge")
+            outside[key, tok] = -v
+            if not (key == "infant2yr" and tok == "otsu"):  # that one is wr_qc_infant2yr_offset_outside_otsu_mm (qc_offset_facts)
+                F.add(f"wr_qc_{key}_offset_outside_{tok}_mm", f"{-v:.1f}", -v, src.format(path, key, edge))
+    vals = [outside[k, "otsu"] for k in recs]
+    F.add("wr_qc_templates_offset_outside_otsu_mm_range", f"{min(vals):.1f} to {max(vals):.1f}", [min(vals), max(vals)],
+          f"{QC} :: anatomies['infant2yr'], {TEMPLATES_QC} :: anatomies['infant18mo', 'infant12mo'] .scalp_vs_mri.offsets.cap."
+          "otsu.median_mm (derived: min and max of the magnitudes over the three templates, each scalp outside its boundary)")
+    adult_in = float(a24["otsu"]["median_mm"])
+    conv = [adult_in + v for v in vals]
+    F.add("wr_qc_template_adult_convention_mm_range", f"{min(conv):.1f} to {max(conv):.1f}", [min(conv), max(conv)],
+          f"{QC} :: anatomies['adult', 'infant2yr'], {TEMPLATES_QC} :: anatomies['infant18mo', 'infant12mo'] .scalp_vs_mri.offsets.cap.otsu."
+          "median_mm (derived: the adult's offset of the MRI head boundary outside its scalp plus each template's scalp "
+          "outside its boundary, min and max over the three templates, mm: the difference between the scalp conventions)")
+    for key in ("infant18mo", "infant12mo"):
+        c = qt["verdicts"][key]["class"]
+        F.add(f"wr_qc_{key}_verdict", c, c, f"{TEMPLATES_QC} :: verdicts['{key}'].class (the check's declared rules)")
+    w18 = qt["anatomies"]["infant18mo"]["white_vs_t1"]
+    tol = float(qt["parameters"]["tolerance_mm"])
+    chk = qt["anatomies"]["infant18mo"]["verdict"]["checks"]
+    if not (qt["verdicts"]["infant18mo"]["class"] == "misregistered" and float(w18["best_shift_norm_mm"]) > tol
+            and float(chk["white_edge_translation_mm"]) > tol):
+        raise ValueError(f"{TEMPLATES_QC}: the 18-month template's verdict no longer rests on a shift and an edge translation "
+                         "above the tolerance, as the text says")
+    F.add("wr_qc_infant18mo_white_edge_translation_mm", f"{float(chk['white_edge_translation_mm']):.1f}",
+          float(chk["white_edge_translation_mm"]), f"{TEMPLATES_QC} :: anatomies['infant18mo'].verdict.checks."
+          "white_edge_translation_mm (the translation part of the T1 edge across the white surface, mm; the rule's tolerance is "
+          f"parameters.tolerance_mm = {tol:g} mm)")
+    F.add("wr_qc_infant18mo_white_best_shift_mm", f"{float(w18['best_shift_norm_mm']):.1f}", float(w18["best_shift_norm_mm"]),
+          f"{TEMPLATES_QC} :: anatomies['infant18mo'].white_vs_t1.best_shift_norm_mm (the rigid shift of the white surface that "
+          "maximizes the T1 white/grey contrast across it, mm)")
+    g = 100 * float(w18["contrast_gain_share"])
+    F.add("wr_qc_infant18mo_white_contrast_gain_pct", f"{g:.0f}%", g, f"{TEMPLATES_QC} :: anatomies['infant18mo'].white_vs_t1."
+          "contrast_gain_share (the contrast at that shift over the contrast at none, minus 1, as a percentage)")
+    others = [float(q24["anatomies"]["infant2yr"]["white_vs_t1"]["best_shift_norm_mm"]),
+              float(qt["anatomies"]["infant12mo"]["white_vs_t1"]["best_shift_norm_mm"])]
+    if f"{min(others):.1f}" != f"{max(others):.1f}":
+        raise ValueError("the 24- and 12-month templates' realigning shifts differ; print them as a range")
+    F.add("wr_qc_templates_other_white_best_shift_mm", f"{others[0]:.1f}", others,
+          f"{QC} :: anatomies['infant2yr'], {TEMPLATES_QC} :: anatomies['infant12mo'] .white_vs_t1.best_shift_norm_mm (the "
+          "24- and 12-month templates' realigning shifts, equal at the search's 0.5-mm step)")
+    if float(w18["best_shift_norm_mm"]) <= max(others):
+        raise ValueError(f"{TEMPLATES_QC}: the 18-month template's shift is not the largest of the three")
+    dch = [float(q["anatomies"][k]["g3b_targets"]["depth_change_to_mri_boundary_mm"]["p50"]) for k, (path, q) in recs.items()]
+    F.add("wr_qc_templates_targets_depth_change_p50_mm_range", f"{signed(min(dch), 1)} to {signed(max(dch), 1)}", [min(dch), max(dch)],
+          f"{QC} :: anatomies['infant2yr'], {TEMPLATES_QC} :: anatomies['infant18mo', 'infant12mo'] .g3b_targets."
+          "depth_change_to_mri_boundary_mm.p50 (median change of the targets' depth when measured to the MRI head boundary "
+          "instead of the scalp used, mm; derived: min and max over the three templates)")
+
+    g2s = json.loads((root / G2).read_text())
+    e = g2s["primary"]["oracle"]["opm_dense/combined/intrinsic+brain"]
+    ahead = round(float(e["share_opm_better"]) * int(e["n"]))
+    F.add("wr_g2_ahead_n", count(ahead), ahead, f"{G2} :: primary.oracle['opm_dense/combined/intrinsic+brain'].share_opm_better "
+          f"x n (derived: the targets, of {int(e['n']):,}, at which the dense array's detectability exceeds Neuromag's; the rest "
+          "are rev_g2_notahead_n)")
+
+    import inspect
+    import sys
+    if str(root / "src") not in sys.path:
+        sys.path.insert(0, str(root / "src"))
+    from opmsquid import opm
+    brow = inspect.signature(opm.matched_to_neuromag).parameters["brow_offset"].default
+    if any(inspect.signature(f).parameters["brow_offset"].default != brow for f in (opm.above_brow_plane, opm.dense_array)):
+        raise ValueError("src/opmsquid/opm.py: the brow_offset defaults of the coverage rule differ")
+    if "brow_offset" in (root / "src/opmsquid/g2.py").read_text():
+        raise ValueError("src/opmsquid/g2.py sets brow_offset; read it there")
+    if "3 cm above the nasion" not in (root / REGISTER).read_text():
+        raise ValueError(f"{REGISTER}: A-OPM-COVER no longer says '3 cm above the nasion'")
+    F.add("wr_cover_brow_offset_mm", f"{1e3 * brow:g}", 1e3 * brow, "src/opmsquid/opm.py :: matched_to_neuromag(brow_offset=...), "
+          "dense_array(brow_offset=...) and above_brow_plane(brow_offset=...), the default the G2 arrays use (src/opmsquid/g2.py passes none; register "
+          "A-OPM-COVER: a point 3 cm above the nasion), mm")
+
+    cf = json.loads((root / CONFIRM_PER.format(anatomy="childC")).read_text())
+    ci = cf["comparisons"]["opm_matched/opm_vs_squid/combined/practical@1/replicate0"]["s50_ratio_squid_over_opm"]["ci95"]
+    lo = float(ci[0])
+    if not (lo < 1 and f"{lo:.2f}" == "1.00"):
+        raise ValueError(f"{CONFIRM_PER.format(anatomy='childC')}: the site-matched lower bound is not a value below 1 printed as 1.00")
+    F.add("wr_cf_childc_matched_practical_ci_lo_4dp", f"{lo:.4f}", lo, f"{CONFIRM_PER.format(anatomy='childC')} :: comparisons["
+          "'opm_matched/opm_vs_squid/combined/practical@1/replicate0'].s50_ratio_squid_over_opm.ci95[0] (unrounded lower bound, "
+          "printed as 1.00 in the confirmatory table)")
+
+    cg = json.loads((root / CGAP).read_text())
+    same = {h: float(cg["delta_same_rule"][f"{h}/gap_matched/opm_dense/combined/intrinsic+brain"]["delta"]["median"])
+            for h in ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo")}
+    if max(same, key=same.get) != "infant18mo":
+        raise ValueError(f"{CGAP}: the 18-month template no longer has the highest Delta at the adult's gap of the scaled adults "
+                         "and templates, as the text says")
+    it = {h: float(cg["interaction"][f"{h}/gap_matched/combined/intrinsic+brain"]["interaction"]["median"])
+          for h in ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo")}
+    tm = [it[h] for h in ("infant2yr", "infant18mo", "infant12mo")]
+    sc = [it["school"], it["size2yr"]]
+    if not (min(sc) <= min(tm) and max(tm) <= max(sc)):
+        raise ValueError(f"{CGAP}: the templates' interaction leaves the range of the two scaled adults")
+    F.add("wr_cgap_templates_interaction_range", f"{signed(min(tm), 2)} to {signed(max(tm), 2)}", [min(tm), max(tm)],
+          f"{CGAP} :: interaction['<template>/gap_matched/combined/intrinsic+brain'].interaction.median (derived: min and max over "
+          "the three infant templates; checked to lie within the two scaled adults' values)")
+
+
 def facts(root: Path = ROOT) -> dict:
     """Every writer fact, name -> {"value", "raw", "source"}."""
     root = Path(root)
@@ -963,6 +1095,7 @@ def facts(root: Path = ROOT) -> dict:
     confirm_exact_p_facts(F, root)
     round3_facts(F, root)
     round3b_facts(F, root)
+    round3c_facts(F, root)
     return dict(F)
 
 

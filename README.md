@@ -142,7 +142,7 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   with the head (laterally centred; tighter than the adult's own fit), the SQUID gains about as much or more (point estimates; the templates'
   intervals include 0). The smaller heads' arrays also
   have fewer OPM sites (174, 155, 151, 157 and 144; school-aged children 155, 153 and 167; adult
-  208); at an equal site count Delta would be larger.
+  208); at an equal OPM site count Delta would be larger.
 - A helmet fitted to each head at the adult's own gap (29.55 mm; added in the revision,
   `results/g3b_constant_gap/`) brings Delta to +0.02 to +0.15 dB in the size controls and templates
   (+0.03 [+0.00, +0.05] dB for the school-age size; every template interval includes 0) and to -0.30
@@ -315,11 +315,13 @@ https://khan-laiba.github.io/opm-squid-meg/, is this build, committed to the `gh
 - The infant templates (24, 18 and 12 months; O'Reilly et al. 2021, from the Neurodevelopmental
   MRI Database of Richards et al. 2016; LGPL-2.1 repository) are not committed. Figures and tables
   derived from them (every `results/g3b` figure that shows a template, `results/g3b/g3b_targets_infant*`,
-  `results/g4/*infant*` and the motion results) cite both papers. Publishing these derived results
+  `results/g4/*infant*`, the motion results and the templates' MRI check, `results/g3b_templates_qc/` and
+  `results/g3b_children_qc/Figure_QC_overlay_infant2yr.png`) cite both papers. Publishing these derived results
   was decided on 2026-10-04 (the owner's instruction to publish the report with all its analyses;
   `docs/release_checklist.md` item 3): the templates are distributed publicly by their authors
   (J. E. Richards, who created the database, is a co-author of O'Reilly et al. 2021) under LGPL-2.1
-  through MNE-Python's `fetch_infant_template`, and only derived results are published.
+  through MNE-Python's `fetch_infant_template`, and only derived results are published, except that the MRI
+  check's overlay figures show sections of the templates' T1 volumes.
 - The school-aged children (OpenNeuro ds005234, Fadeev et al. 2024; individual, de-identified MRIs of
   typically developing children) are not committed (`data/external/school_subjects/`, fetched by
   `scripts/fetch_school_subjects.py` and listed with S3 object versions, sizes and SHA-256 in

@@ -75,6 +75,7 @@ step constant_gap $PY scripts/study_g3b_constant_gap.py                 # G3B  c
 # arrays, which are checked against it:
 step target_precision $PY scripts/export_target_precision.py            # G2/G3B full-precision depth and bins of the per-target tables
 step children_qc $PY scripts/study_children_qc.py                       # G3B  MRI quality check of the school-aged children (after target_precision: exact depths)
+step templates_qc $PY scripts/study_children_qc.py --anatomies infant18mo infant12mo --skip-tests --out results/g3b_templates_qc  # G3B  the same check on the 18- and 12-month templates
 step g2_depth_bins $PY scripts/study_g2_depth_bins.py                   # G2   95 % parcel-bootstrap interval per 5-mm depth bin (adult)
 step g2_metrics $PY scripts/export_g2_target_metrics.py                # G2   full-precision detectability of the adult's targets, OPM-ahead flags
 step cortex_exclusion $PY scripts/study_cortex_exclusion.py            # G3B  cortex left out by the source rule in each native head
