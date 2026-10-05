@@ -51,10 +51,11 @@ def apply() -> None:
 
 
 def commit() -> str:
-    """Short HEAD commit, '+dirty' when the figure code or its inputs have uncommitted changes."""
+    """Short HEAD commit, '+dirty' when the figure code or its inputs have uncommitted changes (the figures' own
+    outputs in results/report/ do not count)."""
     head = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
-    dirty = subprocess.run(["git", "status", "--porcelain", "--", "scripts", "results"], cwd=ROOT, capture_output=True,
-                           text=True).stdout.strip()
+    dirty = subprocess.run(["git", "status", "--porcelain", "--", "scripts", "results", ":!results/report"], cwd=ROOT,
+                           capture_output=True, text=True).stdout.strip()
     return head + ("+dirty" if dirty else "")
 
 
