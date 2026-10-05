@@ -776,7 +776,7 @@ def summarise(anats, state, cfg) -> dict:
         + (" In " + ", ".join(LABEL[k] for k in other) + " the detectability changes by "
            + ", ".join(f"{gain(k, 'opm_dense/opm'):+.2f} / {gain(k, sq):+.2f} dB" for k in other)
            + " (dense OPM / Neuromag combined, against the adult)"
-           + ("; their cortex is nearly adult-sized, so the background does not shrink and Neuromag's detectability falls."
+           + ("; their cortex is nearly adult-sized, so with the background fixed per unit area it does not shrink and Neuromag's detectability falls (a description of these surfaces, not a tested mechanism; the children are provisional examples)."
               if all(gain(k, sq) <= 0 for k in other) and all(k in SCHOOL for k in other) else ".")
            if other else "")
         + " The templates' averaged white surfaces are smoother than an individual cortex (usable area "
@@ -789,7 +789,7 @@ def summarise(anats, state, cfg) -> dict:
         "before the top contact (shift: " + ", ".join(f"{LABEL[k]} {out['placements'][k]['x-centred']['shift_x_mm']:+.1f} mm"
                                                        for k in ANATOMIES)
         + "; negative = to the left), and 'counterfactual_x-centred' scales the helmet about that laterally centred head. The "
-        "counterfactual helmet (scaled with the head) is a mechanistic control, not a pediatric SQUID system.",
+        "counterfactual helmet (scaled with the head) is a geometric control, not a pediatric SQUID system.",
         "Targets on the medial wall (FreeSurfer 'unknown': the cut through the corpus callosum and midbrain, not cortex) are left "
         "out of every summary; they would otherwise dominate the deepest strata."]
     return out
@@ -930,7 +930,7 @@ def write_report(anats, s, cfg):
         for ref in REFS:
             r = s["comparisons"][f"{c}/opm_matched/{ref}/intrinsic+brain/detect"]
             L.append(f"| {LABEL[c]} | {LABEL[ref]} | {fmt_ci(r['d_child'])} | {fmt_ci(r['d_adult'])} | {fmt_ci(r['delta'])} |")
-    L += ["", "## What drives Delta: placement and helmet fit (dense OPM vs Neuromag combined, intrinsic + brain)", "",
+    L += ["", "## Delta by placement and helmet construction (dense OPM vs Neuromag combined, intrinsic + brain)", "",
           "Each child placement is compared with the adult at the same rule (the adult's counterfactual helmet has factor 1).", "",
           "| child anatomy | top (primary) | centred | x-centred | top-18mm | back | counterfactual | counterfactual, x-centred |",
           "|---|---|---|---|---|---|---|---|"]

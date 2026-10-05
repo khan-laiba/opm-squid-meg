@@ -158,7 +158,7 @@ def main():
         r = ms["intrinsic_rms"]
         L.append("## Neuromag sensor noise from the measured spectrum\n")
         L.append(f"- Per channel, the in-band empty-room variance the 8-term room fit leaves (an upper bound on the sensor noise in this "
-                 f"room): median {r['mag_fT']:.1f} fT (magnetometers) and {r['grad_fT_cm']:.1f} fT/cm (gradiometers), vs the brochure "
+                 f"room): median {r['mag_fT']:.1f} fT (magnetometers) and {r['grad_fT_cm']:.1f} fT/cm (gradiometers), vs the TRIUX datasheet's "
                  f"{r['brochure_mag_fT']:.1f} fT and {r['brochure_grad_fT_cm']:.1f} fT/cm in the band. Dense / matched vs combined: "
                  + ", ".join(f"{c} {2 ** ms[f'opm_dense/combined/{c}']['median_log2']:.2f}x / {2 ** ms[f'opm_matched/combined/{c}']['median_log2']:.2f}x"
                              for c in headline) + ".\n")

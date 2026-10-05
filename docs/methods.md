@@ -253,7 +253,7 @@ Configuration: `configs/hunold_reference.toml` (every value tagged as printed, c
   gradiometer spike is 1.5-1.7x the paper's (199 vs 119-134 pT/m); the gradiometer baseline is
   therefore not an independent confirmation of the calibration, and the head position relative
   to the helmet (not reported) may differ.
-* Extension (NEW): white sensor noise (SQUID brochure values; OPM 7/15/30 fT/sqrt(Hz)) added to
+* Extension (NEW): white sensor noise (SQUID TRIUX datasheet values; OPM 7/15/30 fT/sqrt(Hz)) added to
   the background; spike, background and noise all filtered 0.5-70 Hz (zero phase); p2p numerator.
 
 ## 7. Goldenholz cortical SNR maps (G1C, ADAPT; OPM NEW) — `opmsquid.goldenholz`, `scripts/g1c_goldenholz.py`
@@ -307,7 +307,7 @@ Configuration: `configs/goldenholz_reference.toml`.
 * Extension (NEW): the matched 98-site OPM array. The brain-noise sources are calibrated on the
   recorded minus empty-room variance (instrument noise is 6 % of the recorded variance for
   magnetometers and 35 % for gradiometers), then intrinsic noise is added explicitly (SQUID
-  brochure values; OPM swept 7-30 fT/sqrt(Hz)), 0.5-100 Hz. Brain noise only, the OPM array is within about 0.1 dB of
+  TRIUX datasheet values; OPM swept 7-30 fT/sqrt(Hz)), 0.5-100 Hz. Brain noise only, the OPM array is within about 0.1 dB of
   both SQUID sensor types (point estimates: Eq. 1 median +0.1 dB vs magnetometers, -0.08 dB vs gradiometers).
   With intrinsic noise, OPM vs gradiometers is +1.3 to +2.3 dB (the gradiometer noise floor),
   and OPM vs magnetometers +0.2 dB at 7 fT/sqrt(Hz) to -1.0 dB at 30 fT/sqrt(Hz) (crossing near
@@ -330,7 +330,7 @@ Design
   0.25 nAm/mm^2). All arrays see the same targets.
 * Noise, identical sources for every array, one analysis band (1-40 Hz, zero-phase Butterworth
   order 4; variance = ASD^2 x ENBW of the composite response, 35.1 Hz): intrinsic white noise
-  (SQUID brochure values; OPM 15 fT/sqrt(Hz) primary, 7-30 swept); cortical background (1,755
+  (SQUID TRIUX datasheet values; OPM 15 fT/sqrt(Hz) primary, 7-30 swept); cortical background (1,755
   area-weighted sources on a 7-mm grid, scale fitted once so the median good-gradiometer variance
   equals the measured task-baseline minus empty-room variance in the band; correlated extension
   with lambda = 5 and 10 mm, refitted); room field (8-term external expansion fitted to the
@@ -353,7 +353,7 @@ Design
   head position (measured; +/-5 mm along each device axis; +/-5 deg pitch; well fitted, 20 mm
   from the nearest magnetometer); OPM scalp gap (0, 3, 6 mm); a joint OPM noise x scalp gap grid;
   plug-in covariance; Neuromag sensor noise from the measured empty-room spectrum instead of the
-  brochure values (v4, A-G2-SQUIDMEAS); frequency bands 1-10, 8-30 and 30-80 Hz with a 100-Hz OPM
+  datasheet values (v4, A-G2-SQUIDMEAS); frequency bands 1-10, 8-30 and 30-80 Hz with a 100-Hz OPM
   response (`scripts/g2_band_sensitivity.py`). Except the joint grid, one factor at a time: the analyses
   show the dependence, they do not bound it. The scalp-gap variants move the primary OPM sites
   outward along their axes (v2; v1 rebuilt the arrays, which added sensors at larger gaps).
@@ -410,7 +410,7 @@ Design
 Results (`results/g2/g2_summary.json`, v4: the head surface on the MRI scalp, A-BEM-CONFORM; run
 at e53bea8; medians over the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 15 fT/sqrt(Hz);
 3-layer BEM)
-* Noise validation: the empty-room model (brochure intrinsic noise + fitted room field) gives
+* Noise validation: the empty-room model (datasheet intrinsic noise + fitted room field) gives
   115 fT (magnetometers) and 21.4 fT/cm (gradiometers) against 115 fT and 20.2 fT/cm measured; the
   room field explains 94 % of the magnetometer and 1.6 % of the gradiometer empty-room variance.
   Brain noise (task baseline minus empty room, 1-40 Hz): gradiometers 37.1 fT/cm (calibrated),
@@ -488,7 +488,7 @@ at e53bea8; medians over the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 1
   1.02x; background calibrated on magnetometers: 1.15x | 1.01x; head position (+/-5 mm, +/-5 deg,
   well fitted): 1.10-1.18x | 0.99-1.02x; OPM scalp gap 3 and 6 mm (same sites moved out): 1.09 and
   1.04x | 0.99 and 0.96x; Neuromag noise from the measured empty-room spectrum (median in-band
-  25.9 fT and 20.0 fT/cm vs the brochure's 20.7 fT and 21.3 fT/cm): 1.17x | 1.02x (projected 1.13x
+  25.9 fT and 20.0 fT/cm vs the datasheet's 20.7 fT and 21.3 fT/cm): 1.17x | 1.02x (projected 1.13x
   | 0.96x). Joint OPM noise x scalp gap: dense 0.92x (30 fT/sqrt(Hz), 6 mm) to 1.14x
   (15 fT/sqrt(Hz), 0 mm), matched 0.84-1.01x. Frequency bands (brain scale and room field
   recalibrated per band): dense 1.15x (1-10 Hz), 1.14x (8-30 Hz), 1.11x (30-80 Hz; 1.07x with a

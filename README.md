@@ -50,7 +50,7 @@ caveats in `docs/methods.md` and `results/g2/G2_report.md`:
   ahead (dense 0.90x, Neuromag higher for 72 % of targets; mean-power SNR 1.04x), and after the
   external-field projection the dense array is no longer ahead below 45 mm (0.92-1.00x; the matched
   array is behind from 25 mm, 0.75-0.99x). With Neuromag noise taken from the measured empty-room spectrum
-  instead of the brochure values the dense ratio is 1.17x. Not modelled: non-cortical physiological
+  instead of the datasheet values the dense ratio is 1.17x. Not modelled: non-cortical physiological
   fields (cardiac, ocular), which the OPMs would see as magnetometers; the 1/f rise of real OPM
   noise at low frequencies (white noise assumed); and the measured brain noise's spatial pattern,
   which the cortical background matches only in its median gradiometer level (per channel the

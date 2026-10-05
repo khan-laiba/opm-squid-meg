@@ -664,7 +664,7 @@ def notes(s: dict, keys) -> list[str]:
         "+-10 deg, roll +-5 deg, yaw +-10 deg), each head against the adult in the same placement, as the difference of the stored "
         "area-weighted medians of D (dense OPM); placements infeasible for either head left out. 'crossed' pairs any feasible "
         "placement of the child with any of the adult.",
-        "A mechanistic control, not a pediatric SQUID system: a scaled helmet keeps the adult coils' sizes, orientations, "
+        "A geometric control, not a pediatric SQUID system: a scaled helmet keeps the adult coils' sizes, orientations, "
         "integration points and noise."]
 
 
