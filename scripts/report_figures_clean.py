@@ -11,33 +11,34 @@ from stored outputs only: nothing is simulated or re-analysed.
        channels, sensor + brain noise (results/g2/g2_targets.csv)
   R12  geometry: sagittal and coronal scalp sections of the adult, the 12-month template and child B,
        each with the fixed adult helmet at top contact, the helmet scaled with the head (laterally
-       centred) and the dense OPM sites (the stored G3B run)
+       centred) and the dense OPM sites (results/g3b/g3b_geometry_sections.json)
   R13  D (dB) on the inflated cortex of the 24- and 12-month templates, dense array, top contact
        (results/g3b/g3b_targets_<anatomy>.csv), on the colour scale of R11
+  R14  D (dB) on the adult's inflated cortex for the adult and the two scaled adults (school-age and
+       2-year size), dense array, top contact (results/g3b/g3b_targets_<anatomy>.csv), same scale
 
 D = 20 log10(detectability OPM / detectability Neuromag) per cortical target (the G2 and G3B
 definition; scripts/g3b_pediatric_helmet.py d_db). Surfaces are read from the external data for
-drawing only (OPMSQUID_DATA, src/opmsquid/paths.py): inflated white surfaces and sulcal depth
-(shading) at the vertices of the oct-6 source spaces, of which the targets are a subset, the full
-white surfaces and the MRI scalps. R12's helmet transforms and OPM sites are not in results/: they
-are read from the stored state of the G3B run (cache/g3b/state.pkl under OPMSQUID_CACHE, read only),
-and the script stops unless that state reproduces results/g3b/g3b_summary.json (commit, moves, scale
-factors, every coil-to-scalp gap, OPM site counts). A missing input stops the script before anything
-is drawn: nothing is recomputed in its place.
+drawing the cortical maps only (OPMSQUID_DATA, src/opmsquid/paths.py): inflated white surfaces and
+sulcal depth (shading) at the vertices of the oct-6 source spaces, of which the targets are a subset.
+R12 is drawn from results/ only: its scalp and white-surface sections, coil centres and OPM sites are
+those exported from the stored state of the G3B run by scripts/export_g3b_geometry.py, and the script
+stops unless that export is of the run of results/g3b/g3b_summary.json and reproduces its moves,
+scale factors, coil-to-scalp gaps and OPM site counts. A missing input stops the script before
+anything is drawn: nothing is recomputed in its place.
 Every number in the labels, captions and descriptions is read from these files or computed from them
 as described in figures_clean.json; colour limits, section planes and the 20-mm sensor slab are
 display choices (the slab is that of the G3B geometry figure).
 
 Outputs (results/report/): Figure_R0_sphere.png, Figure_R11_maps_adult.png, Figure_R12_geometry.png,
-Figure_R13_maps_heads.png and figures_clean.json (inputs, description, alt text, draft caption and
-plotted values of every figure).
+Figure_R13_maps_heads.png, Figure_R14_maps_scaled.png and figures_clean.json (inputs, description,
+alt text, draft caption and plotted values of every figure).
 
-Usage: OPMSQUID_DATA=<data dir> OPMSQUID_CACHE=<cache dir> PYTHONPATH=src .venv/bin/python scripts/report_figures_clean.py
+Usage: OPMSQUID_DATA=<data dir> PYTHONPATH=src .venv/bin/python scripts/report_figures_clean.py
 """
 from __future__ import annotations
 
 import json
-import pickle
 import sys
 import warnings
 from pathlib import Path
@@ -54,9 +55,8 @@ from matplotlib.collections import LineCollection, PolyCollection  # noqa: E402
 from matplotlib.colors import Normalize  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
 from matplotlib.patches import Patch  # noqa: E402
-from scipy.spatial import cKDTree  # noqa: E402
 
-from opmsquid import anatomy, io, neuromag, paths, pediatric as P, plotting  # noqa: E402
+from opmsquid import anatomy, io, paths, pediatric as P, plotting  # noqa: E402
 
 G1A = "results/g1a/g1a_benchmark.json"
 G1A_CURVES = "results/g1a/g1a_curves.csv"
@@ -64,13 +64,13 @@ G2 = "results/g2/g2_summary.json"
 G2_TARGETS = "results/g2/g2_targets.csv"
 G3B = "results/g3b/g3b_summary.json"
 G3B_TARGETS = "results/g3b/g3b_targets_{}.csv"
-STATE = paths.CACHE / "g3b" / "state.pkl"
-STATE_LABEL = "cache/g3b/state.pkl (stored state of the G3B run; read only)"
+GEOMETRY = "results/g3b/g3b_geometry_sections.json"  # scripts/export_g3b_geometry.py
 OUT_JSON = "figures_clean.json"
 
 COND = "intrinsic+brain"  # sensor (intrinsic) + brain noise: the primary condition
 DB_PER_LOG2 = 20.0 * np.log10(2.0)
 TEMPLATES = {"infant2yr": "ANTS2-0Years3T", "infant12mo": "ANTS12-0Months3T"}  # as scripts/g3b_pediatric_helmet.py
+SCALED_HEADS = ("adult", "school", "size2yr")  # R14: the scaled adults keep the adult's vertices
 GEOMETRY_HEADS = {"adult": None, "infant12mo": "ANTS12-0Months3T", "childB": "sub-Z209"}
 GEOMETRY_NAMES = {"adult": "adult", "infant12mo": "12-month template", "childB": "child B"}
 
@@ -86,6 +86,8 @@ VIEWS = ((0, -1.0, "Left, lateral"), (0, 1.0, "Left, medial"), (1, -1.0, "Right,
 
 # geometry: sections through the head origin, sensors within the slab (as the G3B geometry figure)
 SLAB_MM = 20.0
+ROUND_MM = 0.01  # rounding of the exported coordinates (scripts/export_g3b_geometry.py)
+COIL_TOL_MM = 0.02  # drawn coil centre vs stored transform applied to the device-frame coil centre (both rounded)
 SCALED_COLOR = "#D55E00"
 CORTEX_GREY = "0.62"
 SECTION_LIM = {"sagittal": ((-138.0, 152.0), (-68.0, 182.0)), "coronal": ((-145.0, 145.0), (-68.0, 182.0))}
@@ -404,15 +406,67 @@ def template_maps() -> tuple[list, dict]:
     return out, vals
 
 
+def scale_factors(g: dict) -> dict:
+    """Linear scale factors of the adult and the two scaled adults as scripts/g3b_pediatric_helmet.py sets them
+    (config.anatomy.school_age_scale; the 24-month template's head circumference over the adult's), checked against
+    the scale notes stored with the anatomies."""
+    a = g["anatomies"]
+    f = {"adult": 1.0, "school": float(g["config"]["anatomy"]["school_age_scale"]),
+         "size2yr": a["infant2yr"]["head_size"]["ofc_mm"] / a["adult"]["head_size"]["ofc_mm"]}
+    for k in ("school", "size2yr"):
+        if not a[k]["scale_note"].endswith(f": {f[k]:.4f}"):
+            raise SystemExit(f"{G3B}: the scale note of {k} ('{a[k]['scale_note']}') does not give {f[k]:.4f}")
+    return f
+
+
+def scaled_maps() -> tuple[list, dict]:
+    """R14 data: D per G3B target (dense array, Neuromag 306, top contact) for the adult and the two scaled adults,
+    all on the adult's inflated cortex: a scaled adult's targets are adult targets (the same vertices, those still at
+    least 4 mm inside its scaled inner skull)."""
+    g = load(G3B)
+    src_file = paths.SUBJECTS_DIR / "sample" / "bem" / "sample-oct-6-src.fif"
+    adult = {(r["hemi"], r["vertno"]) for r in io.read_csv(ROOT / G3B_TARGETS.format("adult"))}
+    f = scale_factors(g)
+    out, vals = [], {}
+    for letter, k in zip("abc", SCALED_HEADS):
+        rows = io.read_csv(ROOT / G3B_TARGETS.format(k))
+        own = {(r["hemi"], r["vertno"]) for r in rows}
+        if not own <= adult:
+            raise SystemExit(f"{G3B_TARGETS.format(k)}: targets that are not targets of the adult")
+        d = 20.0 * np.log10(col(rows, f"detect_opm_dense_opm_{COND}") / col(rows, f"detect_squid_top_combined_{COND}"))
+        medial = np.char.endswith(np.array([r["region"] for r in rows]).astype(str), "unknown")
+        area = col(rows, "area_mm2")
+        wmed = P.weighted_median(d[~medial], area[~medial])
+        stored = g["placement_D"][f"{k}/top/combined/{COND}"]["median"]
+        if abs(wmed - stored) > 0.005:
+            raise SystemExit(f"{G3B_TARGETS.format(k)} does not reproduce the stored D ({wmed:.4f} vs {stored:.4f} dB)")
+        hem = cortex_values(paths.SUBJECTS_DIR, "sample", src_file, rows, d)
+        n_sites, n_sq = g["arrays"][k]["opm_dense"]["n_sites"], g["arrays"][k]["squid:top"]["n"]
+        out.append((f"({letter}) {style.ANAT_LABEL[k]}: {style.ARRAY_LABEL['opm_dense']} ({n_sites} sites) vs "
+                    f"Neuromag ({n_sq} channels)", hem, d))
+        vals[k] = dict(scale=f[k], n_sites=n_sites, n_squid_channels=n_sq,
+                       area_weighted_median_without_medial_wall_dB=wmed, stored_D_dB=stored,
+                       share_positive_area=float(np.sum(area[~medial][d[~medial] > 0]) / np.sum(area[~medial])),
+                       min_dB=float(d.min()), max_dB=float(d.max()), share_above_limit=float(np.mean(d > LIM_DB)),
+                       share_below_minus_limit=float(np.mean(d < -LIM_DB)), n_targets=len(rows),
+                       adult_targets_not_targets_here=len(adult - own), medial_wall=int(medial.sum()),
+                       source_space_vertices=sum(len(hm[4]) for hm in hem),
+                       not_targets=sum(int(np.sum(hm[4] == EXCLUDED)) for hm in hem))
+    return out, vals
+
+
 def figures_maps() -> dict:
     adult, va = adult_maps()
     heads, vh = template_maps()
-    ext = extend_of([d for *_, d in adult] + [d for *_, d in heads])
+    scaled, vs = scaled_maps()
+    ext = extend_of([d for *_, d in adult] + [d for *_, d in heads] + [d for *_, d in scaled])
     g2s, g3 = load(G2), load(G3B)
     q = g2s["config"]["sources"]["focal_nAm"]
     map_figure("Figure_R11_maps_adult", [(t, h) for t, h, _ in adult],
                f"Adult at its measured head position; sensor + brain noise; {q:g}-nAm dipoles", ext)
     map_figure("Figure_R13_maps_heads", [(t, h) for t, h, _ in heads],
+               f"Top contact in the adult helmet; sensor + brain noise; {q:g}-nAm dipoles", ext)
+    map_figure("Figure_R14_maps_scaled", [(t, h) for t, h, _ in scaled],
                f"Top contact in the adult helmet; sensor + brain noise; {q:g}-nAm dipoles", ext)
     n_sq = g2s["arrays"]["squid"]["channels"]
     vd, vm = va["opm_dense"], va["opm_matched"]
@@ -438,7 +492,7 @@ def figures_maps() -> dict:
                 f"{NEAR_SKULL_MM:g} mm of the 5,120-triangle inner-skull mesh or outside it (A-BEM-DIST; the shallowest "
                 "cortex, which the noise model also leaves out of the brain background). A triangle takes the category "
                 "of at least two of its vertices.")
-    scale_txt = (f"Diverging colour scale (red: OPM higher), -{LIM_DB:g} to +{LIM_DB:g} dB, shared by R11 and R13 "
+    scale_txt = (f"Diverging colour scale (red: OPM higher), -{LIM_DB:g} to +{LIM_DB:g} dB, shared by R11, R13 and R14 "
                  f"(display choice); values beyond it take the end colour (colour bar extension: '{ext}'). Views: "
                  "orthographic, left lateral, left medial, right medial, right lateral, with sulcal shading "
                  "(opmsquid.plotting); each hemisphere fills its panel (not to scale).")
@@ -517,82 +571,114 @@ def figures_maps() -> dict:
             f"noise; {q:g}-nAm dipoles. Area-weighted median D {fmt_db(w2)} and {fmt_db(w1)} dB (medial wall excluded; "
             f"the adult at top contact {fmt_db(adult_top)} dB). Colour scale and greys as in Figure R11."),
         values=dict(vh, colour_limit_dB=LIM_DB, extend=ext))
-    return {"Figure_R11_maps_adult": r11, "Figure_R13_maps_heads": r13}
+    sa, ss, s2 = vs["adult"], vs["school"], vs["size2yr"]
+    wa, ws, w2s = (v["area_weighted_median_without_medial_wall_dB"] for v in (sa, ss, s2))
+    if abs(wa - adult_top) > 0.005:
+        raise SystemExit(f"{G3B_TARGETS.format('adult')}: top-contact D {wa:.4f} dB, stored {adult_top:.4f} dB")
+    r14 = dict(
+        inputs=[f"{G3B_TARGETS.format(k)} :: hemi, vertno, region, area_mm2, detect_opm_dense_opm_{COND}, "
+                f"detect_squid_top_combined_{COND}" for k in SCALED_HEADS]
+               + [f"{G3B} :: placement_D['<head>/top/combined/{COND}'].median (check), arrays.<head>.opm_dense.n_sites, "
+                  "arrays.<head>['squid:top'].n, config.anatomy.school_age_scale, anatomies.<adult|infant2yr>.head_size.ofc_mm "
+                  "(the 2-year size factor), anatomies.<school|size2yr>.scale_note (check), config.placement.clearance_mm",
+                  "MNE-sample-data/subjects/sample: bem/sample-oct-6-src.fif, surf/?h.inflated, surf/?h.sulc (drawing only; "
+                  "all three rows on the adult's cortex)"],
+        description=(
+            "D = 20 log10(detect_opm_dense_opm / detect_squid_top_combined) per cortical target of the G3B run for the adult "
+            "(MNE sample subject) and its two size-only controls, the adult scaled about its MRI origin by "
+            f"{ss['scale']:.4f} (school-age size) and {s2['scale']:.4f} (2-year size; the scale notes stored with the run: "
+            f"'{g3['anatomies']['school']['scale_note']}' and '{g3['anatomies']['size2yr']['scale_note']}'): the dense OPM "
+            f"array refitted to each head ({sa['n_sites']}, {ss['n_sites']} and {s2['n_sites']} sites), Neuromag's "
+            f"{sa['n_squid_channels']} channels with the head at top contact in the fixed adult helmet (the adult's measured "
+            f"pose, then raised until the nearest magnetometer coil is {clearance:g} mm from the scalp), sensor + brain "
+            f"noise, {q:g}-nAm cortical-normal dipoles. A scaled adult keeps the adult's vertices, so all three rows are "
+            "drawn on the adult's inflated cortex and compare vertex by vertex; its targets are the adult's that stay "
+            f"usable on the scaled meshes (inside the scaled inner skull and at least {NEAR_SKULL_MM:g} mm from it), so "
+            f"{ss['adult_targets_not_targets_here']} and {s2['adult_targets_not_targets_here']} of the adult's "
+            f"{sa['n_targets']:,} targets are not targets there and are drawn dark grey. Area-weighted median D without the "
+            f"medial wall (opmsquid.pediatric.weighted_median, weights area_mm2): {wa:.3f} dB (adult), {ws:.3f} dB "
+            f"(school-age size) and {w2s:.3f} dB (2-year size), equal to the stored values ({sa['stored_D_dB']:.3f}, "
+            f"{ss['stored_D_dB']:.3f} and {s2['stored_D_dB']:.3f} dB; checked). The adult at its measured position is "
+            "Figure R11a. " + grey_txt + " " + scale_txt + f" Targets above +{LIM_DB:g} dB: {sa['share_above_limit']:.1%} "
+            f"(adult), {ss['share_above_limit']:.1%} (school-age size), {s2['share_above_limit']:.1%} (2-year size); below "
+            f"-{LIM_DB:g} dB: " + (", ".join(f"{v['share_below_minus_limit']:.1%}" for v in (sa, ss, s2))
+                                   if any(v["share_below_minus_limit"] for v in (sa, ss, s2)) else "none") + "."),
+        alt=("Inflated left and right cortical hemispheres of the adult in lateral and medial views, three rows: the adult "
+             "and the adult scaled to school-age size and to 2-year size, all at top contact. All three are red over most of "
+             f"the cortex (D positive on {sa['share_positive_area']:.1%}, {ss['share_positive_area']:.1%} and "
+             f"{s2['share_positive_area']:.1%} of the cortical area) and redder with each smaller size, most on the lateral "
+             "convexities, while the medial surfaces stay pale. Grey: medial wall (light) and vertices near the inner skull "
+             "(dark), more of them in the scaled heads."),
+        caption_draft=(
+            "D on the adult's inflated cortex for (a) the adult and the adult scaled (b) to school-age size "
+            f"(\u00d7{ss['scale']:.3f}) and (c) to the 24-month template's head circumference (\u00d7{s2['scale']:.3f}), each "
+            f"at top contact in the adult helmet: dense OPM array ({sa['n_sites']}, {ss['n_sites']} and {s2['n_sites']} "
+            f"sites) against Neuromag's {sa['n_squid_channels']} channels; sensor plus brain noise; {q:g}-nAm dipoles. The "
+            "scaled adults keep the adult's vertices, so the rows compare vertex by vertex. Area-weighted median D "
+            f"{fmt_db(wa)}, {fmt_db(ws)} and {fmt_db(w2s)} dB (medial wall excluded). Dark grey also marks the adult's "
+            f"targets that come within {NEAR_SKULL_MM:g} mm of the scaled inner skull. Colour scale and greys as in "
+            "Figure R11."),
+        values=dict(vs, colour_limit_dB=LIM_DB, extend=ext))
+    return {"Figure_R11_maps_adult": r11, "Figure_R13_maps_heads": r13, "Figure_R14_maps_scaled": r14}
 
 
 # ----------------------------------------------------------------------------------------------
 # R12: geometry
-def plane_section(rr: np.ndarray, tris: np.ndarray, axis: int) -> np.ndarray:
-    """Segments (n, 2, 3) where the triangle mesh (rr, tris) crosses the plane rr[:, axis] = 0."""
-    s = rr[:, axis].copy()
-    s[s == 0.0] = 1e-12
-    st = s[tris]
-    t = tris[(st.min(axis=1) < 0) & (st.max(axis=1) > 0)]
-    pts = []
-    for i, j in ((0, 1), (1, 2), (2, 0)):
-        a, b = t[:, i], t[:, j]
-        cross = np.sign(s[a]) != np.sign(s[b])
-        f = s[a] / (s[a] - s[b])
-        p = rr[a] + f[:, None] * (rr[b] - rr[a])
-        pts.append(np.where(cross[:, None], p, np.nan))
-    pts = np.stack(pts, axis=1)  # (n, 3 edges, 3): exactly two edges of a crossing triangle cross the plane
-    two = np.argsort(np.isnan(pts[:, :, 0]), axis=1, kind="stable")[:, :2]
-    return pts[np.arange(len(pts))[:, None], two]
+def segments(polylines: list) -> np.ndarray:
+    """Segments (n, 2, 2) between consecutive points of each polyline of the geometry export."""
+    return np.concatenate([np.stack([p[:-1], p[1:]], axis=1) for p in map(np.asarray, polylines)])
 
 
-def geometry_state(g: dict) -> dict:
-    """Helmet transforms and OPM sites of the stored G3B run for the three heads, checked against
-    results/g3b/g3b_summary.json."""
-    with open(STATE, "rb") as fh:
-        st = pickle.load(fh)
-    if st["provenance"]["commit"] != g["provenance"]["commit"]:
-        raise SystemExit(f"{STATE}: run commit {st['provenance']['commit']} is not that of {G3B} "
-                         f"({g['provenance']['commit']})")
+def geometry_sections(g: dict) -> tuple[dict, dict]:
+    """Sections, magnetometer coil centres and dense OPM sites of the three heads, head frame [mm]
+    (results/g3b/g3b_geometry_sections.json, exported by scripts/export_g3b_geometry.py from the stored
+    state of the G3B run), checked against results/g3b/g3b_summary.json: the export must be of the same
+    run and give its moves, scale factors, coil-to-scalp gaps (recomputed by the export from the
+    unrounded geometry) and OPM site counts, and the drawn coil centres must be the exported transforms
+    applied to the device-frame coil centres (to the rounding)."""
+    x = load(GEOMETRY)
+    run = x["provenance"]["source_state"]["commit"]
+    if run != g["provenance"]["commit"]:
+        raise SystemExit(f"{GEOMETRY}: exported from the state of run {run}, {G3B} is run {g['provenance']['commit']}")
+    dev = np.asarray(x["neuromag"]["coil_centres_device_mm"], float)
     out = {}
-    for k in GEOMETRY_HEADS:
-        run, stored = st["runs"][k], g["placements"][k]
-        for name in ("top", "counterfactual_x-centred"):
-            keys = ("min_dist_mm", "median_dist_mm", "max_dist_mm") + (("moved_mm",) if name == "top" else ("k",))
-            for key in keys:
-                if abs(run["placements"][name][key] - stored[name][key]) > 1e-9:
-                    raise SystemExit(f"{STATE}: {k} {name} {key} differs from {G3B}")
-        n = len(run["opm_pos"]["opm_dense"])
-        if n != g["arrays"][k]["opm_dense"]["n_sites"]:
-            raise SystemExit(f"{STATE}: {k} has {n} dense OPM sites, {G3B} {g['arrays'][k]['opm_dense']['n_sites']}")
-        out[k] = dict(top=np.asarray(run["placements"]["top"]["trans"], float),
-                      cfx=np.asarray(run["placements"]["counterfactual_x-centred"]["trans"], float),
-                      k=float(run["placements"]["counterfactual_x-centred"]["k"]),
-                      opm=np.asarray(run["opm_pos"]["opm_dense"], float))
-    return out
-
-
-def head_geometry(k: str, sub, geo: dict, mags: np.ndarray, stored: dict) -> dict:
-    """Scalp, white surface, helmet coils and OPM sites of one head in its head frame [mm]; the
-    coil-to-scalp gaps recomputed from them must equal the stored ones."""
-    mh = np.linalg.inv(sub.trans["trans"])  # MRI -> head
-    scalp = P.scalp_head_frame(sub)
-    top, cfx, kk = geo["top"], geo["cfx"], geo["k"]
-    fixed = mags @ top[:3, :3].T + top[:3, 3]  # fixed helmet, head at top contact (device -> head)
-    centre = np.linalg.inv(cfx)[:3, 3]  # head origin, device frame (as opmsquid.pediatric.counterfactual_helmet)
-    scaled = (centre + kk * (mags - centre)) @ cfx[:3, :3].T + cfx[:3, 3]
-    tree = cKDTree(scalp)
-    for name, c in (("top", fixed), ("counterfactual_x-centred", scaled)):
-        dist = tree.query(c)[0] * 1e3
-        for key, val in (("median_dist_mm", np.median(dist)), ("min_dist_mm", dist.min()), ("max_dist_mm", dist.max())):
-            if abs(val - stored[name][key]) > 1e-6:
-                raise SystemExit(f"{k}: drawn {name} {key} {val:.6f} differs from the stored {stored[name][key]:.6f}")
-    white = [((s["rr"] @ mh[:3, :3].T + mh[:3, 3]) * 1e3, s["tris"]) for s in sub.src]
-    return dict(scalp=(scalp * 1e3, sub.scalp.tris), white=white, fixed=fixed * 1e3, scaled=scaled * 1e3,
-                opm=geo["opm"] * 1e3, k=kk)
+    for k, name in GEOMETRY_HEADS.items():
+        a, stored = x["anatomies"][k], g["placements"][k]
+        if name is not None and name not in a["description"]:  # the description below names the subjects
+            raise SystemExit(f"{GEOMETRY}: {k} is '{a['description']}', not {name}")
+        tr, cf = a["transforms"], a["transforms"]["counterfactual_x-centred"]
+        checks = [("top moved_mm", tr["top"]["moved_mm"], stored["top"]["moved_mm"], 1e-9),
+                  ("k", cf["k"], stored["counterfactual_x-centred"]["k"], 1e-9),
+                  ("k_nominal", cf["k_nominal"], stored["counterfactual_x-centred"]["k_nominal"], 1e-9)]
+        checks += [(f"{name} {key}", a["gaps_mm"][name][key], stored[name][key], 1e-6)
+                   for name in ("top", "counterfactual_x-centred") for key in ("min_dist_mm", "median_dist_mm", "max_dist_mm")]
+        for what, have, want, tol in checks:
+            if abs(have - want) > tol:
+                raise SystemExit(f"{GEOMETRY}: {k} {what} {have} differs from {G3B} ({want})")
+        top = np.asarray(tr["top"]["device_to_head"], float)
+        cfx = np.asarray(cf["device_to_head"], float)
+        centre = np.linalg.inv(cfx)[:3, 3] * 1e3  # head origin, device frame [mm]
+        expect = {"fixed_top": dev @ top[:3, :3].T + top[:3, 3] * 1e3,
+                  "scaled_x_centred": (centre + cf["k"] * (dev - centre)) @ cfx[:3, :3].T + cfx[:3, 3] * 1e3}
+        coils = {n: np.asarray(a["coils_mm"][n], float) for n in expect}
+        coil_err = max(float(np.abs(coils[n] - expect[n]).max()) for n in expect)
+        if coil_err > COIL_TOL_MM:
+            raise SystemExit(f"{GEOMETRY}: {k} coil centres differ from the exported transforms by {coil_err:.4f} mm")
+        opm = np.asarray(a["opm_dense_mm"], float)
+        if len(opm) != g["arrays"][k]["opm_dense"]["n_sites"]:
+            raise SystemExit(f"{GEOMETRY}: {k} has {len(opm)} dense OPM sites, {G3B} {g['arrays'][k]['opm_dense']['n_sites']}")
+        sec = a["sections"]
+        out[k] = dict(scalp={plane: segments(sec[plane]["scalp"]) for plane in ("sagittal", "coronal")},
+                      white=[segments(sec["coronal"]["white"][h]) for h in ("lh", "rh")],
+                      fixed=coils["fixed_top"], scaled=coils["scaled_x_centred"], opm=opm, k=float(cf["k"]),
+                      coil_err=coil_err)
+    return out, x
 
 
 def figure_geometry() -> dict:
     g = load(G3B)
-    geo = geometry_state(g)
-    mags = P.magnetometer_positions(neuromag.load_info("T3"))
-    subs = {"adult": anatomy.load_sample(), "infant12mo": anatomy.load_template(GEOMETRY_HEADS["infant12mo"]),
-            "childB": anatomy.load_school(GEOMETRY_HEADS["childB"])}
-    heads = {k: head_geometry(k, subs[k], geo[k], mags, g["placements"][k]) for k in GEOMETRY_HEADS}
+    heads, geo = geometry_sections(g)
+    n_coils = int(geo["neuromag"]["magnetometers"])
 
     # panels of equal size and scale: the sagittal and coronal sections share the horizontal span
     xs, zl = SECTION_LIM["sagittal"]
@@ -614,15 +700,18 @@ def figure_geometry() -> dict:
         for i, (plane, axis) in enumerate((("sagittal", 0), ("coronal", 1))):
             ax = fig.add_axes([x0 / W, (H - t_top - ph if i == 0 else t_bot) / H, pw / W, ph / H])
             other = 1 - axis  # horizontal coordinate: y (anterior) in the sagittal, x (right) in the coronal section
+            # section points are in-plane, (y, z) or (x, z); no pixel snapping: a segment made exactly vertical or
+            # horizontal by the 0.01-mm rounding would otherwise be snapped, which the unrounded sections never were
             if plane == "coronal":  # the midsagittal plane passes between the hemispheres
-                for rr, tris in hd["white"]:
-                    seg = plane_section(rr, tris, axis)[:, :, [other, 2]]
-                    ax.add_collection(LineCollection(seg, colors=CORTEX_GREY, linewidths=0.4, zorder=1))
-            seg = plane_section(*hd["scalp"], axis)[:, :, [other, 2]]
-            ax.add_collection(LineCollection(seg, colors="k", linewidths=0.9, zorder=2))
+                for seg in hd["white"]:
+                    ax.add_collection(LineCollection(seg, colors=CORTEX_GREY, linewidths=0.4, zorder=1, snap=False))
+            ax.add_collection(LineCollection(hd["scalp"][plane], colors="k", linewidths=0.9, zorder=2, snap=False))
             for kw, key in markers:
                 pts = hd[key]
-                sel = np.abs(pts[:, axis]) < SLAB_MM
+                off = np.abs(pts[:, axis])
+                if np.any(np.abs(off - SLAB_MM) <= ROUND_MM / 2):  # rounding could move a sensor across the slab edge
+                    raise SystemExit(f"{GEOMETRY}: {k} has a {key} position within the rounding of the {SLAB_MM:g}-mm slab edge")
+                sel = off < SLAB_MM
                 ax.plot(pts[sel, other], pts[sel, 2], ls="none", zorder=3, **kw)
             ax.set_xlim(*SECTION_LIM[plane][0])
             ax.set_ylim(*zl)
@@ -669,26 +758,25 @@ def figure_geometry() -> dict:
     standoff = standoffs.pop()
     sc = {k: vals[k]["scaled_laterally_centred"] for k in vals}
     return dict(
-        inputs=[f"{STATE_LABEL} :: runs[<head>].placements['top'|'counterfactual_x-centred'] (trans: device-to-head, "
-                "k), runs[<head>].opm_pos['opm_dense'] (head frame), provenance.commit",
+        inputs=[f"{GEOMETRY} (written by scripts/export_g3b_geometry.py at {geo['provenance']['commit']} from the stored "
+                f"state of the G3B run {geo['provenance']['source_state']['commit']}) :: anatomies[<head>].sections "
+                "(sagittal.scalp, coronal.scalp, coronal.white.lh/rh: polylines, head frame, mm), coils_mm (fixed_top, "
+                "scaled_x_centred), opm_dense_mm, transforms (top: device_to_head, moved_mm; counterfactual_x-centred: "
+                "device_to_head, k, k_nominal), gaps_mm (checks), neuromag (magnetometers, coil_centres_device_mm: "
+                "check), provenance (commit, source_state.commit)",
                 f"{G3B} :: placements[<head>]['top'|'counterfactual_x-centred'|'x-centred'] (moved_mm, k, k_nominal, "
                 "shift_x_mm, min/median/max_dist_mm: checks and labels), arrays[<head>].opm_dense (n_sites, "
                 "standoff_mm), anatomies[<head>].head_size.ofc_mm, config.placement (clearance_mm, dewar_spacing_mm), "
-                "provenance.commit",
-                "MNE-sample-data/MEG/sample/sample_audvis_raw.fif (opmsquid.neuromag.load_info('T3'): magnetometer coil "
-                "centres, device frame)",
-                "MRI scalps and white surfaces via opmsquid.anatomy (load_sample, load_template('ANTS12-0Months3T'), "
-                "load_school('sub-Z209')): sample-head.fif, ANTS12-0Months3T-head.fif, sub-Z209-head.fif and the full "
-                "white surfaces held by each subject's oct-6 source space; head frames from each subject's head-to-MRI "
-                "transform"],
+                "provenance.commit"],
         description=(
             "Head-frame sections (Neuromag convention of each head's own fiducials; x right, y anterior, z up; mm) "
-            "through the head origin: sagittal x = 0 and coronal y = 0. Lines: the exact intersection of the MRI scalp "
-            "mesh (black) and, in the coronal sections, of the white-matter surfaces (grey; the cortical sources lie on "
-            "them) with the plane (the midsagittal plane passes between the hemispheres, so the sagittal sections show "
-            f"the scalp only); the sections are cropped below z = {zl[0]:g} mm (face and neck). Markers: sensors within "
+            "through the head origin: sagittal x = 0 and coronal y = 0. Lines: the intersection of the MRI scalp mesh "
+            "(black) and, in the coronal sections, of the white-matter surfaces (grey; the cortical sources lie on them) "
+            "with the plane, one segment per crossed triangle (the midsagittal plane passes between the hemispheres, so "
+            "the sagittal sections show the scalp only), as polylines rounded to 0.01 mm; the sections are cropped below "
+            f"z = {zl[0]:g} mm (face and neck). Markers: sensors within "
             f"{SLAB_MM:g} mm of the plane, projected onto it (as in the G3B geometry figure). Filled black squares: the "
-            f"{len(mags)} Neuromag magnetometer coil centres of the fixed adult helmet (VectorView geometry of the sample "
+            f"{n_coils} Neuromag magnetometer coil centres of the fixed adult helmet (VectorView geometry of the sample "
             "recording) with the head at top contact (the adult's measured pose, then raised along device +z until the "
             f"nearest coil is {pc['clearance_mm']:g} mm from the scalp; moved "
             + ", ".join(f"{GEOMETRY_NAMES[k]} {vals[k]['top']['moved_mm']:g} mm" for k in vals)
@@ -702,13 +790,15 @@ def figure_geometry() -> dict:
             + f". Open blue circles: the dense OPM sites (sensing centres, {standoff:g} mm from the scalp) refitted to "
             "each head (" + ", ".join(str(vals[k]["opm_dense_sites"]) for k in vals) + " sites). Order: adult, 12-month "
             "template (ANTS12-0Months3T), child B (sub-Z209, OpenNeuro ds005234). Median magnetometer-to-scalp gap "
-            f"(nearest MRI scalp vertex, all {len(mags)} coils), stored and recomputed from the drawn geometry (equal to "
-            "1e-6 mm): fixed helmet at top contact " + ", ".join(f"{x:.2f}" for x in g_fix) + " mm; scaled, laterally "
-            "centred helmet " + ", ".join(f"{x:.2f}" for x in g_sc) + " mm. The helmet transforms and OPM sites come "
-            "from the stored G3B state (not in results/), which reproduces every stored gap, move, scale factor and site "
-            "count; the coil centres are drawn, not the Dewar surface. Infant template: O'Reilly et al. (2021), built "
-            "from the Neurodevelopmental MRI Database (Richards et al., 2016); child B: OpenNeuro ds005234 (Fadeev et "
-            "al., 2024, 2025)."),
+            f"(nearest MRI scalp vertex, all {n_coils} coils), stored, and recomputed by the export from the unrounded "
+            "geometry (equal within 1e-6 mm): fixed helmet at top contact " + ", ".join(f"{x:.2f}" for x in g_fix)
+            + " mm; scaled, laterally centred helmet " + ", ".join(f"{x:.2f}" for x in g_sc) + " mm. Sections, coil "
+            f"centres and OPM sites are read from {GEOMETRY}, exported by scripts/export_g3b_geometry.py from the stored "
+            f"state of the G3B run of {G3B} (checked: run, moves, scale factors, gaps, site counts; the drawn coil centres "
+            "equal the exported transforms applied to the device-frame coil centres within "
+            f"{max(heads[k]['coil_err'] for k in heads):.4f} mm, the effect of the rounding); the coil centres are drawn, not "
+            "the Dewar surface. Infant template: O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database "
+            "(Richards et al., 2016); child B: OpenNeuro ds005234 (Fadeev et al., 2024, 2025)."),
         alt=("Six panels: sagittal (top) and coronal (bottom) sections of three heads, adult, 12-month template and "
              "child B, drawn at the same scale. Each shows the scalp outline (the coronal ones with the folded "
              "white-matter outline inside), open blue circles of the dense OPM sites hugging the scalp, filled black "
@@ -730,14 +820,12 @@ def figure_geometry() -> dict:
 
 # ----------------------------------------------------------------------------------------------
 def check_inputs() -> None:
-    """Stop before drawing anything if an external input is missing (nothing is recomputed in its place)."""
+    """Stop before drawing anything if an input is missing (nothing is recomputed in its place)."""
     paths.require(paths.SUBJECTS_DIR / "sample" / "bem" / "sample-oct-6-src.fif",
                   "MNE sample subject (set OPMSQUID_DATA)")
     for name in TEMPLATES.values():
         paths.require(paths.EXTERNAL / anatomy.INFANT_SUBJECTS / name, f"infant template {name} (set OPMSQUID_DATA)")
-    paths.require(paths.EXTERNAL / anatomy.SCHOOL_SUBJECTS / GEOMETRY_HEADS["childB"], "child B (set OPMSQUID_DATA)")
-    paths.require(STATE, "stored G3B state, the only record of the helmet transforms and OPM sites drawn in R12 (set "
-                         "OPMSQUID_CACHE to the cache that holds g3b/state.pkl; it is only read)")
+    paths.require(ROOT / GEOMETRY, "G3B geometry export (scripts/export_g3b_geometry.py)")
 
 
 def main():

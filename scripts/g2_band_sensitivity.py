@@ -37,7 +37,7 @@ import mne  # noqa: E402
 import g2_adult_comparison as G  # noqa: E402
 from opmsquid import background, g2, io, noise, noisemodel  # noqa: E402
 
-BANDS = ((1.0, 40.0), (1.0, 10.0), (8.0, 30.0), (30.0, 80.0))  # first = primary band
+BANDS = ((1.0, 40.0), (1.0, 10.0), (8.0, 30.0), (30.0, 80.0), (3.0, 70.0))  # first = primary; 3-70 Hz = spike review
 OPM_CORNER_HZ = 100.0
 OUT = ROOT / "results" / "g2"
 

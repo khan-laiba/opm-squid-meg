@@ -11,9 +11,9 @@ and figure resolving, and two independent referees, Claude Fable 5.1 (maximum ef
 subagent) and GPT-6 Astra (maximum reasoning, Codex CLI), each return "accept" or "minor
 revisions" in the same round. Each referee sees only the files.
 
-**Site:** https://khan-laiba.github.io/opm-squid-meg/ (served from the `gh-pages` branch; the version
-under review is live, and the accepted version will replace it). The repository stays private; the
-Pages site is public.
+**Site:** https://khan-laiba.github.io/opm-squid-meg/ (served from the `gh-pages` branch; the round-1
+version is live, and the revised version will replace it). The repository is public (code MIT; report,
+figures and result files CC BY 4.0).
 
 ## Status
 
@@ -22,12 +22,18 @@ Pages site is public.
 | 1. Foundations: number provenance, new figures from stored outputs, verified literature table, site integration | done | 31,150 sourced facts; figures R1-R10; 15 studies (14 verified in full text); 197 tests pass |
 | 2. Draft the report as one narrative | done | about 8,500 words of main text, 10 figures, 3 tables, 39 references |
 | 3. Internal verification: numbers, claims against evidence, methods completeness, build, tests, links | done | 166 checker issues resolved; supplementary pages cleaned for publication; 197 tests pass |
-| 4. Referee rounds (both referees, same round) | in progress | round 1 |
+| 4. Referee rounds (both referees, same round) | in progress | round 1: major revisions from both; revision in progress, round 2 next |
 | 5. Deploy to GitHub Pages and check the live site | first deployment done | the round-1 version is live; redeploy after acceptance |
 
 ## Referee rounds
 
-- Round 1 (commit f59f76e): both referees reviewing.
+- Round 1 (commit f59f76e): **major revisions** from both referees. They verified the numbers (no
+  number contradicted its result file) and asked for: evidence on the noise model that decides the
+  comparison (validation against measured Neuromag noise; near-skull cortex, coloured OPM noise and
+  cardiac/ocular fields as sensitivity analyses); a quality check of the school-aged children's MRI
+  surfaces; a helmet fitted to each head at the adult's gap, with placement uncertainty; a confirmatory
+  spike run with the endpoint fixed in advance; public code; and a shorter manuscript in its own terms.
+- Round 2: in preparation (revision branch `revision-r2`).
 
 ## Log
 
@@ -56,3 +62,20 @@ Pages site is public.
   set to serve that branch. Live check: 13 pages, 157 internal assets and 95 anchors, 0 failures; 42 external
   links, 32 load from a script and 10 publisher pages (Wiley, AIP, RSNA, MDPI) refuse scripts (to be checked in a
   browser). Round 1 sent to both referees with the manuscript, its site and the analysis files only.
+- 2026-10-04: round 1 returned: major revisions from both referees (reports kept outside the repository).
+  The owner made the repository public; code under the MIT licence, report, figures and result files
+  under CC BY 4.0 (LICENSE, LICENSE-CONTENT.md).
+- 2026-10-04: the analyses the referees asked for were implemented with tests (10e37b9): the children's MRI
+  quality check (their T1 and head-mask files fetched after the owner's approval, with SHA-256 in
+  configs/school_subjects_qc_manifest.json), the noise model against the measured Neuromag covariance, the
+  noise-model sensitivity analyses, a helmet fitted to each head at the adult's gap, and a confirmatory spike
+  run whose endpoint, seeds and number of locations were declared in configs/g4_confirmatory.toml before it ran.
+- 2026-10-05: results of the checks committed (ae458a9). The children's surfaces are usable and their shallow
+  cortex is genuine; Neuromag's detectability with its measured noise is 1.14 times the model's, so the adult
+  OPM advantage is a conditional prediction whose size matches the model's own error for Neuromag; the named
+  omissions (near-skull cortex, coloured OPM noise, heart and eyes) barely move it. The helmet fitted at the
+  adult's gap brings the smaller heads' OPM advantage back to the adult's (and below it in two of the three
+  children). The confirmatory spike run is computing (nine anatomies, one clean commit).
+- 2026-10-05: revision of the manuscript started on branch `revision-r2`: clean main-text figures, the
+  Methods details as sourced facts, the clinical comparison as qualitative analogues, a supplementary text
+  page, and the condensed manuscript (about half the length), followed by independent checks before round 2.

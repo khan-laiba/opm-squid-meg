@@ -7,6 +7,8 @@ build_facts() merges the per-milestone fact modules:
   scripts/report_facts_g4.py   G4 (spike detection, localization, motion)
   scripts/report_facts_methods.py  Methods details asked for in referee round 1 (noise model, OPM axes, time-domain
                                model, bootstrap resamples, seeds, location-level test resolution, parameter provenance)
+  scripts/report_facts_rev.py  the referee round-1 analyses (noise-model sensitivity, the noise model against the
+                               measured Neuromag covariance, the children's MRI quality check)
 Each module exposes facts(root: Path) -> dict[name, fact]; a fact is
   {"value": text exactly as printed in the report, "raw": the unrounded number(s) or text,
    "source": "results/<file> :: <key path>" or "... :: derived: <how>"}.
@@ -23,7 +25,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MODULES = ("report_facts_g12", "report_facts_g3", "report_facts_g4", "report_facts_methods")
+MODULES = ("report_facts_g12", "report_facts_g3", "report_facts_g4", "report_facts_methods", "report_facts_rev")
 
 
 def _load(name: str):
