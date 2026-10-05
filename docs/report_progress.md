@@ -79,3 +79,18 @@ figures and result files CC BY 4.0).
 - 2026-10-05: revision of the manuscript started on branch `revision-r2`: clean main-text figures, the
   Methods details as sourced facts, the clinical comparison as qualitative analogues, a supplementary text
   page, and the condensed manuscript (about half the length), followed by independent checks before round 2.
+- 2026-10-05: the confirmatory spike run finished (nine anatomies at one clean commit, ae458a9, settings as
+  declared in configs/g4_confirmatory.toml). The declared endpoint (dense OPM array vs Neuromag's 306 channels,
+  practical detector at 1 false event per minute, spikes 10-20 mm deep) passes the Holm-corrected test in all
+  nine anatomies, with S50 ratios of 1.27 to 1.47, and in each of five independent noise replicates; the
+  oracle and a mismatched detector agree; the site-matched array passes in five of nine. Results committed
+  (e9433e5) with those of the helmet fitted at the adult's gap.
+- 2026-10-05: stage B2 of the manuscript revision done: the manuscript rewritten at about half its length
+  (about 5,500 words) with the supplementary text S1; nine independent checkers (numbers x3, claims, referee
+  coverage, figures and tables, flow and style, compliance, build) raised 13 blockers and 71 major issues,
+  an editor resolved them, three rechecks and a second edit followed. New figures from stored outputs: the
+  arrays (R15), the geometry with the fitted helmet (R12), the noise-model checks (R17), the confirmatory
+  spikes (R16), the children's MRI check and three supplementary spike figures; dB axes on the adult figures.
+  The 3-70 Hz band was added to the band analysis and the children's MRI check re-run with full-precision
+  depths, both from a clean checkout. Stage B3 (the confirmatory results written in, nine checkers, editor,
+  point-by-point response letter) is running; round 2 follows.
