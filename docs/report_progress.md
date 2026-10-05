@@ -183,3 +183,9 @@ figures and result files CC BY 4.0).
   docs/literature/model_counterparts.json marked as superseded by Table 4. Left to the author: funding, competing
   interests and contributions, an archive DOI, print-resolution figure files, Table 4's journal layout, and confirming
   the sample dataset's terms with its providers.
+- 2026-10-05: two independent checkers verified the round-4 corrections (104b086): every new number matches its source;
+  their wording findings were fixed (f60e083): the Abstract's spike result keeps "fixed adult helmet" and the
+  localization result "exploratory" (249 words); the 18-month template's flag uses the MRI check's verdict everywhere;
+  the independence of the anatomies and their shared assumptions are stated separately; the equal-rate test is called
+  approximate and uncorrected, and the rate matching is to the nominal 1 per minute; the superseded comparison record's
+  note lists how it differs from Table 4. Next: tests, deploy, live check.
