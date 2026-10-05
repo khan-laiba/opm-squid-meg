@@ -196,3 +196,32 @@ figures and result files CC BY 4.0).
   corrections they requested in round 4, checked by two independent checkers. Open for the author: funding,
   competing-interests and contributions statements, an archive DOI, print-resolution figure files, Table 4's journal
   layout, confirming the MNE sample dataset's terms with its providers, and the reference details at proof.
+
+# NeuroImage manuscript
+
+**Goal (2026-10-05).** Rewrite the published report as a manuscript ready for submission to NeuroImage, without
+re-analysis: `paper/` holds the LaTeX source and the compiled PDF (title, highlights, abstract, keywords, Introduction,
+Materials and methods, Results, Discussion, Conclusion, references, print-resolution multi-panel figures and tables),
+written to a one-page style sheet derived from ten open-access NeuroImage MEG/OPM-MEG papers of 2024-2026 and the
+current Guide for Authors; every number matches the analysis outputs. Done when Claude Fable 5.1 (maximum effort) and
+GPT-6 Astra (maximum reasoning, Codex CLI), each seeing only the manuscript, the ten papers and the analysis outputs,
+return accept or minor revisions in the same round.
+
+| Step | Status | Notes |
+|---|---|---|
+| 1. Reference papers and Guide for Authors | done | ten NeuroImage papers (PMC Open Data author manuscripts: PDF, XML, text, figures; 102 files, 75.8 MB, checksums verified) and the Guide for Authors (saved by the owner) in `refs/`, which is not committed |
+| 2. Style sheet | done | `paper/style_sheet.md`, one page, from eleven parallel analyses and a synthesis |
+| 3. Figures at print resolution | pending | vector PDFs exported from the stored results |
+| 4. Manuscript and supplementary material | pending | LaTeX templates filled from the facts (`paper/build_paper.py`) |
+| 5. Internal checks | pending | numbers, style-sheet compliance, claims |
+| 6. Referee rounds | pending | both referees, same round |
+
+## Manuscript log
+
+- 2026-10-05: branch `neuroimage-manuscript`. ScienceDirect refuses automated access, so the ten papers come from the
+  PMC Open Data bucket (NIH-deposited author manuscripts of the accepted papers, CC BY/BY-NC/BY-NC-ND): Matsubara 2026,
+  Núñez Ponasso 2025, Wartman 2025, Arif 2025, Youssofzadeh 2026, Jiao 2024, Ward 2025, Pulliam 2024, Jia 2025, Wang
+  2025. The owner saved the Guide for Authors. Toolchain: tectonic (XeTeX) with Elsevier's elsarticle class and TeX Gyre
+  Termes. Title page and declarations as decided by the owner: Laiba Khan (Lexington High School) and Mainak Jas
+  (Martinos Center, MGH/HMS; corresponding author); no specific funding; no competing interests; CRediT roles; a
+  generative-AI declaration.

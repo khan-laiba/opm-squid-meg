@@ -19,3 +19,6 @@ cache/
 
 # locally built website (published only with explicit owner approval)
 site/_build/
+
+# manuscript build outputs (the PDFs in paper/ are kept)
+paper/build/
