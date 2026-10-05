@@ -238,6 +238,11 @@ def page_numbers(facts, uses, out):
 
 MILESTONE_PAGES = ("adult.html", "g2-report.html", "pediatric.html", "g3b-report.html", "epilepsy.html", "motion-report.html",
                    "summary.html")
+REFERENCE_PAGES = ("methods.html", "register.html")
+REFERENCE_NOTE = ('<div class="finding"><p><strong>Reference document.</strong> This page records the methods, parameters and '
+                  'analysis history in full, earlier model versions included. Where its summaries of results differ from the '
+                  '<a href="index.html">manuscript</a> and its supplementary text (<a href="supplement.html">S1</a>), those take '
+                  'precedence.</p></div>')
 MILESTONE_NOTE = ('<div class="finding"><p><strong>Milestone report.</strong> This page presents the analyses as they were first '
                   'run and reported. The <a href="index.html">manuscript</a> and its supplementary text '
                   '(<a href="supplement.html">S1</a>) give the current interpretation, the conditions of each result and the '
@@ -1021,14 +1026,14 @@ def main(argv=None):
         "summary.html": (page_title("summary.html"), page_summary(d)),
     })
     # the milestone pages report the analyses as first run; the manuscript and S1 hold the current interpretation
-    note = MILESTONE_NOTE
-    for target in ("index.html", "supplement.html"):  # link only to pages that were built (tests build subsets)
-        if target not in pages:
-            note = re.sub(rf'<a href="{target}">(.*?)</a>', r"\1", note)
-    for fname in MILESTONE_PAGES:
-        if fname in pages:
-            title, content = pages[fname]
-            pages[fname] = (title, note + content)
+    for names, note in ((MILESTONE_PAGES, MILESTONE_NOTE), (REFERENCE_PAGES, REFERENCE_NOTE)):
+        for target in ("index.html", "supplement.html"):  # link only to pages that were built (tests build subsets)
+            if target not in pages:
+                note = re.sub(rf'<a href="{target}">(.*?)</a>', r"\1", note)
+        for fname in names:
+            if fname in pages:
+                title, content = pages[fname]
+                pages[fname] = (title, note + content)
     # the navigation: every supplementary page that was built (no S1 without report/supplement.md)
     supplement = [dict(file=f, title=f"{n} {t}" if n else t) for f, n, t in SUPPLEMENT if f in pages]
     documents = {doc["page"] for doc in docs.values()}

@@ -74,12 +74,12 @@ CI_LINE = dict(lw=1.3, solid_capstyle="butt", zorder=3)
 # gloss (the caption defines each scenario in full)
 SCENARIOS = (("A", "S1_same_relative_change", "common model error"),
              ("B", "S2_same_variance_excess_both_modelled", "both backgrounds × {k}"),
-             ("C", "S3_neuromag_measured_opm_variance_excess", "OPM bears the excess (bound)"),
+             ("C", "S3_neuromag_measured_opm_variance_excess", "OPM bears the excess (pessimistic)"),
              ("D", "S4_neuromag_measured_opm_as_modelled", "Neuromag measured, OPM modelled"),
              ("E", "S5_neuromag_measured_empty_room", "measured empty room"))
 # the phrases of docs/methods.md that define A-E, in this order (the letters must stay those of the methods)
 METHODS_LETTERS = (("A", "the model's error common"), ("B", "both cortical backgrounds scaled"),
-                   ("C", "a pessimistic bound, Neuromag as measured"), ("D", "Neuromag as measured, the OPM exactly as modelled"),
+                   ("C", "the most pessimistic, Neuromag as measured"), ("D", "Neuromag as measured, the OPM exactly as modelled"),
                    ("E", "Neuromag with its measured empty"))
 CORNERS = (1, 3, 10)  # (c) 1/f corners, Hz
 SWEEP_LS = {IB: "-", PR: (0, (1.0, 1.4))}  # (d) sensor plus brain noise solid, after the projection dotted

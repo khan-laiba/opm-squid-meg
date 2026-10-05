@@ -272,7 +272,7 @@ Configuration: `configs/goldenholz_reference.toml`.
   9 % of patches by more than 1 dB; `patch_truncation` in `g1c_summary.json`). The same patch
   construction is used in G2, G3B and G4. G1C keeps the medial wall (aparc 'unknown': 5.9 % of the
   usable vertices, 558 of the 7,661 patch centroids, 97 of the 1,736 noise sources), as the paper's
-  whole-cortex maps do, whereas G2 and G4 exclude it; without it the pooled focal median is -21.66
+  whole-cortex maps do, whereas G3B leaves it out of every summary and the G4 locations never lie on it (G2 keeps it in every median); without it the pooled focal median is -21.66
   instead of -22.13 dB and 58.9 instead of 56.0 % of the vertices lie in the paper's display range
   (`without_medial_wall`). With both changes, patches over every valid vertex (untruncated) at the
   7,103 centroids off the wall (v4, `variant_no_wall_untruncated`), the pooled patch medians are
@@ -398,7 +398,7 @@ Design
   its measured covariance (finite-sample corrected) against the model, and what this implies for the
   OPM/Neuromag ratio in five scenarios, A-E here (S1-S5 in the result file): A the model's error common
   to both systems (the model's ratio); B both cortical backgrounds scaled by the measured magnetometer
-  variance excess; C a pessimistic bound, Neuromag as measured and the OPM bearing that whole excess as
+  variance excess; C the most pessimistic, Neuromag as measured and the OPM bearing that whole excess as
   cortical noise; D Neuromag as measured, the OPM exactly as modelled; E Neuromag with its measured empty
   room and modelled brain noise. Intervals: 1,000 parcel-bootstrap resamples (IC-BOOT-COVVAL).
 * 3-70 Hz band (revision): `scripts/g2_band_sensitivity.py` also rebuilds the
@@ -984,7 +984,7 @@ means the 2-year template; the 18- and 12-month templates are named.
   right of the helmet's midline, centred left/right temporal gaps 48.9/33.3 mm, and its right side
   stops the helmet from shrinking to 0.844). Lateral centring moves the heads by -1.5 (adult), -0.5,
   -0.5 and -6.5 mm (template) along device x; about the laterally centred template the factor is
-  0.864 (median gap 27.0 mm, adult 29.8 mm). The 18- and 12-month templates: circumference 491 and
+  0.864 (median gap 27.0 mm, adult 29.6 mm laterally centred; 29.8 mm centred). The 18- and 12-month templates: circumference 491 and
   469 mm, usable cortex 975 and 895 cm^2, dense 157 and 144 sites (26.5 and 25.6 per 100 cm^2 of
   593 and 562 cm^2 covered scalp), matched 80 and 82; top contact raises them by 28 and 33.5 mm
   (median gap 38.9 and 40.4 mm; centred 46.0 and 48.9 mm). They too sit right of the midline
@@ -1012,7 +1012,7 @@ means the 2-year template; the 18- and 12-month templates are named.
   peak-channel SNR +1.32 and +1.60, mean-power SNR +0.92 and +1.08 dB. Across the three templates
   Delta is +0.73, +0.88 and +0.96 dB (24, 18, 12 months; overlapping intervals), but reweighted to
   the adult's depth mix the pooled differences are +0.32, +0.53 and +0.29 dB (below): the
-  12-month template's top rank reflects its shallow cortex (the raw ordering also follows head
+  12-month template's top rank is consistent with its shallow cortex, not separated from its size (the raw ordering also follows head
   circumference, 495, 491 and 469 mm, so depth mix and size are not separated here). The templates'
   shallower cortex (42 % of the 2-year template's area at 10-20 mm depth vs 21 % of the adult's) may
   partly be an artefact of template averaging, which smooths sulci; the depth-reweighted differences
@@ -1103,7 +1103,7 @@ means the 2-year template; the 18- and 12-month templates are named.
   contact +0.44, +1.09 and +0.77 dB; back contact +0.85, +1.21 and +1.39 dB. In the counterfactual
   helmet scaled with the head it is -0.22 [-0.25, -0.18], -0.37 [-0.43, -0.33] and +0.24 [+0.13,
   +0.56] dB, and about the laterally centred head -0.21, -0.38 and -0.30 [-0.42, +0.02] dB: the
-  template's positive residual came from its lateral offset. For the 18- and 12-month templates:
+  template's positive residual disappears when the head is laterally centred. For the 18- and 12-month templates:
   centred +2.08 and +2.50, top +0.88 and +0.96, laterally centred then top +0.75 and +0.91, 18-mm
   contact +0.85 and +0.85, back +1.49 and +1.68 dB; counterfactual +0.18 [+0.11, +0.47] and -0.02
   [-0.16, +0.11] dB, about the laterally centred head -0.16 [-0.39, +0.03] and -0.18 [-0.37, +0.06]
@@ -1230,7 +1230,7 @@ intrinsic + brain noise, area-weighted medians without the medial wall, parcel-b
   A-BEM-CHILD and the
   transferred fiducials A-G3-FID, section 10). Templates are averages and three children are not a
   population; the comparison with the adult mixes head size, anatomy and the fixed-helmet fit,
-  which G3B separates for detectability.
+  which G3B varies in several constructions, none isolating one route.
 
 Pediatric G4 results (`results/g4/G4_pediatric_report.md`, `g4_pediatric_comparison.json`; detection in
 the adult and the five earlier smaller heads simulated at ed852b2 with the v4 arrays, their localization

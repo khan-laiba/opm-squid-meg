@@ -890,6 +890,10 @@ def round3b_facts(F: Facts, root: Path) -> None:
           f"{CGAP} :: interaction['<head>/gap_matched_top/combined/intrinsic+brain'].interaction.median (derived: min and max over "
           "the scaled adults and the infant templates, the helmet fitted at the adult's top-contact gap; every ci95 above zero, "
           "checked)")
+    wt = [float(cg["within_head"][f"{h}/gap_matched_top/combined/intrinsic+brain"]["median"]) for h in scaled_templates]
+    F.add("wr_cgap_scaled_templates_within_top_range", f"{signed(min(wt), 2)} to {signed(max(wt), 2)}", [min(wt), max(wt)],
+          f"{CGAP} :: within_head['<head>/gap_matched_top/combined/intrinsic+brain'].median (derived: min and max over the scaled "
+          "adults and the infant templates; the reduction measured against the adult at top contact)")
     top = [cg["delta_vs_adult_top"][f"{h}/gap_matched_top/opm_dense/combined/intrinsic+brain"]["delta"] for h in scaled_templates]
     tm = [float(x["median"]) for x in top]
     F.add("wr_cgap_scaled_templates_fittedtop_vs_top_range", f"{signed(min(tm), 2)} to {signed(max(tm), 2)}", [min(tm), max(tm)],

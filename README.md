@@ -25,6 +25,9 @@ papers has reviewed or approved it. The OPM advantage is tested, not assumed.
 "Checked" means separate checking passes within the project by reviewer agents, with fixes
 re-verified (on 2026-10-01 also complete passes by two other models); it is not external peer review.
 
+The report ([index](https://khan-laiba.github.io/opm-squid-meg/) and its supplementary text S1) is the current, qualified
+statement of the results; the milestone summaries below take second place where they differ.
+
 Adult findings so far (`adult-baseline-v4`), conditional on one adult head (MNE sample subject),
 an assumed OPM noise of 15 fT/sqrt(Hz), OPM sensors at the 7-mm standoff with no extra
 helmet-to-scalp gap (median sensing-centre height 7.0 mm above the MRI scalp, as on every head
@@ -41,8 +44,7 @@ caveats in `docs/methods.md` and `results/g2/G2_report.md`:
   count (a triaxial OPM at those sites, 294 channels) it is 1.12x, or 1.05x if the tangential axes
   are twice as noisy. With covariances estimated from 10 or 60 s of data instead of the oracle, the
   dense ratio is 1.23x or 1.16x (Neuromag's 306 channels lose more to estimation). The ratio
-  hardly depends on the brain-background level; it is set by signal outside the brain-noise
-  subspace.
+  hardly depends on the brain-background level.
 - The advantage disappears with worse assumptions: 1.01x at an OPM noise of 30 fT/sqrt(Hz),
   0.97x with 30 fT/sqrt(Hz) and a 3-mm scalp gap, 0.92x with a 6-mm gap. Without brain noise,
   Neuromag wins (0.74x). The 3- and 1-layer head models agree (1.14x and 1.13x). The advantage also
@@ -50,9 +52,9 @@ caveats in `docs/methods.md` and `results/g2/G2_report.md`:
   ahead (dense 0.90x, Neuromag higher for 72 % of targets; mean-power SNR 1.04x), and after the
   external-field projection the dense array is no longer ahead below 45 mm (0.92-1.00x; the matched
   array is behind from 25 mm, 0.75-0.99x). With Neuromag noise taken from the measured empty-room spectrum
-  instead of the datasheet values the dense ratio is 1.17x. Not modelled: non-cortical physiological
-  fields (cardiac, ocular), which the OPMs would see as magnetometers; the 1/f rise of real OPM
-  noise at low frequencies (white noise assumed); and the measured brain noise's spatial pattern,
+  instead of the datasheet values the dense ratio is 1.17x. Not in the primary model (added as sensitivity checks in the
+  revision, below): non-cortical physiological fields (cardiac, ocular), which the OPMs would see as magnetometers;
+  the 1/f rise of real OPM noise at low frequencies (white noise assumed); and the measured brain noise's spatial pattern,
   which the cortical background matches only in its median gradiometer level (per channel the
   model/measured ratio spans 0.16-1.90).
 - Noise-model checks added in the revision (`docs/methods.md` section 8; detectability only):
@@ -136,8 +138,8 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   -0.38, -0.30, -0.16 and -0.18 dB (without the lateral centring the off-centre 24- and 18-month
   templates kept +0.24 and +0.18 dB). With the background fixed per unit cortical area, both systems'
   detectability rises in these smaller heads and the on-scalp OPM's rises more (vertex-wise +1.10 and
-  +1.67 dB vs Neuromag +0.65 and +0.54 dB in the scaled controls); with a helmet that fits (scaled
-  with the head, laterally centred), the SQUID gains about as much or more (point estimates; the templates'
+  +1.67 dB vs Neuromag +0.65 and +0.54 dB in the scaled controls); in a helmet scaled
+  with the head (laterally centred; tighter than the adult's own fit), the SQUID gains about as much or more (point estimates; the templates'
   intervals include 0). The smaller heads' arrays also
   have fewer OPM sites (174, 155, 151, 157 and 144; school-aged children 155, 153 and 167; adult
   208); at an equal site count Delta would be larger.
@@ -152,8 +154,8 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   provisional examples (their near-scalp anatomy could not be verified).
 - The child-minus-adult difference of the median D stays positive for OPM noise 7-30 fT/sqrt(Hz),
   background variance x0.5 or x2 and a 1-layer head model (for the school-aged children except at 7
-  fT/sqrt(Hz), -0.15 to -0.03 dB); at 30 fT/sqrt(Hz) the adult's D is -0.05 dB (Neuromag slightly
-  ahead), the templates' +0.61, +0.61 and +0.77 dB and the school-aged children's +0.55, +0.72 and
+  fT/sqrt(Hz), -0.15 to -0.03 dB); at 30 fT/sqrt(Hz) the adult's D is -0.05 dB (no established
+  difference), the templates' +0.61, +0.61 and +0.77 dB and the school-aged children's +0.55, +0.72 and
   +0.27 dB. In the scaled controls the gain is large near the
   surface (vertex-wise +2.40 dB at 10-15 mm for the 2-year size) and smallest at 40-60 mm. In the
   templates the within-stratum gain is smallest at 20-50 mm, larger near the surface and deeper (most
@@ -197,7 +199,7 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   null (`results/g4/G4_matched_rate_report.md`) the superficial result is unchanged (ratios
   1.21-1.63), of the children's deeper ones the 12-month template's 30-45 mm remains (p = 0.018,
   uncorrected) and one school-aged child's 20-30 mm appears (p = 0.032, uncorrected). Localization:
-  dipole errors similar; dSPM of strong focal spikes 3.6-7.0 mm better with the dense OPM in both size
+  dipole errors similar; dSPM of strong focal spikes 3.6-7.0 mm smaller by point estimate with the dense OPM in both size
   controls and the 2-year and 18-month templates (p = 0.0002 to 0.035, uncorrected; MNE's own dSPM
   agrees in direction, -5.0 to 0.0 mm), not in the 12-month template or the adult (0 mm), and 2.9-4.7
   mm in the school-aged children without a clear difference (p = 0.071-0.25; MNE's dSPM -4.9 to -5.5
@@ -205,7 +207,7 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   within their anatomy and array (20 each), none of them in the school-aged children, and none across
   all eight children (320 comparisons; across the five earlier children two did: the school-age
   control's dense dSPM of strong focal spikes and the 12-month matched array's dSPM of weak, mostly
-  undetected 80-nAm patches); which ones survive varies between runs, the direction does not: of the
+  undetected 80-nAm patches); which ones survive varies between runs, and no localization difference is established: of the
   360 localization comparisons in the nine anatomies, 65 have p < 0.05 (uncorrected; about 18 would
   be expected by chance if they were independent, which they are not), 61 of them strictly favouring
   an OPM array, 3 with a zero median difference and 1 favouring Neuromag; 28 concern weak, mostly
