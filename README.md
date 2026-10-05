@@ -55,6 +55,14 @@ caveats in `docs/methods.md` and `results/g2/G2_report.md`:
   noise at low frequencies (white noise assumed); and the measured brain noise's spatial pattern,
   which the cortical background matches only in its median gradiometer level (per channel the
   model/measured ratio spans 0.16-1.90).
+- Noise-model checks added after referee round 1 (`docs/methods.md` section 8; detectability only):
+  near-skull cortex, coloured (1/f + white) OPM noise and cardiac and ocular sources leave the dense
+  ratio between 1.07 and 1.16 at 15 fT/sqrt(Hz); it reaches 1 at an OPM white noise of 31.5 [28.5,
+  34.9] fT/sqrt(Hz) (matched 16.7). Against the measured Neuromag noise the model predicts 0.73 of the
+  magnetometers' brain-noise amplitude (0.89 without the heart's field), and Neuromag's detectability
+  with its measured covariance is 1.14 [1.08, 1.20] times the modelled; what this implies for the OPM
+  ratio depends on the OPM's real noise, which no measurement here constrains (dense 0.80-1.14 over
+  the scenarios considered).
 - Equal standoff (v4): the sample subject's stored outer skin lay about 1 mm outside its MRI scalp,
   so the whole-cell clearance moved most of the adult's OPM sensors outward (v3), and its stored
   normals tilted their axes; with the head surface on the scalp, as the infant templates' already
@@ -70,8 +78,11 @@ caveats in `docs/methods.md` and `results/g2/G2_report.md`:
   strength ratio is 1.36 [1.10-1.58]); 11 of the 18 locations favour the OPM, 1 Neuromag, 6 tie
   (p = 0.004, uncorrected); with an oracle detector that knows the source and onset, 15 favour the
   OPM and none Neuromag (p = 0.00006). The practical detector knows the three simulated spike
-  morphologies, so absolute sensitivities and false-event rates are optimistic; the paired
-  comparison is less affected. The superficial advantage holds in every run, its size varies (v3
+  morphologies and the true forward model, so it is idealized: absolute sensitivities and
+  false-event rates are optimistic, and whether this optimism is the same for every array was not
+  tested in these runs (a confirmatory run with new locations, seeds and null data and one
+  detector-mismatch variant is declared in `configs/g4_confirmatory.toml`). These spike results are
+  exploratory: the superficial endpoint was chosen after them. The superficial advantage holds in every run, its size varies (v3
   8/2, ratio 1.29; v2 16/0, 1.51). In v4 the dense array is also favoured at 20-30 mm (9/1,
   p = 0.014) and 45-70 mm (9/0, p = 0.004); the equal-standoff change raised its G2 detectability
   at the G4 locations in every band, most in the deepest, but 30-45 mm shows no detection difference.
@@ -100,7 +111,9 @@ caveats in `docs/methods.md` and `results/g2/G2_report.md`:
 Pediatric findings (G3B, NEW), conditional on one adult head, three average infant templates of
 one database (24, 18 and 12 months; O'Reilly et al. 2021), three individual school-aged children of
 one dataset (7.8-8.7 years; OpenNeuro ds005234, Fadeev et al. 2024; their skull modelled because the
-dataset's segmentation failed, their fiducials transferred from the adult) and two scaled copies of
+dataset's segmentation failed, their fiducials transferred from the adult; an MRI quality check after
+referee round 1 found their surfaces registered to their MRIs and their scalps on the MRI head boundary
+as the adult's is) and two scaled copies of
 the adult; the same Neuromag helmet, sensors and noise for every head; OPM arrays refitted to each head with the
 adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report.md`:
 - With the child raised to 20-mm contact with the top of the fixed helmet, the dense OPM array's
@@ -126,6 +139,13 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   with the head, laterally centred), the SQUID gains at least as much. The children's arrays also
   have fewer OPM sites (174, 155, 151, 157 and 144; school-aged children 155, 153 and 167; adult
   208); at an equal site count Delta would be larger.
+- A helmet fitted to each head at the adult's own gap (29.55 mm; added after referee round 1,
+  `results/g3b_constant_gap/`) brings Delta to +0.02 to +0.15 dB in the size controls and templates
+  (+0.03 [+0.00, +0.05] dB for the school-age size; every template interval includes 0) and to -0.30
+  and -0.39 dB in children A and B (child C +0.01 dB, its helmet limited by clearance); within each of
+  these heads the fixed helmet at top contact gives +0.17 to +0.76 dB more than the fitted one (children
+  A and B +0.29 and +0.42, child C -0.12 dB). In this model the fixed helmet's gap, not head size, gives
+  the smaller heads their larger OPM gain.
 - The child-minus-adult difference of the median D stays positive for OPM noise 7-30 fT/sqrt(Hz),
   background variance x0.5 or x2 and a 1-layer head model (for the school-aged children except at 7
   fT/sqrt(Hz), -0.15 to -0.03 dB); at 30 fT/sqrt(Hz) the adult's D is -0.05 dB (Neuromag slightly
@@ -183,8 +203,9 @@ adult rules; details in `docs/methods.md` section 10 and `results/g3b/G3B_report
   control's dense dSPM of strong focal spikes and the 12-month matched array's dSPM of weak, mostly
   undetected 80-nAm patches); which ones survive varies between runs, the direction does not: of the
   360 localization comparisons in the nine anatomies, 65 have p < 0.05 (uncorrected; about 18 would
-  be expected by chance if they were independent, which they are not), 64 of them favouring an OPM
-  array; 28 concern weak, mostly undetected 80-nAm sources.
+  be expected by chance if they were independent, which they are not), 61 of them strictly favouring
+  an OPM array, 3 with a zero median difference and 1 favouring Neuromag; 28 concern weak, mostly
+  undetected 80-nAm sources.
 
 Scope: G3B is a geometry and helmet-fit experiment on average templates, three individual
 school-aged children and scaled copies of one adult, and the G4 examples are bounded recovery of
@@ -233,8 +254,14 @@ python3.12 -m venv .venv
 .venv/bin/python -c "import mne; mne.datasets.sample.data_path(path='data/external')"  # ~1.6 GB download
 .venv/bin/python -c "import mne; [mne.datasets.fetch_infant_template(a, subjects_dir='data/external/infant_subjects') for a in ('2yr', '18mo', '12mo')]"  # ~1.15 GB (G3B, pediatric G4)
 .venv/bin/python scripts/fetch_school_subjects.py  # ~125 MB: three school-aged children of OpenNeuro ds005234 (G3B, pediatric G4)
-bash scripts/run_all.sh     # tests, then every milestone in order (~11 h on a 10-core laptop: adult ~2 h, eight pediatric G4 runs ~1 h each)
+bash scripts/run_all.sh     # tests, then every milestone in order (~11 h on a 10-core laptop: adult ~2 h, eight pediatric G4 runs ~1 h each; the analyses added after referee round 1, among them nine confirmatory spike runs, add to this)
 ```
+
+The MRI quality check of the school-aged children (`scripts/study_children_qc.py`) also needs their T1
+volumes and the head masks their scalps were made from: 6 files, 9,855,337 bytes, listed with S3 object
+versions, sizes and SHA-256 in `configs/school_subjects_qc_manifest.json` and placed under
+`data/external/school_subjects/<subject>/mri/`. `scripts/fetch_school_subjects.py` does not download
+them; without them the check reports the children as 'undetermined'.
 
 Smoke run (about 15 min: the unit tests, which skip the full-resolution lead-field check without
 the local cache, then the analytical G1A benchmark, which needs no data):
@@ -253,10 +280,17 @@ override with `OPMSQUID_DATA`). Caches go to `cache/` (`OPMSQUID_CACHE`).
 ## Local report
 
 `.venv/bin/python scripts/build_site.py` builds a static report into `site/_build/` (git-ignored;
-open `site/_build/index.html`) from the committed result files, in the order the goal asks for:
-adult benchmarks, realistic adult results, pediatric extension, epilepsy, then methods,
-parameters and reproduction. Every number is read from `results/`; the downloads list each file's
-size, SHA-256 and the code commit recorded in it; the build fails on any broken link. The published report,
+open `site/_build/index.html`) from the committed result files: the report (`report/report.md`, the
+landing page), then the supplementary material: S1 supplementary text (`report/supplement.md`, rendered
+like the report, its figures and tables numbered S1, S2, ...; without that file the site is built
+without S1, with a warning), S2 adult reference benchmarks, S3 realistic adult comparison, S4 smaller
+heads, S5 simulated interictal spikes and head motion, S6 methods, uncertainty and limitations
+(`docs/methods.md`), S7 parameters, provenance and assumptions (`docs/provenance_register.md`), S8
+number provenance, S9 reproduce and download, and the project summary by milestone. Every number in
+the report and in S1 is a named fact (`scripts/report_facts.py`) read from `results/`, and S8 lists
+each with its source and the document that uses it; the downloads list each file's size, SHA-256 and
+the code commit recorded in it; the build fails on a missing fact, a cross-reference to an unknown
+figure or table, or any broken link. The published report,
 https://khan-laiba.github.io/opm-squid-meg/, is this build, committed to the `gh-pages` branch by
 `scripts/deploy_pages.py` and checked with `scripts/check_live_site.py`.
 
@@ -273,11 +307,15 @@ https://khan-laiba.github.io/opm-squid-meg/, is this build, committed to the `gh
 - The school-aged children (OpenNeuro ds005234, Fadeev et al. 2024; individual, de-identified MRIs of
   typically developing children) are not committed (`data/external/school_subjects/`, fetched by
   `scripts/fetch_school_subjects.py` and listed with S3 object versions, sizes and SHA-256 in
-  `configs/school_subjects_manifest.json`). Results derived from them (`results/g3b/g3b_targets_child*.csv`,
+  `configs/school_subjects_manifest.json`; their T1 volumes and head masks for the MRI quality check in
+  `configs/school_subjects_qc_manifest.json`). Results derived from them (`results/g3b/g3b_targets_child*.csv`,
   `school_subjects_preparation.json`, `school_anatomy_checks.json`, the G3B summary, report and figures,
-  `results/g4/*child*` and the pediatric G4 cross-reading summaries and reports) are derived quantities
-  only; the dataset's metadata say CC0 and its acknowledgement text CC BY: the report and the supplementary
-  pages cite the dataset and its paper.
+  `results/g4/*child*`, the pediatric G4 cross-reading summaries and reports, the helmet fitted at the
+  adult's gap, `results/g3b_constant_gap/`, and the MRI quality check, `results/g3b_children_qc/`) are
+  derived quantities, except that the quality check's overlay figures (`Figure_QC_overlay_child*.png`)
+  show sections of the children's T1 volumes with the surfaces drawn on them; the dataset's metadata say
+  CC0 and its acknowledgement text CC BY: the report and the supplementary pages cite the dataset and its
+  paper.
 - Not committed: the reference PDFs, the MNE sample data and anatomy (`data/`), computed caches
   (`cache/`). Results contain only derived quantities of the public datasets.
 - Release preparation (`docs/release_checklist.md`): every figure is set in open fonts (DejaVu

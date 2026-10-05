@@ -4,13 +4,16 @@
 The landing page (index.html) is the report, report/report.md: first rendered by Jinja2 with the
 number facts of scripts/report_facts.py as F.<name> (a missing fact or variable fails the build),
 then by the Markdown subset of opmsquid.sitebuild (numbered figures and tables, cross-references,
-a table of contents). The supplementary material follows: S1 adult reference benchmarks (G1),
-S2 realistic adult results (G2), S3 pediatric extension (G3), S4 epilepsy and head motion (G4),
-S5 methods, uncertainty and limitations, S6 parameters and provenance, S7 number provenance (every
-fact the report uses, with its source), S8 reproduction and downloads, and the project summary by
-milestone (summary.html). Every number is read from results/*/ (nothing is recomputed); figures
-are the committed PNGs; JSON, CSV and the generated reports are copied for download with their
-size, SHA-256 and the code commit recorded in the result file. The G1A Fig. 3 PDF and SVG
+a table of contents). Its supplementary text, report/supplement.md, is rendered the same way with
+the same facts as S1 (supplement.html; figures and tables numbered S1, S2, ...; each document can
+cross-reference the other's figures and tables); without that file the site is built without S1,
+with a warning. The other supplementary pages follow: S2 adult reference benchmarks, S3 realistic
+adult comparison, S4 smaller heads, S5 simulated interictal spikes and head motion, S6 methods,
+uncertainty and limitations, S7 parameters, provenance and assumptions, S8 number provenance (every
+fact the report and S1 use, with its source), S9 reproduction and downloads, and the project
+summary by milestone (summary.html). Every number is read from results/*/ (nothing is recomputed);
+figures are the committed PNGs; JSON, CSV and the generated reports are copied for download with
+their size, SHA-256 and the code commit recorded in the result file. The G1A Fig. 3 PDF and SVG
 (licensed font subsets and outlines) are not used.
 
 Usage: .venv/bin/python scripts/build_site.py [--out DIR]   (default site/_build, git-ignored)
@@ -38,11 +41,15 @@ from opmsquid import detection, io, sitebuild as sb  # noqa: E402
 
 RES = ROOT / "results"
 REPORT = ROOT / "report" / "report.md"
-# navigation: "Report" (index.html), then the supplementary material
-SUPPLEMENT = [("benchmarks.html", "S1 Benchmarks"), ("adult.html", "S2 Realistic adult"), ("pediatric.html", "S3 Pediatric"),
-              ("epilepsy.html", "S4 Epilepsy and motion"), ("methods.html", "S5 Methods"),
-              ("register.html", "S6 Parameters and provenance"), ("numbers.html", "S7 Number provenance"),
-              ("reproduce.html", "S8 Reproduce and download"), ("summary.html", "Project summary by milestone")]
+SUPPLEMENT_MD = ROOT / "report" / "supplement.md"  # S1, the supplementary text (optional: without it, no S1 page)
+# navigation: "Report" (index.html), then the supplementary material as (page, number, name); the page titles read
+# "S1. Supplementary text", the navigation "S1 Supplementary text"
+SUPPLEMENT = [("supplement.html", "S1", "Supplementary text"), ("benchmarks.html", "S2", "Adult reference benchmarks"),
+              ("adult.html", "S3", "Realistic adult comparison"), ("pediatric.html", "S4", "Smaller heads"),
+              ("epilepsy.html", "S5", "Simulated interictal spikes and head motion"),
+              ("methods.html", "S6", "Methods, uncertainty and limitations"),
+              ("register.html", "S7", "Parameters, provenance and assumptions"), ("numbers.html", "S8", "Number provenance"),
+              ("reproduce.html", "S9", "Reproduce and download"), ("summary.html", "", "Project summary by milestone")]
 FROZEN_TAG = "adult-baseline-v2"  # the adult baseline frozen before any pediatric outcome was compared
 CURRENT_TAG = "adult-baseline-v4"  # every head-model- and array-dependent result recomputed with equal OPM standoff (adult and pediatric alike)
 MARKER = ".opmsquid_site_build"  # marks an output directory as the builder's own (safe to replace)
@@ -93,6 +100,14 @@ def with_credits(caption, labels, link=True):
     return f"{caption} {c}" if c else caption
 
 
+def page_title(fname, suffix="", name=None):
+    """'S3. Realistic adult comparison' for a supplementary page (its name alone if unnumbered); a page that belongs
+    to it, such as a generated report, adds ``suffix`` and may replace the ``name``."""
+    number, title = next((n, t) for f, n, t in SUPPLEMENT if f == fname)
+    title = name or title
+    return (f"{number}. {title}" if number else title) + suffix
+
+
 def load(rel):
     p = RES / rel
     return json.loads(p.read_text()) if p.exists() else None
@@ -133,21 +148,50 @@ def load_facts():
 
 
 # ------------------------------------------------------------------------------------------ pages
-def page_report(out, facts):
-    """index.html: report/report.md with its facts filled in, then the Markdown subset and a table of contents.
-    The first line is the title ('# Title'). Returns (title, html, names of the facts used)."""
-    text, used = sb.fill_facts(REPORT.read_text(), {k: f["value"] for k, f in facts.items()})
+def render_document(path, values, out, prefix=""):
+    """First pass over a document of the report (report/report.md, report/supplement.md): its facts filled in
+    (F.<name>; a missing fact or any other variable fails), then the Markdown subset, figures and tables numbered
+    with ``prefix`` ('S': Figure S1, Table S1); the cross-references wait for render_documents. The first line is
+    the title ('# Title'). Returns dict(path, title, html, labels, used: names of the facts used, in order)."""
+    text, used = sb.fill_facts(path.read_text(), values)
     lines = text.split("\n")
     k = next((i for i, x in enumerate(lines) if x.strip()), 0)
     if not lines[k].startswith("# "):
-        raise ValueError("the report must start with its title ('# Title')")
+        raise ValueError("the document must start with its title ('# Title')")
     body = "\n" * (k + 1) + "\n".join(lines[k + 1:])  # blank title lines: error messages give the line in the file
-    h = sb.md_to_html(body, image=lambda p: sb.publish_png(p, RES, out))
-    return Markup(sb.inline(lines[k][2:].strip())), sb.toc(h), used
+    h, labels = sb.md_blocks(body, image=lambda p: sb.publish_png(p, RES, out), prefix=prefix)
+    return dict(path=path, title=Markup(sb.inline(lines[k][2:].strip())), html=h, labels=labels, used=used)
 
 
-def page_numbers(facts, used, out):
-    """S7: every fact the report uses, its value as printed and its source (result files linked to their downloads)."""
+def render_documents(out, facts):
+    """The report (index.html) and its supplementary text (supplement.html, S1; skipped with a warning if
+    report/supplement.md does not exist), with the same facts: each through render_document, then every
+    cross-reference linked to the figure or table of its own document ('#id') or of the other ('index.html#id',
+    'supplement.html#id'; an id may not be defined in both), and a table of contents. Any error ends the build
+    naming the document. Returns {'report': doc[, 'supplement': doc]}, each with its 'page'."""
+    values = {k: f["value"] for k, f in facts.items()}
+    docs = {}
+    for key, path, page, prefix in (("report", REPORT, "index.html", ""), ("supplement", SUPPLEMENT_MD, "supplement.html", "S")):
+        if key == "supplement" and not path.is_file():
+            print(f"warning: {path} not found; building without the supplementary text (S1)")
+            continue
+        try:
+            docs[key] = dict(render_document(path, values, out, prefix), page=page)
+        except (jinja2.TemplateError, ValueError, FileNotFoundError) as e:
+            raise SystemExit(f"{path}: {e}")
+    for key, doc in docs.items():
+        refs = {i: (o["page"], lab) for other, o in docs.items() if other != key for i, lab in o["labels"].items()}
+        try:
+            doc["html"] = sb.toc(sb.resolve_xrefs(doc["html"], doc["labels"], refs))
+        except ValueError as e:
+            raise SystemExit(f"{doc['path']}: {e}")
+    return docs
+
+
+def page_numbers(facts, uses, out):
+    """S8: every fact the report and its supplementary text use (``uses``: {'report': names[, 'supplement': names]},
+    each in order of first use), its value as printed, its source (result files linked to their downloads) and,
+    with both documents, the documents that use it."""
     def source(s):
         def link(m):
             rel = m.group(0)[len("results/"):]
@@ -155,22 +199,40 @@ def page_numbers(facts, used, out):
 
         return re.sub(r"results/[\w./-]*\w", link, html.escape(str(s)))
 
-    h = ["<p>Every number in the <a href=\"index.html\">report</a> is a named fact, inserted into the text when the site is "
-         "built. <code>scripts/report_facts.py</code> collects the facts of its modules (<code>scripts/report_facts_*.py</code>), "
-         "which read or derive each value from the committed result files and record its source: the result file and the key "
-         "path in it, or how the value is derived. The report refers to each fact by name; a reference to a missing fact fails "
-         "the build.</p>",
-         f"<p>The report uses {len(used):,} of the {len(facts):,} facts available"
-         + (", listed below in order of first use.</p>" if used else ".</p>")]
+    rep, sup = uses.get("report", []), uses.get("supplement")
+    used = list(dict.fromkeys([*rep, *(sup or [])]))  # the report's facts first
+    if sup is None:
+        h = ["<p>Every number in the <a href=\"index.html\">report</a> is a named fact, inserted into the text when the site is "
+             "built. <code>scripts/report_facts.py</code> collects the facts of its modules (<code>scripts/report_facts_*.py</code>), "
+             "which read or derive each value from the committed result files and record its source: the result file and the key "
+             "path in it, or how the value is derived. The report refers to each fact by name; a reference to a missing fact fails "
+             "the build.</p>",
+             f"<p>The report uses {len(used):,} of the {len(facts):,} facts available"
+             + (", listed below in order of first use.</p>" if used else ".</p>")]
+    else:
+        h = ["<p>Every number in the <a href=\"index.html\">report</a> and in its <a href=\"supplement.html\">supplementary "
+             "text</a> (S1) is a named fact, inserted into the text when the site is built. <code>scripts/report_facts.py</code> "
+             "collects the facts of its modules (<code>scripts/report_facts_*.py</code>), which read or derive each value from the "
+             "committed result files and record its source: the result file and the key path in it, or how the value is derived. "
+             "Both documents refer to each fact by name; a reference to a missing fact fails the build.</p>",
+             f"<p>The report uses {len(rep):,} and the supplementary text {len(sup):,} of the {len(facts):,} facts available "
+             f"({len(used):,} different facts, {len(set(rep) & set(sup)):,} of them in both)"
+             + (", listed below in order of first use, the report's first; the last column names the documents that use each."
+                "</p>" if used else ".</p>")]
     pediatric = [n for n in used if re.search(r"results/g3b/|results/g4/(g4_pediatric|g4_motion|g4_(infant|child))|infant|child[ABC]",
                                               str(facts[n]["source"]))]
     if pediatric and credits(CHILDREN):
         h.append("<p><strong>Data sources.</strong> The pediatric facts derive from results of the infant templates and the "
                  f"school-aged children. {credits(CHILDREN)}</p>")
     if used:
-        h.append(sb.table(["Fact", "Value as printed", "Source"],
-                          [[f"<code>{html.escape(n)}</code>", facts[n]["value"], source(facts[n]["source"])] for n in used],
-                          cls="facts", html_cols=(0, 2)))
+        rows = [[f"<code>{html.escape(n)}</code>", facts[n]["value"], source(facts[n]["source"])] for n in used]
+        if sup is None:
+            h.append(sb.table(["Fact", "Value as printed", "Source"], rows, cls="facts", html_cols=(0, 2)))
+        else:
+            in_doc = (("report", set(rep)), ("S1", set(sup)))
+            used_in = [", ".join(d for d, names in in_doc if n in names) for n in used]
+            h.append(sb.table(["Fact", "Value as printed", "Source", "Used in"], [r + [u] for r, u in zip(rows, used_in)],
+                              cls="facts", html_cols=(0, 2)))
     return "\n".join(h)
 
 
@@ -822,8 +884,11 @@ def page_reproduce(out, manifest):
          "<h2 id=\"downloads\">Downloads</h2>",
          "<p>Result files as committed. The commit is the one recorded in the result file; tables and reports carry the commit "
          "of the run that wrote them. The full SHA-256 of every file is in <a href=\"data/MANIFEST.json\">data/MANIFEST.json</a>.</p>",
-         "<p><strong>Data sources.</strong> The pediatric files (names with <code>infant</code> or <code>child</code>; the G3B, "
-         "pediatric G4, matched-rate, fit-failure and motion summaries and reports; <code>report/figures_pediatric.json</code>) hold "
+         "<p><strong>Data sources.</strong> The pediatric files (names with <code>infant</code> or <code>child</code>; the "
+         "summaries and reports of the smaller heads, of their simulated spikes, of the matched-rate and fit-failure checks and of "
+         "the motion extension; the helmet fitted at the adult's gap, <code>g3b_constant_gap/</code>; the children's MRI quality "
+         "check, <code>g3b_children_qc/</code>; <code>report/figures_pediatric.json</code> and "
+         "<code>report/figures_clean.json</code>) hold "
          "results derived from the 24-, 18- and 12-month infant templates of O'Reilly et al. (2021), built from the "
          "Neurodevelopmental MRI Database (Richards et al. 2016) and distributed publicly by their authors under LGPL-2.1 "
          "through MNE-Python's <code>fetch_infant_template</code>, and from three school-aged children of OpenNeuro ds005234 "
@@ -849,14 +914,18 @@ WRITTEN_BY = {"g1a_curves.csv": "g1a_benchmark.json", "g1b_sources.csv": "g1b_su
               "G4_fit_failures_report.md": "g4_fit_failures.json"}
 # result folders whose files carry no provenance of their own: the run that wrote them
 PARENT_RUN = {"g1a/fig3": "g1a/g1a_benchmark.json"}
-for _k in ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo"):
+for _k in ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC"):
     WRITTEN_BY[f"g3b_targets_{_k}.csv"] = "g3b_summary.json"
     WRITTEN_BY[f"g4_{_k}_events.csv"] = f"g4_{_k}_summary.json"
     WRITTEN_BY[f"g4_localization_{_k}_events.csv"] = f"g4_localization_{_k}_summary.json"
+    WRITTEN_BY[f"targets_{_k}.csv"] = "g3b_constant_gap_summary.json"  # the helmet fitted at the adult's gap
+WRITTEN_BY["covariance_validation_targets.csv"] = "covariance_validation.json"
+CSV_COMMIT = re.compile(r"\|\s*commit\s+([0-9a-f]{7,40}(?:\+dirty)?)\s*$")  # a table's first line: '# ... | commit <hash>'
 
 
 def build_manifest(out):
-    """Copy JSON, CSV and Markdown results for download; record size, SHA-256 and commit."""
+    """Copy JSON, CSV and Markdown results for download; record size, SHA-256 and commit (a table's own, from its
+    first line, else that of the summary its run wrote)."""
     manifest = []
     for p in sorted(RES.rglob("*")):
         if p.suffix not in (".json", ".csv", ".md") or p.name == "README.md":
@@ -867,7 +936,11 @@ def build_manifest(out):
         shutil.copy2(p, dst)
         src = p if p.suffix == ".json" else p.parent / WRITTEN_BY.get(p.name, "")
         commit = "-"
-        if src.suffix == ".json" and src.exists():
+        if p.suffix == ".csv":
+            with open(p, encoding="utf-8", errors="replace") as fh:
+                m = CSV_COMMIT.search(fh.readline())
+            commit = m.group(1) if m else "-"
+        if commit == "-" and src.suffix == ".json" and src.exists():
             commit = (json.loads(src.read_text()).get("provenance") or {}).get("commit", "-")
         parent = PARENT_RUN.get(str(rel.parent))
         if commit == "-" and parent:
@@ -900,13 +973,9 @@ def main(argv=None):
     sources = (*io.CODE_PATHS, "site", "report", "results", "docs", "README.md")  # everything the pages are built from
     head = git("rev-parse", "--short", "HEAD") + ("+dirty" if git("status", "--porcelain", "--", *sources) else "")
     head_date = git("log", "-1", "--format=%cs")
-    supplement = [dict(file=f, title=t) for f, t in SUPPLEMENT]
     manifest = build_manifest(out)
     facts = load_facts()
-    try:
-        title, report, used = page_report(out, facts)
-    except (jinja2.TemplateError, ValueError, FileNotFoundError) as e:
-        raise SystemExit(f"{REPORT}: {e}")
+    docs = render_documents(out, facts)
 
     def md(path):
         return sb.md_to_html(path.read_text(), heading_offset=1, image=lambda p: sb.publish_png(p, RES, out))
@@ -916,28 +985,32 @@ def main(argv=None):
         c = credits(labels or ())
         return f"<p><strong>Data sources.</strong> {c}</p>\n" if c else ""
 
-    pages = {
-        "index.html": (title, report),
-        "benchmarks.html": ("S1. Adult reference benchmarks (G1)", page_benchmarks(d, out)),
-        "adult.html": ("S2. Realistic adult comparison (G2)", page_adult(d, out)),
-        "g2-report.html": ("G2 report", md(RES / "g2" / "G2_report.md")),
-        "pediatric.html": ("S3. Pediatric extension (G3)", page_pediatric(d, out)),
-        "g3b-report.html": ("G3B report", sources(d["g3b"] and d["g3b"]["anatomies"]) + md(RES / "g3b" / "G3B_report.md")
+    pages = {doc["page"]: (doc["title"], doc["html"]) for doc in docs.values()}  # the report and S1 (if present)
+    pages.update({
+        "benchmarks.html": (page_title("benchmarks.html"), page_benchmarks(d, out)),
+        "adult.html": (page_title("adult.html"), page_adult(d, out)),
+        "g2-report.html": (page_title("adult.html", ": generated report"), md(RES / "g2" / "G2_report.md")),
+        "pediatric.html": (page_title("pediatric.html"), page_pediatric(d, out)),
+        "g3b-report.html": (page_title("pediatric.html", ": generated report"),
+                            sources(d["g3b"] and d["g3b"]["anatomies"]) + md(RES / "g3b" / "G3B_report.md")
                             if (RES / "g3b" / "G3B_report.md").exists() else "<p>G3B has not been run yet.</p>"),
-        "epilepsy.html": ("S4. Epilepsy relevance and head motion (G4)", page_epilepsy(d, out)),
-        "motion-report.html": ("G4 motion and slippage report", sources(d["motion"] and d["motion"]["anatomies"])
-                               + md(RES / "g4" / "G4_motion_report.md")
+        "epilepsy.html": (page_title("epilepsy.html"), page_epilepsy(d, out)),
+        "motion-report.html": (page_title("epilepsy.html", ": generated report", "Head motion and OPM slippage"),
+                               sources(d["motion"] and d["motion"]["anatomies"]) + md(RES / "g4" / "G4_motion_report.md")
                                if (RES / "g4" / "G4_motion_report.md").exists() else "<p>The motion extension has not been run yet.</p>"),
-        "methods.html": ("S5. Methods, uncertainty and limitations", md(ROOT / "docs" / "methods.md")),
-        "register.html": ("S6. Parameters, provenance and assumptions", md(ROOT / "docs" / "provenance_register.md")),
-        "numbers.html": ("S7. Number provenance", page_numbers(facts, used, out)),
-        "reproduce.html": ("S8. Reproduce and download", page_reproduce(out, manifest)),
-        "summary.html": ("Project summary by milestone", page_summary(d)),
-    }
+        "methods.html": (page_title("methods.html"), md(ROOT / "docs" / "methods.md")),
+        "register.html": (page_title("register.html"), md(ROOT / "docs" / "provenance_register.md")),
+        "numbers.html": (page_title("numbers.html"), page_numbers(facts, {k: doc["used"] for k, doc in docs.items()}, out)),
+        "reproduce.html": (page_title("reproduce.html"), page_reproduce(out, manifest)),
+        "summary.html": (page_title("summary.html"), page_summary(d)),
+    })
+    # the navigation: every supplementary page that was built (no S1 without report/supplement.md)
+    supplement = [dict(file=f, title=f"{n} {t}" if n else t) for f, n, t in SUPPLEMENT if f in pages]
+    documents = {doc["page"] for doc in docs.values()}
     for fname, (title, content) in pages.items():
         current = {"g2-report.html": "adult.html", "g3b-report.html": "pediatric.html", "motion-report.html": "epilepsy.html"}.get(fname, fname)
         (out / fname).write_text(tpl.render(title=title, content=Markup(content), supplement=supplement, current=current,
-                                            head=head, head_date=head_date, layout="report" if fname == "index.html" else ""))
+                                            head=head, head_date=head_date, layout="report" if fname in documents else ""))
     problems = sb.check_links(out)
     if problems:
         print("\n".join(problems))

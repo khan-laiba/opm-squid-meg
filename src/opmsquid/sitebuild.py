@@ -8,6 +8,11 @@ links. For the report also: figure blocks (``::: figure {#fig-id}``, then ``![al
 lines and the caption, closed by ``:::``), table captions (a line ``Table: caption {#tab-id}``
 before a pipe table), both numbered in order of appearance, cross-references to them (``[@fig-id]``,
 ``[@tab-id]``), subscripts (``X~child~``) and superscripts (``cm^2^``). Raw HTML is always escaped.
+
+Two documents can refer to each other's figures and tables (the report and its supplementary text):
+``md_blocks`` converts a document and returns its labels (with a number prefix, e.g. 'S' for
+'Figure S1'), ``resolve_xrefs`` then links each ``[@id]`` to its own document ('#id') or to the
+other ('page.html#id'); ``md_to_html`` does both for a single document.
 """
 from __future__ import annotations
 
@@ -87,13 +92,22 @@ def _table(rows: list[str], caption_html: str | None = None, ident: str | None =
     return f'<div class="table-wrap"><table{attr}>{cap}<thead><tr>{h}</tr></thead><tbody>{b}</tbody></table></div>'
 
 
-def md_to_html(md: str, heading_offset: int = 0, image=None) -> str:
+def md_to_html(md: str, heading_offset: int = 0, image=None, prefix: str = "", refs: dict | None = None) -> str:
     """Convert the project's Markdown subset to HTML (``heading_offset`` demotes headings).
 
     ``image`` maps an image path of a figure block to its published src (e.g. publish_png); without
-    it the path is used as written. Raises ValueError on a malformed block, a duplicate or invalid
-    id, or a cross-reference to an unknown id.
+    it the path is used as written. ``prefix`` goes before the figure and table numbers ('S':
+    'Figure S1'); ``refs`` are the figures and tables of another document (see resolve_xrefs).
+    Raises ValueError on a malformed block, a duplicate or invalid id, or a cross-reference to an
+    unknown id.
     """
+    return resolve_xrefs(*md_blocks(md, heading_offset, image, prefix), refs)
+
+
+def md_blocks(md: str, heading_offset: int = 0, image=None, prefix: str = "") -> tuple[str, dict]:
+    """The conversion of md_to_html without the cross-references: returns the HTML, in which every
+    ``[@id]`` is left as written, and the document's figure and table labels, id -> 'Figure 1' (with
+    ``prefix``: 'Figure S1'), in order of appearance."""
     lines = md.splitlines()
     out, para, i = [], [], 0
     ids, labels, count = set(), {}, {"Figure": 0, "Table": 0}
@@ -116,7 +130,7 @@ def md_to_html(md: str, heading_offset: int = 0, image=None) -> str:
 
     def number(kind, ident):
         count[kind] += 1
-        label = f"{kind} {count[kind]}"
+        label = f"{kind} {prefix}{count[kind]}"
         if ident is not None:
             labels[claim(ident)] = label
         return label
@@ -233,14 +247,29 @@ def md_to_html(md: str, heading_offset: int = 0, image=None) -> str:
         para.append(line)
         i += 1
     flush()
+    return "\n".join(out), labels
+
+
+def resolve_xrefs(h: str, labels: dict, refs: dict | None = None) -> str:
+    """Replace every ``[@id]`` of ``h`` outside code and tags (after the conversion: references may point
+    forward) by a link: to '#id' for a figure or table of this document (``labels``, id -> label), to
+    'page#id' for one of another document (``refs``, id -> (page, label)). An unknown id, or an id that
+    both documents define, raises ValueError."""
+    refs = refs or {}
+    both = sorted(set(labels) & set(refs))
+    if both:
+        raise ValueError("figure or table id defined in both documents: " + ", ".join(both))
 
     def ref(m):
-        if m.group(1) not in labels:
-            raise ValueError(f"cross-reference to an unknown figure or table: [@{m.group(1)}]")
-        return f'<a href="#{m.group(1)}">{labels[m.group(1)]}</a>'
+        ident = m.group(1)
+        if ident in labels:
+            return f'<a href="#{ident}">{labels[ident]}</a>'
+        if ident in refs:
+            page, label = refs[ident]
+            return f'<a href="{html.escape(page)}#{ident}">{label}</a>'
+        raise ValueError(f"cross-reference to an unknown figure or table: [@{ident}]")
 
-    # cross-references last (they may point forward), never inside code or tags
-    parts = re.split(r"(<code>[\s\S]*?</code>|<[^>]*>)", "\n".join(out))
+    parts = re.split(r"(<code>[\s\S]*?</code>|<[^>]*>)", h)
     return "".join(p if k % 2 else _XREF.sub(ref, p) for k, p in enumerate(parts))
 
 

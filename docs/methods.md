@@ -169,9 +169,14 @@ taken only among usable vertices, inside the inner skull and at least 4 mm from 
 collocation gives lead-field energies up to ~4000x those of neighbouring vertices; refining the
 mesh to 20,480 triangles changes Neuromag gains by a median 14 % (90th percentile 67 %) at
 2-3 mm, 2.5 % (13 %) at 3-4 mm and 0.8 % (3.6 %) at 4-5 mm, OPM gains by about half as much. The
-rule removes the cortex nearest the skull (8.7 %), which makes a superficial OPM advantage
-conservative. Cortical sources fixed along the cortical normal (cortical patch statistics), or
-discrete dipoles at arbitrary points. Content-addressed cache keyed by all
+rule removes the cortex nearest the skull (8.7 % of the valid vertices). This does not by itself make
+the OPM advantage conservative: as noise that cortex would add background close to the on-scalp
+sensors, as targets it would add the shallowest sources. Both were tested (section 8, noise-model
+sensitivity): the cortex 2-4 mm from the inner skull added to the background, as targets, or both
+leaves the dense/Neuromag ratio at 1.137, 1.152 and 1.144 (1.144 without it; matched 1.008-1.009);
+closer than 2 mm the primary model's lead fields are not converged, and a refined 1-layer check
+down to 0 mm changes the dense ratio by -0.3 to +0.9 %. Cortical sources fixed along the cortical
+normal (cortical patch statistics), or discrete dipoles at arbitrary points. Content-addressed cache keyed by all
 inputs. Checks: discrete and surface forwards agree to < 1e-5; the OPM coil in a realistic BEM
 forward behaves as expected (`tests/test_forward.py`).
 
@@ -359,6 +364,48 @@ Design
 * Bridge to G1A: the realistic OPM/magnetometer peak-field ratio vs depth and the equal-SNR depth
   d_eq(eta) (intrinsic noise only, peak-channel SNR) against the sphere benchmark. d_eq comes from
   the depth-binned medians of the ratio, not from per-source crossings.
+* Per-depth-bin intervals (revision): the median ratio in each 5-mm depth bin with a 95 % interval
+  from a bootstrap over the parcels that hold targets in that bin (the parcels behind a bin's interval
+  number 17 at 10-15 mm, 60 at 30-35 mm and 6 at 60-65 mm; bins with fewer than 10 targets are not
+  summarised).
+* Noise-model sensitivity (revision; `configs/g2_noise_sensitivity.toml`, `scripts/study_noise_sensitivity.py`,
+  `results/g2_noise_sensitivity/noise_sensitivity_summary.json`): the omissions of the noise model,
+  each variant recalibrated on the measured gradiometer brain noise as the primary model, then all
+  together. (i) Near-skull cortex (A-G2-NEARSKULL): the cortex 2-4 mm from the inner skull (22,923
+  vertices, 124 cm^2; 463 more targets) in the background, as targets, or both; closer than 2 mm,
+  where the primary model's lead fields are not converged, only in a 1-layer BEM whose inner skull is
+  subdivided once (20,480 triangles), down to 0 mm. (ii) Coloured OPM noise (A-G2-OPM1F): PSD
+  w^2 (1 + f_c / f), corner f_c 1, 3 and 10 Hz, with a frequency-resolved detectability (the matched
+  filter's SNR summed over sub-bands of the analysis band, each with its own noise levels; Neuromag's
+  sensor noise white, as in the primary model).
+  (iii) Far-field physiological sources (A-G2-FARFIELD): a cardiac current dipole 200, 250 or 300 mm
+  below the head (or a magnetic dipole at 250 mm) and ocular current dipoles at the two eye centres
+  located in the sample T1 (in the head BEM or an unbounded conductor), three orthogonal moments
+  each, at the room field's level or filling the magnetometer brain-noise shortfall, added to the
+  cortical background or recalibrated with it; the energy of their fields left after the 8-term
+  projection. (iv) The primary result over the OPM white-noise sweep (7-30 fT/sqrt(Hz)), and the
+  white level at which the median ratio is 1, found on 33 log-spaced levels from 4 to 60 fT/sqrt(Hz).
+  Intervals: 1,000 parcel-bootstrap resamples. Detectability only: the spike simulations were not
+  repeated under these variants.
+* Covariance check against the measured Neuromag noise (revision; `scripts/study_covariance_validation.py`,
+  `results/g2_covariance_validation/covariance_validation.json`; D-G2-COVCHECK): the model fits one scale
+  of the cortical background (the median good-gradiometer brain-noise variance) and the room field's
+  8 x 8 coefficient covariance (empty room); everything else is compared with the sample recording as
+  an independent prediction (the 320 pre-stimulus windows of the task recording minus the empty room,
+  1-40 Hz, without SSP as in G2): the magnetometers' brain-noise level, the gradiometer level at held-out
+  sites (scale fitted on random halves), the channel pattern, spatial correlations, eigenstructure and
+  sub-band spectra; the heart's contribution from a cardiac-locked average. Neuromag's detectability with
+  its measured covariance (finite-sample corrected) against the model, and what this implies for the
+  OPM/Neuromag ratio in five scenarios, A-E here (S1-S5 in the result file): A the model's error common
+  to both systems (the model's ratio); B both cortical backgrounds scaled by the measured magnetometer
+  variance excess; C a pessimistic bound, Neuromag as measured and the OPM bearing that whole excess as
+  cortical noise; D Neuromag as measured, the OPM exactly as modelled; E Neuromag with its measured empty
+  room and modelled brain noise. Intervals: 1,000 parcel-bootstrap resamples (IC-BOOT-COVVAL).
+* 3-70 Hz band (revision; design only, not yet run): `scripts/g2_band_sensitivity.py` also rebuilds the
+  whole noise model in a 3-70 Hz band, a band used for clinical spike review, by the rules of its other
+  bands (Butterworth order 4, zero phase; brain scale recalibrated on the good gradiometers and room field
+  refitted in the band; with and without the 100-Hz OPM response; 200 resamples of targets,
+  IC-BOOT-G2-BAND).
 
 Results (`results/g2/g2_summary.json`, v4: the head surface on the MRI scalp, A-BEM-CONFORM; run
 at e53bea8; medians over the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 15 fT/sqrt(Hz);
@@ -379,7 +426,9 @@ at e53bea8; medians over the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 1
   uniform-plus-gradient part; the 1/f rise of real OPM noise at low frequencies (white OPM noise is
   assumed; the 30-fT/sqrt(Hz) end of the sweep bounds a uniformly worse sensor, not a coloured
   one); the single-axis arrays have 208 channels against Neuromag's 306 (the triaxial control
-  below matches the count under a declared tangential-noise assumption).
+  below matches the count under a declared tangential-noise assumption). The revision's noise-model
+  sensitivity adds cardiac and ocular sources and coloured OPM noise to the detectability analysis
+  (below; muscle fields are not modelled); the spike simulations keep the primary model.
 * Intrinsic noise only (no brain noise): Neuromag combined beats every OPM array (dense 0.74x
   [0.72-0.77], matched 0.53x; OPM higher for <= 4 % of targets); OPMs beat the gradiometers alone
   (2.3-3.2x). The ratio scales as 1/(OPM noise): break-even at 11.1 (dense) and 8.0 (matched)
@@ -464,6 +513,55 @@ at e53bea8; medians over the 7,661 targets with parcel-bootstrap 95 % CIs; OPM 1
   which on-scalp sensors also see more strongly, it shrinks to about 1.14x overall and to 1.05-1.07x
   for deep sources.
 
+Revision results (run at 10e37b9 after referee round 1; dense | matched OPM vs Neuromag combined,
+intrinsic + brain noise, OPM 15 fT/sqrt(Hz) unless stated; parcel-bootstrap 95 % intervals)
+* Per-depth-bin intervals (`noise_sensitivity_summary.json`, the sweep at 15 fT/sqrt(Hz), which
+  reproduces the stored G2 medians exactly): dense 1.60 [1.55, 1.65] at 10-15 mm, 1.13 [1.12, 1.14] at
+  25-30 mm, 1.06 [1.05, 1.09] at 40-45 mm and 1.07 [1.06, 1.10] at 60-65 mm; matched 1.20 [1.12, 1.32]
+  at 10-15 mm and 0.97 [0.94, 0.99] at 40-45 mm.
+* OPM white noise (sweep): dense 1.30 [1.27, 1.32] at 7 fT/sqrt(Hz), 1.14 [1.12, 1.17] at 15 and 1.01
+  [0.99, 1.03] at 30 (matched 1.08 to 0.93); the median ratio reaches 1 at 31.5 [28.5, 34.9]
+  fT/sqrt(Hz) for the dense array (26.0 [22.3, 29.5] after the 8-term projection) and at 16.7 [14.0,
+  19.4] (8.9 [5.6, 12.4]) for the matched array.
+* Near-skull cortex (2-4 mm from the inner skull): in the background 1.137 [1.117, 1.160] | 1.008, as
+  additional targets 1.152 [1.127, 1.181] | 1.009, both 1.144 [1.121, 1.171] | 1.009, against 1.144 |
+  1.009 without it; on those 463 targets alone 1.40 | 1.06 (1.37 | 1.04 with that cortex also in the
+  background). Down to 0 mm in the refined 1-layer check the inclusion changes the dense ratio by
+  -0.3 % (background), +0.9 % (targets) and +0.5 % (both). Leaving this cortex out is therefore
+  neither conservative nor favourable for the OPM to any noticeable degree in this model.
+* Coloured OPM noise (white level 15 fT/sqrt(Hz); frequency-resolved detectability, whose values with
+  white noise, 1.127 | 1.005, lie below the band-variance ratios 1.144 | 1.009): corner 1, 3 and 10 Hz
+  1.122, 1.111 and 1.083 [1.057, 1.109] | 1.002, 0.997 and 0.980 [0.963, 0.997].
+* Far-field sources: the 8-term projection leaves 0.4-2.1 % of the heart's field energy (current
+  dipole 200-300 mm below the head; 4.6-7.4 % for a magnetic dipole at 250 mm) and 10-23 % of the
+  eyes' (Neuromag's 306 channels jointly, the matched and the dense array); with these sources in the
+  noise the dense ratio is 1.125-1.162 (one source at a time) and 1.143-1.144 (heart and eyes
+  together), the matched 0.995-1.006. In this model they do not act against the OPM.
+* Most adverse combination (near-skull background and a 10-Hz corner, frequency-resolved): dense
+  1.262, 1.176, 1.080, 1.016 and 0.935 at 7, 10, 15, 20 and 30 fT/sqrt(Hz), matched 1.092, 1.039,
+  0.980, 0.933 and 0.838.
+* Covariance check (`covariance_validation.json`, "plain_summary"; Neuromag 305 channels, the bad one
+  left out): the model predicts the magnetometers' median brain-noise amplitude at 0.73 of the measured
+  (an exact model, measured the same way, would give 0.98-1.03); the heart (cardiac-locked average of
+  282 beats) adds 127 fT RMS at the median magnetometer, 51 % of the shortfall, and without it the
+  prediction is 0.89. Held-out gradiometer sites: 1.00 [0.93, 1.09] over random halves of the sites,
+  1.34 and 0.75 when the scale is fitted on the inferior or the superior half (device frame). Channel
+  pattern (Pearson r of the log variances): magnetometers 0.14, gradiometers 0.43 (0.76 and 0.66
+  without the heart), against a split-half reliability of 0.93 and 0.97. The magnetometers' excess
+  over the model is concentrated: its leading 3 components hold 91 % of it, and 91 % of the leading
+  one lies in the 8-dimensional external subspace (a random direction: 8 %). By band the magnetometer
+  prediction falls from 0.97 (1-4 Hz) to 0.33 (30-40 Hz).
+* Neuromag's detectability with its measured covariance is 1.14 [1.08, 1.20] times the modelled
+  (finite-sample corrected; uncorrected 1.18; an exact model would give 0.997-1.006): the real noise is
+  more favourable to Neuromag than the model; with the measured empty room and modelled brain noise
+  1.009, without the heart 1.147; by lobe 0.89 (temporal) to 1.40 (cingulate).
+* Implied OPM/Neuromag ratio (sensor, brain and room noise): A, the model's error common to both,
+  1.141 | 1.007 (the model's own ratio); B 1.142 | 1.003; E 1.130 | 1.000; D 1.034 [0.986, 1.083] |
+  0.888 [0.855, 0.921]; C 0.799 [0.760, 0.842] | 0.675 [0.647, 0.703]. Which scenario holds depends on
+  how the OPM's real noise departs from the model, which no measurement here constrains: the noise
+  model is validated in part for Neuromag, not for the OPM arrays.
+* 3-70 Hz band: not yet computed.
+
 ## 9. Epilepsy relevance, adult (G4, NEW) — `opmsquid.ied`, `opmsquid.detection`, `opmsquid.localization`, `scripts/g4_*.py`
 
 Configuration: `configs/g4_epilepsy.toml`; assumptions A-G4-* in the register. The pediatric part
@@ -480,11 +578,12 @@ Detection design (`scripts/g4_epilepsy_adult.py`)
 * Detectors, per array and Neuromag channel set: a known-source/onset oracle (per-trial
   false-positive probability 0.001) and a practical scanner that knows neither time nor source
   (three waveform templates x 716 cortical candidates distinct from the true sources). The
-  scanner's templates are the three simulated morphologies, so its absolute sensitivity and
-  false-event rates are optimistic; the paired comparison between arrays is less affected. The
-  candidates' topographies come from the truth forward model (3-layer BEM, exact coregistration), a
-  convenience shared by every array that makes the scanner optimistic in the same way. Whitener from
-  10 min of baseline null data; thresholds for 1 and 0.2 false events per minute from 20 min of
+  scanner's templates are the three simulated morphologies and the candidates' topographies come from
+  the truth forward model (3-layer BEM, exact coregistration), so it is an idealized detector: its
+  absolute sensitivity and false-event rates are optimistic. Every array shares these conveniences,
+  but whether they favour the arrays equally was not tested in the exploratory runs, so the paired
+  comparison may be affected too; the confirmatory run adds one detector-mismatch variant (below).
+  Whitener from 10 min of baseline null data; thresholds for 1 and 0.2 false events per minute from 20 min of
   independent calibration null data, frozen; held-out null (20 min) gives 0.65-1.3 and 0.1-0.6 false
   events per minute (v4; v3 0.65-1.15 and 0.1-0.35); each 1-per-minute threshold rests on about 20 calibration events, whose Poisson
   95 % interval (0.6-1.5 per minute) matches that held-out spread, and the 0.2-per-minute one on
@@ -558,6 +657,37 @@ level and the 1-per-minute operating point are operational study choices, not cl
   in v4 that agrees in direction with G2's deep ratios but is not established across runs; a matched-site OPM array
   is not ahead by location in any band (10-20 mm: 7/4, p = 0.40; p = 0.52 in v3, 0.04 in v2 and 0.14
   in the earlier run: not robust).
+
+Confirmatory detection run (revision; `configs/g4_confirmatory.toml`, `scripts/g4_confirmatory.py`;
+D-G4-CONFIRM; design declared before the run, results not yet available). The runs above are
+exploratory: the superficial endpoint was chosen after them. This run fixes that endpoint and tests it
+on new data.
+* Endpoint (fixed before the run): in each of the nine anatomies (adult, the two scaled adults, the
+  three templates and children A-C, each with its arrays and helmet placement of the exploratory runs),
+  the dense OPM array against Neuromag (all 306 channels), practical detector with its thresholds frozen
+  on the calibration null at 1 false event per minute, focal sources at 10-20 mm depth; two-sided exact
+  sign-flip test on the per-location differences in detection counts, Holm-corrected over the nine
+  anatomies at alpha = 0.05 (with more than 20 non-zero location differences the p-value comes from
+  20,000 random sign patterns, IC-SIGNFLIP-MC); effect size: the paired S50 ratio Neuromag / OPM from
+  the location-pooled detection curves, with a location bootstrap (censored interval, 1,000 resamples).
+* New data: a new root seed (20261005; one stream per anatomy and purpose, IC-SEED-CONFIRM); 36
+  locations in the 10-20 mm band (12 per orientation stratum, twice the exploratory 18), declared before
+  any confirmatory draw after two pilot runs on test seeds had shown single anatomies underpowered with
+  18 (child A: 8/1 and 9/4 locations, p = 0.074 and 0.21), drawn anew, never on the medial wall and
+  vertex-disjoint from the exploratory locations where a stratum allows; five independent noise
+  replicates of every event, replicate 0 being the confirmatory one (one realization per event, as in
+  the exploratory design); the exploratory null durations for whitening, threshold calibration and the
+  held-out check, plus a fourth, independent 20-min evaluation null on which the realized false-event
+  rates are measured, both of the frozen thresholds and of thresholds matched to 1 per minute on the
+  held-out null (fitted there, evaluated here).
+* Secondary, not confirmatory (uncorrected p, and Holm over the anatomies within each family): the
+  site-matched array; the oracle detector; the thresholds matched on the held-out null; the
+  detector-mismatch variant; Monte Carlo variability (the endpoint in every replicate, and pooled).
+* Detector-mismatch variant (A-G4-MISMATCH; one, declared): templates at the geometric midpoints of the
+  simulated stretches (sqrt(0.75 x 1.0) and sqrt(1.0 x 1.5), so that no template equals an injected
+  morphology) and candidate topographies from a 1-layer BEM (inner skull) with a 2-mm/2-deg
+  coregistration error (one draw per anatomy, shared by all arrays), applied to the same events and
+  null data as the primary detector.
 
 Localization design (`scripts/g4_localization.py`, bounded)
 * 24 locations (2 per depth x orientation stratum), focal dipoles and 10-mm patches at 80 and
@@ -715,6 +845,23 @@ Neuromag combined, matched OPM, dense OPM)
   of one dataset, not a population; like the templates they are compared with the adult by parcel and
   stratum, with their own bootstrap stream. No cortex maps are drawn for them (their inflated surfaces
   were not obtained).
+* MRI quality check of the school-aged children (revision; `scripts/study_children_qc.py`,
+  `results/g3b_children_qc/children_qc.json`, overlays `Figure_QC_*.png`; D-G3-QC): children A-C with the
+  adult (whose dense scalp the same FreeSurfer tool made) and the 2-year template as references, the
+  surfaces exactly as G3B and G4 load them. Checks: the coordinate frames of every surface against each
+  other and the T1 header; the white surface's registration to the T1 (the T1 edge across it, decomposed
+  into a uniform offset, a translation and a rotation, and the rigid shift that maximises the white/grey
+  contrast); the cortex near the scalp (white-surface area within 8 and 10 mm of the dense scalp and of
+  the MRI head boundary); the scalp against the MRI head boundary (T1 profiles along the scalp's outward
+  normals; the boundary where the intensity falls through the volume's Otsu air/tissue level, with the
+  half-maximum edge as a sensitivity; signed offset over the head above the fiducial plane, positive
+  where the boundary lies outside the scalp); and the head circumference from both. Verdict per anatomy
+  by declared rules: misregistered if a header differs by more than 0.01 mm, the white surface's
+  realigning shift, edge translation or rotation displacement exceeds 1 mm, or the scalp lies more
+  than 1 mm from the head mask it was made from; scalp inside (outside) the head boundary if the
+  boundary's median offset exceeds (falls short of) the adult's by more than 1 mm at both edges;
+  usable otherwise. Positive controls on the adult: its scalp moved 4 mm inward is measured as 4.0 mm,
+  a 2-mm translation as 2.03 mm.
 * Head size from the dense scalp (head frame): occipitofrontal circumference (largest convex-hull
   perimeter of scalp sections parallel to the fiducial plane), breadth, length, vertex height,
   cap volume above the fiducial plane and inter-auricular distance.
@@ -741,6 +888,21 @@ Neuromag combined, matched OPM, dense OPM)
   Around a scaled adult this reproduces the adult's measured fit with every gap scaled by the same
   factor; where a coil would come within 18 mm of the scalp the factor is raised in steps of 0.005.
   It is computed about the centred head and about the laterally centred head ('x-centred').
+* Helmet fitted at the adult's gap (revision; `scripts/study_g3b_constant_gap.py`,
+  `results/g3b_constant_gap/`; A-G3-GAPMATCH; a mechanistic control, not a pediatric SQUID system): the
+  Neuromag helmet scaled about the head origin of each head's laterally centred pose until the median
+  magnetometer-coil-centre-to-scalp gap equals the adult's, 29.55 mm (the adult in its own helmet about
+  its laterally centred head, scale 1) or, as a variant, 28.38 mm (the adult at top contact); no coil
+  centre within the 18-mm Dewar spacing of the scalp (in child C this binds first, at a 32.83-mm gap).
+  The OPM arrays are those of the fixed-helmet analysis, unchanged, so a within-head contrast, D at top
+  contact in the fixed helmet minus D in the fitted helmet, is a property of Neuromag alone. Reported:
+  Delta at the adult's gap; the within-head contrasts and their interaction with head size (the child's
+  contrast minus the adult's); Delta at an equal OPM site count (the adult's dense array subsampled to
+  the child's count, as in the channel-count control below); and, as placement uncertainty, Delta over
+  the 12 source-blind placements of the fixed helmet (each head against the adult at the same placement;
+  difference of the area-weighted medians; infeasible placements left out). Intervals: 1,000
+  parcel-bootstrap resamples for the dense array in the fixed helmet and in the helmet fitted at 29.55
+  mm, 200 elsewhere (IC-BOOT-CGAP).
 * Head-adaptive OPM arrays: refitted to each head with the G2 rules unchanged (10-mm cell, 7-mm
   standoff, 17-mm packing, clearance and coverage rules; nothing shrunk): the dense array and the
   matched-site array (the Neuromag sites at the primary placement projected onto the scalp; the
@@ -1008,6 +1170,30 @@ means the 2-year template; the 18- and 12-month templates are named.
   intervals contain no between-subject variability. Delta measures a change in relative
   performance under these matching assumptions, not a clinical benefit.
 
+Revision results (run at 10e37b9 after referee round 1; comparisons: dense OPM vs Neuromag combined,
+intrinsic + brain noise, area-weighted medians without the medial wall, parcel-bootstrap 95 % intervals)
+* MRI quality check: children A-C are usable. Their surfaces share the T1's frame (within 0.0001 mm),
+  their white surfaces are registered to the T1 (no rigid shift raises the white/grey contrast; the T1
+  edge across them shows a translation of at most 0.014 mm and a rotation of at most 0.014 deg), and
+  their scalps lie a median 1.35, 1.48 and 1.34 mm inside the T1 head boundary (half-maximum edge
+  0.94, 1.22 and 0.36 mm), as the adult's does (1.35 mm; 1.08 mm). Their shallow cortex is therefore
+  not the product of a misplaced scalp: the white surface lies within 8 mm of the scalp over 22, 83 and
+  3.6 cm^2 (within 8 mm of the MRI head boundary over 6.8, 29 and 0.1 cm^2; adult none). The 2-year template's
+  scalp lies 1.64 mm outside its boundary (half-maximum edge 1.62 mm; verdict 'outside').
+* Helmet fitted at the adult's gap: scale factors 0.855-0.921 (child C 0.941, clearance-bound). At the
+  adult's gap Delta is +0.03 [+0.00, +0.05] dB (school-age size), +0.02 [-0.02, +0.06] dB (2-year size),
+  +0.04 [-0.06, +0.19], +0.15 [-0.08, +0.33] and +0.05 [-0.09, +0.24] dB (24-, 18- and 12-month
+  templates), and -0.30 [-0.48, -0.22], -0.39 [-0.54, -0.17] and +0.01 [-0.23, +0.18] dB in children
+  A-C; at the adult's top-contact gap +0.02, +0.01, +0.02, +0.13, +0.02, -0.27, -0.36 and +0.11 dB (same
+  order). Within each head, fixed helmet at top contact minus fitted helmet: +0.17 and +0.76 dB (school-age
+  and 2-year size), +0.34, +0.42 and +0.55 dB (templates), +0.29, +0.42 and -0.12 dB (children A-C; child
+  C's fixed gap is already close to its fitted one) and -0.23 dB in the adult, whose laterally centred
+  pose is looser than top contact. At an equal OPM site count Delta at the adult's gap is +0.16 to +0.49
+  dB. Placement band of the fixed-helmet Delta over the 12 source-blind placements: +0.20 to +1.12 dB
+  (school-age size), +0.67 to +1.61 (2-year size), +0.48 to +1.38, +0.54 to +1.36 and +0.75 to +1.66
+  (templates), +0.06 to +0.37, +0.19 to +0.63 and -0.10 to +0.70 dB (children A-C; child C over its 11
+  feasible placements).
+
 ## 11. Epilepsy relevance, pediatric (G4, NEW) — `scripts/g4_epilepsy_pediatric.py`
 * The adult detection and localization studies (section 9) run unchanged — configuration
   (`configs/g4_epilepsy.toml`), seeds, strengths, morphologies, detectors, operating points, null
@@ -1134,10 +1320,14 @@ slightly, which moves some held-out rates by up to 0.05 per minute); the scaled 
   survive varies between runs (v3 had four survivors under 16 comparisons, two of them among these;
   v2 seven). The direction is the more robust observation: over all nine anatomies 65 of the 360
   localization comparisons have p < 0.05 (uncorrected; about 18 would be expected by chance if they
-  were independent, which they are not), 64 of them in favour of an OPM array (children A-C: 13 of
-  their 120, all favouring an OPM array); 28 of the 65 concern weak 80-nAm sources, mostly undetected, 21
-  are the study's dSPM errors over all events and 27 MNE's (without MNE's dSPM, as in v3: 38 of 288,
-  37 favouring an OPM array).
+  were independent, which they are not): 61 of them strictly in favour of an OPM array, 3 with a zero
+  median difference (MNE's dSPM errors of 320-nAm sources: the 12-month template's matched array, focal,
+  p = 0.036; the 18-month template's dense array, focal, p = 0.030; the 2-year template's dense array,
+  patches, p = 0.0092) and 1 in favour of Neuromag (the 2-year template's matched-array dipole errors for
+  80-nAm focal events, +1.5 mm, p = 0.025); children A-C: 13 of their 120, all strictly in favour of an
+  OPM array. 28 of the 65 concern weak 80-nAm sources, mostly undetected, 21 are the study's dSPM errors
+  over all events and 27 MNE's (without MNE's dSPM, as in v3: 38 of 288, 37 strictly in favour of an
+  OPM array and 1 of Neuromag).
 * The pediatric epilepsy examples use the same framework as the adult; detection and
   reconstruction claims rest on separate results. Simulated IED-source recovery does not
   identify an epileptogenic zone or establish surgical benefit.

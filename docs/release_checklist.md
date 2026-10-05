@@ -106,8 +106,9 @@ a Pages site, if ever enabled, would be public.
    comparison values of Hunold et al. (2016) are published as factual comparison data with
    attribution: the colour classes digitised from Figs 4a and 5a
    (re-plotted in `Figure_G1B_vs_paper.png`, compared in the G1B table) and the Fig. 6 values in
-   `g1b_summary.json`. Their source is named where they are shown (S1 caption and table: "values
-   digitised from Hunold et al. (2016), Figs 4a and 5a, for comparison"; the downloads note on S8).
+   `g1b_summary.json`. Their source is named where they are shown (S2 caption and table: "values
+   digitised from Hunold et al. (2016), Figs 4a and 5a, for comparison"; the downloads note on S9;
+   pages renumbered in the revision, when the supplementary text became S1).
 8. **Local references.** `docs/audit.md` names the local working folders (`goal_condition.txt`, which also did, was removed on 2026-10-04),
    and `legacy/realistic_head_output/realistic_head_results.npz` stores the local SUBJECTS_DIR of
    the original run; edit or drop before publication if the folder names should not appear.
