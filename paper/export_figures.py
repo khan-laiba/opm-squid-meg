@@ -40,6 +40,8 @@ matplotlib.use("Agg")
 import matplotlib.axes  # noqa: E402
 import matplotlib.axis  # noqa: E402
 import matplotlib.category  # noqa: E402
+import matplotlib.collections  # noqa: E402
+import matplotlib.legend  # noqa: E402
 import matplotlib.colors  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import matplotlib.spines  # noqa: E402
@@ -52,7 +54,7 @@ import report_style as style  # noqa: E402
 EXPORT = HERE / "build" / "figure_export"   # drawing scripts' outputs and previews (not committed)
 FIGDIR = HERE / "figures"                   # the manuscript's figure files
 PDF_DPI, PNG_DPI = 600, 300
-PANEL = re.compile(r"^(?:\(([a-i])\)(?:\s+|$)|([a-i])(?:\s{2,}|$))(.*)$", re.S)  # "(a) Title", "a  Title" or "a"
+PANEL = re.compile(r"^(?:\(([a-l])\)(?:\s+|$)|([a-l])(?:\s{2,}|$))(.*)$", re.S)  # "(a) Title", "a  Title" or "a"
 # figures drawn without panel letters whose panels the manuscript letters (continuing the figure they are stacked under):
 # letters given to the axes that carry a left title, in reading order
 EXTRA_LETTERS = {"Figure_noise_sensitivity_depth": "ghij"}
@@ -71,10 +73,20 @@ SUPP = {"Figure_S1": ["Figure_R0_sphere"], "Figure_S2": ["Figure_R2_noise_model"
         "Figure_S15": ["Figure_S_joint_detection_localization"]}
 
 
+def legend_texts(fig: Figure) -> set[int]:
+    """ids of the texts of every legend of the figure (subfigures and axes included)."""
+    legends = [a for a in fig.findobj(lambda o: isinstance(o, matplotlib.legend.Legend))]
+    return {id(t) for lg in legends for t in lg.get_texts()} | {id(lg.get_title()) for lg in legends}
+
+
 def relabel(fig: Figure) -> int:
-    """'(a) Title' -> bold 'A' + title, for every text of the figure that starts with a panel label."""
+    """'(a) Title' -> bold 'A' + title, for every text of the figure that starts with a panel label (legend entries
+    keep a plain reference, '(C) ...', set by americanize())."""
     n = 0
+    in_legend = legend_texts(fig)
     for t in fig.findobj(Text):
+        if id(t) in in_legend:
+            continue
         m = PANEL.match(t.get_text() or "")
         if not m:
             continue
@@ -114,9 +126,23 @@ BRITISH = re.compile(r"\b(" + "|".join(AMERICAN) + r")\b", re.I)
 
 # the analysis scripts' internal labels -> the manuscript's terms
 TERMS = {"published model": "primary model", "room interference": "room field", "OPM dense": "dense OPM",
-         "OPM matched": "site-matched OPM"}
+         "OPM matched": "site-matched OPM", "BEM (published)": "BEM (primary model)", "not stored": "not computed",
+         "standard placements": "source-blind placements", "individual child": "school-aged child",
+         "Fixed minus fitted helmet, within each head": "Fixed minus other helmet, within each head",
+         "D(fixed) − D(fitted)": "D(fixed) − D(other)",
+         ", thresholds frozen for a nominal 1 false event/min;": ";"}
+# whole labels replaced as they stand (figure rows and legend entries)
+EXACT = {"+ room field": "Sensor, brain and room noise",
+         "+ room field, after the 8-term projection": "Sensor, brain and room noise, room field projected out",
+         "1-layer BEM (1,000-target subset; no interval)": "Single-compartment BEM (1,000-target subset; no interval)",
+         "3-layer BEM (primary model)": "Three-layer BEM (primary model)",
+         "medial wall (not cortex)": "medial wall (not colored)",
+         "within 4 mm of the inner skull (not simulated)": "within 4 mm of the inner skull (neither target nor background)",
+         "primary 95 % interval, per array (shaded)": "primary 95 % interval (in each array's color)",
+         "panels f and i": "panels F and I"}
+UNIT_BRACKETS = re.compile(r"\[((?:fT|mm|dB|Hz|nAm|cm|ms|s)\b[^\]]{0,12})\]")
 # a panel referred to inside a text, "(c)", "(b, c)", "(a-c)" or "(d and e)" -> upper case, as the panel letters are
-PANEL_REF = re.compile(r"\(([a-i](?:(?:,\s*|\s*[-\u2013]\s*|\s+and\s+)[a-i])*)\)")
+PANEL_REF = re.compile(r"\(([a-l](?:(?:,\s*|\s*[-\u2013]\s*|\s+and\s+)[a-l])*)\)")
 
 
 def americanize_text(s: str) -> str:
@@ -127,7 +153,9 @@ def americanize_text(s: str) -> str:
     s = BRITISH.sub(swap, s)
     for internal, term in TERMS.items():
         s = s.replace(internal, term).replace(internal[0].upper() + internal[1:], term[0].upper() + term[1:])
-    return PANEL_REF.sub(lambda m: "(" + re.sub(r"\b[a-i]\b", lambda k: k.group(0).upper(), m.group(1)) + ")", s)
+    s = UNIT_BRACKETS.sub(r"(\1)", s)
+    s = PANEL_REF.sub(lambda m: "(" + re.sub(r"\b[a-l]\b", lambda k: k.group(0).upper(), m.group(1)) + ")", s)
+    return EXACT.get(s, s)
 
 
 def americanize(fig: Figure) -> int:
@@ -199,6 +227,8 @@ def savefig(self, fname, *args, **kwargs):
     """Every figure saved during the export: panel labels converted, spelling made American, notes removed, then a
     vector PDF and a PNG preview in EXPORT (cropped to what is drawn)."""
     stem = Path(str(fname)).stem
+    if stem in RECOLOR:
+        recolor(self, RECOLOR[stem])
     add_letters(self, EXTRA_LETTERS.get(stem, ""))
     relabel(self)
     americanize(self)
@@ -239,11 +269,43 @@ def run_main(name: str, argv: list[str]):
         sys.argv = old
 
 
+# the scaled adults get colors no array uses (the report drew them in the arrays' blues); labels as in Table 2
+HEAD_COLORS = {"school": "#332288", "size2yr": "#882255"}
+HEAD_SHORT = {"school": "School-age size", "size2yr": "2-year size"}
+# per figure: colors replaced in every artist ({old: new}, lower-case hex); Fig. 7's fitted helmet as in Fig. 1
+RECOLOR = {"Figure_constant_gap": {"#0072b2": "#d55e00", "#009e73": "#555555"}}
+
+
+def recolor(fig: Figure, mapping: dict) -> None:
+    """Replace colors (as hex) in lines, markers and line collections of the figure."""
+    to_hex = matplotlib.colors.to_hex
+    for a in fig.findobj():
+        for get, put in (("get_color", "set_color"), ("get_markerfacecolor", "set_markerfacecolor"),
+                         ("get_markeredgecolor", "set_markeredgecolor")):
+            if isinstance(a, matplotlib.collections.Collection) or not (hasattr(a, get) and hasattr(a, put)):
+                continue
+            try:
+                c = getattr(a, get)()
+                if isinstance(c, str) and c not in ("none", "None") and to_hex(c) in mapping:
+                    getattr(a, put)(mapping[to_hex(c)])
+            except (ValueError, TypeError):
+                pass
+        if isinstance(a, matplotlib.collections.Collection):
+            for get, put in (("get_edgecolor", "set_edgecolor"), ("get_facecolor", "set_facecolor")):
+                cols = getattr(a, get)()
+                if len(cols):
+                    new = [mapping.get(to_hex(c, keep_alpha=False), None) for c in cols]
+                    if any(new):
+                        getattr(a, put)([n if n else tuple(c) for n, c in zip(new, cols)])
+
+
 def draw_all():
     Figure.savefig = savefig
     style.OUT = EXPORT
     style.save = save
     style.DPI = PNG_DPI  # the preview's resolution; the PDFs' raster layers use PDF_DPI
+    style.ANAT_COLOR.update(HEAD_COLORS)
+    style.ANAT_SHORT.update(HEAD_SHORT)
     run_main("report_figures_adult", [])
     run_main("report_figures_clean", [])
     run_main("report_figures_noise", [])

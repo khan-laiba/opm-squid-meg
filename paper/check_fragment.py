@@ -50,6 +50,7 @@ def main(argv=None):
                              block_end_string="%>", comment_start_string="<#", comment_end_string="#>",
                              keep_trailing_newline=True, autoescape=False)
     env.globals["trim"] = bp.trim
+    env.filters["words"] = bp.words
     view = bp.FactView(facts)
     try:
         body = env.get_template(str(frag.relative_to(HERE))).render(F=view)

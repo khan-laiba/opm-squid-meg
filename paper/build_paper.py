@@ -72,6 +72,13 @@ class FactView:
         self._facts = facts
         self.used: dict[str, dict] = {}
 
+    def dp(self, name: str, digits: int) -> str:
+        """A numeric fact printed from its unrounded value with the given number of decimals (no double rounding)."""
+        if name not in self._facts:
+            raise jinja2.UndefinedError(f"unknown fact F.{name}")
+        self.used[name] = self._facts[name]
+        return latex_value(f"{float(self._facts[name]['raw']):.{digits}f}")
+
     def __getattr__(self, name: str) -> str:
         if name.startswith("_"):
             raise AttributeError(name)
@@ -79,6 +86,14 @@ class FactView:
             raise jinja2.UndefinedError(f"unknown fact F.{name}")
         self.used[name] = self._facts[name]
         return latex_value(self._facts[name]["value"])
+
+
+NUMBER_WORDS = {str(i): w for i, w in enumerate("zero one two three four five six seven eight nine".split())}
+
+
+def words(value: str) -> str:
+    """A count below ten in words, as the journal writes counts in prose ('8' -> 'eight'); other values unchanged."""
+    return NUMBER_WORDS.get(str(value).strip(), value)
 
 
 STACKS = HERE / "figure_stacks.json"  # where each part of a stacked figure sits (written by export_figures.py)
@@ -148,6 +163,7 @@ def render(doc: str, facts: dict) -> tuple[Path, dict]:
                              block_end_string="%>", comment_start_string="<#", comment_end_string="#>",
                              keep_trailing_newline=True, autoescape=False)
     env.globals["trim"] = trim
+    env.filters["words"] = words
     view = FactView(facts)
     text = env.get_template(f"{doc}.tex.j2").render(F=view)
     if doc == "manuscript":

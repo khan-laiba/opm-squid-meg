@@ -5,6 +5,8 @@
 \usepackage{amsmath}
 \usepackage{unicode-math}
 \setmathfont{texgyretermes-math.otf}
+% a text block close to the journal's printed figure width (19 cm): figures print near their drawn size
+\usepackage[a4paper,left=2.4cm,right=2.4cm,top=2.4cm,bottom=2.6cm,footskip=1cm]{geometry}
 \usepackage{graphicx}
 \graphicspath{{../figures/}{../../figures/}}
 \usepackage{booktabs}
@@ -12,6 +14,7 @@
 \usepackage{tabularx}
 \usepackage{longtable}
 \usepackage{pdflscape}
+\usepackage{rotating}
 \usepackage{xcolor}
 \usepackage{setspace}
 \usepackage{lineno}
@@ -22,11 +25,13 @@
 \usepackage{etoolbox}
 \AtBeginEnvironment{figure}{\NoHyper}
 \AtBeginEnvironment{table}{\NoHyper}
+\AtBeginEnvironment{sidewaystable}{\NoHyper}
 % references as the journal prints them: DOIs as https://doi.org/..., no 'URL:' prefix, URLs in the text font
 \urlstyle{same}
 \providecommand{\DOIprefix}{}\renewcommand{\DOIprefix}{}
 \providecommand{\URLprefix}{}\renewcommand{\URLprefix}{}
 \providecommand{\doi}[1]{}\renewcommand{\doi}[1]{\url{https://doi.org/#1}}
+\providecommand{\hy}{-}  % a hyphen that the bibliography style does not turn into a dash
 \renewcommand{\figurename}{Fig.}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
