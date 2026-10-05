@@ -905,6 +905,9 @@ def round3b_facts(F: Facts, root: Path) -> None:
           f"{CGAP} :: delta_vs_adult_top['<head>/gap_matched_top/opm_dense/combined/intrinsic+brain'].delta.ci95 (derived: "
           "the scaled adults and templates whose interval lies above zero, of all of them)")
 
+    secs = [float(s) for s in json.loads((root / G2).read_text())["config"]["covariance"]["estimate_seconds"]]
+    F.add("wr_cov_seconds_long", f"{max(secs):g}", max(secs), f"{G2} :: config.covariance.estimate_seconds (the longer of the "
+          "declared estimation durations, s)")
     q = json.loads((root / QC).read_text())["anatomies"]
     off = {k: float(q[k]["scalp_vs_mri"]["offsets"]["cap"]["otsu"]["median_mm"]) for k in ("adult", "infant2yr")}
     conv = off["adult"] - off["infant2yr"]

@@ -22,7 +22,7 @@ figures and result files CC BY 4.0).
 | 1. Foundations: number provenance, new figures from stored outputs, verified literature table, site integration | done | 31,150 sourced facts; figures R1-R10; 15 studies (14 verified in full text); 197 tests pass |
 | 2. Draft the report as one narrative | done | about 8,500 words of main text, 10 figures, 3 tables, 39 references |
 | 3. Internal verification: numbers, claims against evidence, methods completeness, build, tests, links | done | 166 checker issues resolved; supplementary pages cleaned for publication; 197 tests pass |
-| 4. Referee rounds (both referees, same round) | in progress | round 1: major revisions from both; round 2: minor revisions (Fable 5.1), major revisions (GPT-6 Astra); round-3 revision done; round 3 under review |
+| 4. Referee rounds (both referees, same round) | done | round 1: major revisions from both; round 2: minor revisions (Fable 5.1), major revisions (GPT-6 Astra); round 3: minor revisions from both |
 | 5. Deploy to GitHub Pages and check the live site | first deployment done | the round-1 version is live; redeploy after acceptance |
 
 ## Referee rounds
@@ -40,8 +40,14 @@ figures and result files CC BY 4.0).
   fitted at the adult's gap shows that fitting reduces the smaller heads' extra advantage, not that the
   advantage needs the wide gap. Fable 5.1 asked for multi-axis clinical arrays to be named, a checkable
   pre-specification, the excluded cortex per head and a plainer Abstract.
-- Round 3 (commit fabd710, after two internal pre-checks): both referees reviewing, with the round-2 reports and the
-  point-by-point response.
+- Round 3 (commit fabd710, after two internal pre-checks): **minor revisions** from both referees (Claude Fable 5.1
+  and GPT-6 Astra), the acceptance condition. Both again found every checked number in its result file (Fable 5.1
+  recomputed about 30 groups of values, GPT-6 Astra 29) and judged every second-round point adequately addressed. Their
+  remaining points are presentational. The small wording corrections applied before deployment: the Ren et al.
+  comparison no longer read as selective compatibility, the template-convention bias stated as possible rather than
+  certain, the 4,680-sample covariance described as the declared 60-s scenario, a pointer from Figure 7 to the
+  interaction in Table S6, child C's within-head contrast attributed to the construction, the children's depth-strata
+  count, and 'an independent prediction' for the magnetometer brain noise.
 
 ## Log
 
