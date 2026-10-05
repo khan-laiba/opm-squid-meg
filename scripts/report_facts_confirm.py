@@ -65,8 +65,6 @@ CF = f"{DIR}/g4_confirm_summary.json"
 PER = DIR + "/g4c_{}_summary.json"
 CHECK = f"{DIR}/g4c_endpoint_code_check.json"
 EXACT = f"{DIR}/g4_confirm_exact_p.json"  # exact sign-flip p of every comparison (scripts/g4_confirm_exact_p.py)
-EXACT_NOTE = (f" [p: the exact sign-flip p and its Holm adjustment, {EXACT} (from the stored location_differences; "
-              "the run's Monte Carlo values in the field named here agree and give the same Holm decisions)]")
 SECTIONS = {"oracle": "opm_dense/opm_vs_squid/combined/oracle/replicate0",  # the combined summary's per-anatomy copies
             "mismatch": "opm_dense/opm_vs_squid/combined/mismatch@1/replicate0",
             "matched_array": "opm_matched/opm_vs_squid/combined/practical@1/replicate0"}
@@ -1011,10 +1009,14 @@ def facts(root: Path = ROOT) -> dict:
     _locations(F, D, not reasons)
     _exploratory(F, D)
     _exact_facts(F, agreement)
-    for name, f in F.items():  # values derived from the confirmatory run's sign-flip p are now the exact ones
+    for name, f in F.items():  # values derived from the confirmatory run's sign-flip p are now the exact ones: the exact-p
+        # file is their primary source, the run's Monte Carlo field the agreement check
         if name.startswith("cf_") and not name.startswith("cf_exact_") and "exploratory" not in name and any(
                 k in f["source"] for k in ("sign_flip_p", "holm_p", "n_pass", "n_p_below_alpha", "n_replicates_all_pass")):
-            f["source"] += EXACT_NOTE
+            files, _, how = f["source"].partition(" :: ")
+            f["source"] = (f"{EXACT}, {files} :: the exact sign-flip p and its Holm adjustment (from the stored "
+                           f"location_differences) for {how}; agreement check: the run's Monte Carlo value in that field "
+                           "gives the same Holm decisions")
     return dict(F)
 
 

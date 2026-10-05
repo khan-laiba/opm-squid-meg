@@ -22,8 +22,8 @@ figures and result files CC BY 4.0).
 | 1. Foundations: number provenance, new figures from stored outputs, verified literature table, site integration | done | 31,150 sourced facts; figures R1-R10; 15 studies (14 verified in full text); 197 tests pass |
 | 2. Draft the report as one narrative | done | about 8,500 words of main text, 10 figures, 3 tables, 39 references |
 | 3. Internal verification: numbers, claims against evidence, methods completeness, build, tests, links | done | 166 checker issues resolved; supplementary pages cleaned for publication; 197 tests pass |
-| 4. Referee rounds (both referees, same round) | done | round 1: major revisions from both; round 2: minor revisions (Fable 5.1), major revisions (GPT-6 Astra); round 3: minor revisions from both; their minor points applied, and the final version sent to both for confirmation (round 4) |
-| 5. Deploy to GitHub Pages and check the live site | in progress | the final version is deployed from the commit that applies the round-3 minor points; live check follows |
+| 4. Referee rounds (both referees, same round) | done | round 1: major revisions from both; round 2: minor revisions (Fable 5.1), major revisions (GPT-6 Astra); round 3: minor revisions from both; round 4, on the deployed final version (f167fd3): minor revisions from both |
+| 5. Deploy to GitHub Pages and check the live site | done | f167fd3 deployed (gh-pages af1ef8e) and checked live: 14 pages, 240 internal assets, 139 anchors, 0 failures; the round-4 minor corrections are deployed from the commit that applies them |
 
 ## Referee rounds
 
@@ -48,8 +48,14 @@ figures and result files CC BY 4.0).
   certain, the 4,680-sample covariance described as the declared 60-s scenario, a pointer from Figure 7 to the
   interaction in Table S6, child C's within-head contrast attributed to the construction, the children's depth-strata
   count, and 'an independent prediction' for the magnetometer brain noise (fb7fd2f). The referees' remaining minor
-  points were then applied in a final pass (log, 2026-10-05), and the final version goes to both referees once more
-  as a confirmation round (round 4).
+  points were then applied in a final pass (log, 2026-10-05), and the final version went to both referees once more
+  as a confirmation round.
+- Round 4 (commit f167fd3, the deployed final version): **minor revisions** from both referees (Claude Fable 5.1 and
+  GPT-6 Astra), again the acceptance condition, with every third-round point judged answered. Their remaining requests
+  are editorial: the Abstract within NeuroImage's 250 words, the 18-month template's MRI-check flag beside its results,
+  the children's skull rule as implemented, Section 3.6's checks one at a time with each array's false-event rates, the
+  exact-p file named as the primary source of Table 3's p values, the superseded clinical-comparison record marked, and
+  items only the author can supply (funding, competing interests, contributions, an archive DOI, print figure files).
 
 ## Log
 
@@ -163,3 +169,17 @@ figures and result files CC BY 4.0).
   the author: funding, competing-interests and contributions statements, an archive DOI, print-resolution figure files,
   and confirming the sample dataset's terms with its providers. Next: deploy, check the live site, and a confirmation
   round with both referees on the deployed version.
+- 2026-10-05: f167fd3 deployed (gh-pages af1ef8e; live check: 14 pages, 240 internal assets, 139 anchors, 0 failures;
+  39 external links, 31 load and 8 publisher pages refuse scripts: in a browser the MDPI page loads, and the Wiley and
+  RSNA DOIs resolve to their article pages, which show those publishers' bot check). Round 4 on that version: minor
+  revisions from both referees. Their round-4 corrections applied: the Abstract cut to 249 words (NeuroImage's limit is
+  250; Human Brain Mapping sets none) with every condition kept; the 18-month template flagged in Tables 2 and 3 and the
+  Figure 6 to 8 captions, with its MRI sections added to Figure S6; the nine anatomies described as not independent
+  anatomical replications; the children's skull rule as implemented, with the single-compartment check beside it;
+  Section 3.5's first paragraph split; Section 3.6's checks with each array's false-event rates and the equal-rate tests;
+  the triaxial control with noisier tangential axes; which way a displaced cortex would move the 18-month template's Δ;
+  "would test", not "would decide", for a measured OPM covariance; the exact-p file as the primary source of the
+  confirmatory p values on S8; the dataset versions; the ethics sentence under Declarations; and
+  docs/literature/model_counterparts.json marked as superseded by Table 4. Left to the author: funding, competing
+  interests and contributions, an archive DOI, print-resolution figure files, Table 4's journal layout, and confirming
+  the sample dataset's terms with its providers.

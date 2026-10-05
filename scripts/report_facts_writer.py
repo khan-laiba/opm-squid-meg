@@ -87,6 +87,8 @@ Read only; nothing is re-run. Every fact is computed from unrounded stored value
                                   confirmatory run, the one interval bound printed as 1.00 in the confirmatory table
   wr_cgap_templates_interaction_range  the templates' interaction at the adult's gap; checked to lie within the two scaled
                                   adults' values, which set the range over the scaled adults and templates
+  wr_qc_infant18mo_white_scalp_min_mm  the 18-month template's white-surface vertex closest to the scalp, through which
+                                  the template check's overlay figure is drawn
 Formats as scripts/report_facts_g12.py (whose helpers are imported): dB signed with 2 decimals, intervals "[lo, hi]",
 U+2212 for negatives, counts with thousands separators.
 
@@ -1060,6 +1062,17 @@ def round3c_facts(F: Facts, root: Path) -> None:
           "the three infant templates; checked to lie within the two scaled adults' values)")
 
 
+def round4_facts(F: Facts, root: Path) -> None:
+    """Facts added after the fourth round: the 18-month template's white-surface vertex closest to the scalp, which the
+    template check's overlay (results/g3b_templates_qc/Figure_QC_overlay_infant18mo.png) is drawn through."""
+    qt = json.loads((root / TEMPLATES_QC).read_text())
+    v = float(qt["anatomies"]["infant18mo"]["white_to_scalp_used"]["min_mm"])
+    if abs(v - float(qt["anatomies"]["infant18mo"]["closest_white_vertex"]["distance_mm"])) > 1e-9:
+        raise ValueError(f"{TEMPLATES_QC}: the closest white vertex and the minimum white-to-scalp distance differ")
+    F.add("wr_qc_infant18mo_white_scalp_min_mm", f"{v:.1f}", v, f"{TEMPLATES_QC} :: anatomies['infant18mo'].white_to_scalp_used."
+          "min_mm (the white-surface vertex closest to the scalp used, mm; the overlay's sections pass through it)")
+
+
 def facts(root: Path = ROOT) -> dict:
     """Every writer fact, name -> {"value", "raw", "source"}."""
     root = Path(root)
@@ -1096,6 +1109,7 @@ def facts(root: Path = ROOT) -> dict:
     round3_facts(F, root)
     round3b_facts(F, root)
     round3c_facts(F, root)
+    round4_facts(F, root)
     return dict(F)
 
 

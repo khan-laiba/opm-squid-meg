@@ -542,6 +542,12 @@ class TestWriterFacts(unittest.TestCase):
         self.assertEqual(self.F["wr_cf_childc_matched_practical_ci_lo_4dp"]["value"], "0.9997")
         self.assertEqual(self.F["wr_qc_template_adult_convention_mm_range"]["value"], "2.6 to 3.0")
 
+    def test_round4_facts_against_their_files(self):
+        qt = json.loads((ROOT / "results/g3b_templates_qc/children_qc.json").read_text())["anatomies"]["infant18mo"]
+        self.assertEqual(self.F["wr_qc_infant18mo_white_scalp_min_mm"]["raw"], qt["white_to_scalp_used"]["min_mm"])
+        self.assertAlmostEqual(qt["white_to_scalp_used"]["min_mm"], qt["closest_white_vertex"]["distance_mm"], places=9)
+        self.assertEqual(self.F["wr_qc_infant18mo_white_scalp_min_mm"]["value"], "7.3")
+
     def test_registered_last_in_the_merged_facts(self):
         R = _load("report_facts")
         self.assertEqual(R.MODULES[-1], "report_facts_writer")

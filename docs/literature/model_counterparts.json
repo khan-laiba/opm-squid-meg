@@ -1,5 +1,6 @@
 {
   "title": "Model counterparts of the clinical OPM epilepsy studies (report Table 3)",
+  "status": "superseded: a working record of 2026-10-04 for the first draft's clinical table. The comparison as published is Table 4 of report/report.md, which differs from it in two rows: the model analogue of Feys et al. (2022) is the school-age scaled adult, not children A-C, and the detection comparison with Ren et al. (2025) reads 'not comparable', not 'consistent for the matched array'. Kept unchanged below as a record.",
   "description": "One record per clinical study of docs/literature/epilepsy_opm_studies.json: the quantity the study reported, the model's closest counterpart as a fact name of scripts/report_facts*.py (or 'no counterpart'), that model quantity's metric, comparator, anatomy and noise condition in words, and the dimensions on which study and model are not matched. The counterparts are qualitative analogues: they are compared with the reports in direction only. Values are given as printed by the facts when this file was written; the report takes them from the facts when the site is built.",
   "date": "2026-10-04",
   "facts_built_at_commit": "10e37b9 (branch revision-r2; the uncommitted methods facts module present, which adds no fact used here), scripts/report_facts.py --json",
