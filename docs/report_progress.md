@@ -120,3 +120,12 @@ figures and result files CC BY 4.0).
   run's commits and dates and its pilot runs in Section 2.5, full-precision adult detectabilities
   (scripts/export_g2_target_metrics.py), the within-head contrast's aggregation order, a plainer Abstract and
   Highlights, and a point-by-point response to both round-2 reports.
+- 2026-10-05: before round 3, an internal pre-check (five independent checkers: response accuracy, coverage of
+  every referee point, framing consistency across all pages, numbers, and a mock strict referee; every serious
+  finding re-checked by a skeptic) found no wrong number but several overstatements and stale pages. Fixed: the
+  fitted helmet now reported with the interaction (+0.40 to +1.10 dB, every interval above zero), which does not
+  depend on the adult's reference placement, and with the residual against the adult at top contact; the
+  children flagged as provisional wherever their values appear; the templates' scalp convention stated as a
+  limitation; the excluded cortex for all nine heads; Figure 7 labelled with its paired estimands and Figure 8
+  resized to a journal page; S1, S6, S7, the README, the G2 report and the milestone pages brought in line with
+  the manuscript. A second pre-check runs before the package goes to both referees.

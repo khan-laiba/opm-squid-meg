@@ -1021,10 +1021,14 @@ def main(argv=None):
         "summary.html": (page_title("summary.html"), page_summary(d)),
     })
     # the milestone pages report the analyses as first run; the manuscript and S1 hold the current interpretation
+    note = MILESTONE_NOTE
+    for target in ("index.html", "supplement.html"):  # link only to pages that were built (tests build subsets)
+        if target not in pages:
+            note = re.sub(rf'<a href="{target}">(.*?)</a>', r"\1", note)
     for fname in MILESTONE_PAGES:
         if fname in pages:
             title, content = pages[fname]
-            pages[fname] = (title, MILESTONE_NOTE + content)
+            pages[fname] = (title, note + content)
     # the navigation: every supplementary page that was built (no S1 without report/supplement.md)
     supplement = [dict(file=f, title=f"{n} {t}" if n else t) for f, n, t in SUPPLEMENT if f in pages]
     documents = {doc["page"] for doc in docs.values()}
