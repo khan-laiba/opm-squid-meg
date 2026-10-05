@@ -253,15 +253,25 @@ python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -c "import mne; mne.datasets.sample.data_path(path='data/external')"  # ~1.6 GB download
 .venv/bin/python -c "import mne; [mne.datasets.fetch_infant_template(a, subjects_dir='data/external/infant_subjects') for a in ('2yr', '18mo', '12mo')]"  # ~1.15 GB (G3B, pediatric G4)
-.venv/bin/python scripts/fetch_school_subjects.py  # ~125 MB: three school-aged children of OpenNeuro ds005234 (G3B, pediatric G4)
-bash scripts/run_all.sh     # tests, then every milestone in order (~11 h on a 10-core laptop: adult ~2 h, eight pediatric G4 runs ~1 h each; the analyses added after referee round 1, among them nine confirmatory spike runs, add to this)
+.venv/bin/python scripts/fetch_school_subjects.py  # ~135 MB: three school-aged children of OpenNeuro ds005234 (G3B, pediatric G4) and their MRI quality-check inputs
+bash scripts/run_all.sh     # tests, then every milestone in order, then the report figures and the site (~11 h on a 10-core laptop: adult ~2 h, eight pediatric G4 runs ~1 h each; the analyses added after referee round 1, among them nine confirmatory spike runs, add to this)
 ```
 
 The MRI quality check of the school-aged children (`scripts/study_children_qc.py`) also needs their T1
 volumes and the head masks their scalps were made from: 6 files, 9,855,337 bytes, listed with S3 object
 versions, sizes and SHA-256 in `configs/school_subjects_qc_manifest.json` and placed under
-`data/external/school_subjects/<subject>/mri/`. `scripts/fetch_school_subjects.py` does not download
-them; without them the check reports the children as 'undetermined'.
+`data/external/school_subjects/<subject>/mri/`. `scripts/fetch_school_subjects.py` downloads them with the
+45 files of `configs/school_subjects_manifest.json` (124,961,312 bytes), each from its exact S3 object version,
+and keeps a file only if its size and SHA-256 are those listed; `--no-qc` leaves the quality-check files out
+(the check then reports the children as 'undetermined'), and `--check` checks the files of both manifests
+without downloading anything.
+
+After the analyses, `scripts/run_all.sh` writes the per-target tables' full-precision depths and bins
+(`scripts/export_target_precision.py`: a `<table>_depth.csv` next to each table), the adult's per-depth-bin
+intervals (`scripts/study_g2_depth_bins.py`) and the geometry that the figures draw (`scripts/export_g3b_geometry.py`,
+from the G3B run's state in `cache/g3b/`, then `scripts/export_g2_arrays.py`); after the confirmatory spike runs it
+draws the report figures from stored outputs (`scripts/report_figures_*.py`: adult, pediatric, main text,
+supplement, MRI quality check, confirmatory run) and builds the site last.
 
 Smoke run (about 15 min: the unit tests, which skip the full-resolution lead-field check without
 the local cache, then the analytical G1A benchmark, which needs no data):

@@ -66,15 +66,26 @@ step g4_matched $PY scripts/study_g4_matched_rate.py                     # G4  d
 step fit_failures $PY scripts/study_g4_fit_failures.py                   # G4  failed fits under declared criteria (from the event tables)
 step g4_motion $PY scripts/g4_motion.py                                  # G4  head motion and OPM slippage (bounded extension)
 # analyses added for the referees' round-1 requests (2026-10-04); the children's QC needs their T1 and head masks
-# (configs/school_subjects_qc_manifest.json):
+# (configs/school_subjects_qc_manifest.json, fetched with the surfaces by scripts/fetch_school_subjects.py):
 step children_qc $PY scripts/study_children_qc.py                       # G3B  MRI quality check of the school-aged children
 step cov_valid $PY scripts/study_covariance_validation.py               # G2   noise model vs the measured Neuromag covariance
 step noise_sens $PY scripts/study_noise_sensitivity.py                  # G2   near-skull cortex, coloured OPM noise, far-field sources
 step constant_gap $PY scripts/study_g3b_constant_gap.py                 # G3B  counterfactual helmet fitted at the adult's gap
+# added in the revision (2026-10-05), nothing simulated again: the per-target tables' full-precision depths, then the
+# adult's per-bin intervals that bin them; the geometry the figures draw, from the G3B state in cache/, then the adult's
+# arrays, which are checked against it:
+step target_precision $PY scripts/export_target_precision.py            # G2/G3B full-precision depth and bins of the per-target tables
+step g2_depth_bins $PY scripts/study_g2_depth_bins.py                   # G2   95 % parcel-bootstrap interval per 5-mm depth bin (adult)
+step g3b_geometry $PY scripts/export_g3b_geometry.py                    # G3B  helmet geometry drawn by the figures (cache/g3b/state.pkl)
+step g2_arrays $PY scripts/export_g2_arrays.py                          # G2   the adult's sensor arrays and head surface drawn by the figures
 for _a in adult school size2yr infant2yr infant18mo infant12mo childA childB childC; do
   step g4c_$_a $PY scripts/g4_confirmatory.py $_a --no-combine          # G4   confirmatory spike run, one anatomy
 done
 step g4c_combine $PY scripts/g4_confirmatory.py --check-endpoint-code --combine-only  # G4  confirmatory endpoint over the nine anatomies
 step report_figures $PY scripts/report_figures_adult.py                 # G5   report figures from stored outputs
 step report_figures_ped $PY scripts/report_figures_pediatric.py         # G5   report figures from stored outputs
+step report_figures_clean $PY scripts/report_figures_clean.py           # G5   main-text figures: sphere benchmark, cortical maps, geometry, arrays
+step report_figures_supplement $PY scripts/report_figures_supplement.py # G5   supplementary spike figures: localization, joint detection, adult curves
+step report_figures_qc $PY scripts/report_figures_qc.py                 # G5   figures of the children's MRI quality check
+step report_figures_confirm $PY scripts/report_figures_confirm.py       # G5   confirmatory spike figure (R16; needs g4c_combine)
 step site $PY scripts/build_site.py                                      # G5   report and supplementary pages in site/_build
