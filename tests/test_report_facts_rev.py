@@ -15,7 +15,10 @@ NS = "results/g2_noise_sensitivity/noise_sensitivity_summary.json"
 COV = "results/g2_covariance_validation/covariance_validation.json"
 QC = "results/g3b_children_qc/children_qc.json"
 CFG_NS = "configs/g2_noise_sensitivity.toml"
-NEEDED = [NS, COV, QC, CFG_NS, "configs/school_subjects_qc_manifest.json"]
+CGAP = "results/g3b_constant_gap/g3b_constant_gap_summary.json"
+DB = "results/g2/g2_depth_bins.json"
+G2T = "results/g2/g2_targets.csv"
+NEEDED = [NS, COV, QC, CFG_NS, "configs/school_subjects_qc_manifest.json", CGAP, DB]
 HAVE = all((ROOT / p).exists() for p in NEEDED)
 
 
@@ -72,7 +75,7 @@ class TestRevisionFacts(unittest.TestCase):
     def test_every_fact_has_a_value_and_an_existing_source(self):
         self.assertGreater(len(self.F), 5000)
         for name, f in self.F.items():
-            self.assertRegex(name, r"^rev_(ns|cov|qc)_[a-z0-9_]+$")
+            self.assertRegex(name, r"^rev_(ns|cov|qc|cgap|db|g2_notahead|seed|boot)_[a-z0-9_]+$")
             self.assertEqual(set(f), {"value", "raw", "source"}, name)
             self.assertTrue(str(f["value"]).strip(), name)
             files, sep, how = f["source"].partition(" :: ")
@@ -242,6 +245,183 @@ class TestRevisionFacts(unittest.TestCase):
         mins = [self.qc["anatomies"][c]["white_to_scalp_used"]["min_mm"] for c in ("childA", "childB", "childC")]
         self.assertEqual(self.F["rev_qc_children_white_scalp_min_mm_range"]["raw"], [min(mins), max(mins)])
         self.assertTrue(math.isclose(self.F["rev_qc_children_white_scalp_min_mm_min"]["raw"], 3.6709052216543094))
+
+
+# ================================================================================================
+# STAGE B2 SECTIONS: rev_cgap_ (helmet fitted at the adult's gap), rev_db_ (per-depth-bin intervals),
+# rev_g2_notahead_ (targets where the dense array is not ahead), rev_seed_ (seeds no other module states)
+@unittest.skipUnless(HAVE, "revision result files not present")
+class TestStageB2Facts(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.F = R.facts(ROOT)
+        cls.v = {k: f["value"] for k, f in cls.F.items()}
+        cls.cg, cls.db = (json.loads((ROOT / p).read_text()) for p in (CGAP, DB))
+
+    def test_cgap_key_values(self):
+        """Literals read from results/g3b_constant_gap/g3b_constant_gap_summary.json (comments: the stored value)."""
+        expect = {
+            "rev_cgap_adult_gap_mm_2dp": "29.55",                                  # target_gaps.gap_matched.gap_mm 29.55017
+            "rev_cgap_adult_top_gap_mm_2dp": "28.38",                              # target_gaps.gap_matched_top.gap_mm 28.37951
+            "rev_cgap_adult_gap_minus_top_mm": "1.2",                              # 29.55017 - 28.37951
+            "rev_cgap_child_c_fitted_gap_mm": "32.8",                              # helmets.childC.gap_matched.median_mm 32.8295
+            "rev_cgap_child_c_fitted_binding": "yes",
+            "rev_cgap_child_c_fitted_gap_above_target_mm": "3.3",                  # 32.8295 - 29.5502
+            "rev_cgap_child_c_fitted_gap_nearest_mm": "18.0",                      # min_mm 18.000: the Dewar spacing
+            "rev_cgap_fitted_binding_heads": "child C",
+            "rev_cgap_fitted_n_binding": "1",
+            "rev_cgap_school_fitted_k": "0.916",                                   # k 0.91617
+            "rev_cgap_child_c_fitted_k_at_target": "0.920",                        # k_at_target 0.92025
+            "rev_cgap_smaller_fitted_gap_mm_range": "29.6 to 32.8",
+            "rev_cgap_all_fixed_gap_mm_range": "28.4 to 40.4",                     # top: adult 28.38 ... infant12mo 40.42
+            "rev_cgap_adult_fixed_dense_vs_combined_ib_d": "+1.00",                # D adult/top 0.99739
+            "rev_cgap_adult_fitted_dense_vs_combined_ib_d": "+1.28",               # D adult/gap_matched 1.28350
+            "rev_cgap_adult_fitted_dense_vs_combined_ib_d_ci": "[+1.08, +1.47]",   # [1.08255, 1.47399]
+            "rev_cgap_school_fitted_dense_vs_combined_ib_delta": "+0.03",          # delta_same_rule ... delta.median 0.02563
+            "rev_cgap_school_fitted_dense_vs_combined_ib_delta_ci": "[0.00, +0.05]",  # [0.00014, 0.05387]
+            "rev_cgap_size2yr_fitted_dense_vs_combined_ib_delta": "+0.02",         # 0.01922
+            "rev_cgap_child_a_fitted_dense_vs_combined_ib_delta": "−0.30",         # -0.30461
+            "rev_cgap_child_a_fitted_dense_vs_combined_ib_delta_ci": "[−0.48, −0.22]",
+            "rev_cgap_child_b_fitted_dense_vs_combined_ib_delta": "−0.39",         # -0.39300
+            "rev_cgap_child_b_fitted_dense_vs_combined_ib_delta_ci": "[−0.54, −0.17]",
+            "rev_cgap_child_c_fitted_dense_vs_combined_ib_delta": "+0.01",         # 0.00593
+            "rev_cgap_child_a_fitted_dense_vs_combined_ib_delta_n": "66",          # n_parcels
+            "rev_cgap_school_fitted_dense_vs_combined_ib_delta_n": "6,949",        # common vertices
+            "rev_cgap_templates_fitted_dense_vs_combined_ib_delta_range": "+0.04 to +0.15",
+            "rev_cgap_child_a_fittedtop_vs_fixed_dense_vs_combined_ib_delta_ci": "[−0.40, +0.06]",
+            "rev_cgap_fitted_dense_vs_combined_ib_delta_templates_n_ci_includes_zero": "3",
+            "rev_cgap_fitted_dense_vs_combined_ib_delta_children_ci_below_zero_heads": "child A and child B",
+            "rev_cgap_fitted_dense_vs_combined_ib_delta_smaller_n_near_zero": "6",
+            "rev_cgap_near_zero_db": "0.15",
+            "rev_cgap_templates_scaled_fixed_minus_fitted_combined_ib_range": "+0.17 to +0.76",
+            "rev_cgap_child_a_fixed_minus_fitted_combined_ib": "+0.29",            # within_head childA/gap_matched 0.28507
+            "rev_cgap_child_b_fixed_minus_fitted_combined_ib": "+0.42",            # 0.42436
+            "rev_cgap_child_c_fixed_minus_fitted_combined_ib": "−0.12",            # -0.12159
+            "rev_cgap_adult_fixed_minus_fitted_combined_ib": "−0.23",              # -0.22858
+            "rev_cgap_fixed_minus_fitted_combined_ib_smaller_n_positive": "7",
+            "rev_cgap_smaller_fitted_eqsites_dense_vs_combined_ib_delta_range": "+0.16 to +0.49",
+            "rev_cgap_child_a_eqsites_n_sites": "155",
+            "rev_cgap_school_band_dense_vs_combined_ib_range": "+0.20 to +1.12",   # placement_band min 0.20061, max 1.12202
+            "rev_cgap_child_a_band_dense_vs_combined_ib_range": "+0.06 to +0.37",
+            "rev_cgap_child_b_band_dense_vs_combined_ib_range": "+0.19 to +0.63",
+            "rev_cgap_child_c_band_dense_vs_combined_ib_range": "−0.10 to +0.70",
+            "rev_cgap_child_c_band_dense_vs_combined_ib_n": "11",
+            "rev_cgap_child_c_band_dense_vs_combined_ib_excluded": "x-5mm",
+            "rev_cgap_dense_vs_combined_ib_smaller_band_includes_zero_heads": "child C",
+            "rev_cgap_n_boot_primary": "1,000",
+            "rev_cgap_n_boot_secondary": "200",
+            "rev_cgap_check_max_abs_diff": "7.1 × 10⁻¹⁵",
+        }
+        for name, value in expect.items():
+            self.assertEqual(self.v[name], value, name)
+
+    def test_cgap_raw_values_are_the_stored_ones(self):
+        d, F = self.cg, self.F
+        e = d["delta_same_rule"]["childA/gap_matched/opm_dense/combined/intrinsic+brain"]["delta"]
+        self.assertEqual(F["rev_cgap_child_a_fitted_dense_vs_combined_ib_delta"]["raw"], e["median"])
+        self.assertEqual(F["rev_cgap_child_a_fitted_dense_vs_combined_ib_delta_ci"]["raw"], e["ci95"])
+        tpl = [d["delta_same_rule"][f"{a}/gap_matched/opm_dense/combined/intrinsic+brain"]["delta"]["median"]
+               for a in ("infant2yr", "infant18mo", "infant12mo")]
+        self.assertEqual(F["rev_cgap_templates_fitted_dense_vs_combined_ib_delta_range"]["raw"], [min(tpl), max(tpl)])
+        wh = [d["within_head"][f"{a}/gap_matched/combined/intrinsic+brain"]["median"]
+              for a in ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo")]
+        self.assertEqual(F["rev_cgap_templates_scaled_fixed_minus_fitted_combined_ib_range"]["raw"], [min(wh), max(wh)])
+        self.assertEqual(F["rev_cgap_child_c_fitted_gap_mm"]["raw"], d["helmets"]["childC"]["gap_matched"]["median_mm"])
+        self.assertAlmostEqual(F["rev_cgap_adult_fitted_dense_vs_combined_ib_d_ratio"]["raw"],
+                               10 ** (d["D"]["adult/gap_matched/opm_dense/combined/intrinsic+brain"]["median"] / 20))
+        # the counts are recounted here from the stored values
+        near = [a for a in ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC")
+                if abs(d["delta_same_rule"][f"{a}/gap_matched/opm_dense/combined/intrinsic+brain"]["delta"]["median"]) <= 0.15]
+        self.assertEqual(F["rev_cgap_fitted_dense_vs_combined_ib_delta_smaller_n_near_zero"]["raw"], len(near))
+
+    def test_cgap_headline_is_the_detailed_sections(self):
+        """A headline value that differs from its detailed section is refused (the facts read the sections)."""
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / CGAP).parent.mkdir(parents=True)
+            x = json.loads((ROOT / CGAP).read_text())
+            x["headline"]["by_anatomy"]["childA"]["delta"]["gap_matched"]["median"] += 0.01
+            (Path(d) / CGAP).write_text(json.dumps(x))
+            with self.assertRaisesRegex(ValueError, "headline value differs"):
+                R.cgap_facts(R.Facts(), Path(d))
+
+    def test_depth_bins(self):
+        """Literals of results/g2/g2_depth_bins.json and its medians against results/g2/g2_summary.json."""
+        db, v = self.db, self.v
+        self.assertEqual(v["rev_db_n_boot"], "1,000")
+        self.assertEqual(v["rev_db_seed"], "2026")
+        self.assertEqual(v["rev_db_n_parcel_labels"], "70")
+        self.assertEqual(v["rev_db_bin_mm"], "5")
+        self.assertEqual(v["rev_db_dense_vs_combined_ib_n_bins"], "11")
+        self.assertEqual(v["rev_db_dense_vs_combined_ib_10_15_n"], "222")
+        summary = json.loads((ROOT / "results/g2/g2_summary.json").read_text())
+        for key, c in db["comparisons"].items():
+            stored = (summary["log2_ratio_vs_depth"][key] if not key.startswith("peak_field/") else
+                      summary["bridge_to_sphere"][key.split("/")[1] + "_ratio_vs_depth"])
+            for b, st in zip(c["bins"], stored):
+                self.assertEqual((b["lo"], b["hi"], b["n"]), (st["lo"], st["hi"], st["n"]), key)
+                if "ratio" not in b:
+                    self.assertIsNone(st["median"])
+                    continue
+                self.assertLessEqual(b["ci95_ratio"][0], b["ratio"])  # the stored median lies inside its interval
+                self.assertLessEqual(b["ratio"], b["ci95_ratio"][1])
+                if key.startswith("peak_field/"):  # the bin's ratio is the stored median; the CSV reproduces it
+                    self.assertEqual(b["ratio"], st["median"])
+                    self.assertLessEqual(abs(b["median_ratio_linear_csv"] - st["median"]), b["precision_bound_ratio"] + 1e-12)
+                else:
+                    self.assertEqual((b["median_log2"], b["ratio"]), (st["median"], 2 ** st["median"]))
+                    self.assertLessEqual(abs(b["median_log2_csv"] - st["median"]), b["precision_bound_log2"] + 1e-12)
+        b0 = db["comparisons"]["opm_dense/combined/intrinsic+brain"]["bins"][0]
+        self.assertEqual(self.F["rev_db_dense_vs_combined_ib_10_15_ci"]["raw"], b0["ci95_ratio"])
+        self.assertEqual(v["rev_db_dense_vs_combined_ib_10_15_ratio"], f"{b0['ratio']:.2f}")
+        # printed as the existing depth facts print the stored medians (the two must never disagree)
+        g2f = _load("report_facts_g12").facts(ROOT)
+        for arr in ("dense", "matched"):
+            for cond in ("int", "ib", "proj"):
+                for lo in range(10, 65, 5):
+                    name = f"{arr}_vs_combined_{cond}_{lo}_{lo + 5}_ratio"
+                    self.assertEqual(v[f"rev_db_{name}"], g2f[f"g2_depth_{name}"]["value"], name)
+        self.assertEqual(v["rev_db_dense_vs_combined_proj_50_55_ratio_3dp"], "0.995")      # stored 0.99493, CSV 0.99541
+        self.assertEqual(v["rev_db_dense_vs_combined_proj_bins_ci_below1"], "55–60")
+        self.assertEqual(v["rev_db_matched_vs_combined_ib_bins_ci_spans1"], "30–35 and 35–40")
+        self.assertEqual(v["rev_db_matched_vs_combined_ib_ci_below1_from_bin"], "40–45")
+        self.assertEqual(v["rev_db_dense_vs_combined_ib_n_bins_ci_above1"], "11")
+        self.assertEqual(v["rev_db_dense_vs_combined_ib_10_15_ci"], "[1.55, 1.65]")
+        self.assertEqual(v["rev_db_check_n_moved"], "5")
+
+    def test_not_ahead_targets(self):
+        """Referee 1, minor 13: the 4 of 7,661 targets at which the dense array is not ahead (sensor + brain noise)."""
+        v = self.v
+        self.assertEqual(v["rev_g2_notahead_n"], "4")
+        self.assertEqual(v["rev_g2_notahead_n_csv_undecided"], "1")       # equal at the CSV's 4 decimals
+        self.assertEqual(v["rev_g2_notahead_regions"], "left medial orbitofrontal (3) and left medial wall (1)")
+        self.assertEqual(v["rev_g2_notahead_depth_mm_range"], "26.5 to 35.1")  # depth_mm 26.53, 30.30, 33.67, 35.08
+        self.assertEqual(v["rev_g2_notahead_ratio_range"], "0.956 to 0.997")   # 0.1816/0.19 ... 0.5081/0.5097
+        self.assertEqual(v["rev_g2_notahead_1_region"], "lh.unknown")
+        self.assertEqual(v["rev_g2_notahead_2_region"], "lh.medialorbitofrontal")
+        self.assertEqual(v["rev_g2_notahead_2_depth_mm"], "30.3")
+        self.assertEqual(v["rev_g2_notahead_hemispheres"], "left")
+
+    def test_seeds(self):
+        """Seeds no other module states (values set in code are read from their line when the facts are built)."""
+        expect = {"rev_seed_g2_patch_boot": "1", "rev_seed_g2_convergence": "2", "rev_seed_g2_band": "2026",
+                  "rev_seed_g2_hse": "2026", "rev_seed_g2_near_mesh": "11", "rev_seed_bem_sphere": "5", "rev_seed_g1b": "2016",
+                  "rev_seed_g1b_noise": "7", "rev_seed_g1c": "2009", "rev_seed_g3b_patches": "2027", "rev_seed_g3b_useful": "0",
+                  "rev_seed_cgap": "2026", "rev_seed_signflip_mc": "0", "rev_seed_confirm_replicates": "5"}
+        for name, value in expect.items():
+            self.assertEqual(self.v[name], value, name)
+        self.assertFalse([k for k in self.F if k.startswith("rev_boot_")])  # every resample count is a fact elsewhere
+
+
+class TestCodeConstants(unittest.TestCase):
+    def test_code_int_reads_the_line_and_refuses_a_missing_one(self):
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "x.py").write_text("def a():\n    rng = np.random.default_rng(1)\n\n\ndef b():\n    rng = np.random.default_rng(2)\n")
+            self.assertEqual(R.code_int(d, "x.py", r"default_rng\((\d+)\)"), (1, 2))
+            self.assertEqual(R.code_int(d, "x.py", r"default_rng\((\d+)\)", after=r"^def b\("), (2, 6))
+            with self.assertRaises(ValueError):
+                R.code_int(d, "x.py", r"default_rng\((\d+)\)", after=r"^def c\(")
+            with self.assertRaises(ValueError):
+                R.code_int(d, "x.py", r"SEED = (\d+)")
 
 
 if __name__ == "__main__":

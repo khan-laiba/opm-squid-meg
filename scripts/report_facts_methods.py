@@ -333,7 +333,7 @@ def axis_facts(F: Facts, root: Path) -> None:
 def neuromag_facts(F: Facts, root: Path) -> None:
     g2 = _json(root, G2)
     asd = g2["config"]["sensors"]["squid_asd"]
-    q = quoted(root, REGISTER, "manufacturer's typical value (MEGIN TRIUX; not verified against the specification sheet)")
+    q = quoted(root, REGISTER, "manufacturer's typical value: TRIUX datasheet, document NM23083B-A")
     F.add("meth_squid_mag_asd", const(asd["mag_fT_per_rtHz"]), asd["mag_fT_per_rtHz"], f"{G2}, {REGISTER} :: config.sensors."
           f"squid_asd.mag_fT_per_rtHz (fT/sqrt(Hz)); HW-mag-noise ('{q}'), U-HW1")
     F.add("meth_squid_grad_asd", const(asd["grad_fT_per_cm_rtHz"]), asd["grad_fT_per_cm_rtHz"], f"{G2}, {REGISTER} :: "
@@ -359,7 +359,7 @@ def neuromag_facts(F: Facts, root: Path) -> None:
     F.add("meth_coil_grad_points", "8", 8, f"{REGISTER} :: HW-coildef ('{q}')")
     F.add("meth_coil_mag_points", "16", 16, f"{REGISTER} :: HW-coildef ('{q}')")
     d = g2["config"]["head_position"]["dewar_spacing_mm"]
-    q = quoted(root, REGISTER, "manufacturer's specification (MEGIN TRIUX; not verified against the specification sheet)")
+    q = quoted(root, REGISTER, "manufacturer's specification: the same TRIUX datasheet")
     F.add("meth_dewar_mm", const(d), d, f"{G2}, {REGISTER} :: config.head_position.dewar_spacing_mm; HW-18mm ('{q}')")
 
 

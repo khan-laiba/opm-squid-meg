@@ -1,6 +1,14 @@
 {
  "provenance": {
-  "commit": "9ed3258+dirty"
+  "commit": "dbced6b+dirty",
+  "drawn_at": {
+   "Figure_R0_sphere": "9ed3258+dirty",
+   "Figure_R11_maps_adult": "9ed3258+dirty",
+   "Figure_R12_geometry": "dbced6b+dirty",
+   "Figure_R13_maps_heads": "9ed3258+dirty",
+   "Figure_R14_maps_scaled": "9ed3258+dirty",
+   "Figure_R15_arrays": "dbced6b+dirty"
+  }
  },
  "figures": {
   "Figure_R0_sphere": {
@@ -158,12 +166,13 @@
   },
   "Figure_R12_geometry": {
    "inputs": [
-    "results/g3b/g3b_geometry_sections.json (written by scripts/export_g3b_geometry.py at 9ed3258+dirty from the stored state of the G3B run 71de176) :: anatomies[<head>].sections (sagittal.scalp, coronal.scalp, coronal.white.lh/rh: polylines, head frame, mm), coils_mm (fixed_top, scaled_x_centred), opm_dense_mm, transforms (top: device_to_head, moved_mm; counterfactual_x-centred: device_to_head, k, k_nominal), gaps_mm (checks), neuromag (magnetometers, coil_centres_device_mm: check), provenance (commit, source_state.commit)",
-    "results/g3b/g3b_summary.json :: placements[<head>]['top'|'counterfactual_x-centred'|'x-centred'] (moved_mm, k, k_nominal, shift_x_mm, min/median/max_dist_mm: checks and labels), arrays[<head>].opm_dense (n_sites, standoff_mm), anatomies[<head>].head_size.ofc_mm, config.placement (clearance_mm, dewar_spacing_mm), provenance.commit"
+    "results/g3b/g3b_geometry_sections.json (written by scripts/export_g3b_geometry.py at 4da5f17+dirty from the stored state of the pediatric run 71de176 and the constant-gap run 10e37b9) :: anatomies[<head>].sections (sagittal.scalp, coronal.scalp, coronal.white.lh/rh: polylines, head frame, mm), coils_mm (fixed_top, fitted_adult_gap; scaled_x_centred: not drawn, its offset from the fitted helmet), opm_dense_mm, transforms (top: device_to_head, moved_mm; gap_matched: device_to_head, k, k_at_target, target_gap_mm, clearance_binding; counterfactual_x-centred: device_to_head, k, k_nominal), gaps_mm (checks), neuromag (magnetometers, coil_centres_device_mm: check), fitted_helmet.rule, provenance (commit, source_state.commit, constant_gap_summary.commit)",
+    "results/g3b/g3b_summary.json :: placements[<head>]['top'|'counterfactual_x-centred'|'x-centred'] (moved_mm, k, k_nominal, shift_x_mm, min/median/max_dist_mm: checks and labels), arrays[<head>].opm_dense (n_sites, standoff_mm), anatomies[<head>].head_size.ofc_mm, config.placement (clearance_mm, dewar_spacing_mm), provenance.commit",
+    "results/g3b_constant_gap/g3b_constant_gap_summary.json :: target_gaps.gap_matched.gap_mm, helmets[<head>].gap_matched (k, k_at_target, clearance_binding, min/median/max_mm: labels and checks; every head for the clearance-bound ones), provenance.commit"
    ],
-   "description": "Head-frame sections (Neuromag convention of each head's own fiducials; x right, y anterior, z up; mm) through the head origin: sagittal x = 0 and coronal y = 0. Lines: the intersection of the MRI scalp mesh (black) and, in the coronal sections, of the white-matter surfaces (grey; the cortical sources lie on them) with the plane, one segment per crossed triangle (the midsagittal plane passes between the hemispheres, so the sagittal sections show the scalp only), as polylines rounded to 0.01 mm; the sections are cropped below z = -68 mm (face and neck). Markers: sensors within 20 mm of the plane, projected onto it (as in the G3B geometry figure). Filled black squares: the 102 Neuromag magnetometer coil centres of the fixed adult helmet (VectorView geometry of the sample recording) with the head at top contact (the adult's measured pose, then raised along device +z until the nearest coil is 20 mm from the scalp; moved adult 5.5 mm, 12-month template 33.5 mm, child B 26.5 mm). Open vermillion squares: the counterfactual helmet scaled with the head and laterally centred ('counterfactual_x-centred': coil centres scaled by k about the head origin with the head at the measured pose shifted along device x to equal left/right median gaps, before any top contact; k = head-circumference ratio, raised in steps of 0.005 (opmsquid.pediatric.counterfactual_helmet) until no coil is closer than 18 mm to the scalp): k = 1.0000, 0.8409, 0.8644 (nominal 1.0000, 0.8009, 0.8294), x shift -1.5 mm, -2.5 mm, -2.5 mm. Open blue circles: the dense OPM sites (sensing centres, 7 mm from the scalp) refitted to each head (208, 144, 153 sites). Order: adult, 12-month template (ANTS12-0Months3T), child B (sub-Z209, OpenNeuro ds005234). Median magnetometer-to-scalp gap (nearest MRI scalp vertex, all 102 coils), stored, and recomputed by the export from the unrounded geometry (equal within 1e-6 mm): fixed helmet at top contact 28.38, 40.42, 38.40 mm; scaled, laterally centred helmet 29.55, 27.72, 27.98 mm. Sections, coil centres and OPM sites are read from results/g3b/g3b_geometry_sections.json, exported by scripts/export_g3b_geometry.py from the stored state of the G3B run of results/g3b/g3b_summary.json (checked: run, moves, scale factors, gaps, site counts; the drawn coil centres equal the exported transforms applied to the device-frame coil centres within 0.0050 mm, the effect of the rounding); the coil centres are drawn, not the Dewar surface. Infant template: O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database (Richards et al., 2016); child B: OpenNeuro ds005234 (Fadeev et al., 2024, 2025).",
-   "alt": "Six panels: sagittal (top) and coronal (bottom) sections of three heads, adult, 12-month template and child B, drawn at the same scale. Each shows the scalp outline (the coronal ones with the folded white-matter outline inside), open blue circles of the dense OPM sites hugging the scalp, filled black squares of the fixed adult helmet and open vermillion squares of the helmet scaled with the head. Around the adult the two helmets nearly coincide; around the two smaller heads the fixed helmet touches at the top and leaves a wide gap at the sides, front and back (median 40 and 38 mm against the adult's 28 mm), while the scaled helmet follows the head (28 and 28 mm).",
-   "caption_draft": "Helmet geometry. Sagittal (top) and coronal (bottom) sections through the head origin of the adult, the 12-month template and child B, at the same scale: scalp (black) and, in the coronal sections, white-matter surface (grey); filled squares, the Neuromag magnetometers of the fixed adult helmet with the head at top contact; open squares, the helmet scaled with the head and laterally centred (scale factor above each column); circles, the dense OPM sites; only sensors within 20 mm of the section are drawn. Median magnetometer-to-scalp gap in the fixed helmet 28.4, 40.4, 38.4 mm and in the scaled helmet 29.6, 27.7, 28.0 mm (adult, 12-month template, child B).",
+   "description": "Head-frame sections (Neuromag convention of each head's own fiducials; x right, y anterior, z up; mm) through the head origin: sagittal x = 0 and coronal y = 0. Lines: the intersection of the MRI scalp mesh (black) and, in the coronal sections, of the white-matter surfaces (grey; the cortical sources lie on them) with the plane, one segment per crossed triangle (the midsagittal plane passes between the hemispheres, so the sagittal sections show the scalp only), as polylines rounded to 0.01 mm; the sections are cropped below z = -68 mm (face and neck). Markers: sensors within 20 mm of the plane, projected onto it (the slab of results/g3b/Figure_G3B_geometry.png). Filled black squares: the 102 Neuromag magnetometer coil centres of the fixed adult helmet (VectorView geometry of the sample recording) with the head at top contact (the adult's measured pose, then raised along device +z until the nearest coil is 20 mm from the scalp; moved adult 5.5 mm, 12-month template 33.5 mm, child B 26.5 mm). Open vermillion squares: the helmet fitted at the adult's gap (the constant-gap control of results/g3b_constant_gap/g3b_constant_gap_summary.json): the Neuromag helmet scaled by k about the head origin of the laterally centred head (the adult's measured pose shifted along device x to equal left/right median gaps, x shift -1.5 mm, -2.5 mm, -2.5 mm, not raised to top contact) until the median magnetometer-to-scalp gap equals the adult's (29.55 mm, the adult's own helmet laterally centred, k = 1), with no coil centre within the 18-mm Dewar spacing of the scalp or inside the head (where that limit is reached first, k is the smallest feasible factor and the gap is larger: Child C (8.7 y) (not drawn) is clearance-bound at 32.8 mm): k = 1.0000, 0.8552, 0.8769; the coil centres are those exported by scripts/export_g3b_geometry.py, which recomputes this helmet with the constant-gap study's code and reproduces its scale factors and gaps. The helmet scaled with the head (laterally centred; k = 1.0000, 0.8409, 0.8644) is not drawn: its coil centres lie within 2.5 mm of the fitted helmet's in these heads (adult 0.0 mm, 12-month template 2.5 mm, child B 2.2 mm), which the markers could not separate. Open blue circles: the dense OPM sites (sensing centres, 7 mm from the scalp) refitted to each head (208, 144, 153 sites). Order: adult, 12-month template (ANTS12-0Months3T), child B (sub-Z209, OpenNeuro ds005234). Median magnetometer-to-scalp gap (nearest MRI scalp vertex, all 102 coils), stored, and recomputed by the export from the unrounded geometry (equal within 1e-6 mm): fixed helmet at top contact 28.38, 40.42, 38.40 mm; helmet fitted at the adult's gap 29.55, 29.55, 29.55 mm. Sections, coil centres and OPM sites are read from results/g3b/g3b_geometry_sections.json (checked: runs, moves, scale factors, gaps, site counts; the drawn coil centres equal the exported transforms applied to the device-frame coil centres within 0.0050 mm, the effect of the rounding); the coil centres are drawn, not the Dewar surface. Infant template: O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database (Richards et al., 2016); child B: OpenNeuro ds005234 (Fadeev et al., 2024, 2025).",
+   "alt": "Six panels: sagittal (top) and coronal (bottom) sections of three heads, adult, 12-month template and child B, drawn at the same scale. Each shows the scalp outline (the coronal ones with the folded white-matter outline inside), open blue circles of the dense OPM sites hugging the scalp, filled black squares of the fixed adult helmet and open vermillion squares of the helmet fitted at the adult's gap. Around the adult the two helmets nearly coincide; around the two smaller heads the fixed helmet touches at the top and leaves a wide gap at the sides, front and back (median 40 and 38 mm against the adult's 28 mm), while the fitted helmet is shrunk to follow the head at the adult's gap (29.6 mm in each).",
+   "caption_draft": "Helmet geometry. Sagittal (top) and coronal (bottom) sections through the head origin of the adult, the 12-month template and child B, at the same scale: scalp (black) and, in the coronal sections, white-matter surface (grey); filled squares, the Neuromag magnetometers of the fixed adult helmet with the head at top contact; open squares, the helmet fitted at the adult's gap (the Neuromag helmet scaled about the laterally centred head until its median magnetometer-to-scalp gap equals the adult's, 29.6 mm; scale factor above each column); circles, the dense OPM sites; only sensors within 20 mm of the section are drawn. Median magnetometer-to-scalp gap in the fixed helmet 28.4, 40.4, 38.4 mm (adult, 12-month template, child B); in the fitted helmet it is the adult's, 29.6 mm, in each head.",
    "values": {
     "adult": {
      "top": {
@@ -172,13 +181,21 @@
       "min_gap_mm": 20.391196313677757,
       "max_gap_mm": 40.09065971733728
      },
-     "scaled_laterally_centred": {
+     "fitted_adult_gap": {
       "k": 1.0,
-      "k_nominal": 1.0,
+      "k_at_target": 1.0,
+      "clearance_binding": false,
+      "target_gap_mm": 29.55016691912663,
       "median_gap_mm": 29.55016691912663,
       "min_gap_mm": 22.51595366500968,
       "max_gap_mm": 37.495385533285145,
       "shift_x_mm": -1.499999999999984
+     },
+     "scaled_with_head_not_drawn": {
+      "k": 1.0,
+      "k_nominal": 1.0,
+      "median_gap_mm": 29.55016691912663,
+      "max_coil_offset_from_fitted_mm": 0.0
      },
      "opm_dense_sites": 208,
      "head_circumference_cm": 58.60968275996705
@@ -190,13 +207,21 @@
       "min_gap_mm": 20.195222415132868,
       "max_gap_mm": 59.42572681920796
      },
-     "scaled_laterally_centred": {
+     "fitted_adult_gap": {
+      "k": 0.8552081298828124,
+      "k_at_target": 0.8552081298828124,
+      "clearance_binding": false,
+      "target_gap_mm": 29.55016691912663,
+      "median_gap_mm": 29.550168523000508,
+      "min_gap_mm": 20.454290633554322,
+      "max_gap_mm": 41.207679153616944,
+      "shift_x_mm": -2.499999999999985
+     },
+     "scaled_with_head_not_drawn": {
       "k": 0.8409196427461285,
       "k_nominal": 0.8009196427461285,
       "median_gap_mm": 27.71731119694387,
-      "min_gap_mm": 18.472938060094453,
-      "max_gap_mm": 38.802521154373295,
-      "shift_x_mm": -2.499999999999985
+      "max_coil_offset_from_fitted_mm": 2.507169719025817
      },
      "opm_dense_sites": 144,
      "head_circumference_cm": 46.941646177576736
@@ -208,13 +233,21 @@
       "min_gap_mm": 20.09984787924787,
       "max_gap_mm": 54.20195686105839
      },
-     "scaled_laterally_centred": {
+     "fitted_adult_gap": {
+      "k": 0.8768648529052733,
+      "k_at_target": 0.8768648529052733,
+      "clearance_binding": false,
+      "target_gap_mm": 29.55016691912663,
+      "median_gap_mm": 29.550172896832045,
+      "min_gap_mm": 19.682733036873966,
+      "max_gap_mm": 37.79785903836806,
+      "shift_x_mm": -2.499999999999985
+     },
+     "scaled_with_head_not_drawn": {
       "k": 0.8644384612043382,
       "k_nominal": 0.8294384612043382,
       "median_gap_mm": 27.983349879024622,
-      "min_gap_mm": 18.127959406061695,
-      "max_gap_mm": 36.33625766255689,
-      "shift_x_mm": -2.499999999999985
+      "max_coil_offset_from_fitted_mm": 2.174695380967184
      },
      "opm_dense_sites": 153,
      "head_circumference_cm": 48.6131250801015
@@ -333,6 +366,103 @@
     },
     "colour_limit_dB": 6.0,
     "extend": "max"
+   }
+  },
+  "Figure_R15_arrays": {
+   "inputs": [
+    "results/g2/g2_arrays.json (written by scripts/export_g2_arrays.py at dbced6b+dirty: the adult run's arrays rebuilt by its code and checked against results/g2/g2_summary.json of run e53bea8) :: neuromag.coil_centres_mm, opm_matched.sensing_centres_mm, opm_dense.sensing_centres_mm, head_surface (vertices_mm, triangles, n_vertices, n_triangles, conform), <array>.descriptors and checks.sensor_distance_mm (checks), provenance",
+    "results/g2/g2_summary.json :: arrays.squid (sites, channels), arrays.opm_matched and arrays.opm_dense (n_sites, min_spacing_mm, standoff_mm, excluded_sites), arrays.head_surface_conform.n_vertices, bridge_to_sphere.sensor_distance_mm (squid, opm_matched, opm_dense: median, p5, p95), provenance.commit"
+   ],
+   "description": "The adult (MNE sample subject) in its head frame (Neuromag convention from the digitised fiducials: x towards the right preauricular point, y towards the nasion, z up; mm), in orthographic projection, seen from the right (top row: view along -x, anterior to the right) and from above (bottom row: view along -z, anterior up), all panels at one scale. Head: the boundary-element head surface of the forward model on the MRI scalp (2562 vertices, 5120 triangles; conformed to the MRI scalp, vertices moved a median 1.05 mm), drawn with smooth grey shading lit from the viewer's side and its visible outline; the side view is cut at z = -70 mm (neck). Markers: a sensor is drawn when no part of the head surface lies between it and the viewer and, in the side view, when it is on the right half of the head (x > 0), so that the far side's sensors do not overlap the near side's (drawn, side/top: Neuromag 47/102; site-matched OPM 44/96; dense OPM 99/206). (a) Neuromag (306 channels): the 102 magnetometer coil centres of the sample recording (each of the sensor sites also holds two planar gradiometers) at the adult's measured head position, the primary position of the adult analyses; median 29.8 mm from the scalp (nearest MRI scalp vertex; 5th-95th percentile 25.4-35.9 mm). (b) Site-matched OPM array: the Neuromag sites that fit the OPM placement rules, each projected onto the scalp (98 of 102; the sites of magnetometers MEG 0111, MEG 0141, MEG 1421, MEG 1431 excluded), at least 22.1 mm apart. (c) Dense OPM array: the densest feasible single-axis array under the packing rule (208 sites, at least 17.0 mm apart). OPM markers are the sensing centres, 7 mm from the scalp along the head-surface normal (median distance to the nearest MRI scalp vertex 6.99 and 7.00 mm); each OPM measures the field component along the head-surface normal. Colours: Okabe-Ito, the report's array colours (Neuromag black, site-matched OPM sky blue, dense OPM blue). The channel-budget control of the adult analyses (204 sites, a subset of the dense array) is not analysed in the main text and not drawn. Positions and head surface are read from results/g2/g2_arrays.json, exported by scripts/export_g2_arrays.py, which rebuilds the adult run's arrays with its code and reproduces every array descriptor and sensor-to-scalp distance stored in results/g2/g2_summary.json (checked again here: site counts, descriptors, distances).",
+   "alt": "Six panels in two rows: a grey, smoothly shaded adult head seen from the right (top row) and from above (bottom row), with three arrays in the three columns. Left: 102 black squares of the Neuromag helmet form a shell that stands off the head by about 3 cm, lower at the back than at the front. Middle: 98 sky-blue squares sit on the scalp in the same pattern, the Neuromag sites pulled in onto the head. Right: 208 blue circles cover the scalp above the brow and ears more densely (208 against 98 sites).",
+   "caption_draft": "Sensor arrays on the adult head (MNE sample subject), seen from the right (top; sensors on the right half of the head) and from above (bottom). (a) Neuromag (306 channels): its 102 sensor sites (magnetometer coil centres; each site also holds two planar gradiometers) at the adult's measured head position, a median 29.8 mm from the scalp. (b) Site-matched OPM array (98 sites): Neuromag's sites that fit the OPM placement rules, projected onto the scalp. (c) Dense OPM array (208 sites, at least 17 mm apart). OPM sensing centres lie 7 mm from the scalp; each OPM measures the field component normal to the head surface. Head: the boundary-element head surface of the forward model.",
+   "values": {
+    "sites": {
+     "Neuromag": 102,
+     "site-matched OPM": 98,
+     "dense OPM": 208
+    },
+    "channels": {
+     "Neuromag": 306,
+     "site-matched OPM": 98,
+     "dense OPM": 208
+    },
+    "sensor_to_scalp_mm": {
+     "Neuromag": {
+      "median": 29.825027689705387,
+      "p5": 25.401251733770135,
+      "p95": 35.914116875210915
+     },
+     "site-matched OPM": {
+      "median": 6.990057146917956,
+      "p5": 6.878860254185109,
+      "p95": 7.128917732336504
+     },
+     "dense OPM": {
+      "median": 6.9999996926526205,
+      "p5": 6.820404070250016,
+      "p95": 7.493653014903939
+     }
+    },
+    "min_spacing_mm": {
+     "site-matched OPM": 22.130546734294644,
+     "dense OPM": 17.038841283174754
+    },
+    "excluded_neuromag_sites": {
+     "index": [
+      0,
+      3,
+      51,
+      52
+     ],
+     "magnetometer": [
+      "MEG 0111",
+      "MEG 0141",
+      "MEG 1421",
+      "MEG 1431"
+     ]
+    },
+    "opm_standoff_mm": 7.0,
+    "drawn": {
+     "right side": {
+      "Neuromag": 47,
+      "site-matched OPM": 44,
+      "dense OPM": 99
+     },
+     "top": {
+      "Neuromag": 102,
+      "site-matched OPM": 96,
+      "dense OPM": 206
+     }
+    },
+    "extents_mm": {
+     "Right side": {
+      "horizontal": [
+       -126.38,
+       152.39
+      ],
+      "vertical": [
+       -70.0,
+       181.51
+      ]
+     },
+     "Top": {
+      "horizontal": [
+       -121.92,
+       121.92
+      ],
+      "vertical": [
+       -126.38,
+       152.39
+      ]
+     }
+    },
+    "head_surface": {
+     "n_vertices": 2562,
+     "n_triangles": 5120,
+     "conform_moved_median_mm": 1.054674510835487,
+     "conform_moved_max_mm": 9.735933110866624
+    }
    }
   }
  }

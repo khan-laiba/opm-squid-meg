@@ -67,7 +67,6 @@ step fit_failures $PY scripts/study_g4_fit_failures.py                   # G4  f
 step g4_motion $PY scripts/g4_motion.py                                  # G4  head motion and OPM slippage (bounded extension)
 # analyses added for the referees' round-1 requests (2026-10-04); the children's QC needs their T1 and head masks
 # (configs/school_subjects_qc_manifest.json, fetched with the surfaces by scripts/fetch_school_subjects.py):
-step children_qc $PY scripts/study_children_qc.py                       # G3B  MRI quality check of the school-aged children
 step cov_valid $PY scripts/study_covariance_validation.py               # G2   noise model vs the measured Neuromag covariance
 step noise_sens $PY scripts/study_noise_sensitivity.py                  # G2   near-skull cortex, coloured OPM noise, far-field sources
 step constant_gap $PY scripts/study_g3b_constant_gap.py                 # G3B  counterfactual helmet fitted at the adult's gap
@@ -75,6 +74,7 @@ step constant_gap $PY scripts/study_g3b_constant_gap.py                 # G3B  c
 # adult's per-bin intervals that bin them; the geometry the figures draw, from the G3B state in cache/, then the adult's
 # arrays, which are checked against it:
 step target_precision $PY scripts/export_target_precision.py            # G2/G3B full-precision depth and bins of the per-target tables
+step children_qc $PY scripts/study_children_qc.py                       # G3B  MRI quality check of the school-aged children (after target_precision: exact depths)
 step g2_depth_bins $PY scripts/study_g2_depth_bins.py                   # G2   95 % parcel-bootstrap interval per 5-mm depth bin (adult)
 step g3b_geometry $PY scripts/export_g3b_geometry.py                    # G3B  helmet geometry drawn by the figures (cache/g3b/state.pkl)
 step g2_arrays $PY scripts/export_g2_arrays.py                          # G2   the adult's sensor arrays and head surface drawn by the figures

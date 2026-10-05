@@ -10,12 +10,16 @@ from stored outputs only: nothing is simulated or re-analysed.
   R11  D (dB) on the adult's inflated cortex: dense and matched OPM arrays against Neuromag's 306
        channels, sensor + brain noise (results/g2/g2_targets.csv)
   R12  geometry: sagittal and coronal scalp sections of the adult, the 12-month template and child B,
-       each with the fixed adult helmet at top contact, the helmet scaled with the head (laterally
-       centred) and the dense OPM sites (results/g3b/g3b_geometry_sections.json)
+       each with the fixed adult helmet at top contact, the helmet fitted at the adult's gap (the
+       constant-gap control) and the dense OPM sites (results/g3b/g3b_geometry_sections.json, checked
+       against results/g3b_constant_gap/g3b_constant_gap_summary.json)
   R13  D (dB) on the inflated cortex of the 24- and 12-month templates, dense array, top contact
        (results/g3b/g3b_targets_<anatomy>.csv), on the colour scale of R11
   R14  D (dB) on the adult's inflated cortex for the adult and the two scaled adults (school-age and
        2-year size), dense array, top contact (results/g3b/g3b_targets_<anatomy>.csv), same scale
+  R15  the adult's arrays (Methods): Neuromag's 102 sensor sites (magnetometer coil centres) at the
+       measured head position, the site-matched OPM array (98 sites) and the dense OPM array (208
+       sites) on the adult's head, seen from the right and from above (results/g2/g2_arrays.json)
 
 D = 20 log10(detectability OPM / detectability Neuromag) per cortical target (the G2 and G3B
 definition; scripts/g3b_pediatric_helmet.py d_db). Surfaces are read from the external data for
@@ -24,20 +28,30 @@ sulcal depth (shading) at the vertices of the oct-6 source spaces, of which the 
 R12 is drawn from results/ only: its scalp and white-surface sections, coil centres and OPM sites are
 those exported from the stored state of the G3B run by scripts/export_g3b_geometry.py, and the script
 stops unless that export is of the run of results/g3b/g3b_summary.json and reproduces its moves,
-scale factors, coil-to-scalp gaps and OPM site counts. A missing input stops the script before
-anything is drawn: nothing is recomputed in its place.
+scale factors, coil-to-scalp gaps and OPM site counts, and its fitted helmet reproduces the scale
+factors and gaps of results/g3b_constant_gap/g3b_constant_gap_summary.json. R15 is drawn from results/
+only: the positions and the head surface exported by scripts/export_g2_arrays.py (the G2 run's arrays,
+rebuilt by its code and checked against results/g2/g2_summary.json), checked here against the site
+counts and sensor-to-scalp distances of that summary. A missing input stops the script before anything
+is drawn: nothing is recomputed in its place.
 Every number in the labels, captions and descriptions is read from these files or computed from them
-as described in figures_clean.json; colour limits, section planes and the 20-mm sensor slab are
-display choices (the slab is that of the G3B geometry figure).
+as described in figures_clean.json; colour limits, section planes, the 20-mm sensor slab, the views,
+the lighting and which sensors are drawn in a view are display choices (the slab is that of the G3B
+geometry figure).
 
 Outputs (results/report/): Figure_R0_sphere.png, Figure_R11_maps_adult.png, Figure_R12_geometry.png,
-Figure_R13_maps_heads.png, Figure_R14_maps_scaled.png and figures_clean.json (inputs, description,
-alt text, draft caption and plotted values of every figure).
+Figure_R13_maps_heads.png, Figure_R14_maps_scaled.png, Figure_R15_arrays.png and figures_clean.json
+(inputs, description, alt text, draft caption and plotted values of every figure; provenance: the
+commit of this run and, per figure, the commit at which it was drawn). With --figures, only the named
+figures are drawn and their entries replaced; the other entries are kept as they were (R11, R13 and
+R14 are drawn together).
 
 Usage: OPMSQUID_DATA=<data dir> PYTHONPATH=src .venv/bin/python scripts/report_figures_clean.py
+           [--figures R0 R11 R12 R13 R14 R15]
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import warnings
@@ -52,6 +66,7 @@ import report_style as style  # noqa: E402  (selects the Agg backend before pypl
 import matplotlib.pyplot as plt  # noqa: E402
 import mne  # noqa: E402
 from matplotlib.collections import LineCollection, PolyCollection  # noqa: E402
+import matplotlib.tri as mtri  # noqa: E402
 from matplotlib.colors import Normalize  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
 from matplotlib.patches import Patch  # noqa: E402
@@ -65,7 +80,10 @@ G2_TARGETS = "results/g2/g2_targets.csv"
 G3B = "results/g3b/g3b_summary.json"
 G3B_TARGETS = "results/g3b/g3b_targets_{}.csv"
 GEOMETRY = "results/g3b/g3b_geometry_sections.json"  # scripts/export_g3b_geometry.py
+CG = "results/g3b_constant_gap/g3b_constant_gap_summary.json"
+G2_ARRAYS = "results/g2/g2_arrays.json"  # scripts/export_g2_arrays.py
 OUT_JSON = "figures_clean.json"
+FIGURES = ("R0", "R11", "R12", "R13", "R14", "R15")
 
 COND = "intrinsic+brain"  # sensor (intrinsic) + brain noise: the primary condition
 DB_PER_LOG2 = 20.0 * np.log10(2.0)
@@ -88,9 +106,20 @@ VIEWS = ((0, -1.0, "Left, lateral"), (0, 1.0, "Left, medial"), (1, -1.0, "Right,
 SLAB_MM = 20.0
 ROUND_MM = 0.01  # rounding of the exported coordinates (scripts/export_g3b_geometry.py)
 COIL_TOL_MM = 0.02  # drawn coil centre vs stored transform applied to the device-frame coil centre (both rounded)
-SCALED_COLOR = "#D55E00"
+FIT_RULE = "gap_matched"  # the constant-gap study's primary rule: the helmet fitted at the adult's gap
+FITTED_COLOR = "#D55E00"
 CORTEX_GREY = "0.62"
 SECTION_LIM = {"sagittal": ((-138.0, 152.0), (-68.0, 182.0)), "coronal": ((-145.0, 145.0), (-68.0, 182.0))}
+
+# arrays (R15): orthographic views of the adult's head (the exported boundary-element head surface), lit from the
+# viewer's side; a sensor is drawn when no part of the head lies between it and the viewer (and, in the side view,
+# when it is on the right half of the head, x > 0, so that the far side's sensors do not overlap the near side's)
+ARRAY_VIEWS = (("Right side", np.array([1.0, 0.0, 0.0]), (1, 2), ("anterior (mm)", "superior (mm)"), np.array([0.0, 0.3, 0.8])),
+               ("Top", np.array([0.0, 0.0, 1.0]), (0, 1), ("right (mm)", "anterior (mm)"), np.array([-0.4, 0.6, 0.0])))
+ARRAY_SIDE_CUT_MM = -70.0  # the side view stops below this height (neck), as the geometry sections stop at their crop
+HEAD_SHADE = (0.60, 0.36)  # grey level of the head: ambient + diffuse (a display choice; light grey, sensors on top)
+SILHOUETTE_GREY = "0.35"
+ARRAY_NAME = {"squid": "Neuromag", "opm_matched": "site-matched OPM", "opm_dense": "dense OPM"}
 
 OPM_FILL = "#56B4E9"
 PRINTED_COLOR = "#D55E00"
@@ -629,37 +658,51 @@ def segments(polylines: list) -> np.ndarray:
     return np.concatenate([np.stack([p[:-1], p[1:]], axis=1) for p in map(np.asarray, polylines)])
 
 
-def geometry_sections(g: dict) -> tuple[dict, dict]:
+def geometry_sections(g: dict, cg: dict) -> tuple[dict, dict]:
     """Sections, magnetometer coil centres and dense OPM sites of the three heads, head frame [mm]
     (results/g3b/g3b_geometry_sections.json, exported by scripts/export_g3b_geometry.py from the stored
-    state of the G3B run), checked against results/g3b/g3b_summary.json: the export must be of the same
-    run and give its moves, scale factors, coil-to-scalp gaps (recomputed by the export from the
-    unrounded geometry) and OPM site counts, and the drawn coil centres must be the exported transforms
-    applied to the device-frame coil centres (to the rounding)."""
+    state of the G3B run, with the helmet fitted at the adult's gap recomputed there by the constant-gap
+    study's code), checked against results/g3b/g3b_summary.json and the constant-gap summary: the export
+    must be of the same runs and give their moves, scale factors, coil-to-scalp gaps (recomputed by the
+    export from the unrounded geometry) and OPM site counts, and the drawn coil centres must be the
+    exported transforms applied to the device-frame coil centres (to the rounding)."""
     x = load(GEOMETRY)
     run = x["provenance"]["source_state"]["commit"]
     if run != g["provenance"]["commit"]:
         raise SystemExit(f"{GEOMETRY}: exported from the state of run {run}, {G3B} is run {g['provenance']['commit']}")
+    cg_run = x["provenance"].get("constant_gap_summary", {}).get("commit")
+    if cg_run != cg["provenance"]["commit"] or x.get("fitted_helmet", {}).get("rule") != FIT_RULE:
+        raise SystemExit(f"{GEOMETRY}: its fitted helmet is not the '{FIT_RULE}' helmet of {CG} (export of run {cg_run}, "
+                         f"{CG} is run {cg['provenance']['commit']}; rerun scripts/export_g3b_geometry.py)")
+    target = cg["target_gaps"][FIT_RULE]["gap_mm"]
     dev = np.asarray(x["neuromag"]["coil_centres_device_mm"], float)
     out = {}
     for k, name in GEOMETRY_HEADS.items():
-        a, stored = x["anatomies"][k], g["placements"][k]
+        a, stored, fr = x["anatomies"][k], g["placements"][k], cg["helmets"][k][FIT_RULE]
         if name is not None and name not in a["description"]:  # the description below names the subjects
             raise SystemExit(f"{GEOMETRY}: {k} is '{a['description']}', not {name}")
-        tr, cf = a["transforms"], a["transforms"]["counterfactual_x-centred"]
+        tr, cf, ft = a["transforms"], a["transforms"]["counterfactual_x-centred"], a["transforms"][FIT_RULE]
         checks = [("top moved_mm", tr["top"]["moved_mm"], stored["top"]["moved_mm"], 1e-9),
                   ("k", cf["k"], stored["counterfactual_x-centred"]["k"], 1e-9),
-                  ("k_nominal", cf["k_nominal"], stored["counterfactual_x-centred"]["k_nominal"], 1e-9)]
+                  ("k_nominal", cf["k_nominal"], stored["counterfactual_x-centred"]["k_nominal"], 1e-9),
+                  ("fitted k", ft["k"], fr["k"], 1e-12), ("fitted k_at_target", ft["k_at_target"], fr["k_at_target"], 1e-12),
+                  ("fitted target gap", ft["target_gap_mm"], target, 1e-9),
+                  ("fitted clearance flag", float(ft["clearance_binding"]), float(fr["clearance_binding"]), 0.0)]
         checks += [(f"{name} {key}", a["gaps_mm"][name][key], stored[name][key], 1e-6)
                    for name in ("top", "counterfactual_x-centred") for key in ("min_dist_mm", "median_dist_mm", "max_dist_mm")]
+        checks += [(f"fitted {key}_dist_mm", a["gaps_mm"][FIT_RULE][f"{key}_dist_mm"], fr[f"{key}_mm"], 1e-6)
+                   for key in ("min", "median", "max")]
         for what, have, want, tol in checks:
             if abs(have - want) > tol:
-                raise SystemExit(f"{GEOMETRY}: {k} {what} {have} differs from {G3B} ({want})")
+                raise SystemExit(f"{GEOMETRY}: {k} {what} {have} differs from {G3B if 'fitted' not in what else CG} ({want})")
         top = np.asarray(tr["top"]["device_to_head"], float)
         cfx = np.asarray(cf["device_to_head"], float)
+        pose = np.asarray(ft["device_to_head"], float)
         centre = np.linalg.inv(cfx)[:3, 3] * 1e3  # head origin, device frame [mm]
+        fc = np.linalg.inv(pose)[:3, 3] * 1e3
         expect = {"fixed_top": dev @ top[:3, :3].T + top[:3, 3] * 1e3,
-                  "scaled_x_centred": (centre + cf["k"] * (dev - centre)) @ cfx[:3, :3].T + cfx[:3, 3] * 1e3}
+                  "scaled_x_centred": (centre + cf["k"] * (dev - centre)) @ cfx[:3, :3].T + cfx[:3, 3] * 1e3,
+                  "fitted_adult_gap": (fc + ft["k"] * (dev - fc)) @ pose[:3, :3].T + pose[:3, 3] * 1e3}
         coils = {n: np.asarray(a["coils_mm"][n], float) for n in expect}
         coil_err = max(float(np.abs(coils[n] - expect[n]).max()) for n in expect)
         if coil_err > COIL_TOL_MM:
@@ -670,15 +713,16 @@ def geometry_sections(g: dict) -> tuple[dict, dict]:
         sec = a["sections"]
         out[k] = dict(scalp={plane: segments(sec[plane]["scalp"]) for plane in ("sagittal", "coronal")},
                       white=[segments(sec["coronal"]["white"][h]) for h in ("lh", "rh")],
-                      fixed=coils["fixed_top"], scaled=coils["scaled_x_centred"], opm=opm, k=float(cf["k"]),
-                      coil_err=coil_err)
+                      fixed=coils["fixed_top"], fitted=coils["fitted_adult_gap"], scaled=coils["scaled_x_centred"], opm=opm,
+                      k=float(ft["k"]), coil_err=coil_err)
     return out, x
 
 
 def figure_geometry() -> dict:
-    g = load(G3B)
-    heads, geo = geometry_sections(g)
+    g, cg = load(G3B), load(CG)
+    heads, geo = geometry_sections(g, cg)
     n_coils = int(geo["neuromag"]["magnetometers"])
+    target = cg["target_gaps"][FIT_RULE]["gap_mm"]
 
     # panels of equal size and scale: the sagittal and coronal sections share the horizontal span
     xs, zl = SECTION_LIM["sagittal"]
@@ -690,11 +734,11 @@ def figure_geometry() -> dict:
     H = t_top + 2 * ph + t_mid + t_bot
     fig = plt.figure(figsize=(W, H))
     markers = ((dict(marker="o", ms=3.0, mfc="none", mec=style.ARRAY_COLOR["opm_dense"], mew=0.8), "opm"),
-               (dict(marker="s", ms=3.6, mfc="none", mec=SCALED_COLOR, mew=0.9), "scaled"),
+               (dict(marker="s", ms=3.6, mfc="none", mec=FITTED_COLOR, mew=0.9), "fitted"),
                (dict(marker="s", ms=3.0, mfc="k", mec="k", mew=0.0), "fixed"))
     vals = {}
     for j, k in enumerate(GEOMETRY_HEADS):
-        hd, pl = heads[k], g["placements"][k]
+        hd, pl, fr = heads[k], g["placements"][k], cg["helmets"][k][FIT_RULE]
         cf = pl["counterfactual_x-centred"]
         x0 = lm + j * (pw + gap)
         for i, (plane, axis) in enumerate((("sagittal", 0), ("coronal", 1))):
@@ -729,19 +773,20 @@ def figure_geometry() -> dict:
         cx = (x0 + pw / 2) / W
         fig.text(cx, (H - 0.04) / H, style.ANAT_LABEL[k], ha="center", va="top", fontsize=9)
         fig.text(cx, (H - 0.24) / H,
-                 f"median gap: fixed {pl['top']['median_dist_mm']:.1f}, scaled {cf['median_dist_mm']:.1f} mm\n"
-                 f"helmet scale \u00d7{hd['k']:.3f}; {g['arrays'][k]['opm_dense']['n_sites']} OPM sites",
+                 f"median gap: fixed {pl['top']['median_dist_mm']:.1f}, fitted {fr['median_mm']:.1f} mm\n"
+                 f"fitted helmet ×{hd['k']:.3f}; {g['arrays'][k]['opm_dense']['n_sites']} OPM sites",
                  ha="center", va="top", fontsize=7, color="0.25", linespacing=1.3)
         vals[k] = dict(top=dict(moved_mm=pl["top"]["moved_mm"], median_gap_mm=pl["top"]["median_dist_mm"],
                                 min_gap_mm=pl["top"]["min_dist_mm"], max_gap_mm=pl["top"]["max_dist_mm"]),
-                       scaled_laterally_centred=dict(k=hd["k"], k_nominal=cf["k_nominal"],
-                                                     median_gap_mm=cf["median_dist_mm"],
-                                                     min_gap_mm=cf["min_dist_mm"], max_gap_mm=cf["max_dist_mm"],
-                                                     shift_x_mm=pl["x-centred"]["shift_x_mm"]),
+                       fitted_adult_gap=dict(k=hd["k"], k_at_target=fr["k_at_target"], clearance_binding=fr["clearance_binding"],
+                                             target_gap_mm=target, median_gap_mm=fr["median_mm"], min_gap_mm=fr["min_mm"],
+                                             max_gap_mm=fr["max_mm"], shift_x_mm=pl["x-centred"]["shift_x_mm"]),
+                       scaled_with_head_not_drawn=dict(
+                           k=cf["k"], k_nominal=cf["k_nominal"], median_gap_mm=cf["median_dist_mm"],
+                           max_coil_offset_from_fitted_mm=float(np.linalg.norm(hd["scaled"] - hd["fitted"], axis=1).max())),
                        opm_dense_sites=g["arrays"][k]["opm_dense"]["n_sites"],
                        head_circumference_cm=g["anatomies"][k]["head_size"]["ofc_mm"] / 10.0)
-    labels = ("dense OPM sites", "helmet scaled with the head, laterally centred",
-              "fixed adult helmet (Neuromag), head at top contact")
+    labels = ("dense OPM array (sensing centres)", "helmet fitted at the adult's gap", "fixed adult helmet, top contact")
     handles = [Line2D([], [], ls="none", label=lab, **kw) for (kw, _), lab in zip(markers, labels)][::-1]
     handles += [Line2D([], [], color="k", lw=0.9, label="scalp (MRI surface)"),
                 Line2D([], [], color=CORTEX_GREY, lw=0.8, label="white-matter surface: the sources (coronal sections)")]
@@ -750,24 +795,35 @@ def figure_geometry() -> dict:
     style.save(fig, "Figure_R12_geometry")
 
     g_fix = [vals[k]["top"]["median_gap_mm"] for k in vals]
-    g_sc = [vals[k]["scaled_laterally_centred"]["median_gap_mm"] for k in vals]
+    g_fit = [vals[k]["fitted_adult_gap"]["median_gap_mm"] for k in vals]
     pc = g["config"]["placement"]
     standoffs = {g["arrays"][k]["opm_dense"]["standoff_mm"] for k in vals}
     if len(standoffs) != 1:
         raise SystemExit(f"the dense arrays' standoffs differ between the heads: {standoffs}")
     standoff = standoffs.pop()
-    sc = {k: vals[k]["scaled_laterally_centred"] for k in vals}
+    ft = {k: vals[k]["fitted_adult_gap"] for k in vals}
+    sc = {k: vals[k]["scaled_with_head_not_drawn"] for k in vals}
+    if any(ft[k]["clearance_binding"] for k in vals):
+        raise SystemExit("a drawn head's fitted helmet is clearance-bound: say so in the description and caption")
+    bound = [k for k in cg["helmets"] if cg["helmets"][k][FIT_RULE]["clearance_binding"]]
+    bound_txt = "; ".join(f"{style.ANAT_LABEL[k]} (not drawn) is clearance-bound at {cg['helmets'][k][FIT_RULE]['median_mm']:.1f} mm"
+                          for k in bound)
+    off_max = max(sc[k]["max_coil_offset_from_fitted_mm"] for k in vals)
     return dict(
         inputs=[f"{GEOMETRY} (written by scripts/export_g3b_geometry.py at {geo['provenance']['commit']} from the stored "
-                f"state of the G3B run {geo['provenance']['source_state']['commit']}) :: anatomies[<head>].sections "
-                "(sagittal.scalp, coronal.scalp, coronal.white.lh/rh: polylines, head frame, mm), coils_mm (fixed_top, "
-                "scaled_x_centred), opm_dense_mm, transforms (top: device_to_head, moved_mm; counterfactual_x-centred: "
-                "device_to_head, k, k_nominal), gaps_mm (checks), neuromag (magnetometers, coil_centres_device_mm: "
-                "check), provenance (commit, source_state.commit)",
+                f"state of the pediatric run {geo['provenance']['source_state']['commit']} and the constant-gap run "
+                f"{geo['provenance']['constant_gap_summary']['commit']}) :: anatomies[<head>].sections (sagittal.scalp, "
+                "coronal.scalp, coronal.white.lh/rh: polylines, head frame, mm), coils_mm (fixed_top, fitted_adult_gap; "
+                "scaled_x_centred: not drawn, its offset from the fitted helmet), opm_dense_mm, transforms (top: device_to_head, "
+                f"moved_mm; {FIT_RULE}: device_to_head, k, k_at_target, target_gap_mm, clearance_binding; counterfactual_x-centred: "
+                "device_to_head, k, k_nominal), gaps_mm (checks), neuromag (magnetometers, coil_centres_device_mm: check), "
+                "fitted_helmet.rule, provenance (commit, source_state.commit, constant_gap_summary.commit)",
                 f"{G3B} :: placements[<head>]['top'|'counterfactual_x-centred'|'x-centred'] (moved_mm, k, k_nominal, "
                 "shift_x_mm, min/median/max_dist_mm: checks and labels), arrays[<head>].opm_dense (n_sites, "
                 "standoff_mm), anatomies[<head>].head_size.ofc_mm, config.placement (clearance_mm, dewar_spacing_mm), "
-                "provenance.commit"],
+                "provenance.commit",
+                f"{CG} :: target_gaps.{FIT_RULE}.gap_mm, helmets[<head>].{FIT_RULE} (k, k_at_target, clearance_binding, "
+                "min/median/max_mm: labels and checks; every head for the clearance-bound ones), provenance.commit"],
         description=(
             "Head-frame sections (Neuromag convention of each head's own fiducials; x right, y anterior, z up; mm) "
             "through the head origin: sagittal x = 0 and coronal y = 0. Lines: the intersection of the MRI scalp mesh "
@@ -775,71 +831,319 @@ def figure_geometry() -> dict:
             "with the plane, one segment per crossed triangle (the midsagittal plane passes between the hemispheres, so "
             "the sagittal sections show the scalp only), as polylines rounded to 0.01 mm; the sections are cropped below "
             f"z = {zl[0]:g} mm (face and neck). Markers: sensors within "
-            f"{SLAB_MM:g} mm of the plane, projected onto it (as in the G3B geometry figure). Filled black squares: the "
+            f"{SLAB_MM:g} mm of the plane, projected onto it (the slab of results/g3b/Figure_G3B_geometry.png). Filled black squares: the "
             f"{n_coils} Neuromag magnetometer coil centres of the fixed adult helmet (VectorView geometry of the sample "
             "recording) with the head at top contact (the adult's measured pose, then raised along device +z until the "
             f"nearest coil is {pc['clearance_mm']:g} mm from the scalp; moved "
             + ", ".join(f"{GEOMETRY_NAMES[k]} {vals[k]['top']['moved_mm']:g} mm" for k in vals)
-            + "). Open vermillion squares: the counterfactual helmet scaled with the head and laterally centred "
-            "('counterfactual_x-centred': coil centres scaled by k about the head origin with the head at the measured "
-            "pose shifted along device x to equal left/right median gaps, before any top contact; k = head-circumference "
-            "ratio, raised in steps of 0.005 (opmsquid.pediatric.counterfactual_helmet) until no coil is closer than "
-            f"{pc['dewar_spacing_mm']:g} mm to the scalp): k = " + ", ".join(f"{sc[k]['k']:.4f}" for k in vals)
-            + " (nominal " + ", ".join(f"{sc[k]['k_nominal']:.4f}" for k in vals) + "), x shift "
-            + ", ".join(f"{sc[k]['shift_x_mm']:+.1f} mm" for k in vals)
-            + f". Open blue circles: the dense OPM sites (sensing centres, {standoff:g} mm from the scalp) refitted to "
+            + "). Open vermillion squares: the helmet fitted at the adult's gap (the constant-gap control of "
+            f"{CG}): the Neuromag helmet scaled by k about the head origin of the laterally centred head "
+            "(the adult's measured pose shifted along device x to equal left/right median gaps, x shift "
+            + ", ".join(f"{ft[k]['shift_x_mm']:+.1f} mm" for k in vals)
+            + f", not raised to top contact) until the median magnetometer-to-scalp gap equals the adult's ({target:.2f} mm, "
+            "the adult's own helmet laterally centred, k = 1), with no coil centre within the "
+            f"{pc['dewar_spacing_mm']:g}-mm Dewar spacing of the scalp or inside the head (where that limit is reached first, "
+            "k is the smallest feasible factor and the gap is larger: " + (bound_txt or "no head") + "): k = "
+            + ", ".join(f"{ft[k]['k']:.4f}" for k in vals) + "; the coil centres are those exported by "
+            "scripts/export_g3b_geometry.py, which recomputes this helmet with the constant-gap study's code and reproduces "
+            f"its scale factors and gaps. The helmet scaled with the head (laterally centred; k = "
+            + ", ".join(f"{sc[k]['k']:.4f}" for k in vals)
+            + f") is not drawn: its coil centres lie within {off_max:.1f} mm of the fitted helmet's in these heads ("
+            + ", ".join(f"{GEOMETRY_NAMES[k]} {sc[k]['max_coil_offset_from_fitted_mm']:.1f} mm" for k in vals)
+            + "), which the markers could not separate. "
+            f"Open blue circles: the dense OPM sites (sensing centres, {standoff:g} mm from the scalp) refitted to "
             "each head (" + ", ".join(str(vals[k]["opm_dense_sites"]) for k in vals) + " sites). Order: adult, 12-month "
             "template (ANTS12-0Months3T), child B (sub-Z209, OpenNeuro ds005234). Median magnetometer-to-scalp gap "
             f"(nearest MRI scalp vertex, all {n_coils} coils), stored, and recomputed by the export from the unrounded "
             "geometry (equal within 1e-6 mm): fixed helmet at top contact " + ", ".join(f"{x:.2f}" for x in g_fix)
-            + " mm; scaled, laterally centred helmet " + ", ".join(f"{x:.2f}" for x in g_sc) + " mm. Sections, coil "
-            f"centres and OPM sites are read from {GEOMETRY}, exported by scripts/export_g3b_geometry.py from the stored "
-            f"state of the G3B run of {G3B} (checked: run, moves, scale factors, gaps, site counts; the drawn coil centres "
-            "equal the exported transforms applied to the device-frame coil centres within "
+            + " mm; helmet fitted at the adult's gap " + ", ".join(f"{x:.2f}" for x in g_fit) + " mm. Sections, coil "
+            f"centres and OPM sites are read from {GEOMETRY} (checked: runs, moves, scale factors, gaps, site counts; the "
+            "drawn coil centres equal the exported transforms applied to the device-frame coil centres within "
             f"{max(heads[k]['coil_err'] for k in heads):.4f} mm, the effect of the rounding); the coil centres are drawn, not "
             "the Dewar surface. Infant template: O'Reilly et al. (2021), built from the Neurodevelopmental MRI Database "
             "(Richards et al., 2016); child B: OpenNeuro ds005234 (Fadeev et al., 2024, 2025)."),
         alt=("Six panels: sagittal (top) and coronal (bottom) sections of three heads, adult, 12-month template and "
              "child B, drawn at the same scale. Each shows the scalp outline (the coronal ones with the folded "
              "white-matter outline inside), open blue circles of the dense OPM sites hugging the scalp, filled black "
-             "squares of the fixed adult helmet and open vermillion squares of the helmet scaled with the head. Around "
+             "squares of the fixed adult helmet and open vermillion squares of the helmet fitted at the adult's gap. Around "
              "the adult the two helmets nearly coincide; around the two smaller heads the fixed helmet touches at the top "
              f"and leaves a wide gap at the sides, front and back (median {g_fix[1]:.0f} and {g_fix[2]:.0f} mm against "
-             f"the adult's {g_fix[0]:.0f} mm), while the scaled helmet follows the head ({g_sc[1]:.0f} and "
-             f"{g_sc[2]:.0f} mm)."),
+             f"the adult's {g_fix[0]:.0f} mm), while the fitted helmet is shrunk to follow the head at the adult's gap "
+             f"({g_fit[1]:.1f} mm in each)."),
         caption_draft=(
             "Helmet geometry. Sagittal (top) and coronal (bottom) sections through the head origin of the adult, the "
             "12-month template and child B, at the same scale: scalp (black) and, in the coronal sections, white-matter "
             "surface (grey); filled squares, the Neuromag magnetometers of the fixed adult helmet with the head at top "
-            "contact; open squares, the helmet scaled with the head and laterally centred (scale factor above each "
-            f"column); circles, the dense OPM sites; only sensors within {SLAB_MM:g} mm of the section are drawn. Median "
-            "magnetometer-to-scalp gap in the fixed helmet " + ", ".join(f"{x:.1f}" for x in g_fix) + " mm and in the "
-            "scaled helmet " + ", ".join(f"{x:.1f}" for x in g_sc) + " mm (adult, 12-month template, child B)."),
+            "contact; open squares, the helmet fitted at the adult's gap (the Neuromag helmet scaled about the laterally "
+            f"centred head until its median magnetometer-to-scalp gap equals the adult's, {target:.1f} mm; scale factor "
+            f"above each column); circles, the dense OPM sites; only sensors within {SLAB_MM:g} mm of the section are drawn. "
+            "Median magnetometer-to-scalp gap in the fixed helmet " + ", ".join(f"{x:.1f}" for x in g_fix) + " mm "
+            f"(adult, 12-month template, child B); in the fitted helmet it is the adult's, {target:.1f} mm, in each head."),
         values=vals)
 
 
 # ----------------------------------------------------------------------------------------------
-def check_inputs() -> None:
-    """Stop before drawing anything if an input is missing (nothing is recomputed in its place)."""
-    paths.require(paths.SUBJECTS_DIR / "sample" / "bem" / "sample-oct-6-src.fif",
-                  "MNE sample subject (set OPMSQUID_DATA)")
-    for name in TEMPLATES.values():
-        paths.require(paths.EXTERNAL / anatomy.INFANT_SUBJECTS / name, f"infant template {name} (set OPMSQUID_DATA)")
-    paths.require(ROOT / GEOMETRY, "G3B geometry export (scripts/export_g3b_geometry.py)")
+# R15: arrays
+def mesh_normals(rr: np.ndarray, tris: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Unit face normals and area-weighted unit vertex normals of a triangle mesh."""
+    fn = np.cross(rr[tris[:, 1]] - rr[tris[:, 0]], rr[tris[:, 2]] - rr[tris[:, 0]])
+    vn = np.zeros_like(rr)
+    for c in range(3):
+        np.add.at(vn, tris[:, c], fn)
+    return fn / np.linalg.norm(fn, axis=1)[:, None], vn / np.linalg.norm(vn, axis=1)[:, None]
+
+
+def mesh_edges(tris: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """The edges of a closed triangle mesh and, per edge, the two triangles that share it."""
+    e = np.sort(np.concatenate([tris[:, [0, 1]], tris[:, [1, 2]], tris[:, [2, 0]]]), axis=1)
+    f = np.tile(np.arange(len(tris)), 3)
+    order = np.lexsort((e[:, 1], e[:, 0]))
+    e, f = e[order], f[order]
+    if len(e) % 2 or not np.array_equal(e[0::2], e[1::2]) or (len(e) > 2 and np.any(np.all(e[2::2] == e[1:-1:2], axis=1))):
+        raise SystemExit(f"{G2_ARRAYS}: the head surface is not a closed mesh (every edge shared by two triangles)")
+    return e[0::2], np.column_stack([f[0::2], f[1::2]])
+
+
+def hidden(points: np.ndarray, toward: np.ndarray, rr: np.ndarray, tris: np.ndarray) -> np.ndarray:
+    """Whether the ray from each point towards the viewer (unit vector ``toward``) meets the mesh (Moller-Trumbore)."""
+    v0 = rr[tris[:, 0]]
+    e1, e2 = rr[tris[:, 1]] - v0, rr[tris[:, 2]] - v0
+    p = np.cross(toward, e2)
+    det = np.einsum("ij,ij->i", e1, p)
+    ok = np.abs(det) > 1e-12
+    inv = np.where(ok, 1.0 / np.where(ok, det, 1.0), 0.0)
+    out = np.zeros(len(points), bool)
+    for i, o in enumerate(points):
+        t = o - v0
+        u = np.einsum("ij,ij->i", t, p) * inv
+        q = np.cross(t, e1)
+        w = (q @ toward) * inv
+        s = np.einsum("ij,ij->i", e2, q) * inv
+        out[i] = bool(np.any(ok & (u >= 0) & (w >= 0) & (u + w <= 1) & (s > 1e-6)))
+    return out
+
+
+def figure_arrays() -> dict:
+    s, x = load(G2), load(G2_ARRAYS)
+    if x["provenance"]["summary"]["commit"] != s["provenance"]["commit"]:
+        raise SystemExit(f"{G2_ARRAYS}: checked against run {x['provenance']['summary']['commit']} of {G2}, which is now run "
+                         f"{s['provenance']['commit']} (rerun scripts/export_g2_arrays.py)")
+    pts = {"squid": np.asarray(x["neuromag"]["coil_centres_mm"], float),
+           "opm_matched": np.asarray(x["opm_matched"]["sensing_centres_mm"], float),
+           "opm_dense": np.asarray(x["opm_dense"]["sensing_centres_mm"], float)}
+    counts = {"squid": s["arrays"]["squid"]["sites"], "opm_matched": s["arrays"]["opm_matched"]["n_sites"],
+              "opm_dense": s["arrays"]["opm_dense"]["n_sites"]}
+    dist = s["bridge_to_sphere"]["sensor_distance_mm"]
+    for a in pts:
+        if len(pts[a]) != counts[a] or (a != "squid" and x[a]["descriptors"] != s["arrays"][a]):
+            raise SystemExit(f"{G2_ARRAYS}: {a} has {len(pts[a])} sites or other descriptors than {G2} ({counts[a]})")
+        if any(abs(x["checks"]["sensor_distance_mm"][a][q] - dist[a][q]) > 1e-9 for q in ("median", "p5", "p95")):
+            raise SystemExit(f"{G2_ARRAYS}: {a} sensor-to-scalp distances differ from {G2}")
+    if s["arrays"]["squid"]["channels"] != x["neuromag"]["channels"] or len(x["neuromag"]["names"]) != counts["squid"]:
+        raise SystemExit(f"{G2_ARRAYS}: Neuromag channels or sites differ from {G2}")
+    hs = x["head_surface"]
+    rr, tris = np.asarray(hs["vertices_mm"], float), np.asarray(hs["triangles"], int)
+    if len(rr) != hs["n_vertices"] or len(tris) != hs["n_triangles"] or hs["n_vertices"] != s["arrays"]["head_surface_conform"]["n_vertices"]:
+        raise SystemExit(f"{G2_ARRAYS}: the head surface is not the stored BEM head surface")
+    fn, vn = mesh_normals(rr, tris)
+    edges, faces = mesh_edges(tris)
+
+    # panel extents (mm): every sensor and the head, the side view cut below ARRAY_SIDE_CUT_MM; one scale for all panels
+    allp = np.concatenate(list(pts.values()))
+    keep = rr[:, 2] >= ARRAY_SIDE_CUT_MM
+    pad = 7.0
+    ext = {"Right side": ((min(rr[keep, 1].min(), allp[:, 1].min()) - pad, max(rr[keep, 1].max(), allp[:, 1].max()) + pad),
+                          (ARRAY_SIDE_CUT_MM, max(rr[:, 2].max(), allp[:, 2].max()) + pad)),
+           "Top": ((-(max(np.abs(rr[:, 0]).max(), np.abs(allp[:, 0]).max()) + pad), max(np.abs(rr[:, 0]).max(), np.abs(allp[:, 0]).max()) + pad),
+                   (min(rr[:, 1].min(), allp[:, 1].min()) - pad, max(rr[:, 1].max(), allp[:, 1].max()) + pad))}
+    span_h = max(e[0][1] - e[0][0] for e in ext.values())
+    W, lm, rm, gap = style.FULL_W, 0.62, 0.04, 0.10
+    pw = (W - lm - rm - 2 * gap) / 3
+    scale = pw / span_h  # inch per mm
+    ph = {v: scale * (e[1][1] - e[1][0]) for v, e in ext.items()}
+    t_top, t_mid, t_bot = 0.44, 0.34, 0.34
+    H = t_top + ph["Right side"] + t_mid + ph["Top"] + t_bot
+    fig = plt.figure(figsize=(W, H))
+    style_of = {a: dict(marker=MARKER.get(a, "s"), ms=3.2 if a != "opm_dense" else 3.0, mfc=style.ARRAY_COLOR[a], mec="k",
+                        mew=0.35 if a != "squid" else 0.0) for a in pts}
+    titles = {"squid": (f"(a) Neuromag ({s['arrays']['squid']['channels']} channels)", f"{counts['squid']} sites (magnetometer coil centres)"),
+              "opm_matched": ("(b) Site-matched OPM array", f"{counts['opm_matched']} sites (sensing centres)"),
+              "opm_dense": ("(c) Dense OPM array", f"{counts['opm_dense']} sites (sensing centres)")}
+    drawn = {}
+    for i, (vname, view, (h, v), labs, lamp) in enumerate(ARRAY_VIEWS):
+        (x0, x1), (y0, y1) = ext[vname]
+        front = fn @ view > 0
+        depth = rr[tris].mean(axis=1) @ view
+        order = np.flatnonzero(front)[np.argsort(depth[front], kind="stable")]  # far to near (painter's order)
+        light = view + lamp
+        shade = HEAD_SHADE[0] + HEAD_SHADE[1] * np.clip(vn @ (light / np.linalg.norm(light)), 0.0, 1.0)
+        tri = mtri.Triangulation(rr[:, h], rr[:, v], tris[order])
+        sil = (fn[faces[:, 0]] @ view > 0) != (fn[faces[:, 1]] @ view > 0)  # edges between a facing and a turned-away triangle
+        e = edges[sil]
+        out = vn[e].sum(axis=1)
+        out /= np.linalg.norm(out, axis=1)[:, None]
+        e = e[~hidden(rr[e].mean(axis=1) + 0.5 * out + 0.5 * view, view, rr, tris)]  # the visible outline only
+        y_base = t_bot if i else t_bot + ph["Top"] + t_mid
+        for j, a in enumerate(pts):
+            ax = fig.add_axes([(lm + j * (pw + gap)) / W, y_base / H, pw / W, ph[vname] / H])
+            ax.tripcolor(tri, shade, shading="gouraud", cmap="gray", vmin=0.0, vmax=1.0, zorder=1)
+            ax.add_collection(LineCollection(rr[e][:, :, [h, v]], colors=SILHOUETTE_GREY, linewidths=0.6, zorder=2))
+            p = pts[a]
+            vis = ~hidden(p, view, rr, tris)
+            if vname == "Right side":
+                vis &= p[:, 0] > 0
+            ax.plot(p[vis, h], p[vis, v], ls="none", zorder=3, **style_of[a])
+            drawn.setdefault(vname.lower(), {})[ARRAY_NAME[a]] = int(vis.sum())
+            ax.set_xlim(x0, x1)
+            ax.set_ylim(y0, y1)
+            ax.set_aspect("equal", adjustable="box")
+            ax.set_xticks([-100, 0, 100])
+            ax.set_yticks([-50, 0, 50, 100, 150] if vname == "Right side" else [-100, -50, 0, 50, 100])
+            ax.tick_params(labelsize=7, length=2, pad=1.5)
+            ax.set_xlabel(labs[0], fontsize=7.5, labelpad=1)
+            if j:
+                ax.tick_params(labelleft=False)
+            else:
+                ax.set_ylabel(f"{vname} view\n{labs[1]}", fontsize=8)
+            for sp in ("top", "right"):
+                ax.spines[sp].set_visible(False)
+            if i == 0:
+                ax.text(0.5, 1.0 + 0.40 / ph[vname], titles[a][0], transform=ax.transAxes, ha="center", va="top", fontsize=9)
+                ax.text(0.5, 1.0 + 0.21 / ph[vname], titles[a][1], transform=ax.transAxes, ha="center", va="top", fontsize=7,
+                        color="0.25")
+    style.save(fig, "Figure_R15_arrays")
+
+    d_sq, d_m, d_d = dist["squid"]["median"], dist["opm_matched"]["median"], dist["opm_dense"]["median"]
+    sp_m, sp_d = s["arrays"]["opm_matched"]["min_spacing_mm"], s["arrays"]["opm_dense"]["min_spacing_mm"]
+    excl = s["arrays"]["opm_matched"]["excluded_sites"]
+    standoff = {s["arrays"][a]["standoff_mm"] for a in ("opm_matched", "opm_dense")}
+    if len(standoff) != 1:
+        raise SystemExit(f"{G2}: the OPM arrays' standoffs differ: {standoff}")
+    standoff = standoff.pop()
+    conf = hs["conform"]
+    values = dict(sites={ARRAY_NAME[a]: counts[a] for a in pts}, channels={ARRAY_NAME[a]: s["arrays"][a]["channels"] for a in pts},
+                  sensor_to_scalp_mm={ARRAY_NAME[a]: dist[a] for a in pts},
+                  min_spacing_mm={ARRAY_NAME[a]: s["arrays"][a]["min_spacing_mm"] for a in ("opm_matched", "opm_dense")},
+                  excluded_neuromag_sites=dict(index=excl, magnetometer=[x["neuromag"]["names"][e] for e in excl]),
+                  opm_standoff_mm=standoff, drawn=drawn,
+                  extents_mm={k: dict(horizontal=list(v[0]), vertical=list(v[1])) for k, v in ext.items()},
+                  head_surface=dict(n_vertices=hs["n_vertices"], n_triangles=hs["n_triangles"],
+                                    conform_moved_median_mm=conf["moved_median_mm"], conform_moved_max_mm=conf["moved_max_mm"]))
+    return dict(
+        inputs=[f"{G2_ARRAYS} (written by scripts/export_g2_arrays.py at {x['provenance']['commit']}: the adult run's arrays rebuilt "
+                f"by its code and checked against {G2} of run {x['provenance']['summary']['commit']}) :: "
+                "neuromag.coil_centres_mm, opm_matched.sensing_centres_mm, opm_dense.sensing_centres_mm, "
+                "head_surface (vertices_mm, triangles, n_vertices, n_triangles, conform), <array>.descriptors and "
+                "checks.sensor_distance_mm (checks), provenance",
+                f"{G2} :: arrays.squid (sites, channels), arrays.opm_matched and arrays.opm_dense (n_sites, min_spacing_mm, "
+                "standoff_mm, excluded_sites), arrays.head_surface_conform.n_vertices, bridge_to_sphere.sensor_distance_mm "
+                "(squid, opm_matched, opm_dense: median, p5, p95), provenance.commit"],
+        description=(
+            "The adult (MNE sample subject) in its head frame (Neuromag convention from the digitised fiducials: x towards the "
+            "right preauricular point, y towards the nasion, z up; mm), in orthographic projection, seen from the right "
+            "(top row: view along -x, anterior to the right) and from above (bottom row: view along -z, anterior up), all "
+            "panels at one scale. Head: the boundary-element head surface of the forward model on the MRI scalp "
+            f"({hs['n_vertices']} vertices, {hs['n_triangles']} triangles; conformed to the MRI scalp, vertices moved a median "
+            f"{conf['moved_median_mm']:.2f} mm), drawn with smooth grey shading lit from the viewer's side and its visible "
+            f"outline; the side view is cut at z = {ARRAY_SIDE_CUT_MM:g} mm (neck). Markers: a sensor is drawn when no part of "
+            "the head surface lies between it and the viewer and, in the side view, when it is on the right half of the head "
+            "(x > 0), so that the far side's sensors do not overlap the near side's (drawn, side/top: "
+            + "; ".join(f"{ARRAY_NAME[a]} {drawn['right side'][ARRAY_NAME[a]]}/{drawn['top'][ARRAY_NAME[a]]}" for a in pts) + "). "
+            f"(a) Neuromag ({s['arrays']['squid']['channels']} channels): the {counts['squid']} magnetometer coil centres of the sample recording (each of "
+            "the sensor sites also holds two planar gradiometers) at the adult's measured head position, the primary "
+            f"position of the adult analyses; median {d_sq:.1f} mm from the scalp (nearest MRI scalp vertex; 5th-95th percentile "
+            f"{dist['squid']['p5']:.1f}-{dist['squid']['p95']:.1f} mm). (b) Site-matched OPM array: the Neuromag sites that "
+            f"fit the OPM placement rules, each projected onto the scalp ({counts['opm_matched']} of {counts['squid']}; "
+            f"the sites of magnetometers {', '.join(x['neuromag']['names'][e] for e in excl)} excluded), at least {sp_m:.1f} mm "
+            "apart. (c) Dense OPM array: "
+            f"the densest feasible single-axis array under the packing rule ({counts['opm_dense']} sites, at least "
+            f"{sp_d:.1f} mm apart). OPM markers are the sensing centres, {standoff:g} mm from the scalp along the head-surface "
+            f"normal (median distance to the nearest MRI scalp vertex {d_m:.2f} and {d_d:.2f} mm); each OPM measures the field "
+            "component along the head-surface normal. Colours: Okabe-Ito, the report's array colours (Neuromag black, "
+            "site-matched OPM sky blue, dense OPM blue). The channel-budget control of the adult analyses (204 sites, a subset of "
+            "the dense array) is not analysed in the main text and not drawn. Positions and head surface are read from "
+            f"{G2_ARRAYS}, exported by scripts/export_g2_arrays.py, which rebuilds the adult run's arrays with its code and "
+            f"reproduces every array descriptor and sensor-to-scalp distance stored in {G2} (checked again here: site counts, "
+            "descriptors, distances)."),
+        alt=("Six panels in two rows: a grey, smoothly shaded adult head seen from the right (top row) and from above (bottom "
+             f"row), with three arrays in the three columns. Left: {counts['squid']} black squares of the Neuromag helmet form a "
+             f"shell that stands off the head by about {d_sq / 10:.0f} cm, lower at the back than at the front. Middle: "
+             f"{counts['opm_matched']} sky-blue squares sit on the scalp in the same pattern, the Neuromag sites pulled in onto "
+             f"the head. Right: {counts['opm_dense']} blue circles cover the scalp above the brow and ears more densely "
+             f"({counts['opm_dense']} against {counts['opm_matched']} sites)."),
+        caption_draft=(
+            "Sensor arrays on the adult head (MNE sample subject), seen from the right (top; sensors on the right half of the "
+            f"head) and from above (bottom). (a) Neuromag ({s['arrays']['squid']['channels']} channels): its {counts['squid']} "
+            "sensor sites (magnetometer coil centres; each site also holds two planar gradiometers) at the adult's measured "
+            f"head position, a median {d_sq:.1f} mm from the scalp. (b) Site-matched OPM array ({counts['opm_matched']} "
+            "sites): Neuromag's sites that fit the OPM placement rules, projected onto the scalp. (c) Dense OPM array "
+            f"({counts['opm_dense']} sites, at least {sp_d:.0f} mm apart). OPM sensing centres lie {standoff:g} mm from the "
+            "scalp; each OPM measures the field component normal to the head surface. Head: the boundary-element head "
+            "surface of the forward model."),
+        values=values)
+
+
+# ----------------------------------------------------------------------------------------------
+def check_inputs(want: set) -> None:
+    """Stop before drawing anything if an input of the figures ``want`` is missing (nothing is recomputed in its place)."""
+    if "R0" in want:
+        for rel in (G1A, G1A_CURVES, G2):
+            paths.require(ROOT / rel, rel)
+    if want & {"R11", "R13", "R14"}:  # the cortical maps draw on the external surfaces
+        for rel in (G2, G2_TARGETS, G3B):
+            paths.require(ROOT / rel, rel)
+        paths.require(paths.SUBJECTS_DIR / "sample" / "bem" / "sample-oct-6-src.fif",
+                      "MNE sample subject (set OPMSQUID_DATA)")
+        for name in TEMPLATES.values():
+            paths.require(paths.EXTERNAL / anatomy.INFANT_SUBJECTS / name, f"infant template {name} (set OPMSQUID_DATA)")
+    if "R12" in want:
+        paths.require(ROOT / GEOMETRY, "G3B geometry export (scripts/export_g3b_geometry.py)")
+        paths.require(ROOT / CG, "constant-gap summary (scripts/study_g3b_constant_gap.py)")
+        paths.require(ROOT / G3B, G3B)
+    if "R15" in want:
+        paths.require(ROOT / G2_ARRAYS, "G2 arrays export (scripts/export_g2_arrays.py)")
+        paths.require(ROOT / G2, G2)
+
+
+def write_entries(entries: dict) -> Path:
+    """figures_clean.json: the entries drawn now replace their earlier versions and the others are kept; provenance: the
+    commit of this run and, per figure, the commit at which it was drawn (an entry from a file written before that record
+    existed takes that file's commit)."""
+    path = style.OUT / OUT_JSON
+    old = json.loads(path.read_text()) if path.exists() else {"provenance": {}, "figures": {}}
+    c = style.commit()
+    before = old["provenance"].get("drawn_at") or {k: old["provenance"].get("commit") for k in old["figures"]}
+    figs = {**old["figures"], **entries}
+    order = sorted(figs, key=lambda n: int(n.split("_")[1][1:]))
+    drawn_at = {k: (c if k in entries else before.get(k)) for k in order}
+    style.OUT.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({"provenance": {"commit": c, "drawn_at": drawn_at}, "figures": {k: figs[k] for k in order}}, indent=1))
+    return path
 
 
 def main():
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    ap.add_argument("--figures", nargs="+", choices=FIGURES, default=list(FIGURES),
+                    help="figures to draw (default: all); R11, R13 and R14 are drawn together")
+    want = set(ap.parse_args().figures)
+    if want & {"R11", "R13", "R14"}:
+        want |= {"R11", "R13", "R14"}
     style.apply()
     mne.set_log_level("WARNING")
-    check_inputs()
-    entries = {"Figure_R0_sphere": figure_sphere()}
-    entries.update(figures_maps())
-    entries["Figure_R12_geometry"] = figure_geometry()
-    entries = {k: entries[k] for k in sorted(entries, key=lambda n: int(n.split("_")[1][1:]))}
-    style.write_provenance(OUT_JSON, entries)
-    for name in entries:
+    check_inputs(want)
+    entries = {}
+    if "R0" in want:
+        entries["Figure_R0_sphere"] = figure_sphere()
+    if "R11" in want:
+        entries.update(figures_maps())
+    if "R12" in want:
+        entries["Figure_R12_geometry"] = figure_geometry()
+    if "R15" in want:
+        entries["Figure_R15_arrays"] = figure_arrays()
+    path = write_entries(entries)
+    for name in sorted(entries, key=lambda n: int(n.split("_")[1][1:])):
         print(f"results/report/{name}.png")
-    print(f"results/report/{OUT_JSON}")
+    print(path.relative_to(ROOT) if path.is_relative_to(ROOT) else path)
 
 
 if __name__ == "__main__":

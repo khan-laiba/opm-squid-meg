@@ -755,13 +755,23 @@ def near_surface(d_mm: np.ndarray, cortex, regions: np.ndarray, hf: np.ndarray) 
 
 
 def g3b_targets(key: str, d_used: np.ndarray | None = None, d_mri: np.ndarray | None = None, cortex=None) -> dict | None:
-    """G3B's targets of this anatomy below NEAR_MM (their stored depth: nearest dense-scalp vertex),
-    and where the MRI boundary is known, the same targets' depth change."""
+    """G3B's targets of this anatomy below NEAR_MM (their depth: nearest dense-scalp vertex, at full precision from the
+    companion g3b_targets_<key>_depth.csv written by scripts/export_target_precision.py, so that the counts equal those of
+    results/g3b/g3b_summary.json; the table itself prints depth to 0.01 mm), and where the MRI boundary is known, the same
+    targets' depth change."""
     f = paths.RESULTS / "g3b" / f"g3b_targets_{key}.csv"
     if not f.exists():
         return None
     rows = io.read_csv(f)
-    depth = np.array([float(r["depth_mm"]) for r in rows])
+    fd = paths.RESULTS / "g3b" / f"g3b_targets_{key}_depth.csv"
+    if not fd.exists():
+        raise FileNotFoundError(f"{fd} is missing: run scripts/export_target_precision.py first (full-precision depths)")
+    exact = io.read_csv(fd)
+    if [(r["hemi"], r["vertno"]) for r in exact] != [(r["hemi"], r["vertno"]) for r in rows]:
+        raise ValueError(f"{fd}: rows differ from {f.name}")
+    depth = np.array([float(r["depth_mm"]) for r in exact])
+    if not np.allclose(np.round(depth, 2), [float(r["depth_mm"]) for r in rows], atol=1e-9):
+        raise ValueError(f"{fd}: depths do not round to those of {f.name}")
     area = np.array([float(r["area_mm2"]) for r in rows])
     out = dict(n_targets=len(rows), depth=pct(depth, (1, 5, 50)))
     for thr in NEAR_MM:

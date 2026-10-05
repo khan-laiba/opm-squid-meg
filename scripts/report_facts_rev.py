@@ -15,8 +15,24 @@ or "results/<file> :: derived: <how>"}}. Read only; nothing is re-run:
             the heart, sub-bands, Neuromag detectability with the measured covariance, the implied OPM/Neuromag scenarios.
   rev_qc_   results/g3b_children_qc/children_qc.json: the school-aged children's surfaces against their MRIs, with the adult
             and the 2-year template as references (Fable weakness (i), Codex major issue 2); configs/school_subjects_qc_manifest.json.
-  Reserved for analyses whose results are not yet committed (marked section at the end): rev_cgap_ (the gap-matched
-  counterfactual helmet) and rev_conf_ (the confirmatory spike run).
+  Stage B2 sections (marked in the code):
+  rev_cgap_ results/g3b_constant_gap/g3b_constant_gap_summary.json: the counterfactual helmet fitted to each head at the
+            adult's gap (both referees' control): the adult's gaps; per head and helmet (fixed at top contact; scaled
+            with the head, centred and laterally centred; fitted at the adult's gap and at its top-contact gap) the gap,
+            the scale k and whether the clearance binds; D with intervals; Delta at the adult's gap, at its top-contact gap,
+            against the adult at top contact and at equal OPM site count; within-head contrasts (fixed minus another
+            helmet); interactions; the fixed helmet's placement band; regional D; ranges and counts over the groups.
+  rev_db_   results/g2/g2_depth_bins.json (scripts/study_g2_depth_bins.py): 95 % parcel-bootstrap intervals of the adult
+            depth curves per 5-mm bin (Referee 1), the bins whose interval lies above, spans or lies below 1.
+  rev_g2_notahead_  results/g2/g2_targets.csv: the targets at which the dense array is not ahead with sensor + brain
+            noise (Referee 1, minor 13): depth, parcel, lobe.
+  rev_seed_ the random seeds that no other module states (G1B, G1C, the adult patches and convergence subset, the band
+            and head-surface bootstraps, the near-mesh and BEM-sphere checks, the smaller heads' patch centres and
+            usefulness strata, the gap-matched helmet, the sign-flip Monte Carlo, the confirmatory replicates); values set
+            in code are read from the line that sets them. rev_boot_ is kept for resample counts that no module states;
+            none is missing at present (the section lists where each count is).
+  Reserved for the analysis whose results are not yet committed (marked section at the end): rev_conf_ (the
+  confirmatory spike run).
 
 Name tokens. Arrays dense (208 sites), matched (98), neuromag (the 306-channel array where a quantity is per array);
 Neuromag comparators combined (all channels), mag, grad; conditions ib (sensor + cortical background), proj (+ room field,
@@ -24,7 +40,10 @@ Neuromag comparators combined (all channels), mag, grad; conditions ib (sensor +
 condition). A comparison is <array>_vs_<comparator>_<condition> with _ratio (median over targets of d_OPM/d_Neuromag), _ci
 (95 % interval), _share (share of the targets with the OPM ahead). OPM white levels asd<level>ft (fT/sqrt(Hz)); 1/f corners
 c<f>hz; sub-bands sb<lo>_<hi> (Hz) and b<lo>_<hi> (the covariance validation's bands); depth bins <lo>_<hi> (mm below the
-scalp); distance bands from the inner skull band_<lo>_<hi> (mm); anatomies adult, infant2yr, child_a, child_b, child_c.
+scalp); distance bands from the inner skull band_<lo>_<hi> (mm); anatomies adult, infant2yr, child_a, child_b, child_c
+(rev_cgap_: adult, school, size2yr, infant2yr, infant18mo, infant12mo, child_a, child_b, child_c; helmets fixed, scaled,
+scaledx, fitted, fittedtop; groups all, smaller, scaled, templates, templates_scaled, children; dB signed with 2 decimals,
+intervals '[0.00, +0.05]' (no sign on a zero), k 3 decimals, gaps 1 decimal with _2dp twins).
 The covariance validation's OPM/Neuromag scenarios are rev_cov_opm_<array>_vs_<comparator>_<scenario> (s1 to s5,
 s4_uncorrected, model306, model305, corr5mm_model, ...), in the condition ibenv unless the token says ib (model306_ib) or
 proj (proj_...); rev_cov_det_<comparator>_<what> are Neuromag's detectability ratios, measured (or hybrid) over modelled.
@@ -1458,15 +1477,809 @@ def qc_facts(F, root):
           100 * wm["measured"]["contrast_gain_share"], f"{p}.white_translation.measured.contrast_gain_share")
 
 
+# ================================================================================================
+# STAGE B2 SECTIONS (added after commit 4da5f17): rev_cgap_, rev_db_, rev_g2_notahead_, rev_boot_/rev_seed_
+# ================================================================================================
+# the helmet fitted at the adult's gap (rev_cgap_)
+CGAP = "results/g3b_constant_gap/g3b_constant_gap_summary.json"
+CFG_G3B = "configs/g3b_pediatric.toml"
+CFG_G2 = "configs/g2_adult.toml"
+CG_ANATS = ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC")
+CG_SMALLER = CG_ANATS[1:]
+CG_SCALED = ("school", "size2yr")
+CG_TEMPLATES = ("infant2yr", "infant18mo", "infant12mo")
+CG_CHILDREN = ("childA", "childB", "childC")
+CG_TOK = {a: a for a in CG_ANATS} | {"childA": "child_a", "childB": "child_b", "childC": "child_c"}
+CG_NAME = {"adult": "adult", "school": "school-age size", "size2yr": "2-year size", "infant2yr": "24-month template",
+           "infant18mo": "18-month template", "infant12mo": "12-month template", "childA": "child A", "childB": "child B",
+           "childC": "child C"}
+CG_GROUPS = {"all": CG_ANATS, "smaller": CG_SMALLER, "scaled": CG_SCALED, "templates": CG_TEMPLATES,
+             "templates_scaled": CG_SCALED + CG_TEMPLATES, "children": CG_CHILDREN}
+CG_GROUP_DESC = {"all": "all nine heads", "smaller": "the eight smaller heads", "scaled": "the two scaled adults",
+                 "templates": "the three infant templates", "templates_scaled": "the two scaled adults and the three templates",
+                 "children": "children A-C"}
+RANGE_GROUPS = ("smaller", "scaled", "templates", "templates_scaled", "children")
+COUNT_GROUPS = ("smaller", "templates", "templates_scaled", "children")
+# helmets: the fixed adult helmet at top contact; scaled with the head (centred, laterally centred); fitted at the adult's
+# gap (the adult laterally centred in its own helmet) and at the adult's top-contact gap
+HELMETS = {"top": "fixed", "counterfactual": "scaled", "counterfactual_x-centred": "scaledx", "gap_matched": "fitted",
+           "gap_matched_top": "fittedtop"}
+HELMET_DESC = {"top": "the fixed adult helmet at top contact", "counterfactual": "the helmet scaled with the head (centred)",
+               "counterfactual_x-centred": "the helmet scaled with the head (laterally centred)",
+               "gap_matched": "the helmet fitted at the adult's gap", "gap_matched_top": "the helmet fitted at the adult's "
+               "top-contact gap"}
+CONTRASTS = ("counterfactual", "counterfactual_x-centred", "gap_matched", "gap_matched_top")  # within-head, interaction
+CG_REFS = ("combined", "mag", "grad")
+CG_CONDS = ("intrinsic+brain", "projected")
+CG_HEADLINE = ("opm_dense", "combined", "intrinsic+brain")
+NEAR_ZERO_DB = 0.15  # a descriptive threshold for the text (rev_cgap_near_zero_db), not a test
+PLACEMENTS = {"top": "top", "back": "back", "x+5mm": "xp5mm", "x-5mm": "xm5mm", "y+5mm": "yp5mm", "y-5mm": "ym5mm",
+              "pitch+10deg": "pitchp10", "pitch-10deg": "pitchm10", "roll+5deg": "rollp5", "roll-5deg": "rollm5",
+              "yaw+10deg": "yawp10", "yaw-10deg": "yawm10"}
+# Delta families: (token, section, helmet, what is compared)
+DELTAS = (("fitted", "delta_same_rule", "gap_matched", "each head and the adult in the helmet fitted at the adult's gap"),
+          ("fittedtop", "delta_same_rule", "gap_matched_top", "each head and the adult in the helmet fitted at the adult's "
+           "top-contact gap"),
+          ("fittedtop_vs_fixed", "delta_vs_adult_top", "gap_matched_top", "each head in the helmet fitted at the adult's "
+           "top-contact gap against the adult in the fixed helmet at top contact"))
+EQSITES = (("top", "fixed"), ("gap_matched", "fitted"), ("gap_matched_top", "fittedtop"))
+
+
+def db(x) -> str:
+    """dB: signed, 2 decimals, U+2212; '0.00' when it rounds to zero."""
+    return signed(x, 2)
+
+
+def share2(x) -> str:
+    return num(x, 2)
+
+
+def cg_stem(arr, comp, cond) -> str:
+    return f"{ARR[arr]}_vs_{comp}_{COND[cond]}"
+
+
+def cg_delta_desc(c: str) -> str:
+    if c in CG_SCALED:
+        return "vertex-wise: area-weighted median over the common cortical vertices of D_head - D_adult"
+    return "area-weighted median over the Desikan-Killiany parcels of the parcel difference D_head - D_adult"
+
+
+def cg_stat(F, base, e, path, what):
+    """A stored dB statistic {median, ci95[, share_positive]}: <base>, <base>_ci and <base>_share_pos."""
+    F.add(base, db(e["median"]), e["median"], f"{CGAP} :: {path}.median ({what}, dB)")
+    if e.get("ci95"):
+        F.add(f"{base}_ci", ci_text(*e["ci95"], f=db), list(e["ci95"]),
+              f"{CGAP} :: {path}.ci95 (95 % interval: parcels resampled within each head; no between-subject variability)")
+    if e.get("share_positive") is not None:
+        F.add(f"{base}_share_pos", share2(e["share_positive"]), e["share_positive"],
+              f"{CGAP} :: {path}.share_positive (area share with a positive value)")
+
+
+def cg_span(F, base, items, fmt, src):
+    """<base>_min, _max, _range ('lo to hi') over items {anatomy: raw}, from unrounded values, naming the heads."""
+    vals = {k: v for k, v in items.items() if v is not None}
+    if len(vals) < 2:
+        return
+    klo, khi = min(vals, key=vals.get), max(vals, key=vals.get)
+    lo, hi = float(vals[klo]), float(vals[khi])
+    F.add(f"{base}_min", fmt(lo), lo, f"{src} (lowest: {klo})")
+    F.add(f"{base}_max", fmt(hi), hi, f"{src} (highest: {khi})")
+    F.add(f"{base}_range", f"{fmt(lo)} to {fmt(hi)}", [lo, hi], f"{src} (lowest {klo}, highest {khi})")
+
+
+def cg_spans(F, tpl, series, fmt, path, groups=RANGE_GROUPS):
+    """Ranges of series {anatomy: raw} over each group; tpl holds '{g}' for the group token."""
+    for gname in groups:
+        cg_span(F, tpl.format(g=gname), {a: series[a] for a in CG_GROUPS[gname] if a in series}, fmt,
+                f"{CGAP} :: {path} over {CG_GROUP_DESC[gname]}")
+
+
+COUNT_TESTS = {
+    "ci_includes_zero": ("95 % interval includes 0", lambda e: e["ci95"][0] <= 0 <= e["ci95"][1]),
+    "ci_above_zero": ("95 % interval lies above 0", lambda e: e["ci95"][0] > 0),
+    "ci_below_zero": ("95 % interval lies below 0", lambda e: e["ci95"][1] < 0),
+    "positive": ("median is above 0", lambda e: e["median"] > 0),
+    "near_zero": (f"|median| is at most {NEAR_ZERO_DB:g} dB (rev_cgap_near_zero_db)", lambda e: abs(e["median"]) <= NEAR_ZERO_DB),
+    "band_includes_zero": ("placement band (min to max) includes 0", lambda e: e["min"] <= 0 <= e["max"]),
+    "band_above_zero": ("placement band lies above 0", lambda e: e["min"] > 0),
+    "band_below_zero": ("placement band lies below 0", lambda e: e["max"] < 0),
+}
+DELTA_TESTS = ("ci_includes_zero", "ci_above_zero", "ci_below_zero", "positive", "near_zero")
+
+
+def cg_counts(F, base, entries, path, groups=COUNT_GROUPS, tests=DELTA_TESTS):
+    """How many heads of each group meet each test, and which, from unrounded values: <base>_<group>_n_<test> and
+    <base>_<group>_<test>_heads."""
+    for gname in groups:
+        mem = [a for a in CG_GROUPS[gname] if a in entries]
+        for tk in tests:
+            what, test = COUNT_TESTS[tk]
+            hit = [a for a in mem if test(entries[a])]
+            names = listing([CG_NAME[a] for a in hit], str)
+            src = f"{CGAP} :: derived: {path}, the heads of {CG_GROUP_DESC[gname]} whose {what} ({names}; of {len(mem)})"
+            F.add(f"{base}_{gname}_n_{tk}", count(len(hit)), len(hit), src)
+            F.add(f"{base}_{gname}_{tk}_heads", names, hit, src)
+
+
+def cgap_check_headline(d):
+    """The headline block repeats the detailed sections (dense OPM vs Neuromag 306, sensor + brain noise): checked, so the
+    facts below, read from the sections, are the headline's numbers."""
+    H, key = d["headline"]["by_anatomy"], "/".join(CG_HEADLINE)
+    _, comp, cond = CG_HEADLINE
+    pairs = []
+    for a, x in H.items():
+        pairs += [(v, d["D"][f"{a}/{h}/{key}"]) for h, v in x["D"].items()]
+        pairs += [(v, d["within_head"][f"{a}/{h}/{comp}/{cond}"]) for h, v in x["within_head"].items()]
+        for h, v in x.get("delta", {}).items():
+            src = {"gap_matched": ("delta_same_rule", f"{a}/gap_matched/{key}"),
+                   "gap_matched_top": ("delta_same_rule", f"{a}/gap_matched_top/{key}"),
+                   "gap_matched_top_vs_adult_top": ("delta_vs_adult_top", f"{a}/gap_matched_top/{key}"),
+                   "gap_matched_equal_sites": ("delta_equal_channels", f"{a}/gap_matched/{comp}/{cond}")}.get(h)
+            if src:
+                pairs.append((v, d[src[0]][src[1]]["delta"]))
+        pairs += [(v, d["interaction"][f"{a}/{h}/{comp}/{cond}"]["interaction"]) for h, v in x.get("interaction", {}).items()]
+        for h, v in x["gap_mm"].items():
+            if v != d["helmets"][a][h]["median_mm"] or x["k"][h] != d["helmets"][a][h]["k"]:
+                raise ValueError(f"{CGAP}: headline gap or k of {a}/{h} differs from helmets")
+        if "placement_band" in x:
+            pb = d["placement_band"][f"{a}/{comp}/{cond}"]
+            if any(x["placement_band"][k] != pb[k] for k in ("min", "max", "span", "n_placements")):
+                raise ValueError(f"{CGAP}: headline placement band of {a} differs from placement_band")
+    for v, e in pairs:
+        if (v["median"], v["ci95"]) != (e["median"], e["ci95"]):
+            raise ValueError(f"{CGAP}: a headline value differs from its detailed section")
+
+
+def cgap_setup_facts(F, root, d):
+    p = f"{CGAP} :: "
+    if d["anatomies_computed"] != list(CG_ANATS):
+        raise ValueError(f"{CGAP}: anatomies_computed is not the nine heads")
+    hl = d["headline"]
+    if (hl["array"], hl["comparator"], hl["condition"]) != CG_HEADLINE:
+        raise ValueError(f"{CGAP}: the headline is not dense OPM vs Neuromag 306 with sensor + brain noise")
+    cgap_check_headline(d)
+    F.add("rev_cgap_n_anatomies", count(len(CG_ANATS)), len(CG_ANATS), p + "anatomies_computed")
+    F.add("rev_cgap_commit", d["provenance"]["commit"], d["provenance"]["commit"], p + "provenance.commit (code of the run)")
+    tg, H = d["target_gaps"], d["helmets"]["adult"]
+    gm, gt = tg["gap_matched"]["gap_mm"], tg["gap_matched_top"]["gap_mm"]
+    if gm != H["counterfactual_x-centred"]["median_mm"] or gt != H["top"]["median_mm"]:
+        raise ValueError(f"{CGAP}: target_gaps are not the adult's laterally centred and top-contact gaps")
+    src = (p + "target_gaps.gap_matched.gap_mm (the adult's median magnetometer-coil-centre-to-scalp gap in its own helmet, "
+           "laterally centred = helmets['adult']['counterfactual_x-centred'].median_mm: the target of the fitted helmet, mm)")
+    F.add("rev_cgap_adult_gap_mm", mm(gm), gm, src)
+    F.add("rev_cgap_adult_gap_mm_2dp", mm2(gm), gm, src)
+    src = (p + "target_gaps.gap_matched_top.gap_mm (the adult's median gap at top contact in the fixed helmet = "
+           "helmets['adult']['top'].median_mm: the target of the helmet fitted at the adult's top-contact gap, mm)")
+    F.add("rev_cgap_adult_top_gap_mm", mm(gt), gt, src)
+    F.add("rev_cgap_adult_top_gap_mm_2dp", mm2(gt), gt, src)
+    src = p + "derived: target_gaps.gap_matched.gap_mm - target_gaps.gap_matched_top.gap_mm (mm; laterally centred minus top contact)"
+    F.add("rev_cgap_adult_gap_minus_top_mm", mm(gm - gt), gm - gt, src)
+    F.add("rev_cgap_adult_gap_minus_top_mm_2dp", mm2(gm - gt), gm - gt, src)
+    pl = d["config"]["g3b"]["placement"]
+    F.add("rev_cgap_dewar_spacing_mm", g(pl["dewar_spacing_mm"]), pl["dewar_spacing_mm"], p + "config.g3b.placement."
+          "dewar_spacing_mm (no magnetometer coil centre closer to the scalp in any helmet: the feasibility rule, mm)")
+    F.add("rev_cgap_contact_mm", g(pl["clearance_mm"]), pl["clearance_mm"], p + "config.g3b.placement.clearance_mm (top "
+          "contact: the head raised until the nearest coil centre is this far from the scalp, mm)")
+    nb = d["n_boot"]
+    if not nb["primary"] == d["config"]["g3b"]["strata"]["n_boot"] == tomllib.loads((Path(root) / CFG_G3B).read_text())["strata"]["n_boot"]:
+        raise ValueError(f"{CGAP}: n_boot.primary differs from strata.n_boot of {CFG_G3B}")
+    F.add("rev_cgap_n_boot_primary", count(nb["primary"]), nb["primary"], f"{CGAP}, {CFG_G3B} :: n_boot.primary (= strata.n_boot; "
+          f"{nb['rule']})")
+    F.add("rev_cgap_n_boot_secondary", count(nb["secondary"]), nb["secondary"], p + f"n_boot.secondary ({nb['rule']})")
+    ck = d["checks"]
+    mx, n = max(ck["max_abs_difference"].values()), sum(ck["n_compared"].values())
+    F.add("rev_cgap_check_max_abs_diff", small(mx), mx, p + f"checks.max_abs_difference (largest; {ck['what']})")
+    F.add("rev_cgap_check_n_compared", count(n), n, p + "checks.n_compared (summed over the checks)")
+    F.add("rev_cgap_near_zero_db", num(NEAR_ZERO_DB, 2), NEAR_ZERO_DB, p + "derived: the threshold of the *_n_near_zero "
+          "counts (|median| at most this, dB): a descriptive choice for the text, not a test")
+    for a in CG_ANATS:
+        x, t = d["anatomies"][a], CG_TOK[a]
+        F.add(f"rev_cgap_{t}_n_cortical", count(x["n_cortical_targets"]), x["n_cortical_targets"],
+              p + f"anatomies['{a}'].n_cortical_targets (the targets of every summary: the medial wall left out)")
+        for o in ARR:
+            k = x["opm_arrays"][o]["n_sites"]
+            F.add(f"rev_cgap_{t}_{ARR[o]}_sites", count(k), k, p + f"anatomies['{a}'].opm_arrays.{o}.n_sites (each head keeps "
+                  "its own OPM arrays in every helmet)")
+
+
+def cgap_helmet_facts(F, d):
+    gaps, ks, nearest = ({h: {} for h in HELMETS} for _ in range(3))
+    for a in CG_ANATS:
+        t = CG_TOK[a]
+        for h, ht in HELMETS.items():
+            x, path = d["helmets"][a][h], f"helmets['{a}']['{h}']"
+            if not x["feasible"]:
+                raise ValueError(f"{CGAP}: {path} is not feasible")
+            src = f"{CGAP} :: {path}.median_mm (median magnetometer-coil-centre-to-scalp gap of {HELMET_DESC[h]}, mm)"
+            F.add(f"rev_cgap_{t}_{ht}_gap_mm", mm(x["median_mm"]), x["median_mm"], src)
+            F.add(f"rev_cgap_{t}_{ht}_gap_mm_2dp", mm2(x["median_mm"]), x["median_mm"], src)
+            F.add(f"rev_cgap_{t}_{ht}_gap_nearest_mm", mm(x["min_mm"]), x["min_mm"], f"{CGAP} :: {path}.min_mm (the nearest "
+                  "coil centre to the scalp, mm)")
+            F.add(f"rev_cgap_{t}_{ht}_k", r3(x["k"]), x["k"], f"{CGAP} :: {path}.k (helmet scale factor about the head origin; "
+                  "1 = the adult helmet)")
+            if x["k_nominal"] is not None:
+                F.add(f"rev_cgap_{t}_{ht}_k_nominal", r3(x["k_nominal"]), x["k_nominal"], f"{CGAP} :: {path}.k_nominal "
+                      "(head-circumference ratio to the adult; k exceeds it where the scaled helmet was enlarged to fit)")
+            if x["k_at_target"] is not None:
+                F.add(f"rev_cgap_{t}_{ht}_k_at_target", r3(x["k_at_target"]), x["k_at_target"], f"{CGAP} :: {path}.k_at_target "
+                      "(the scale that reaches the target gap; k is larger where the clearance binds)")
+            if x["clearance_binding"] is not None:
+                F.add(f"rev_cgap_{t}_{ht}_binding", yes(x["clearance_binding"]), x["clearance_binding"], f"{CGAP} :: {path}."
+                      "clearance_binding (the 18-mm Dewar spacing reached before the target gap)")
+                excess = x["median_mm"] - x["target_gap_mm"]
+                if x["clearance_binding"]:
+                    F.add(f"rev_cgap_{t}_{ht}_gap_above_target_mm", mm(excess), excess, f"{CGAP} :: derived: {path}.median_mm - "
+                          f"{path}.target_gap_mm (the gap reached lies this far above the target, mm)")
+                elif abs(excess) > 0.01:
+                    raise ValueError(f"{CGAP}: {path} misses its target gap by {excess:.3f} mm without a binding clearance")
+            gaps[h][a], ks[h][a], nearest[h][a] = x["median_mm"], x["k"], x["min_mm"]
+    for h in ("gap_matched", "gap_matched_top"):
+        b = [a for a in CG_ANATS if d["helmets"][a][h]["clearance_binding"]]
+        src = f"{CGAP} :: helmets[*]['{h}'].clearance_binding (true: {listing([CG_NAME[a] for a in b], str)})"
+        F.add(f"rev_cgap_{HELMETS[h]}_n_binding", count(len(b)), len(b), src)
+        F.add(f"rev_cgap_{HELMETS[h]}_binding_heads", listing([CG_NAME[a] for a in b], str), b, src)
+    for h, ht in HELMETS.items():
+        cg_spans(F, f"rev_cgap_{{g}}_{ht}_gap_mm", gaps[h], mm, f"helmets['<head>']['{h}'].median_mm",
+                 groups=("all",) + RANGE_GROUPS)
+        cg_spans(F, f"rev_cgap_{{g}}_{ht}_k", ks[h], r3, f"helmets['<head>']['{h}'].k", groups=("all",) + RANGE_GROUPS)
+        cg_spans(F, f"rev_cgap_{{g}}_{ht}_gap_nearest_mm", nearest[h], mm, f"helmets['<head>']['{h}'].min_mm", groups=("smaller",))
+
+
+def cgap_d_facts(F, d):
+    """D per head and helmet, every array, comparator and condition; ranges over the groups for the 306-channel comparator."""
+    for a in CG_ANATS:
+        n = d["anatomies"][a]["n_cortical_targets"]
+        for key in [k for k in d["D"] if k.startswith(f"{a}/")]:
+            if d["D"][key]["n"] != n:
+                raise ValueError(f"{CGAP}: D['{key}'].n is not the cortical target count of {a}")
+    for h, ht in HELMETS.items():
+        for arr_ in ARR:
+            for comp in CG_REFS:
+                for cond in CG_CONDS:
+                    stem, series = cg_stem(arr_, comp, cond), {}
+                    for a in CG_ANATS:
+                        path = f"D['{a}/{h}/{arr_}/{comp}/{cond}']"
+                        e = d["D"][f"{a}/{h}/{arr_}/{comp}/{cond}"]
+                        base = f"rev_cgap_{CG_TOK[a]}_{ht}_{stem}_d"
+                        cg_stat(F, base, e, path, f"D = 20 log10(d_OPM / d_Neuromag), area-weighted median over the cortical "
+                                f"targets, {HELMET_DESC[h]}")
+                        F.ratio(base, 10.0 ** (e["median"] / 20.0), f"{CGAP} :: derived: 10^(D/20) of {path}.median "
+                                "(the detectability ratio of the median D)")
+                        series[a] = e["median"]
+                    if comp == "combined":
+                        cg_spans(F, f"rev_cgap_{{g}}_{ht}_{stem}_d", series, db, f"D['<head>/{h}/{arr_}/{comp}/{cond}'].median",
+                                 groups=("all",) + RANGE_GROUPS)
+
+
+def cgap_delta_facts(F, d):
+    """Delta of each smaller head against the adult: in the fitted helmets, against the adult at top contact, at equal
+    OPM site count; with ranges and counts over the groups for the 306-channel comparator."""
+    for ft, sec, h, what in DELTAS:
+        for arr_ in ARR:
+            for comp in CG_REFS:
+                for cond in CG_CONDS:
+                    stem, entries = cg_stem(arr_, comp, cond), {}
+                    for c in CG_SMALLER:
+                        key = f"{c}/{h}/{arr_}/{comp}/{cond}"
+                        e, path = d[sec][key]["delta"], f"{sec}['{key}'].delta"
+                        base = f"rev_cgap_{CG_TOK[c]}_{ft}_{stem}_delta"
+                        cg_stat(F, base, e, path, f"Delta of {what}; {cg_delta_desc(c)}")
+                        nk = "n" if c in CG_SCALED else "n_parcels"
+                        F.add(f"{base}_n", count(e[nk]), e[nk], f"{CGAP} :: {path}.{nk} ("
+                              f"{'common cortical vertices' if c in CG_SCALED else 'parcels'})")
+                        entries[c] = e
+                    if comp == "combined":
+                        path = f"{sec}['<head>/{h}/{arr_}/{comp}/{cond}'].delta"
+                        cg_spans(F, f"rev_cgap_{{g}}_{ft}_{stem}_delta", {c: e["median"] for c, e in entries.items()}, db,
+                                 path + ".median")
+                        cg_spans(F, f"rev_cgap_{{g}}_{ft}_{stem}_delta_ci_hi", {c: e["ci95"][1] for c, e in entries.items()},
+                                 db, path + ".ci95[1]", groups=("smaller", "templates_scaled"))
+                        cg_spans(F, f"rev_cgap_{{g}}_{ft}_{stem}_delta_ci_lo", {c: e["ci95"][0] for c, e in entries.items()},
+                                 db, path + ".ci95[0]", groups=("smaller", "templates_scaled"))
+                        cg_counts(F, f"rev_cgap_{ft}_{stem}_delta", entries, path)
+    # equal OPM site count: the adult's dense array subsampled to each head's dense site count, the adult in the same rule
+    for h, ht in EQSITES:
+        for comp in CG_REFS:
+            for cond in CG_CONDS:
+                stem, entries = cg_stem("opm_dense", comp, cond), {}
+                for c in CG_SMALLER:
+                    key = f"{c}/{h}/{comp}/{cond}"
+                    x, path = d["delta_equal_channels"][key], f"delta_equal_channels['{key}']"
+                    if x["n_sites"] != d["anatomies"][c]["opm_arrays"]["opm_dense"]["n_sites"]:
+                        raise ValueError(f"{CGAP}: {path}.n_sites is not the head's dense site count")
+                    base = f"rev_cgap_{CG_TOK[c]}_{ht}_eqsites_{stem}"
+                    cg_stat(F, f"{base}_delta", x["delta"], f"{path}.delta", f"Delta at equal OPM site count, {HELMET_DESC[h]} "
+                            f"(the adult's dense array subsampled to {x['n_sites']} sites); {cg_delta_desc(c)}")
+                    nk = "n" if c in CG_SCALED else "n_parcels"
+                    F.add(f"{base}_delta_n", count(x["delta"][nk]), x["delta"][nk], f"{CGAP} :: {path}.delta.{nk}")
+                    cg_stat(F, f"{base}_d_adult", x["d_adult_subsampled"], f"{path}.d_adult_subsampled",
+                            f"the adult's D with its dense array subsampled to {x['n_sites']} sites, same helmet rule")
+                    entries[c] = x["delta"]
+                if comp == "combined":
+                    path = f"delta_equal_channels['<head>/{h}/{comp}/{cond}'].delta"
+                    cg_spans(F, f"rev_cgap_{{g}}_{ht}_eqsites_{stem}_delta", {c: e["median"] for c, e in entries.items()}, db,
+                             path + ".median")
+                    cg_counts(F, f"rev_cgap_{ht}_eqsites_{stem}_delta", entries, path)
+    for c in CG_SMALLER:
+        k = d["delta_equal_channels"][f"{c}/gap_matched/combined/intrinsic+brain"]["n_sites"]
+        F.add(f"rev_cgap_{CG_TOK[c]}_eqsites_n_sites", count(k), k, f"{CGAP} :: delta_equal_channels['{c}/<helmet>/<comparator>/"
+              "<condition>'].n_sites (the adult's dense array subsampled by farthest-point sampling to this many sites)")
+    # Delta by depth in the fitted helmet (dense vs Neuromag 306, sensor + brain noise)
+    key_tail = "gap_matched/opm_dense/combined/intrinsic+brain"
+    for c in CG_SMALLER:
+        x, t = d["delta_same_rule"][f"{c}/{key_tail}"], CG_TOK[c]
+        field = "delta_by_adult_depth" if c in CG_SCALED else "delta_by_depth"
+        for i, row in enumerate(x[field]):
+            path = f"{CGAP} :: delta_same_rule['{c}/{key_tail}'].{field}[{i}]"
+            stratum = f"{row['lo']:g}-{row['hi']:g} mm below the scalp" + (" (the adult's depth)" if c in CG_SCALED else "")
+            base = f"rev_cgap_{t}_fitted_dense_vs_combined_ib_{'adultdepth' if c in CG_SCALED else 'depth'}_{row['lo']:g}_{row['hi']:g}mm"
+            if c in CG_SCALED:
+                F.add(f"{base}_n", count(row["n"]), row["n"], f"{path}.n (common vertices, {stratum})")
+                if "median" in row:
+                    F.add(f"{base}_vdelta", db(row["median"]), row["median"], f"{path}.median (vertex-wise Delta, area-weighted "
+                          f"median in the stratum, {stratum})")
+                    F.add(f"{base}_vdelta_ci", ci_text(*row["ci95"], f=db), row["ci95"], f"{path}.ci95")
+            else:
+                for q in ("n_child", "n_adult"):
+                    F.add(f"{base}_{q}", count(row[q]), row[q], f"{path}.{q} (cortical targets, {stratum})")
+                if "delta" in row:
+                    F.add(f"{base}_delta", db(row["delta"]), row["delta"], f"{path}.delta (difference of the area-weighted "
+                          f"medians, {stratum})")
+                    F.add(f"{base}_delta_ci", ci_text(*row["ci95"], f=db), row["ci95"], f"{path}.ci95 (parcels resampled "
+                          "within each head)")
+
+
+def cgap_within_facts(F, d):
+    """Within each head: D in the fixed helmet minus D in another helmet (the same for both OPM arrays)."""
+    for h in CONTRASTS:
+        ht = HELMETS[h]
+        for comp in CG_REFS:
+            for cond in CG_CONDS:
+                ct, entries = f"{comp}_{COND[cond]}", {}
+                for a in CG_ANATS:
+                    key = f"{a}/{h}/{comp}/{cond}"
+                    e, path = d["within_head"][key], f"within_head['{key}']"
+                    base = f"rev_cgap_{CG_TOK[a]}_fixed_minus_{ht}_{ct}"
+                    cg_stat(F, base, e, path, f"D(fixed helmet, top contact) - D({HELMET_DESC[h]}) in the same head, "
+                            "vertex-wise, area-weighted median; a property of Neuromag alone, the same for both OPM arrays")
+                    entries[a] = e
+                    if (comp, cond) == ("combined", "intrinsic+brain"):
+                        for i, row in enumerate(e["by_depth"]):
+                            if row.get("median") is not None:
+                                F.add(f"{base}_depth_{row['lo']:g}_{row['hi']:g}mm", db(row["median"]), row["median"],
+                                      f"{CGAP} :: {path}.by_depth[{i}].median ({row['lo']:g}-{row['hi']:g} mm, {row['n']:,} "
+                                      "targets; no interval stored)")
+                        for lb, v in e["by_lobe"].items():
+                            F.add(f"{base}_{lb}", db(v), v, f"{CGAP} :: {path}.by_lobe['{lb}'] (area-weighted median over the lobe)")
+                if comp == "combined":
+                    path = f"within_head['<head>/{h}/{comp}/{cond}']"
+                    cg_spans(F, f"rev_cgap_{{g}}_fixed_minus_{ht}_{ct}", {a: e["median"] for a, e in entries.items()}, db,
+                             path + ".median", groups=("all",) + RANGE_GROUPS)
+                    cg_counts(F, f"rev_cgap_fixed_minus_{ht}_{ct}", entries, path, groups=("all",) + COUNT_GROUPS,
+                              tests=("positive", "ci_above_zero", "ci_below_zero", "ci_includes_zero"))
+
+
+def cgap_interaction_facts(F, d):
+    """The within-head contrast of each smaller head minus the adult's."""
+    for h in CONTRASTS:
+        ht = HELMETS[h]
+        for comp in CG_REFS:
+            for cond in CG_CONDS:
+                ct, entries = f"{comp}_{COND[cond]}", {}
+                for c in CG_SMALLER:
+                    key = f"{c}/{h}/{comp}/{cond}"
+                    x, path = d["interaction"][key], f"interaction['{key}']"
+                    base = f"rev_cgap_{CG_TOK[c]}_{ht}_{ct}_interaction"
+                    est = "vertex-wise" if c in CG_SCALED else "area-weighted median of the parcel differences"
+                    cg_stat(F, base, x["interaction"], f"{path}.interaction", f"the head's fixed-minus-{ht} contrast minus the "
+                            f"adult's ({est}, as Delta)")
+                    F.add(f"{base}_additivity_residual", db(x["additivity_residual"]), x["additivity_residual"],
+                          f"{CGAP} :: {path}.additivity_residual (Delta(fixed) - Delta({ht}) - interaction, medians: the "
+                          "area-weighted medians are not additive)")
+                    entries[c] = x["interaction"]
+                if comp == "combined":
+                    path = f"interaction['<head>/{h}/{comp}/{cond}'].interaction"
+                    cg_spans(F, f"rev_cgap_{{g}}_{ht}_{ct}_interaction", {c: e["median"] for c, e in entries.items()}, db,
+                             path + ".median")
+                    cg_counts(F, f"rev_cgap_{ht}_{ct}_interaction", entries, path,
+                              tests=("positive", "ci_above_zero", "ci_below_zero", "ci_includes_zero"))
+
+
+def cgap_band_facts(F, d):
+    """Delta of the fixed helmet over its source-blind placements (dense OPM; difference of the stored medians)."""
+    for comp in CG_REFS:
+        for cond in CG_CONDS:
+            stem, series = cg_stem("opm_dense", comp, cond), {q: {} for q in ("min", "max", "span")}
+            for c in CG_SMALLER:
+                key = f"{c}/{comp}/{cond}"
+                x, path = d["placement_band"][key], f"{CGAP} :: placement_band['{key}']"
+                if x["n_placements"] != len(PLACEMENTS) - len(x["excluded_infeasible"]) or set(x["delta_by_placement"]) != \
+                        set(PLACEMENTS) - set(x["excluded_infeasible"]):
+                    raise ValueError(f"{path}: placements do not add up")
+                vals = x["delta_by_placement"].values()
+                if (x["min"], x["max"]) != (min(vals), max(vals)) or abs(x["span"] - (x["max"] - x["min"])) > 1e-12:
+                    raise ValueError(f"{path}: min, max or span is not that of delta_by_placement")
+                base, what = f"rev_cgap_{CG_TOK[c]}_band_{stem}", "(Delta of the fixed helmet over its feasible source-blind placements"
+                F.add(f"{base}_n", count(x["n_placements"]), x["n_placements"], f"{path}.n_placements {what}; infeasible for "
+                      f"either head left out: {listing(x['excluded_infeasible'], str)})")
+                F.add(f"{base}_excluded", listing(x["excluded_infeasible"], str), x["excluded_infeasible"],
+                      f"{path}.excluded_infeasible (placements infeasible for the head or the adult)")
+                for q in ("min", "max", "median", "top"):
+                    F.add(f"{base}_{q}", db(x[q]), x[q], f"{path}.{q} {what}, difference of the area-weighted medians, dB)")
+                F.add(f"{base}_range", f"{db(x['min'])} to {db(x['max'])}", [x["min"], x["max"]], f"{path}.min, .max {what})")
+                F.add(f"{base}_span", num(x["span"], 2), x["span"], f"{path}.span (max - min, dB, unsigned)")
+                F.add(f"{base}_top_rank", count(x["rank_of_top_from_lowest"]), x["rank_of_top_from_lowest"],
+                      f"{path}.rank_of_top_from_lowest (rank of the top-contact placement, 1 = lowest)")
+                cr = x["crossed"]
+                F.add(f"{base}_crossed_range", f"{db(cr['lo'])} to {db(cr['hi'])}", [cr["lo"], cr["hi"]], f"{path}.crossed "
+                      "(any feasible placement of the head against any of the adult)")
+                for fam in ("child_family", "adult_family"):
+                    y = x[fam]
+                    F.add(f"{base}_{fam}_range", f"{db(y['min'])} to {db(y['max'])}", [y["min"], y["max"]],
+                          f"{path}.{fam} (D over {y['n']} placements of the {'head' if fam == 'child_family' else 'adult'}, dB)")
+                cg_stat(F, f"{base}_primary_delta", x["primary_delta"], f"placement_band['{key}'].primary_delta",
+                        "the stored G3B Delta at top contact (the paired estimator)")
+                F.add(f"{base}_primary_minus_top", db(x["primary_minus_top_difference_of_medians"]),
+                      x["primary_minus_top_difference_of_medians"], f"{path}.primary_minus_top_difference_of_medians "
+                      "(the paired Delta minus the difference of the medians at top contact)")
+                if (comp, cond) == ("combined", "intrinsic+brain"):
+                    for p_, pt in PLACEMENTS.items():
+                        if p_ in x["delta_by_placement"]:
+                            v = x["delta_by_placement"][p_]
+                            F.add(f"{base}_at_{pt}", db(v), v, f"{path}.delta_by_placement['{p_}'] (difference of the medians, dB)")
+                for q in series:
+                    series[q][c] = x[q]
+            if comp == "combined":
+                for q, fmt in (("min", db), ("max", db), ("span", lambda v: num(v, 2))):
+                    cg_spans(F, f"rev_cgap_{{g}}_band_{stem}_{q}", series[q], fmt, f"placement_band['<head>/{comp}/{cond}'].{q}")
+                band = {c: dict(min=series["min"][c], max=series["max"][c]) for c in CG_SMALLER}
+                cg_counts(F, f"rev_cgap_{stem}", band, f"placement_band['<head>/{comp}/{cond}'].min, .max",
+                          tests=("band_includes_zero", "band_above_zero", "band_below_zero"))
+
+
+def cgap_region_facts(F, d):
+    """Regional D (area-weighted median over the region's cortical targets, both hemispheres pooled; no interval stored) in
+    the fixed and the fitted helmet, and each head's difference from the adult's (difference of the regional medians)."""
+    regions = list(d["regions"][f"adult/top/{'/'.join(CG_HEADLINE)}"])
+    for h in ("top", "gap_matched"):
+        ht = HELMETS[h]
+        for arr_ in ARR:
+            for cond in CG_CONDS:
+                stem, tail = cg_stem(arr_, "combined", cond), f"{h}/{arr_}/combined/{cond}"
+                adult = d["regions"][f"adult/{tail}"]
+                vals, diffs = {r: {} for r in regions}, {r: {} for r in regions}
+                for a in CG_ANATS:
+                    reg, path = d["regions"][f"{a}/{tail}"], f"{CGAP} :: regions['{a}/{tail}']"
+                    for r in regions:
+                        if reg[r] is None:
+                            continue
+                        F.add(f"rev_cgap_{CG_TOK[a]}_{ht}_{stem}_d_{r}", db(reg[r]), reg[r], f"{path}['{r}'] (area-weighted "
+                              f"median D over the region's cortical targets, {HELMET_DESC[h]}; no interval stored)")
+                        vals[r][a] = reg[r]
+                        if a != "adult" and adult[r] is not None:
+                            diffs[r][a] = reg[r] - adult[r]
+                            F.add(f"rev_cgap_{CG_TOK[a]}_{ht}_{stem}_d_minus_adult_{r}", db(diffs[r][a]), diffs[r][a],
+                                  f"{CGAP} :: derived: regions['{a}/{tail}']['{r}'] - regions['adult/{tail}']['{r}'] "
+                                  "(difference of the regional medians, the same helmet rule)")
+                if h == "gap_matched":
+                    for r in regions:
+                        cg_spans(F, f"rev_cgap_{{g}}_{ht}_{stem}_d_{r}", vals[r], db, f"regions['<head>/{tail}']['{r}']",
+                                 groups=("smaller", "templates_scaled", "children"))
+                        cg_spans(F, f"rev_cgap_{{g}}_{ht}_{stem}_d_minus_adult_{r}", diffs[r], db,
+                                 f"regions['<head>/{tail}']['{r}'] - regions['adult/{tail}']['{r}']",
+                                 groups=("smaller", "templates_scaled", "children"))
+
+
+def cgap_facts(F, root):
+    d = load(root, CGAP)
+    cgap_setup_facts(F, root, d)
+    cgap_helmet_facts(F, d)
+    cgap_d_facts(F, d)
+    cgap_delta_facts(F, d)
+    cgap_within_facts(F, d)
+    cgap_interaction_facts(F, d)
+    cgap_band_facts(F, d)
+    cgap_region_facts(F, d)
+
+
 # ------------------------------------------------------------------------------------------------
-# RESERVED: the facts of the two revision analyses whose results are not committed yet. Write them here when the result
-# files land, call them from facts() below, and name them with these prefixes and sources:
-#   rev_cgap_  the counterfactual helmet fitted at the adult's gap: scripts/study_g3b_constant_gap.py ->
-#              results/g3b_constant_gap/g3b_constant_gap_summary.json
+# per-depth-bin intervals of the adult comparison (rev_db_)
+DB = "results/g2/g2_depth_bins.json"
+DB_TOK = {f"{a}/combined/{c}": f"{ARR[a]}_vs_combined_{t}" for a in ARR
+          for c, t in (("intrinsic", "int"), ("intrinsic+brain", "ib"), ("projected", "proj"))}
+DB_TOK |= {f"peak_field/{a}": f"peak_{ARR[a]}_vs_mag" for a in ARR}
+DB_SIDES = (("above", "above1"), ("spans", "spans1"), ("below", "below1"))
+
+
+def bin_name(lo, hi) -> str:
+    """A depth bin as printed: '10–15' (mm)."""
+    return f"{lo:.0f}–{hi:.0f}"
+
+
+def db_facts(F, root):
+    d = load(root, DB)
+    m, p = d["method"], f"{DB} :: method"
+    F.add("rev_db_n_boot", count(m["n_boot"]), m["n_boot"], f"{p}.n_boot (parcel-bootstrap resamples per bin and comparison: the "
+          "adult analysis's own function and primary count)")
+    F.add("rev_db_seed", str(m["seed"]), m["seed"], f"{p}.seed ({m['seed_rule']})")
+    F.add("rev_db_n_parcel_labels", count(m["n_parcel_labels"]), m["n_parcel_labels"], f"{p}.n_parcel_labels (the adult's "
+          "Desikan-Killiany parcels and medial-wall labels; each bin resamples the labels present in it)")
+    edges = m["bins"]["edges_mm"]
+    widths = {round(b - a, 9) for a, b in zip(edges[:-1], edges[1:])}
+    if len(widths) != 1:
+        raise ValueError(f"{DB}: method.bins.edges_mm are not equally spaced")
+    F.add("rev_db_bin_mm", g(widths.pop()), edges[1] - edges[0], f"{p}.bins.edges_mm (bin width, mm; {m['bins']['rule']})")
+    F.add("rev_db_min_n", count(m["bins"]["min_n"]), m["bins"]["min_n"], f"{p}.bins.min_n ({m['bins']['note']})")
+    F.add("rev_db_commit", d["provenance"]["commit"], d["provenance"]["commit"], f"{DB} :: provenance.commit (code of the run)")
+    ck, p = d["checks"], f"{DB} :: checks"
+    for k in ("keys_and_order_equal", "printed_depth_equals_rounded_unrounded", "bin_labels_follow_unrounded_depth",
+              "bin_counts_equal_stored", "medians_within_csv_precision"):
+        if ck[k] is not True:
+            raise ValueError(f"{DB}: checks.{k} is not true")
+    F.add("rev_db_check_max_abs_diff_log2", small(ck["max_abs_diff_median_log2"]), ck["max_abs_diff_median_log2"],
+          f"{p}.max_abs_diff_median_log2 (largest deviation of a bin median, log2 ratio, from results/g2/g2_summary.json "
+          f"log2_ratio_vs_depth, at {ck['max_abs_diff_median_log2_at']}; within the precision of results/g2/g2_targets.csv)")
+    F.add("rev_db_check_max_diff_over_bound", r2(ck["max_diff_over_precision_bound_log2"]), ck["max_diff_over_precision_bound_log2"],
+          f"{p}.max_diff_over_precision_bound_log2 (largest deviation as a share of what the CSV's rounding allows)")
+    F.add("rev_db_check_n_moved", count(ck["targets_whose_printed_depth_falls_in_another_bin"]),
+          ck["targets_whose_printed_depth_falls_in_another_bin"], f"{p}.targets_whose_printed_depth_falls_in_another_bin (the "
+          "depth printed to 0.01 mm in results/g2/g2_targets.csv puts these targets in a neighbouring bin)")
+    for key, c in d["comparisons"].items():
+        tok = DB_TOK[key]
+        pop = []
+        for i, b in enumerate(c["bins"]):
+            bt, path = f"{b['lo']:.0f}_{b['hi']:.0f}", f"{DB} :: comparisons['{key}'].bins[{i}]"
+            F.add(f"rev_db_{tok}_{bt}_n", count(b["n"]), b["n"], f"{path}.n (targets with {b['lo']:g} <= depth < {b['hi']:g} mm)")
+            F.add(f"rev_db_{tok}_{bt}_n_parcels", count(b["n_parcels"]), b["n_parcels"], f"{path}.n_parcels (parcel labels "
+                  "present in the bin: the bootstrap's units)")
+            if "ratio" not in b:
+                continue
+            F.ratio(f"rev_db_{tok}_{bt}", b["ratio"], f"{path} (ratio: the median over the bin's {b['n']:,} targets stored in "
+                    f"{c['stored'].split(' :: ')[0]}, {c['description']}; ci95_ratio: 95 % interval from {m['n_boot']:,} "
+                    f"resamples of its {b['n_parcels']} parcel labels)", b["ci95_ratio"], three=True)
+            pop.append(b)
+        F.add(f"rev_db_{tok}_n_bins", count(len(pop)), len(pop), f"{DB} :: comparisons['{key}'].bins (bins with a median)")
+        for side, st in DB_SIDES:
+            labs = c[f"bins_ci_{side}_1"]
+            names = [bin_name(*map(float, x.split("-"))) for x in labs]
+            src = f"{DB} :: comparisons['{key}'].bins_ci_{side}_1 (bins whose 95 % interval {side} {'' if side == 'spans' else 'lies '}" \
+                  f"{'1' if side == 'spans' else ('above 1' if side == 'above' else 'below 1')}; mm)"
+            F.add(f"rev_db_{tok}_bins_ci_{st}", listing(names, str), labs, src)
+            F.add(f"rev_db_{tok}_n_bins_ci_{st}", count(len(labs)), len(labs), src)
+        sides = [b["ci_vs_1"] for b in pop]
+        k = 0
+        while k < len(sides) and sides[k] == "above":
+            k += 1
+        if k:
+            b = pop[k - 1]
+            src = (f"{DB} :: derived: comparisons['{key}'].bins[*].ci_vs_1, the deepest bin of the run from the shallowest bin "
+                   "in which every interval lies above 1")
+            F.add(f"rev_db_{tok}_ci_above1_through_bin", bin_name(b["lo"], b["hi"]), [b["lo"], b["hi"]], src)
+            F.add(f"rev_db_{tok}_ci_above1_to_mm", f"{b['hi']:.0f}", b["hi"], src + " (its deep edge, mm)")
+        j = len(sides)
+        while j > 0 and sides[j - 1] == "below":
+            j -= 1
+        if j < len(sides):
+            b = pop[j]
+            F.add(f"rev_db_{tok}_ci_below1_from_bin", bin_name(b["lo"], b["hi"]), [b["lo"], b["hi"]], f"{DB} :: derived: "
+                  f"comparisons['{key}'].bins[*].ci_vs_1, the shallowest bin from which every deeper interval lies below 1")
+        below = [i for i, b in enumerate(pop) if b["ratio"] < 1]
+        if below and below == list(range(below[0], len(pop))):
+            run = pop[below[0]:]
+            src = (f"{DB} :: derived: comparisons['{key}'].bins[*], the bins from the shallowest one from which every deeper "
+                   "median is below 1")
+            F.add(f"rev_db_{tok}_median_below1_from_bin", bin_name(run[0]["lo"], run[0]["hi"]), [run[0]["lo"], run[0]["hi"]], src)
+            F.add(f"rev_db_{tok}_median_below1_n_ci_below1", count(sum(b["ci_vs_1"] == "below" for b in run)),
+                  sum(b["ci_vs_1"] == "below" for b in run), src + f": how many of their {len(run)} intervals lie below 1")
+        deep = [b for b in pop if 35 <= b["lo"] and b["hi"] <= 60]
+        if deep:
+            lo, hi = min(b["ci95_ratio"][0] for b in deep), max(b["ci95_ratio"][1] for b in deep)
+            src = (f"{DB} :: derived: comparisons['{key}'].bins 35-40 to 55-60 mm, the lowest lower and the highest upper "
+                   "95 % bound")
+            F.add(f"rev_db_{tok}_35_60_ci_envelope", ci_text(lo, hi), [lo, hi], src)
+            F.add(f"rev_db_{tok}_35_60_ci_envelope_3dp", ci_text(lo, hi, r3), [lo, hi], src)
+
+
+# ------------------------------------------------------------------------------------------------
+# the targets at which the dense array is not ahead (rev_g2_notahead_; Referee 1, minor 13)
+G2_TARGETS, G2_SUMMARY = "results/g2/g2_targets.csv", "results/g2/g2_summary.json"
+DK_READABLE = {"bankssts": "banks of the superior temporal sulcus", "caudalanteriorcingulate": "caudal anterior cingulate",
+               "caudalmiddlefrontal": "caudal middle frontal", "cuneus": "cuneus", "entorhinal": "entorhinal",
+               "fusiform": "fusiform", "inferiorparietal": "inferior parietal", "inferiortemporal": "inferior temporal",
+               "isthmuscingulate": "isthmus cingulate", "lateraloccipital": "lateral occipital",
+               "lateralorbitofrontal": "lateral orbitofrontal", "lingual": "lingual", "medialorbitofrontal": "medial orbitofrontal",
+               "middletemporal": "middle temporal", "parahippocampal": "parahippocampal", "paracentral": "paracentral",
+               "parsopercularis": "pars opercularis", "parsorbitalis": "pars orbitalis", "parstriangularis": "pars triangularis",
+               "pericalcarine": "pericalcarine", "postcentral": "postcentral", "posteriorcingulate": "posterior cingulate",
+               "precentral": "precentral", "precuneus": "precuneus", "rostralanteriorcingulate": "rostral anterior cingulate",
+               "rostralmiddlefrontal": "rostral middle frontal", "superiorfrontal": "superior frontal",
+               "superiorparietal": "superior parietal", "superiortemporal": "superior temporal", "supramarginal": "supramarginal",
+               "frontalpole": "frontal pole", "temporalpole": "temporal pole", "transversetemporal": "transverse temporal",
+               "insula": "insula", "unknown": "medial wall"}
+HEMI = {"lh": "left", "rh": "right"}
+
+
+def printed_half_unit(text: str) -> float:
+    """Half a unit in the last printed digit ('0.4150' -> 5e-5)."""
+    mant, _, exp = text.lower().partition("e")
+    return 0.5 * 10.0 ** ((int(exp) if exp else 0) - (len(mant.split(".")[1]) if "." in mant else 0))
+
+
+def readable_region(label: str) -> str:
+    """'lh.medialorbitofrontal' -> 'left medial orbitofrontal'; 'lh.unknown' -> 'left medial wall'."""
+    hemi, parcel = label.split(".", 1)
+    return f"{HEMI[hemi]} {DK_READABLE[parcel]}"
+
+
+def notahead_facts(F, root):
+    s = load(root, G2_SUMMARY)
+    key = "opm_dense/combined/intrinsic+brain"
+    e = s["primary"]["oracle"][key]
+    stored = round((1 - e["share_opm_better"]) * e["n"])
+    rows = G12.read_csv(root, G2_TARGETS)
+    if len(rows) != e["n"]:
+        raise ValueError(f"{G2_TARGETS}: {len(rows)} rows, {e['n']} targets in {G2_SUMMARY}")
+    a_col, b_col = "detect_opm_dense_opm_intrinsic+brain", "detect_squid_combined_intrinsic+brain"
+    sure, tie = [], []
+    for i, r in enumerate(rows):  # 'not ahead' = d_OPM <= d_Neuromag, as share_opm_better counts d_OPM > d_Neuromag
+        a, b = float(r[a_col]), float(r[b_col])
+        ea, eb = printed_half_unit(r[a_col]), printed_half_unit(r[b_col])
+        if a + ea <= b - eb:
+            sure.append(i)
+        elif a - ea <= b + eb:
+            tie.append(i)
+    if len(sure) != stored:
+        raise ValueError(f"{G2_TARGETS}: {len(sure)} targets are surely not ahead at the CSV's precision and {len(tie)} "
+                         f"undecided, but {G2_SUMMARY} counts {stored}")
+    src_n = (f"{G2_SUMMARY}, {G2_TARGETS} :: derived: (1 - primary.oracle['{key}'].share_opm_better) x n ({e['n']:,} targets) "
+             f"= {stored}: the dense OPM array (208 sites) against Neuromag (306 channels), sensor + brain noise, d_OPM <= "
+             f"d_Neuromag; in the CSV (4 decimals) these {stored} lie below Neuromag by more than the rounding, and the "
+             f"{len(tie)} undecided by rounding (equal to 4 decimals) are therefore ahead")
+    F.add("rev_g2_notahead_n", count(stored), stored, src_n)
+    F.add("rev_g2_notahead_n_csv_undecided", count(len(tie)), len(tie), src_n + " (the undecided ones)")
+    order = sorted(sure, key=lambda i: float(rows[i]["depth_mm"]))
+    depths, ratios, regions, lobes = [], [], [], []
+    for k, i in enumerate(order, 1):
+        r = rows[i]
+        src = f"{G2_TARGETS} :: data row {i + 1} (hemi {r['hemi']}, vertno {r['vertno']}; target {k} of the {stored}, by depth)"
+        dep, ratio = float(r["depth_mm"]), float(r[a_col]) / float(r[b_col])
+        F.add(f"rev_g2_notahead_{k}_depth_mm", mm(dep), dep, f"{src}: depth_mm (below the scalp, mm)")
+        F.add(f"rev_g2_notahead_{k}_region", r["region"], r["region"], f"{src}: region (FreeSurfer label)")
+        F.add(f"rev_g2_notahead_{k}_parcel", readable_region(r["region"]), r["region"], f"{src}: region, in words ('unknown' = "
+              "the medial wall)")
+        F.add(f"rev_g2_notahead_{k}_lobe", r["lobe"] if r["lobe"] != "other" else "none (medial wall)", r["lobe"], f"{src}: lobe")
+        F.add(f"rev_g2_notahead_{k}_vertno", r["vertno"], int(r["vertno"]), f"{src}: vertno (vertex of the "
+              f"{HEMI[r['region'].split('.')[0]]} white surface)")
+        F.add(f"rev_g2_notahead_{k}_ratio_3dp", r3(ratio), ratio, f"{src}: {a_col} / {b_col} (values as printed, 4 decimals)")
+        depths.append(dep)
+        ratios.append(ratio)
+        regions.append(r["region"])
+        lobes.append(r["lobe"])
+    src = f"{G2_TARGETS} :: derived: the {stored} targets of rev_g2_notahead_n"
+    F.span("rev_g2_notahead_depth_mm", depths, mm, src + ", depth_mm")
+    F.span("rev_g2_notahead_ratio", ratios, r3, src + f", {a_col} / {b_col}")
+    tally = {lab: regions.count(lab) for lab in dict.fromkeys(sorted(regions, key=lambda x: (-regions.count(x), x)))}
+    F.add("rev_g2_notahead_regions", listing([f"{readable_region(lab)} ({n})" for lab, n in tally.items()], str),
+          tally, src + ", region (count per label)")
+    for lab, n in tally.items():
+        F.add(f"rev_g2_notahead_n_{lab.replace('.', '_')}", count(n), n, src + f", region == '{lab}'")
+    hemis = sorted({HEMI[x.split(".")[0]] for x in regions})
+    F.add("rev_g2_notahead_hemispheres", listing(hemis, str), hemis, src + ", the hemispheres of their regions")
+    lt = {lb: lobes.count(lb) for lb in dict.fromkeys(sorted(lobes, key=lambda x: (-lobes.count(x), x)))}
+    F.add("rev_g2_notahead_lobes", listing([f"{lb if lb != 'other' else 'medial wall'} ({n})" for lb, n in lt.items()], str), lt,
+          src + ", lobe (count; 'other' = the medial wall)")
+
+
+# ------------------------------------------------------------------------------------------------
+# bootstrap counts and random seeds that no other module states (rev_boot_, rev_seed_). Already facts elsewhere: the
+# resample counts meth_boot_g2, _g2_sens, _g2_patch, _g2_band, _hse, _g3b_dense, _g3b_matched, _g3b_placements,
+# _g3b_channels, _g3b_useful, _cgap_primary, _cgap_other, _covval, _noise_sens, _g4, _loc, _confirm and
+# meth_boot_g2_parcels, rev_ns_n_boot, rev_cov_n_boot (+ rev_cov_n_surrogates, _n_band_surrogates, _heldout_n_splits),
+# rev_cgap_n_boot_primary, _secondary, rev_db_n_boot, meth_signflip_mc_patterns, meth_motion_draws; the seeds
+# meth_seed_g2, _g3b_boot, _g3b_school_boot, _g4_detection, _g4_localization, _loc_heldout, _loc_secondary, _g4_boot,
+# _confirm_root (+ meth_confirm_purposes), rev_ns_boot_seed, rev_cov_seed, rev_db_seed, mot_coupling_seed, mot_tc_seed.
+# Values set in code are read from the line that sets them when the facts are built (a changed line raises).
+def code_line(root, rel: str, pattern: str, after: str | None = None):
+    """(match, line number) of the first line of `rel` matching `pattern` (after the first line matching `after`)."""
+    lines = (Path(root) / rel).read_text().splitlines()
+    start = 0
+    if after is not None:
+        hits = [i for i, line in enumerate(lines) if re.search(after, line)]
+        if not hits:
+            raise ValueError(f"{rel}: no line matches {after!r}")
+        start = hits[0]
+    for i in range(start, len(lines)):
+        m = re.search(pattern, lines[i])
+        if m:
+            return m, i + 1
+    raise ValueError(f"{rel}: no line matches {pattern!r}" + (f" after {after!r}" if after else ""))
+
+
+def code_int(root, rel: str, pattern: str, after: str | None = None, group: int = 1) -> tuple[int, int]:
+    """(integer of `group`, line number) of the first line matching `pattern`: a value set in code."""
+    m, ln = code_line(root, rel, pattern, after)
+    return int(m.group(group)), ln
+
+
+def seed_facts(F, root):
+    g2seed = tomllib.loads((Path(root) / CFG_G2).read_text())["sources"]["seed"]
+    rel = "scripts/g2_adult_comparison.py"
+    _, ls = code_line(root, rel, r'self\.rng = np\.random\.default_rng\(cfg\["sources"\]\["seed"\]\)')
+    v, ln = code_int(root, rel, r"rng = np\.random\.default_rng\((\d+)\)", after=r"^def patch_analysis\(")
+    F.add("rev_seed_g2_patch_boot", str(v), v, f"{G2_SUMMARY}, {rel} :: patches.comparisons (their 200-resample parcel "
+          f"bootstrap draws from np.random.default_rng({v}), {rel}:{ln})")
+    v, ln = code_int(root, rel, r"rng = np\.random\.default_rng\((\d+)\)", after=r"^def convergence\(")
+    F.add("rev_seed_g2_convergence", str(v), v, f"{G2_SUMMARY}, {rel} :: convergence (the random target subset of the "
+          f"convergence checks, also used by results/g2/bem_skin_refinement.json: np.random.default_rng({v}), {rel}:{ln})")
+    for name, script, res, what in (
+            ("g2_band", "scripts/g2_band_sensitivity.py", "results/g2/g2_band_sensitivity.json", "the band sensitivity's "
+             "200-resample target bootstrap"),
+            ("g2_hse", "scripts/study_head_surface_effect.py", "results/g2/head_surface_effect.json", "the head-surface and "
+             "OPM-axis decomposition's 1,000-resample parcel bootstrap")):
+        _, ln = code_line(root, script, r"st = G2?\.Study\(cfg\)")
+        F.add(f"rev_seed_{name}", str(g2seed), g2seed, f"{res}, {CFG_G2} :: sources.seed ({what}: {script}:{ln} builds "
+              f"g2_adult_comparison.Study, whose generator is np.random.default_rng(sources.seed), {rel}:{ls}; the targets "
+              "are drawn first, as in the adult analysis)")
+    nm = load(root, "results/g2/near_mesh_check.json")
+    v, ln = code_int(root, "scripts/study_opm_near_mesh.py", r"^SEED = (\d+)$")
+    if v != nm["seed"]:
+        raise ValueError("results/g2/near_mesh_check.json: seed differs from scripts/study_opm_near_mesh.py SEED")
+    F.add("rev_seed_g2_near_mesh", str(v), v, f"results/g2/near_mesh_check.json :: seed (its {nm['n_sources']:,} random "
+          f"sources; scripts/study_opm_near_mesh.py:{ln})")
+    bs = load(root, "results/g2/bem_sphere_check.json")
+    m = re.search(r"^N_SENSORS, N_DIPOLES, SEED = (\d+), (\d+), (\d+)$",
+                  (Path(root) / "scripts/study_bem_sphere_accuracy.py").read_text(), re.M)
+    if not m or (int(m.group(1)), int(m.group(2))) != (bs["n_sensors"], bs["n_dipoles"]):
+        raise ValueError("scripts/study_bem_sphere_accuracy.py: N_SENSORS, N_DIPOLES, SEED line missing or not the stored run")
+    F.add("rev_seed_bem_sphere", m.group(3), int(m.group(3)), "results/g2/bem_sphere_check.json, scripts/study_bem_sphere_"
+          f"accuracy.py :: n_sensors, n_dipoles (random sensor directions and dipoles of the BEM accuracy check: SEED = "
+          f"{m.group(3)})")
+    g1b = load(root, "results/g1b/g1b_summary.json")
+    v = g1b["config"]["sources"]["seed"]
+    F.add("rev_seed_g1b", str(v), v, "results/g1b/g1b_summary.json :: config.sources.seed (the Hunold benchmark: dipole and "
+          "background-source draws; realization r of the background uses np.random.default_rng([seed, 1, r]))")
+    v, ln = code_int(root, "scripts/g1b_hunold.py", r"noise\.white_noise\(asd, fs, bgs\[var\]\[k\]\.shape, "
+                     r"np\.random\.default_rng\((\d+)\)\)")
+    F.add("rev_seed_g1b_noise", str(v), v, f"results/g1b/g1b_summary.json, scripts/g1b_hunold.py :: the sensor-noise series "
+          f"of the benchmark's SNR analysis (np.random.default_rng({v}), scripts/g1b_hunold.py:{ln})")
+    v, ln = code_int(root, "scripts/g1c_goldenholz.py", r"rng = np\.random\.default_rng\((\d+)\)")
+    F.add("rev_seed_g1c", str(v), v, f"results/g1c/g1c_summary.json, scripts/g1c_goldenholz.py :: n_noise_sources (the "
+          f"Poisson-disk noise-source grid of the Goldenholz benchmark: np.random.default_rng({v}), scripts/g1c_goldenholz.py:{ln})")
+    rel3 = "scripts/g3b_pediatric_helmet.py"
+    off, ln = code_int(root, rel3, r'rng = np\.random\.default_rng\(g2cfg\["sources"\]\["seed"\] \+ (\d+)\)')
+    F.add("rev_seed_g3b_patches", str(g2seed + off), g2seed + off, f"results/g3b/g3b_summary.json, {CFG_G2}, {rel3} :: "
+          f"patches_median_D_dB (patch centres drawn with np.random.default_rng(sources.seed + {off}), {rel3}:{ln})")
+    v, ln = code_int(root, rel3, r"np\.random\.default_rng\((\d+)\),", after=r"^def usefulness\(")
+    F.add("rev_seed_g3b_useful", str(v), v, f"results/g3b/g3b_summary.json, {rel3} :: usefulness[<head>]['q_threshold_vs_depth/"
+          f"...'] (their 200-resample strata intervals: np.random.default_rng({v}), {rel3}:{ln})")
+    d = load(root, CGAP)
+    streams = d["n_boot"]["streams"]
+    m = re.match(r"numpy default_rng\(SeedSequence\(\[(\d+) \(configs/g2_adult\.toml sources\.seed\)", streams)
+    if not m or int(m.group(1)) != g2seed:
+        raise ValueError(f"{CGAP}: n_boot.streams does not name the seed of {CFG_G2}")
+    F.add("rev_seed_cgap", m.group(1), int(m.group(1)), f"{CGAP}, {CFG_G2} :: n_boot.streams ({streams})")
+    v, ln = code_int(root, "src/opmsquid/detection.py", r"^def sign_flip_p\(x, n_mc=\d+, seed=(\d+)\):")
+    row = next((x for x in (Path(root) / "docs/methods.md").read_text().splitlines() if x.startswith("| IC-SIGNFLIP-MC |")), "")
+    if f"(seed {v})" not in row:
+        raise ValueError("docs/methods.md: IC-SIGNFLIP-MC does not state the seed of detection.sign_flip_p")
+    F.add("rev_seed_signflip_mc", str(v), v, f"docs/methods.md, src/opmsquid/detection.py :: section 13 IC-SIGNFLIP-MC ('... "
+          f"(seed {v})': the Monte Carlo sign patterns of the location-level test beyond 20 non-zero differences; "
+          f"detection.sign_flip_p, src/opmsquid/detection.py:{ln})")
+    cc = tomllib.loads((Path(root) / "configs/g4_confirmatory.toml").read_text())["design"]
+    F.add("rev_seed_confirm_replicates", count(cc["noise_replicates"]), cc["noise_replicates"], "configs/g4_confirmatory.toml :: "
+          "design.noise_replicates ([declared] independent noise realizations of every event, each its own stream "
+          "(spawn key: anatomy, purpose, replicate); replicate 0 is the confirmatory one)")
+
+
+# ------------------------------------------------------------------------------------------------
+# RESERVED: the facts of the revision analysis whose results are not committed yet (rev_conf_). Write them when the
+# result files land, call them from facts() below, and name them with this prefix and source:
 #   rev_conf_  the confirmatory spike run (endpoint, seeds and sample size declared in configs/g4_confirmatory.toml):
 #              scripts/g4_confirmatory.py -> results/g4_confirm/g4_confirm_summary.json and g4c_<anatomy>_summary.json
-# Until then no fact carries these prefixes, so a report reference to one fails the site build instead of printing a
-# number that does not exist yet; tests/test_report_facts_rev.py checks that every such fact cites its own result file.
+# Until then no fact carries this prefix, so a report reference to one fails the site build instead of printing a number
+# that does not exist yet. rev_cgap_ (the counterfactual helmet fitted at the adult's gap, scripts/study_g3b_constant_gap.py)
+# was reserved here too; its facts are the section above. tests/test_report_facts_rev.py checks that every fact of either
+# prefix cites its own result file.
 RESERVED = {"rev_cgap_": "results/g3b_constant_gap/g3b_constant_gap_summary.json",
             "rev_conf_": "results/g4_confirm/g4_confirm_summary.json"}
 
@@ -1479,6 +2292,10 @@ def facts(root: Path = ROOT) -> dict:
     ns_facts(F, root)
     cov_facts(F, root)
     qc_facts(F, root)
+    cgap_facts(F, root)  # stage B2 sections from here on
+    db_facts(F, root)
+    notahead_facts(F, root)
+    seed_facts(F, root)
     return dict(F)
 
 
