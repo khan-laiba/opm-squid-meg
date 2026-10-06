@@ -1033,7 +1033,9 @@ def fix_conditions(fig: Figure, principal: bool = False) -> None:
 def fix_noise_checks(fig: Figure, principal: bool = False) -> None:
     """Fig. 4 (R17), its type raised to 7.6 pt (draw_noise_checks sets report_figures_noise's FS_* and HEIGHT_IN; the
     rest here): in (D) the break-even intervals after the projection are dotted, the projection's line style, and the
-    open diamonds get their own key entry beside the filled ones. The dB axes are checked again."""
+    open diamonds get their own key entry beside the filled ones; the break-even values, which the report wrote beside
+    their diamonds among the curves, are given instead in a small key of the diamonds in the empty lower left corner of
+    (D), checked to cover no plotted point. The dB axes are checked again."""
     axd = next(a for a in fig.findobj(lambda o: isinstance(o, matplotlib.axes.Axes))
                if a.get_legend() is not None and any("break-even" in t.get_text() for t in a.get_legend().get_texts()))
     n = 0
@@ -1055,6 +1057,25 @@ def fix_noise_checks(fig: Figure, principal: bool = False) -> None:
     labels[i:i + 1] = ["break-even level, 95 % interval:\nsensor plus brain noise (filled)", "after the projection (open, dotted)"]
     rebuild_legend(old, handles, labels, loc="upper center", bbox_to_anchor=(0.5, -0.2), fontsize=7.6, handlelength=2.4,
                    borderaxespad=0.0, labelspacing=0.45, ncol=1)
+    # (D): the break-even values, written at their diamonds where the curves cross a ratio of 1, in a key of the
+    # diamonds (one column per array, dense first; filled above open) in the lower left corner, where nothing is plotted
+    diamonds = {(float(ln.get_xdata()[0]), float(ln.get_ydata()[0])): ln
+                for ln in axd.get_lines() if ln.get_marker() == "D"}
+    values = [t for t in axd.texts if re.fullmatch(r"\d+\.\d", t.get_text())]
+    if len(values) != 4 or any(tuple(map(float, t.xy)) not in diamonds for t in values):
+        raise SystemExit("Figure_R17_noise_checks: four break-even values, each at its diamond, expected in (D)")
+    order = [style.ARRAY_COLOR[a] for a in ("opm_dense", "opm_matched")]
+    values.sort(key=lambda t: (order.index(t.get_color()), t.xy[1] < 1))
+    marks = [diamonds[tuple(map(float, t.xy))] for t in values]
+    key = matplotlib.legend.Legend(
+        axd, [Line2D([], [], ls="none", marker="D", ms=d.get_markersize(), mew=d.get_markeredgewidth(),
+                     mec=d.get_markeredgecolor(), mfc=d.get_markerfacecolor()) for d in marks],
+        [t.get_text() for t in values], loc="lower left", ncol=2, fontsize=7.6, title="break-even level",
+        title_fontsize=7.6, alignment="left", handlelength=0.9, handletextpad=0.3, columnspacing=1.0, borderpad=0.2,
+        labelspacing=0.4, borderaxespad=0.3)
+    axd.add_artist(key)
+    for t in values:
+        t.remove()
     # (A): its key, below the three rows, would cover the last row's label at 7.6 pt: more empty room below the rows
     axa = next(a for a in fig.findobj(lambda o: isinstance(o, matplotlib.axes.Axes))
                if a.get_legend() is not None and any("measured noise" in t.get_text() for t in a.get_legend().get_texts()))
@@ -1072,6 +1093,9 @@ def fix_noise_checks(fig: Figure, principal: bool = False) -> None:
                 t.set_x(0.012)
     floor_fonts(fig, 7.6)
     sys.modules["report_figures_adult"].check_db_axes(fig)
+    if legend_hits(axd, key, full=True):
+        raise SystemExit(f"Figure_R17_noise_checks: D's key of the break-even values covers "
+                         f"{legend_hits(axd, key, full=True)} plotted points")
 
 
 ROW_IN = 0.24  # R6: inches per row unit (the report's 2.24 in for the 9.4 units of nine anatomies)
@@ -2198,18 +2222,21 @@ def fix_geometry(fig: Figure, principal: bool = False) -> None:
 
 def fix_adult_depth(fig: Figure, principal: bool = False) -> None:
     """Fig. 5 (R1): drawn by its script at the report's 7.2-in width, printed at about 0.89 of that: its 7-pt type (the
-    counts per bin and the keys) raised to 7.35 pt (6.5 pt printed); the keys checked to stay clear of the curves and the
-    dB axes checked again. A's key, two columns, set with slightly shorter handles and column spacing to keep its
-    footprint."""
+    counts per bin and the keys) raised to 7.35 pt (6.5 pt printed); the keys checked to stay clear of the curves (their
+    boxes, border pads included, cover no plotted point) and the dB axes checked again. A's key, two columns, set with
+    slightly shorter handles and column spacing to keep its footprint, and its longest entry on two lines (the same
+    words): narrower, the key stands in the empty upper right of A instead of over the shallowest bins."""
     floor_fonts(fig, 7.35)
     a = next(ax for ax in fig.axes if ax.get_legend() is not None and ax.get_legend()._ncols == 2)
-    rebuild_legend(a.get_legend(), loc="upper right", ncol=2, fontsize=7.35, handlelength=2.2, columnspacing=1.0,
-                   handletextpad=0.6)
+    two = {s.replace("\n", " "): s for s in ("Sensor, brain and room noise,\nroom field projected out",)}
+    old = a.get_legend()
+    rebuild_legend(old, labels=[rewrapped(t.get_text(), two) for t in old.get_texts()], loc="upper right", ncol=2,
+                   fontsize=7.35, handlelength=2.2, columnspacing=1.0, handletextpad=0.6)
     fig.canvas.draw()
     for ax in fig.axes:
         lg = ax.get_legend()
-        if lg is not None and legend_hits(ax, lg):
-            raise SystemExit(f"Figure_R1_adult_depth: a key covers {legend_hits(ax, lg)} plotted points")
+        if lg is not None and legend_hits(ax, lg, full=True):
+            raise SystemExit(f"Figure_R1_adult_depth: a key covers {legend_hits(ax, lg, full=True)} plotted points")
     sys.modules["report_figures_adult"].check_db_axes(fig)
     no_clashes(fig, "Figure_R1_adult_depth")
 

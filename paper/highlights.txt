@@ -3,5 +3,5 @@ Highlights
 - With modeled brain noise, a dense OPM array has higher detectability than SQUID MEG
 - The dense-array advantage is as large as the model's error in SQUID detectability
 - Which system has the higher SNR depends on OPM noise, array design and SNR measure
-- Much of the larger OPM advantage in small heads reflects the adult helmet's fit
+- In scaled and template heads, the extra OPM advantage largely reflects helmet fit
 - Idealized detectors detect weaker simulated spikes with dense OPMs than with SQUIDs

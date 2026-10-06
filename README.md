@@ -62,8 +62,7 @@ in *D* from the adult (area-weighted medians).
    covariance, Neuromag has 1.14 (1.08–1.20) times its modeled detectability. Because the OPM covariance was not
    measured, the implied ratio was computed under five assumptions about how each system's noise departs from the
    model. It ranges from 0.80 to 1.14 for the dense array and is 1.03 (0.99–1.08) with Neuromag's noise as measured
-   and the OPM noise as modeled, in which case the dense array's break-even level would fall to near 15 fT/√Hz.
-   Fig. 4, Table 3.
+   and the OPM noise as modeled, so that the dense array then has no clear advantage at 15 fT/√Hz. Fig. 4, Table 3.
 4. In the fixed adult helmet, the four principal smaller heads have larger median magnetometer-to-scalp distances
    than the adult (34.1–40.4 against 28.4 mm) and a larger dense-array advantage (Δ = +0.44 to +1.07 dB). Relative to
    the fitted helmet, the fixed helmet lowers Neuromag's detectability more in each of these heads than in the adult
@@ -157,7 +156,7 @@ committed in `paper/figures/`, so the PDFs can be rebuilt without the external d
 The build also writes `paper/build/numbers_used.tsv` (not committed), which lists every value with the file and key
 it was read from. `.venv/bin/python paper/export_figures.py` redraws the print figures from `results/`; it also reads
 the external data (the cortical surfaces for the maps and the T1-weighted images for Fig. S6) and stops without them.
-The results reported in the paper are those of commit f167fd3, and `results/` has not changed since.
+The paper's data and code availability statement names the commit of the result files it reports.
 [`scripts/README.md`](scripts/README.md) gives the scripts and result files behind each figure and table.
 
 **From the external data.** `scripts/run_all.sh` runs the unit tests, then the analyses in the order in which they

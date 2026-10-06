@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""G4 confirmatory spike-detection run (revision after referee round 1; NEW).
+"""G4 confirmatory spike-detection run (pre-specified; Sections 2.5 and S7.5 of the paper).
 
 The exploratory spike study (scripts/g4_epilepsy_adult.py, g4_epilepsy_pediatric.py; results/g4)
 chose its endpoint after the analyses (report Section 2.8). Here that endpoint is fixed in advance

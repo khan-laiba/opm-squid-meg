@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 NEEDED = ["results/g1a/g1a_benchmark.json", "results/g1a/fig3/figure3_summary.json", "results/g1b/g1b_summary.json",
           "results/g1c/g1c_summary.json", "results/g2/g2_summary.json", "results/g2/g2_band_sensitivity.json",
           "results/g2/g2_targets.csv", "results/g2/g2_patch_targets.csv", "results/g2/head_surface_effect.json",
-          "results/g2/near_mesh_check.json", "results/g2/bem_skin_refinement.json", "results/g2/bem_skin_refinement_v1_arrays.json",
+          "results/g2/near_mesh_check.json", "results/g2/bem_skin_refinement.json",
           "results/g2/bem_sphere_check.json"]
 PREFIXES = ("g1a_", "g1b_", "g1c_", "g2_", "reg_", "lit_")
 

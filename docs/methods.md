@@ -135,8 +135,8 @@ A-BEM-SKIN, v2): on-scalp sensors sit a few millimetres from it, where the field
 surface is not converged on this head. On the v1 arrays (cells up to 2.4 mm inside the coarse
 surface) refining it changed the field at OPM integration points by a median 0.7-0.8 % of the
 array field scale at 3-4 mm (95th percentile 8-12 %), more below 2 mm, and the dense-array
-headline by -2.4 % (`results/g2/*_v1_arrays.*`: historic v1-array diagnoses recorded at
-271a36d+dirty, kept for the record, not reproducible at this baseline). On the v2 arrays (every integration point
+headline by -2.4 % (historic v1-array diagnoses, not reproducible at this baseline; removed from the
+release and kept in the repository history at commit 92203bd). On the v2 arrays (every integration point
 >= 1 mm outside) the same comparison gave a median 0.66-0.74 % at 3-4 mm (95th percentile
 7.5-9.8 %), 1.3-1.6 % at 2-2.5 mm and 4-5 % below 1.5 mm, and the dense-array headline changed by
 -1.6 % (1.147x coarse, 1.129x refined). On the v3 arrays (the whole cell >= 1 mm outside; no

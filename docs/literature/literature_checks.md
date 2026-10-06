@@ -6,7 +6,7 @@ This note records five checks of the literature behind the manuscript: the full 
 
 | # | Question | Finding | Consequence for the manuscript |
 |---|---|---|---|
-| 1 | Ren et al. (2025): is the full text accessible? | Yes in principle: the article is open access (CC BY 4.0) at the publisher. It is not in PMC or Europe PMC. The publisher's site refused every automated reader available to this check, so the full text was **not read**. | Keep the "abstract only" label. The systems, sensor noise, channels and SNR definition are not verifiable. Indirect evidence points to a MEGIN TRIUX and the 128-channel X-Magtech OPM system. |
+| 1 | Ren et al. (2025): is the full text accessible? | The article is open access (CC BY 4.0) at the publisher but is not in PMC or Europe PMC. Its full text was **not read** for this check. | Keep the "abstract only" label. The systems, sensor noise, channels and SNR definition are not verifiable. Indirect evidence points to a MEGIN TRIUX and the 128-channel X-Magtech OPM system. |
 | 2 | Jas et al. (2026): published since? | **No.** Only bioRxiv version 1 (21 August 2026) exists. There is no journal version and no data or code deposit. | No value changes. The figure readings stay labelled as readings of the preprint; their method and uncertainty are in Section 2. |
 | 3 | Neuromag sensor noise | The manufacturer's TRIUX datasheet gives typical white noise of 3.5 fT/√Hz (magnetometers) and 3.6 fT/(cm √Hz) (gradiometers), and an 18-mm average coil-to-surface distance. These are exactly the study's values. The VectorView manual gives guaranteed maxima only. | The three hardware values can be cited to the TRIUX datasheet; they are no longer "not verified". |
 | 4 | OPM cell size and standoff | Cell centre to the sensor's outer surface: 6–6.5 mm for QuSpin, 5 mm for FieldLine. QuSpin cells are 3 × 3 × 3 mm³. No accessible source gives FieldLine's cell size. No device source gives a 10-mm cell. | The 7-mm sensing-centre height is supported. Describe the 10-mm cube as a modelling choice (an averaging volume), not a device cell; its effect at the field peak is at most 1.9 %. |
@@ -25,12 +25,7 @@ This note records five checks of the literature behind the manuscript: the full 
   - OpenAlex and Semantic Scholar list the article as gold open access under CC BY.
   - The other records disagree. PubMed shows only an Elsevier copyright line and no licence. Europe PMC records the CC BY licence but labels its publisher link "subscription required". The licence record is the publisher's own deposit. Read: metadata.
 - **Repositories.** The article is not in PMC and not in Europe PMC; Europe PMC record 40254146 has no full text.
-- **Reading attempts.**
-  - The ScienceDirect article page refused automated access in three ways: HTTP 403 to a page fetcher, an access-error page in a desktop browser, and a crawler error.
-  - Elsevier's article API requires a key.
-  - The Internet Archive holds two captures of the page (May and August 2025), both HTTP 403.
-  - The DOAJ record links back to ScienceDirect. The Beihang University research portal shows the abstract only.
-  - We did not try to get around the publisher's block.
+- **Full text.** The publisher's page could not be read for this check, and the DOAJ record and the Beihang University research portal give the abstract only.
 - **Result.** The following are **not verifiable from accessible sources**: the OPM sensor type and noise, the SQUID system, the comparator channels, the SNR and amplitude definitions, the effect sizes and the table values. The extraction in `epilepsy_opm_studies.md` §3.10 stays abstract-only and needs no correction.
 
 **What accessible records add.** These are indirect; they are not the article's text.
@@ -66,7 +61,7 @@ This note records five checks of the literature behind the manuscript: the full 
 - **Europe PMC.** It holds only the preprint record PPR1302855; its full-text service returned no text for it.
 - **Web search** for the exact title finds only the preprint.
 - **Data and code.** No deposit was found. The preprint itself has no data or code statement (`jas2026.md`, header notes).
-- Read: metadata and web search. The preprint was not re-read for this note, because bioRxiv rate-limited the request. Its values come from the project's extraction, `jas2026.md`.
+- Read: metadata and web search. The preprint was not re-read for this note; its values come from the project's extraction, `jas2026.md`.
 
 **Consequence: no value changes.** The table lists what the report takes from the preprint and how each value was obtained (`jas2026.md` §§5.5, 5.6 and 9).
 
@@ -283,16 +278,16 @@ Two reviews state the general picture:
   - FieldLine: the HEDscan page and the 2023 specification sheet;
   - Elekta/MEGIN: the TRIUX datasheet, the TRIUX technical manual and the VectorView technical manual, in copies hosted by NatMEG and the MRC CBU.
 - **Not accessible or not found**:
-  - the full text of Ren et al. (2025): the publisher's site refused automated access;
-  - bioRxiv pages: rate-limited, so the preprint was not re-read;
+  - the full text of Ren et al. (2025);
+  - the bioRxiv pages of the preprint, which were not re-read;
   - a TRIUX neo datasheet;
   - an X-Magtech specification with a band;
   - FieldLine's cell size;
   - any peer-reviewed measurement of Neuromag white noise, in the searches made.
 
-## Open points
+## Remaining points
 
-1. **Ren et al. (2025).** The article is open access. Reading it in an ordinary browser would settle the systems, the SNR and amplitude definitions, the channels, the sensor noise and any regional detail; `epilepsy_opm_studies.md` §3.10 would then move from abstract to full text.
-2. **Jas et al. (2026).** Check again before resubmission for a version of record or a data or code release.
-3. **The 10-mm cell.** The manuscript, the register (J-opm-cell, A-OPM-CELL) and `jas2026.md` §5.2 describe it as the device's cell. It should become a modelling choice (see Section 4).
-4. **The TRIUX values.** Once the datasheet is cited, the register rows HW-mag-noise, HW-grad-noise, HW-18mm and U-HW1 can change from "transcribed" to "manufacturer datasheet".
+1. **Ren et al. (2025).** The article is open access. Its full text would settle the systems, the SNR and amplitude definitions, the channels, the sensor noise and any regional detail; `epilepsy_opm_studies.md` §3.10 would then move from abstract to full text.
+2. **Jas et al. (2026).** A version of record or a data or code release should be looked for before publication.
+
+The two other points raised by these checks are settled: the manuscript and the register describe the 10-mm cube as a modelling choice (A-OPM-CELL), and the Neuromag noise values are cited to the TRIUX datasheet (HW-mag-noise, HW-grad-noise, HW-18mm).

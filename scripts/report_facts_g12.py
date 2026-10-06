@@ -32,7 +32,7 @@ G1B, G1C = "results/g1b/g1b_summary.json", "results/g1c/g1c_summary.json"
 G2, BAND = "results/g2/g2_summary.json", "results/g2/g2_band_sensitivity.json"
 TARGETS, PATCHES = "results/g2/g2_targets.csv", "results/g2/g2_patch_targets.csv"
 HSE, NEAR = "results/g2/head_surface_effect.json", "results/g2/near_mesh_check.json"
-SKIN, SKIN_V1 = "results/g2/bem_skin_refinement.json", "results/g2/bem_skin_refinement_v1_arrays.json"
+SKIN = "results/g2/bem_skin_refinement.json"
 SPHERE, JAS = "results/g2/bem_sphere_check.json", "docs/literature/jas2026.md"
 METHODS, REGISTER, CFG = "docs/methods.md", "docs/provenance_register.md", "configs/g2_adult.toml"
 LITJSON, LITMD = "docs/literature/epilepsy_opm_studies.json", "docs/literature/epilepsy_opm_studies.md"
@@ -932,9 +932,7 @@ def g2_primary_facts(F, d, root):
         F.ratio(f"g2_nowall_{ARRAYS[arr]}_vs_{comp}_{CONDS[cond]}", r,
                 f"{G2} :: medial_wall.ratios_without['{key}'] (median ratio without the medial-wall targets)", three=True)
     # history of the dense headline (dense vs combined, intrinsic + brain) over the model versions
-    hist = [("v1", load(root, SKIN_V1)["models"]["bem3_5120"]["ratio"]["opm_dense/combined/intrinsic+brain"],
-             f"{SKIN_V1} :: models.bem3_5120.ratio['opm_dense/combined/intrinsic+brain'] (v1 arrays, 5,120-triangle head surface, 1,000-target subset)"),
-            ("v2", 1.129, f"{REGISTER} :: A-BEM-SKIN (v2 arrays: 1.147x coarse vs 1.129x refined; 1,000-target subset)"),
+    hist = [("v2", 1.129, f"{REGISTER} :: A-BEM-SKIN (v2 arrays: 1.147x coarse vs 1.129x refined; 1,000-target subset)"),
             ("v3", load(root, HSE)["variants"]["v3"]["opm_dense/combined/intrinsic+brain"]["ratio"],
              f"{HSE} :: variants.v3['opm_dense/combined/intrinsic+brain'].ratio"),
             ("v4", 2 ** d["primary"]["oracle"]["opm_dense/combined/intrinsic+brain"]["median_log2"],
@@ -1194,8 +1192,8 @@ def g2_convergence_facts(F, d, root):
           f"{G2} :: convergence.target_sampling.max_abs_change_log2 (oct-6 vs random full-resolution targets)")
     w = max(c["whitening_tolerance_max_rel_change"].values())
     F.add("g2_conv_whitening_max_change", num(w, 0), w, f"{G2} :: convergence.whitening_tolerance_max_rel_change (largest)")
-    # head-surface refinement (bem_skin_refinement.json; v4 arrays and v1 arrays)
-    for rel, pre in ((SKIN, "g2_skin"), (SKIN_V1, "g2_skin_v1")):
+    # head-surface refinement (bem_skin_refinement.json)
+    for rel, pre in ((SKIN, "g2_skin"),):
         sk = load(root, rel)
         for model, x in sk["models"].items():
             for key, r in x["ratio"].items():

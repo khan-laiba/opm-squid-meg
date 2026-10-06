@@ -710,8 +710,8 @@ class Renderer:
         if n in ("ref", "eqref", "autoref"):
             key = a[0].strip()
             return ("(" if n == "eqref" else "") + f"\x00R:{key}\x00" + (")" if n == "eqref" else "")
-        if n in ("\\", "newline", "linebreak"):
-            return "<br>"
+        if n in ("\\", "newline", "linebreak"):  # with a newline, the text of the page keeps the break too
+            return "<br>\n"
         if n == "bibinfo":
             return f"<span class=\"bib-{attr(a[0])}\">{self.inline(a[1])}</span>"
         if n in WORD_SYMBOLS:
@@ -812,7 +812,7 @@ class Renderer:
                 out.extend(self.environment(node, out))
             elif isinstance(node, Cmd) and node.name == "tablenotes":
                 flush()
-                self.attach_notes(out, self.inline(node.args[0]))
+                self.attach_notes(out, self.note(node))
             elif isinstance(node, Cmd) and node.name == "bibliography":
                 flush()
                 out.append(self.references())
@@ -825,9 +825,8 @@ class Renderer:
                 para.append(Raw(f"<span id=\"{hid}\"></span>"))
             elif isinstance(node, Group) and self.is_block_group(node):
                 flush()
-                first = next((n for n in node.body if not (isinstance(n, Text) and not n.s.strip())), None)
-                if isinstance(first, Cmd) and first.name in SIZE_SWITCH and out and "<!--NOTES-->" in out[-1]:
-                    self.attach_notes(out, self.inline([n for n in node.body if not isinstance(n, Par)]).strip())
+                if self.is_note(node) and out and "<!--NOTES-->" in out[-1]:
+                    self.attach_notes(out, self.note(node))
                 else:
                     out.extend(self.blocks(node.body))
             elif isinstance(node, Cmd) and node.name in ("FloatBarrier", "linenumbers", "bibliographystyle",
@@ -854,12 +853,29 @@ class Renderer:
             return nodes[j].args[0].strip(), j + 1
         return None, k
 
-    def attach_notes(self, out: list[str], notes: str):
+    @staticmethod
+    def is_note(node) -> bool:
+        """\\tablenotes{...}, or a note set as \\tablenotes sets it: a group opening with a size switch,
+        {\\footnotesize\\raggedright ...\\par}."""
+        if isinstance(node, Cmd):
+            return node.name == "tablenotes"
+        if not isinstance(node, Group):
+            return False
+        first = next((n for n in node.body if not (isinstance(n, Text) and not n.s.strip())), None)
+        return isinstance(first, Cmd) and first.name in SIZE_SWITCH
+
+    def note(self, node) -> str:
+        body = node.args[0] if isinstance(node, Cmd) else node.body
+        if any(isinstance(n, Cmd) and n.name == "raggedleft" for n in body):  # 'Continued on the next page.': print only
+            return ""
+        return f"<div class=\"tablenotes\">{self.inline(body).strip()}</div>"
+
+    def attach_notes(self, out: list[str], note: str):
         if out and "<!--NOTES-->" in out[-1]:
-            out[-1] = out[-1].replace("<!--NOTES-->", f"<div class=\"tablenotes\">{notes}</div>")
+            out[-1] = out[-1].replace("<!--NOTES-->", note + "<!--NOTES-->")  # the marker stays for further notes
         else:
             self.warn("table notes without a preceding table")
-            out.append(f"<div class=\"tablenotes\">{notes}</div>")
+            out.append(note)
 
     def heading(self, c: Cmd, label: str | None) -> str:
         level = SECTIONING[c.name]
@@ -1063,19 +1079,24 @@ class Renderer:
 
     # -- tables
     def table(self, e: Env, wide: bool = False) -> str:
-        caption, label, head, body, ncols = None, None, "", "", 0
+        caption, label, head, body, ncols, continued = None, None, "", "", 0, False
         for node in e.body:
             if isinstance(node, Cmd) and node.name == "caption":
                 caption = node.args[0]
             elif isinstance(node, Cmd) and node.name == "label":
                 label = node.args[0].strip()
+            elif isinstance(node, Cmd) and node.name == "ContinuedFloat":
+                continued = True
             elif isinstance(node, Env) and node.name in RAW_ENVS:
                 head, body, ncols = self.tabular(node, LANDSCAPE_CM if (wide or self.landscape) else TEXT_CM)
-        self.counters["table"] += 1
+        if not continued:
+            self.counters["table"] += 1
         number = self.last_number = self.number("table")
-        hid = self.define(label, number) if label else self.new_id(f"tab-{number}")
-        notes = [n for n in e.body if isinstance(n, Cmd) and n.name == "tablenotes"]
-        notes_html = "".join(f"<div class=\"tablenotes\">{self.inline(n.args[0])}</div>" for n in notes)
+        if label:
+            hid = self.define(label, number)
+        else:
+            hid = self.new_id(f"tab-{number}" + ("-continued" if continued else ""))
+        notes_html = "".join(self.note(n) for n in e.body if self.is_note(n))
         cls = "table wide" if (wide or self.landscape) else "table"
         cls += f" cols{min(ncols, 8)}"
         return (f"<figure class=\"{cls}\" id=\"{hid}\"><figcaption><span class=\"label\">Table\u00a0{esc(number)}."

@@ -18,9 +18,6 @@ cache/
 /*.pptx
 /*.zip
 ~$*
-/refs/
-/prose_example/
-/story_*.md
 
 # manuscript build outputs (the compiled PDFs and the rendered sources in paper/ are kept)
 paper/build/

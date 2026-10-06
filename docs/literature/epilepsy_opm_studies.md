@@ -320,7 +320,7 @@ The table lists every study that recorded epileptiform activity with OPMs, in or
   - IED detection did not differ between systems (McNemar). OPM detection accuracy was 91.3 % relative to SQUID-MEG; Gwet AC1 was 0.892.
   - Among the 39 patients with IEDs in both systems, OPM-MEG had a closer sensor–scalp distance (p < 0.001), higher IED amplitude (p < 0.001) and higher SNR (p = 0.003).
   - Source localization was "nearly consistent" at the sublobar level. In 24 patients with single dipole clusters, the cluster centroids were 12.16 ± 5.90 mm apart.
-- **Read:** abstract only (PubMed 40254146; publisher abstract and highlights). The article is open access (CC BY 4.0 in the publisher's Crossref record), but its full text could not be read with the tools available: the publisher's site refused automated access, and the article is not in PMC or Europe PMC (checked 2026-10-05; `literature_checks.md` §1).
+- **Read:** abstract only (PubMed 40254146; publisher abstract and highlights). The article is open access (CC BY 4.0 in the publisher's Crossref record), but its full text was not read; the article is not in PMC or Europe PMC (checked 2026-10-05; `literature_checks.md` §1).
 - **Note.** Effect sizes, the SNR definition, the comparator channels and any regional breakdown cannot be checked. PubMed's MeSH indexing lists Adolescent, Young Adult and Adult.
 - **Indirect clues** (not the article's text; `literature_checks.md` §1). They point, indirectly, to a MEGIN TRIUX and the 128-channel X-Magtech system, so the systems are at most probable; the entries above do not use them.
   - PubMed's competing-interest statement: one author (M. Ding) is a board member of Beijing X-Magtech Technology Limited, which makes the Marvel MEG OPM system (Shen 2026 used its 128-channel version). It does not say which system the study used.
@@ -626,7 +626,7 @@ Every entry was read once to extract it, then re-read against its source before 
 | Feys 2023, *Front Neurosci* | PMC full text; Europe PMC XML | full text |
 | Feys 2024 | accepted-manuscript text via the DOI; medRxiv v1 full text | full text |
 | Feys 2025 | local PDF, version of record | full text |
-| Ren 2025 | PubMed and publisher abstract, highlights; the open-access full text could not be read (the publisher's site refused automated access, 2026-10-05) | abstract only |
+| Ren 2025 | PubMed and publisher abstract, highlights; the open-access full text was not read (2026-10-05) | abstract only |
 | Schwartz 2025 | local PDF, version of record | full text |
 | Shen 2026 | local PDF, version of record | full text |
 | Zahran 2022 | PMC full text | full text |
