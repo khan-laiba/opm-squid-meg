@@ -210,20 +210,20 @@ return accept or minor revisions in the same round.
 | Step | Status | Notes |
 |---|---|---|
 | 1. Reference papers and Guide for Authors | done | ten NeuroImage papers (PMC Open Data author manuscripts: PDF, XML, text, figures; 102 files, 75.8 MB, checksums verified) and the Guide for Authors (saved by the owner) in `refs/`, which is not committed |
-| 2. Style sheet | done | `paper/style_sheet.md`, one page, from eleven parallel analyses and a synthesis |
+| 2. Style sheet | done | one page (`paper/style_sheet.md`, removed from the release in 8c77a11 and kept in the history), from eleven parallel analyses and a synthesis |
 | 3. Figures at print resolution | done | `paper/export_figures.py`: 10 main and 15 supplementary figures as vector PDFs (raster layers at 600 dpi) from the stored results; bold capital panel letters; American spelling; explanatory notes and figure titles moved out of the images into the captions |
-| 4. Manuscript and supplementary material | done | `paper/manuscript.tex.j2` and `paper/supplementary.tex.j2` (+ `paper/supp/`), filled from the facts by `paper/build_paper.py`, which also checks highlights (3-5, at most 85 characters) and the abstract (at most 250 words); 412 facts in the main text, 2,241 in the supplementary material |
+| 4. Manuscript and supplementary material | done | `paper/manuscript.tex.j2` and `paper/supplementary.tex.j2` (+ `paper/supp/`), filled from the facts by `paper/build_paper.py`, which also checks highlights (3-5, at most 85 characters) and the abstract (at most 400 words, by the owner's decision; the Guide for Authors asks for 250); 412 facts in the main text, 2,241 in the supplementary material |
 | 5. Internal checks | done | five independent checkers (fidelity to the report, style sheet, mock referee, supplementary material, figures and captions); their findings applied; mean sentence 26.0 words |
-| 6. Referee rounds | in progress | round 1 (924c2c6): major revisions from both; round 2 (ea8d5d9): major revisions from both; round 3 in preparation (requirements A-D to be confirmed by both) |
+| 6. Referee rounds | in progress | round 1 (924c2c6): major revisions from both; round 2 (ea8d5d9): major revisions from both; round 3 (88267e6) under review (requirements A-D to be confirmed by both) |
 
 **Requirements added by the owner (2026-10-05), each to be confirmed by both referees in the same round (D added later the same day):**
 
 | Requirement | Status |
 |---|---|
 | A. The paper's prose (style, tone, word selection, sentence structure and length, sentence and paragraph composition, flow) matches the four papers in `prose_example/` (not committed) | main text rewritten: prose profiles of the four papers, a measurable prose guide (46 targets), then a section-by-section rewrite; 44 of 46 targets met (the two misses are bounded by keeping every reported number and by not hedging findings); the adult comparison and the spike detection moved into main-text Tables 3 and 5 so that the Results prose is figure- and table-led |
-| B. https://khan-laiba.github.io/opm-squid-meg/ shows the HTML version of the paper | converter written (`paper/build_html.py`: the rendered LaTeX with LaTeX's own numbering and BibTeX's reference list, figures rasterized, equations by MathJax, every local link checked); `scripts/deploy_pages.py` publishes it; deployment after the abstract is final |
-| C. The repository is cleaned and restructured as the accompanying repository of a NeuroImage paper | in progress: target layout set (code, configurations, results, manuscript sources, documentation, tests); README, CITATION.cff and a guide to the scripts being written; process material to be removed |
-| D. The abstract reads as well as the abstracts of the four example papers (style, flow, prose); written last, after the whole final paper is read; up to 400 words allowed by the owner (the Guide for Authors asks for 250) | written after the final read of the paper: a narrative of problem, approach, results with their conditions and implication, 399 words, with new highlights; to be judged by both referees |
+| B. https://khan-laiba.github.io/opm-squid-meg/ shows the HTML version of the paper | done and live: `paper/build_html.py` (the rendered LaTeX with LaTeX's own numbering and BibTeX's reference list, figures rasterized, equations by MathJax, every local link checked), published by `scripts/deploy_pages.py`; first deployed 2026-10-06 from 8cbb043 (gh-pages bea4a64; live check: 2 pages, 31 internal assets, 235 anchors, 0 failures), redeployed with every revision |
+| C. The repository is cleaned and restructured as the accompanying repository of a NeuroImage paper | done (8c77a11, merged to main): code, configurations, results, manuscript sources, documentation and tests; the report, its site builder, PLAN.md and other process material removed (kept in the history); CITATION.cff; a map from every figure and table to its scripts and result files in `scripts/README.md`. README rewritten again on 2026-10-06 at the owner's request, for a scientific reader (see the log) |
+| D. The abstract reads as well as the abstracts of the four example papers (style, flow, prose); written last, after the whole final paper is read; up to 400 words allowed by the owner (the Guide for Authors asks for 250) | rewritten in full on 2026-10-06 at the owner's request, after rereading the whole paper, in the flow of the abstract of 2026.08.17.744953 (premise; the open question; the factors examined; findings in words with their conditions; "Overall, ..."); 397 words; five new highlights; to be judged by both referees |
 
 ## Manuscript log
 
@@ -289,3 +289,27 @@ return accept or minor revisions in the same round.
   corrected in wording, with every number still read from the results; the figures were corrected (labels, legends,
   overlaps, minimum type of 6.5 pt, the misregistered template marked); the supplement is being aligned with the main
   text. The abstract and highlights were then written last. Unit tests: 318 pass.
+- 2026-10-06: repository reorganized as the paper's code and data release (8c77a11): the report, its site builder,
+  PLAN.md and process notes removed (all kept in the history); new README, CITATION.cff, content licence and a map
+  from every figure and table to its scripts and result files (`scripts/README.md`). The HTML version of the paper
+  was deployed to GitHub Pages from 8cbb043 (gh-pages bea4a64; live check: 2 pages, 31 internal assets, 235 anchors,
+  0 failures). Unit tests: 299 pass (the site builder's tests went with it).
+- 2026-10-06: owner: the abstract and the README were not good enough ("Think like a scientist. This is a top
+  academic paper."), and "record larger fields" is not scientific language. The whole paper was reread and the
+  abstract rewritten from scratch in the flow of the abstract of 2026.08.17.744953: the premise (on the scalp, the
+  field of cortical sources is stronger than at the SQUIDs), the open question (clinical comparisons found a higher
+  OPM SNR in some studies but not in others), the spherical prediction, the factors examined and the design, the
+  findings with their conditions, and an "Overall, ..." conclusion; 396 words, every number a fact. The five
+  highlights follow it. The README was rewritten for a scientific reader: an overview of the question and design
+  with Figs. 1 and 2, the main results with their conditions and figure and table references, system requirements,
+  installation, the external data with their terms, reproduction from the stored results and from the data (with
+  measured run times), the declaration of the pre-specified spike run, tests, citation, licence and contact.
+  Two independent pre-checks followed (abstract and highlights against the paper, the facts and the example
+  abstracts; README against the paper, the repository, the git history and the run logs). They found the
+  measured-noise ratio stated without its assumption (Neuromag measured, OPM modeled), "identified" used for a
+  detection endpoint, two loose verbs, README run times summed from overlapping timers (the pre-specified spike run
+  took about 3 h, not 4 h), result files stamped with pre-rewrite hashes without a pointer to docs/commit_map.tsv,
+  and missing data terms; all corrected, together with the same colloquial verbs in the main text and the
+  supplement (abstract 397 words). Committed as 88267e6 (main fast-forwarded), deployed as gh-pages 55761a3 and
+  checked live (2 pages, 31 internal assets, 235 anchors, 0 failures; the new abstract is served). Unit tests: 299
+  pass; facts: 68,944, 0 problems. Round 3 sent to both referees on 88267e6.
