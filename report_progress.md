@@ -214,7 +214,7 @@ return accept or minor revisions in the same round.
 | 3. Figures at print resolution | done | `paper/export_figures.py`: 10 main and 15 supplementary figures as vector PDFs (raster layers at 600 dpi) from the stored results; bold capital panel letters; American spelling; explanatory notes and figure titles moved out of the images into the captions |
 | 4. Manuscript and supplementary material | done | `paper/manuscript.tex.j2` and `paper/supplementary.tex.j2` (+ `paper/supp/`), filled from the facts by `paper/build_paper.py`, which also checks highlights (3-5, at most 85 characters) and the abstract (at most 400 words, by the owner's decision; the Guide for Authors asks for 250); 412 facts in the main text, 2,241 in the supplementary material |
 | 5. Internal checks | done | five independent checkers (fidelity to the report, style sheet, mock referee, supplementary material, figures and captions); their findings applied; mean sentence 26.0 words |
-| 6. Referee rounds | in progress | round 1 (924c2c6): major revisions from both; round 2 (ea8d5d9): major revisions from both; round 3 (88267e6): major revisions from both; round 4 (16c3e6a) under review (requirements A-D to be confirmed by both) |
+| 6. Referee rounds | done | round 1 (924c2c6): major revisions from both; round 2 (ea8d5d9): major revisions from both; round 3 (88267e6): major revisions from both; round 4 (16c3e6a): **minor revisions from both** (Claude Fable 5.1 and GPT-6 Astra), the acceptance condition, with requirements A-D achieved by both; final version 323dd1a with their minor corrections |
 
 **Requirements added by the owner (2026-10-05), each to be confirmed by both referees in the same round (D added later the same day):**
 
@@ -329,3 +329,14 @@ return accept or minor revisions in the same round.
   a prose judge applying Fable 5.1's criteria, which judged the requirement achieved after trimming re-definitions in
   the Results). All findings applied. Deployed as gh-pages 0e13a01 and checked live (0 failures). Unit tests: 302
   pass; facts: 68,864, 0 problems. Round 4 sent to both referees on 16c3e6a.
+- 2026-10-06: round 4 (16c3e6a) returned **minor revisions from both referees** (Claude Fable 5.1 and GPT-6 Astra), the
+  acceptance condition of the goal. Both judged all four requirements achieved (prose against the example papers, the
+  HTML version, the accompanying repository, the abstract), found no remaining major issue and again no wrong number.
+  Their minor points were applied in 323dd1a: the measured-covariance interpretation stated exactly, the known noise
+  covariance called the true covariance throughout, the scenario-D break-even direction qualified as a point estimate
+  in the Discussion, the abstract's spike range tied to the adult and the smaller heads in the adult helmet, notes on
+  the rounded bounds of Table 4 and the pooled row of Table 5, and small repository cleanups; an independent verifier
+  checked every correction against both reports and the result files. Not applied, by the goal's or the authors'
+  choice: splitting the Limitations paragraph (the goal keeps it as one), the full text of Ren et al. (2025) (not
+  readable here; needs institutional access), consolidating supplementary tables. Unit tests: 302 pass; facts:
+  68,864, 0 problems. Deployed as gh-pages 9c798ca.
