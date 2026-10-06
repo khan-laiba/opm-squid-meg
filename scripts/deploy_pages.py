@@ -77,6 +77,7 @@ def _html_tools():
     """paper/build_html.py as a module (for its link check)."""
     spec = importlib.util.spec_from_file_location("build_html", PAPER / "build_html.py")
     mod = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = mod  # its dataclasses look their module up there
     spec.loader.exec_module(mod)
     return mod
 
