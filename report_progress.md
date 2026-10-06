@@ -214,7 +214,7 @@ return accept or minor revisions in the same round.
 | 3. Figures at print resolution | done | `paper/export_figures.py`: 10 main and 15 supplementary figures as vector PDFs (raster layers at 600 dpi) from the stored results; bold capital panel letters; American spelling; explanatory notes and figure titles moved out of the images into the captions |
 | 4. Manuscript and supplementary material | done | `paper/manuscript.tex.j2` and `paper/supplementary.tex.j2` (+ `paper/supp/`), filled from the facts by `paper/build_paper.py`, which also checks highlights (3-5, at most 85 characters) and the abstract (at most 400 words, by the owner's decision; the Guide for Authors asks for 250); 412 facts in the main text, 2,241 in the supplementary material |
 | 5. Internal checks | done | five independent checkers (fidelity to the report, style sheet, mock referee, supplementary material, figures and captions); their findings applied; mean sentence 26.0 words |
-| 6. Referee rounds | in progress | round 1 (924c2c6): major revisions from both; round 2 (ea8d5d9): major revisions from both; round 3 (88267e6) under review (requirements A-D to be confirmed by both) |
+| 6. Referee rounds | in progress | round 1 (924c2c6): major revisions from both; round 2 (ea8d5d9): major revisions from both; round 3 (88267e6): major revisions from both; round 4 (16c3e6a) under review (requirements A-D to be confirmed by both) |
 
 **Requirements added by the owner (2026-10-05), each to be confirmed by both referees in the same round (D added later the same day):**
 
@@ -313,3 +313,19 @@ return accept or minor revisions in the same round.
   supplement (abstract 397 words). Committed as 88267e6 (main fast-forwarded), deployed as gh-pages 55761a3 and
   checked live (2 pages, 31 internal assets, 235 anchors, 0 failures; the new abstract is served). Unit tests: 299
   pass; facts: 68,944, 0 problems. Round 3 sent to both referees on 88267e6.
+- 2026-10-06: round 3 (88267e6) returned major revisions from both referees; neither found a wrong number (Fable 5.1
+  checked 26 groups of values, GPT-6 Astra 26). Requirements: abstract achieved (both); HTML achieved (Fable 5.1),
+  not achieved (GPT-6 Astra: Table S19's continuation numbered S20 and its notes lost); repository achieved (Fable
+  5.1), not achieved (GPT-6 Astra: three superseded v1-array diagnostics still in results/); prose achieved (GPT-6
+  Astra), not achieved (Fable 5.1: uniformly medium sentences, enumerative Results, coined labels). Both: the
+  scenario-D break-even level was inferred, not computed. Fable 5.1 also asked what "head size" means for scaled heads.
+- 2026-10-06: round 3 revision (b85dcdf, 16c3e6a), no new simulations. The scenario-D break-even values were removed
+  (the stored results support only the direction at 15 fT/√Hz); the head-size caveat added to Section 4.2 and the
+  Limitations; the HTML converter fixed for continued tables, grouped notes and line breaks in cells (every table of
+  both documents checked against the PDF; three new unit tests); the v1 diagnostics and their loading removed; Figs. 4D
+  and 5A relabeled; about 40 targeted corrections. The Methods and Results were then revised for prose by six
+  writer-verifier pairs, block by block, with every fact, float and reference locked; two independent pre-checks
+  followed (a claims and consistency audit, which found one misattributed quantity in the new head-size paragraph, and
+  a prose judge applying Fable 5.1's criteria, which judged the requirement achieved after trimming re-definitions in
+  the Results). All findings applied. Deployed as gh-pages 0e13a01 and checked live (0 failures). Unit tests: 302
+  pass; facts: 68,864, 0 problems. Round 4 sent to both referees on 16c3e6a.
