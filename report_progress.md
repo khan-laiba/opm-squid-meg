@@ -340,3 +340,7 @@ return accept or minor revisions in the same round.
   choice: splitting the Limitations paragraph (the goal keeps it as one), the full text of Ren et al. (2025) (not
   readable here; needs institutional access), consolidating supplementary tables. Unit tests: 302 pass; facts:
   68,864, 0 problems. Deployed as gh-pages 9c798ca.
+- 2026-10-06: owner: the paper is presented as a preprint, without a target journal. The PDF footer now reads
+  "Preprint" (elsarticle printed "Preprint submitted to NeuroImage"), and the HTML top line, the README, CITATION.cff
+  and the content license no longer name a journal (a354d0d; gh-pages 90b4cc6, checked live). References to other
+  papers published in NeuroImage are unchanged.
