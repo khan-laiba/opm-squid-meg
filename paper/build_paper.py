@@ -8,7 +8,8 @@ self-contained (the shared preamble inlined) and written twice: to build/, where
 (manuscript.tex, supplementary.tex: the submission sources, with figures read from figures/). The PDFs go to this
 folder, the highlights to highlights.txt (the journal asks for them as a separate file), and build/numbers_used.tsv
 lists every fact used with its value and source. The build fails when a highlight exceeds 85 characters, when there
-are not 3 to 5 of them, when the abstract exceeds 250 words, or when the body holds a bullet list.
+are not 3 to 5 of them, when the abstract exceeds ABSTRACT_MAX_WORDS words, or when the body holds a bullet list. tectonic
+keeps the .aux and .bbl in build/, which paper/build_html.py reads for the HTML version.
 
 Template syntax (Jinja2 with LaTeX-safe delimiters): << F.name >> prints a fact; <% ... %> is a statement; <# ... #> a
 comment; << trim("Figure_S5", 0) >> gives the includegraphics options showing one part of a stacked figure. Fact values are escaped for LaTeX and their Unicode exponents written as math.
@@ -35,6 +36,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import report_facts  # noqa: E402
 
 DOCS = ("manuscript", "supplementary")
+ABSTRACT_MAX_WORDS = 400  # the Guide for Authors of NeuroImage asks for at most 250
 SUPERSCRIPT = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺", "0123456789-+")
 LATEX_SPECIAL = {"\\": r"\textbackslash{}", "{": r"\{", "}": r"\}", "$": r"\$", "&": r"\&", "#": r"\#", "_": r"\_",
                  "%": r"\%", "~": r"\textasciitilde{}", "^": r"\textasciicircum{}"}
@@ -147,14 +149,31 @@ def check_manuscript(text: str) -> list[str]:
     problems += [f"highlight of {len(i)} characters (85 at most): {i}" for i in items if len(i) > 85]
     abstract = plain(re.sub(r"\\(begin|end)\{abstract\}", "", between(text, "ABSTRACT")))
     n_words = len(abstract.split())
-    if n_words > 250:
-        problems.append(f"abstract of {n_words} words (250 at most)")
+    if n_words > ABSTRACT_MAX_WORDS:
+        problems.append(f"abstract of {n_words} words ({ABSTRACT_MAX_WORDS} at most)")
     body = text.split(r"\end{frontmatter}", 1)[-1]
     if re.search(r"\\begin\{(itemize|enumerate)\}", body):
         problems.append("bullet or numbered list in the body")
     (HERE / "highlights.txt").write_text("Highlights\n\n" + "\n".join(f"- {i}" for i in items) + "\n")
     print(f"highlights: {len(items)}, longest {max(map(len, items))} characters; abstract: {n_words} words")
     return problems
+
+
+def stray_percent(text: str) -> list[str]:
+    """A bare % in the body comments out the rest of its source line, which here is a whole paragraph."""
+    body = text.split(r"\begin{document}", 1)[-1]
+    return [f"unescaped % in the body: ...{line[max(0, m.start() - 60):m.start() + 1]}"
+            for line in body.split("\n") for m in re.finditer(r"(?<![\\%])%", line) if line[:m.start()].strip()]
+
+
+def check_abstract_in_pdf(text: str, pdf: Path) -> None:
+    """The abstract's closing words must reach the compiled PDF (a stray comment or macro can swallow them)."""
+    abstract = plain(re.sub(r"\\(begin|end)\{abstract\}", "", between(text, "ABSTRACT")))
+    tail = " ".join(abstract.split()[-6:])
+    r = subprocess.run(["pdftotext", "-f", "1", "-l", "3", str(pdf), "-"], capture_output=True, text=True)
+    shown = re.sub(r"\s+", " ", r.stdout.replace("\u2019", "'"))
+    if r.returncode or tail.replace("\u2019", "'") not in shown:
+        raise SystemExit(f"{pdf.name}: the abstract's closing words are not in the PDF: '{tail}'")
 
 
 def render(doc: str, facts: dict) -> tuple[Path, dict]:
@@ -166,10 +185,11 @@ def render(doc: str, facts: dict) -> tuple[Path, dict]:
     env.filters["words"] = words
     view = FactView(facts)
     text = env.get_template(f"{doc}.tex.j2").render(F=view)
+    problems = stray_percent(text)
     if doc == "manuscript":
-        problems = check_manuscript(text)
-        if problems:
-            raise SystemExit(f"{doc}: " + "; ".join(problems))
+        problems += check_manuscript(text)
+    if problems:
+        raise SystemExit(f"{doc}: " + "; ".join(problems))
     BUILD.mkdir(exist_ok=True)
     out = BUILD / f"{doc}.tex"
     out.write_text(flatten(text, "../figures/"))
@@ -179,7 +199,8 @@ def render(doc: str, facts: dict) -> tuple[Path, dict]:
 
 def compile_pdf(tex: Path) -> Path:
     shutil.copy2(HERE / "references.bib", BUILD / "references.bib")
-    r = subprocess.run(["tectonic", "-X", "compile", "--keep-logs", tex.name], cwd=BUILD, capture_output=True, text=True)
+    r = subprocess.run(["tectonic", "-X", "compile", "--keep-logs", "--keep-intermediates", tex.name], cwd=BUILD,
+                       capture_output=True, text=True)
     log = (r.stdout or "") + (r.stderr or "")
     (BUILD / f"{tex.stem}.tectonic.txt").write_text(log)
     if r.returncode:
@@ -212,6 +233,8 @@ def main(argv=None):
         print(f"rendered {tex.relative_to(ROOT)} ({len(used)} facts)")
         if not args.no_pdf:
             pdf = compile_pdf(tex)
+            if doc == "manuscript":
+                check_abstract_in_pdf(tex.read_text(), pdf)
             print(f"compiled {pdf.relative_to(ROOT)}")
     lines = ["fact\tvalue\tsource"] + [f"{k}\t{v['value']}\t{v['source']}" for k, v in sorted(used_all.items())]
     (BUILD / "numbers_used.tsv").write_text("\n".join(lines) + "\n")

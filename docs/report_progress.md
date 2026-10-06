@@ -214,7 +214,16 @@ return accept or minor revisions in the same round.
 | 3. Figures at print resolution | done | `paper/export_figures.py`: 10 main and 15 supplementary figures as vector PDFs (raster layers at 600 dpi) from the stored results; bold capital panel letters; American spelling; explanatory notes and figure titles moved out of the images into the captions |
 | 4. Manuscript and supplementary material | done | `paper/manuscript.tex.j2` and `paper/supplementary.tex.j2` (+ `paper/supp/`), filled from the facts by `paper/build_paper.py`, which also checks highlights (3-5, at most 85 characters) and the abstract (at most 250 words); 412 facts in the main text, 2,241 in the supplementary material |
 | 5. Internal checks | done | five independent checkers (fidelity to the report, style sheet, mock referee, supplementary material, figures and captions); their findings applied; mean sentence 26.0 words |
-| 6. Referee rounds | in progress | round 1 (924c2c6): Claude Fable 5.1 major revisions, GPT-6 Astra major revisions; round 2 sent to both referees |
+| 6. Referee rounds | in progress | round 1 (924c2c6): major revisions from both; round 2 (ea8d5d9): major revisions from both; round 3 in preparation (requirements A-D to be confirmed by both) |
+
+**Requirements added by the owner (2026-10-05), each to be confirmed by both referees in the same round (D added later the same day):**
+
+| Requirement | Status |
+|---|---|
+| A. The paper's prose (style, tone, word selection, sentence structure and length, sentence and paragraph composition, flow) matches the four papers in `prose_example/` (not committed) | main text rewritten: prose profiles of the four papers, a measurable prose guide (46 targets), then a section-by-section rewrite; 44 of 46 targets met (the two misses are bounded by keeping every reported number and by not hedging findings); the adult comparison and the spike detection moved into main-text Tables 3 and 5 so that the Results prose is figure- and table-led |
+| B. https://khan-laiba.github.io/opm-squid-meg/ shows the HTML version of the paper | converter written (`paper/build_html.py`: the rendered LaTeX with LaTeX's own numbering and BibTeX's reference list, figures rasterized, equations by MathJax, every local link checked); `scripts/deploy_pages.py` publishes it; deployment after the abstract is final |
+| C. The repository is cleaned and restructured as the accompanying repository of a NeuroImage paper | in progress: target layout set (code, configurations, results, manuscript sources, documentation, tests); README, CITATION.cff and a guide to the scripts being written; process material to be removed |
+| D. The abstract reads as well as the abstracts of the four example papers (style, flow, prose); written last, after the whole final paper is read; up to 400 words allowed by the owner (the Guide for Authors asks for 250) | written after the final read of the paper: a narrative of problem, approach, results with their conditions and implication, 399 words, with new highlights; to be judged by both referees |
 
 ## Manuscript log
 
@@ -253,3 +262,30 @@ return accept or minor revisions in the same round.
   removed; post hoc choices disclosed once, in Section S8.2), with Figs. S3, S5, S14 and S15 enlarged. Every
   supplementary section, figure and table the main text cites was checked for number and content. The build is clean:
   main text 29 pages, supplementary material 56 pages, no undefined references or float errors.
+- 2026-10-05: round 2 (ea8d5d9) returned major revisions from both referees. Both again found no wrong number and judged
+  most first-round points addressed. Their remaining points: the abstract in the PDF was cut short by an unescaped
+  percent sign (the build now rejects a bare % in the body and checks that the abstract's last words reach the PDF);
+  the break-even noise levels and the scenario range must be stated as conditional on the modeled SQUID noise; the
+  misregistered 18-month template and the three children must be separated from the principal pediatric evidence; the
+  interaction must be defined as computed (a paired median of target-level contrasts, not a difference of medians);
+  the bracketing of clinical arrays and the no-reversal inference for spikes must go; the detection comparison holds
+  at nominal false-event rates; and the Methods need the forward-model, covariance-estimation and estimand details.
+  Round 3 revision under way, without new simulations.
+- 2026-10-05: round 3 revision, main text. The round-2 points were addressed in wording and presentation only: the
+  break-even levels stated as conditional on the modeled Neuromag noise (under the measured noise the dense array's
+  level would lie a little above 15 fT/√Hz); the principal smaller heads separated from the four heads of a new Section
+  S10; the interaction defined as computed (Eq. 3); new title. Then the prose rewrite of requirement A: Results
+  paragraphs led by figures and tables, new Table 3 (the adult comparison under every condition, comparator, measure,
+  model variant and scenario) and Table 5 (spike detection by detector and thresholds), the limitations kept in one
+  Discussion paragraph, sentences of 22 words on average. Figure corrections (labels, legends, the misregistered
+  18-month template marked in Figs. S16-S18) under way. Owner, later the same day: the abstract is to be rewritten last,
+  after the whole final paper is read, and both referees gate it (requirement D).
+- 2026-10-05/06: two internal pre-checks of the rewritten main text (numbers, referee coverage, a mock referee,
+  consistency and layout, prose against the four example papers, the supplement). They found three qualitative claims
+  of the rewrite that the stored values contradict (an "only" reversal, "the largest effect of any single change", an
+  incomplete list of the site-matched array's advantages), mislabeled Table 3 rows, and conclusions worded more broadly
+  than the evidence (the helmet-fit result holds with each head's own, smaller dense array; proximity was never ranked
+  against the other factors; under the measured Neuromag noise an equal-SNR depth returns near the sphere's). All were
+  corrected in wording, with every number still read from the results; the figures were corrected (labels, legends,
+  overlaps, minimum type of 6.5 pt, the misregistered template marked); the supplement is being aligned with the main
+  text. The abstract and highlights were then written last. Unit tests: 318 pass.

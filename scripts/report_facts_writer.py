@@ -89,6 +89,21 @@ Read only; nothing is re-run. Every fact is computed from unrounded stored value
                                   adults' values, which set the range over the scaled adults and templates
   wr_qc_infant18mo_white_scalp_min_mm  the 18-month template's white-surface vertex closest to the scalp, through which
                                   the template check's overlay figure is drawn
+  wr_n_principal_words, wr_n_provisional_words, wr_n_principal_templates_words, wr_cgap_principal_*, wr_cgap_provisional_*,
+  wr_qc_principal_template*, wr_confirm_rate_equality_endpoint_*_<adult_principal|provisional>_*  the pooled quantities of
+                                  the text over the principal heads (the two scaled adults and the 24- and 12-month
+                                  templates; with the adult where a statement includes it) and, separately, over the
+                                  provisional heads (the 18-month template, classed misregistered by the MRI check, and
+                                  children A-C), the referees' split; the split is checked against the labels and the MRI
+                                  check's verdicts, and the claims the text makes of the principal heads are checked
+  wr_depth_strata_<principal|infant18mo>_dense_ib_delta_range, wr_cfx_<principal|infant18mo>_lobe_cells_*,
+  wr_g4_bonferroni_<24|48>_*      statements of the supplement that pooled the 18-month template with the principal heads,
+                                  given per group (fifth round): Delta within depth strata in the fixed helmet; the lobe cells
+                                  of the helmet scaled with the head at or below the adult's at top contact; the exploratory
+                                  spike endpoint's Bonferroni tests over one OPM array's and one anatomy's comparisons (the
+                                  principal heads passing and failing, the provisional heads passing); checked against the text
+  wr_cov_dist_grad_d25_50_<model|measured>_abs_r  the gradiometers' median absolute correlation 25-50 mm apart, the
+                                  statistic that Fig. S3E plots (results/g2_covariance_validation/covariance_validation.json)
 Formats as scripts/report_facts_g12.py (whose helpers are imported): dB signed with 2 decimals, intervals "[lo, hi]",
 U+2212 for negatives, counts with thousands separators.
 
@@ -126,6 +141,14 @@ CONFIRM_ENDPOINT_PAIR = "opm_dense/opm_vs_squid/combined/primary/{thresholds}"
 HEAD_LABELS ={"adult": "adult", "school": "school-age size", "size2yr": "2-year size", "infant2yr": "24-month template",
                "infant18mo": "18-month template", "infant12mo": "12-month template", "childA": "child A",
                "childB": "child B", "childC": "child C"}
+# the referees' split of the smaller heads (round 3): the principal pediatric evidence, and the provisional heads reported
+# separately as a sensitivity analysis (checked in principal_facts against the labels and the MRI check's verdicts)
+PRINCIPAL_HEADS = ("school", "size2yr", "infant2yr", "infant12mo")
+PROVISIONAL_HEADS = ("infant18mo", "childA", "childB", "childC")
+HEAD_GROUPS = {"principal": PRINCIPAL_HEADS, "provisional": PROVISIONAL_HEADS}
+HEAD_GROUP_DESC = {"principal": "the four principal heads (the two scaled adults and the 24- and 12-month templates)",
+                   "provisional": "the four provisional heads (the 18-month template and children A-C)",
+                   "adult_principal": "the adult and the four principal heads"}
 WORDS = {0: "zero", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine",
          10: "ten", 11: "eleven", 12: "twelve"}
 
@@ -443,6 +466,14 @@ def confirm_rate_facts(F: Facts, root: Path) -> None:
         F.add(f"wr_confirm_rate_equality_endpoint_{thresholds}_n_p05_words", WORDS[len(low)], len(low), src + ": count, in words")
         F.add(f"wr_confirm_rate_equality_endpoint_{thresholds}_heads_p05",
               _name_list([HEAD_LABELS[a] for a in low]) if low else "none", low, src + ": the anatomies")
+        for g, heads in (("adult_principal", ("adult",) + PRINCIPAL_HEADS), ("provisional", PROVISIONAL_HEADS)):
+            lg = [a for a in low if a in heads]
+            gs = f"{src}, over {HEAD_GROUP_DESC[g]}"
+            F.add(f"wr_confirm_rate_equality_endpoint_{thresholds}_{g}_n_p05", count(len(lg)), len(lg), gs + ": count")
+            F.add(f"wr_confirm_rate_equality_endpoint_{thresholds}_{g}_n_p05_words", WORDS[len(lg)], len(lg),
+                  gs + ": count, in words")
+            F.add(f"wr_confirm_rate_equality_endpoint_{thresholds}_{g}_heads_p05",
+                  _name_list([HEAD_LABELS[a] for a in lg]) if lg else "none", lg, gs + ": the anatomies")
     cells = sum(1 for a in labels for k in per[a]["false_events"] if k.endswith("|primary"))
     F.add("wr_confirm_n_rate_cells", count(cells), cells,
           f"{CONFIRM_SUMMARY} :: anatomies, each read from {CONFIRM_PER.format(anatomy='<anatomy>')} false_events (derived: "
@@ -949,6 +980,17 @@ def round3b_facts(F: Facts, root: Path) -> None:
         commit = "(not a git checkout)"
     F.add("wr_build_commit", commit, commit, ".git :: HEAD, abbreviated (git rev-parse --short HEAD at build time; '+dirty' "
           "if the sources the pages are built from have uncommitted changes, as the page header)")
+    try:
+        last = subprocess.run(["git", "log", "-1", "--format=%h", "--", "results"], cwd=root, capture_output=True, text=True,
+                              check=True).stdout.strip()
+        dirty = subprocess.run(["git", "status", "--porcelain", "--", "results"], cwd=root, capture_output=True, text=True,
+                               check=True).stdout.strip()
+        results_commit = last + ("+dirty" if dirty else "")
+    except (OSError, subprocess.CalledProcessError):
+        results_commit = "(not a git checkout)"
+    F.add("wr_results_commit", results_commit, results_commit, ".git :: the last commit that changed results/, abbreviated "
+          "(git log -1 --format=%h -- results at build time; '+dirty' if results/ has uncommitted changes): the analysis "
+          "outputs a manuscript built from these facts reports")
 
 
 def round3c_facts(F: Facts, root: Path) -> None:
@@ -1079,6 +1121,194 @@ def round4_facts(F: Facts, root: Path) -> None:
           "min_mm (the white-surface vertex closest to the scalp used, mm; the overlay's sections pass through it)")
 
 
+def principal_facts(F: Facts, root: Path) -> None:
+    """The pooled quantities of the text over the principal heads and, separately, over the provisional heads (the
+    referees' split of the smaller heads): counts in words; the helmet-fit interaction and the principal templates' share of
+    it; Delta at the adult's gap (its interval bounds and the head with the highest value), at the adult's top-contact gap
+    against the adult at top contact, and the projected-condition intervals that include zero; the principal templates'
+    scalp convention. The split is checked against the labels and the MRI check's verdicts, and the claims the text makes
+    of the principal heads are checked."""
+    labels = json.loads((root / G4_PED).read_text())["labels"]
+    smaller = [a for a in labels if a != "adult"]
+    if sorted(PRINCIPAL_HEADS + PROVISIONAL_HEADS) != sorted(smaller):
+        raise ValueError(f"{G4_PED}: the principal and provisional heads do not partition the smaller heads {smaller}")
+    q24, qt = json.loads((root / QC).read_text()), json.loads((root / TEMPLATES_QC).read_text())
+    verdict = {k: v["class"] for q in (q24, qt) for k, v in q["verdicts"].items()}
+    mis = sorted(k for k, c in verdict.items() if c == "misregistered")
+    prov_templates = sorted(a for a in PROVISIONAL_HEADS if a.startswith("infant"))
+    if mis != prov_templates:
+        raise ValueError(f"{QC}, {TEMPLATES_QC}: the templates the MRI check classes misregistered ({mis}) are not the "
+                         f"provisional templates ({prov_templates})")
+    split = (f"{G4_PED} :: labels; {QC}, {TEMPLATES_QC} :: verdicts[*].class (derived: the referees' split of the smaller "
+             "heads, the provisional template being the one the MRI check classes misregistered)")
+    for g, heads in HEAD_GROUPS.items():
+        F.add(f"wr_n_{g}_words", words(len(heads)), len(heads), f"{split}: {HEAD_GROUP_DESC[g]}, count in words")
+    pt = [a for a in PRINCIPAL_HEADS if a.startswith("infant")]
+    F.add("wr_n_principal_templates_words", words(len(pt)), len(pt),
+          f"{split}: the principal templates ({_name_list(HEAD_LABELS[a] for a in pt)}), count in words")
+
+    cg = json.loads((root / CGAP).read_text())
+    for g, heads in HEAD_GROUPS.items():
+        what = HEAD_GROUP_DESC[g]
+        # the interaction at the adult's gap
+        it = {h: cg["interaction"][f"{h}/gap_matched/combined/intrinsic+brain"]["interaction"] for h in heads}
+        meds = {h: float(x["median"]) for h, x in it.items()}
+        above = [h for h, x in it.items() if float(x["ci95"][0]) > 0]
+        if g == "principal":
+            if len(above) != len(heads):
+                raise ValueError(f"{CGAP}: an interaction interval of the principal heads includes zero; the text says every "
+                                 "interval lies above zero")
+            if (min(meds, key=meds.get), max(meds, key=meds.get)) != ("school", "size2yr"):
+                raise ValueError(f"{CGAP}: the two scaled adults no longer give the lowest and the highest interaction of the "
+                                 "principal heads, as the text says")
+        lo, hi = min(meds.values()), max(meds.values())
+        F.add(f"wr_cgap_{g}_interaction_range", f"{signed(lo, 2)} to {signed(hi, 2)}", [lo, hi],
+              f"{CGAP} :: interaction['<head>/gap_matched/combined/intrinsic+brain'].interaction.median (derived: min and max "
+              f"over {what}" + ("; every ci95 above zero, checked)" if g == "principal" else ")"))
+        F.add(f"wr_cgap_{g}_interaction_n_ci_above0", f"{len(above)} of {len(heads)}", len(above),
+              f"{CGAP} :: interaction['<head>/gap_matched/combined/intrinsic+brain'].interaction.ci95 (derived: the heads of "
+              f"{what} whose interval lies above zero, of all of them: "
+              + (_name_list(HEAD_LABELS[h] for h in above) if above else "none") + ")")
+        # Delta at the adult's gap (each head and the adult in the helmet fitted at the adult's gap)
+        ds = {h: cg["delta_same_rule"][f"{h}/gap_matched/opm_dense/combined/intrinsic+brain"]["delta"] for h in heads}
+        lo, hi = min(float(e["ci95"][0]) for e in ds.values()), max(float(e["ci95"][1]) for e in ds.values())
+        F.add(f"wr_cgap_{g}_fitted_delta_ci_bounds_range", f"{signed(lo, 2)} to {signed(hi, 2)}", [lo, hi],
+              f"{CGAP} :: delta_same_rule['<head>/gap_matched/opm_dense/combined/intrinsic+brain'].delta.ci95 (derived: the "
+              f"lowest lower bound and the highest upper bound over {what}, dB)")
+        top_h = max(heads, key=lambda h: float(ds[h]["median"]))
+        F.add(f"wr_cgap_{g}_fitted_delta_highest_head", HEAD_LABELS[top_h], top_h,
+              f"{CGAP} :: delta_same_rule['<head>/gap_matched/opm_dense/combined/intrinsic+brain'].delta.median (derived: the "
+              f"head of {what} with the highest value)")
+        if g == "principal":
+            lo_above = [h for h in heads if float(ds[h]["ci95"][0]) > 0]
+            tmpl_incl = all(float(ds[h]["ci95"][0]) <= 0 <= float(ds[h]["ci95"][1]) for h in heads if h.startswith("infant"))
+            if lo_above != ["school"] or not tmpl_incl:
+                raise ValueError(f"{CGAP}: of the principal heads' intervals of Delta at the adult's gap, the text says every "
+                                 "template interval includes zero and only the school-age scaled adult's lies above it")
+        # fitted at the adult's top-contact gap, against the adult at top contact in the fixed helmet
+        top = {h: cg["delta_vs_adult_top"][f"{h}/gap_matched_top/opm_dense/combined/intrinsic+brain"]["delta"] for h in heads}
+        tm = [float(x["median"]) for x in top.values()]
+        F.add(f"wr_cgap_{g}_fittedtop_vs_top_range", f"{signed(min(tm), 2)} to {signed(max(tm), 2)}", [min(tm), max(tm)],
+              f"{CGAP} :: delta_vs_adult_top['<head>/gap_matched_top/opm_dense/combined/intrinsic+brain'].delta.median (derived: "
+              f"min and max over {what}; the head fitted at the adult's top-contact gap against the adult at top contact in the "
+              "fixed helmet)")
+        n_above = sum(float(x["ci95"][0]) > 0 for x in top.values())
+        F.add(f"wr_cgap_{g}_fittedtop_vs_top_n_ci_above0", f"{n_above} of {len(top)}", n_above,
+              f"{CGAP} :: delta_vs_adult_top['<head>/gap_matched_top/opm_dense/combined/intrinsic+brain'].delta.ci95 (derived: "
+              f"the heads of {what} whose interval lies above zero, of all of them)")
+        # the room field projected out, at the adult's gap
+        pj = {h: cg["delta_same_rule"][f"{h}/gap_matched/opm_dense/combined/projected"]["delta"] for h in heads}
+        if any(float(e["median"]) >= 0 for e in pj.values()):
+            raise ValueError(f"{CGAP}: a projected-condition Delta at the adult's gap of {what} is not below zero; the text says "
+                             "every smaller head's point estimate lies below the adult's")
+        n = sum(float(e["ci95"][0]) <= 0.0 <= float(e["ci95"][1]) for e in pj.values())
+        F.add(f"wr_cgap_{g}_fitted_proj_delta_n_ci_includes_zero_words", words(n), n,
+              f"{CGAP} :: delta_same_rule['<head>/gap_matched/opm_dense/combined/projected'].delta.ci95 (derived: the heads of "
+              f"{what} whose 95 % parcel-bootstrap interval of Delta at the adult's gap, room field projected out, includes "
+              "zero; count in words)")
+    # the principal templates' interaction, within the two scaled adults' values as the text says
+    it = {h: float(cg["interaction"][f"{h}/gap_matched/combined/intrinsic+brain"]["interaction"]["median"]) for h in PRINCIPAL_HEADS}
+    tm = [it[h] for h in pt]
+    sc = [it["school"], it["size2yr"]]
+    if not (min(sc) <= min(tm) and max(tm) <= max(sc)):
+        raise ValueError(f"{CGAP}: the principal templates' interaction leaves the range of the two scaled adults")
+    F.add("wr_cgap_principal_templates_interaction_range", f"{signed(min(tm), 2)} to {signed(max(tm), 2)}", [min(tm), max(tm)],
+          f"{CGAP} :: interaction['<template>/gap_matched/combined/intrinsic+brain'].interaction.median (derived: min and max over "
+          "the 24- and 12-month templates, the principal templates; checked to lie within the two scaled adults' values)")
+    # the principal templates' scalp convention (the MRI check)
+    recs = {"infant2yr": q24, "infant18mo": qt, "infant12mo": qt}
+    out = {h: -float(recs[h]["anatomies"][h]["scalp_vs_mri"]["offsets"]["cap"]["otsu"]["median_mm"]) for h in pt}
+    if any(v <= 0 for v in out.values()):
+        raise ValueError(f"{QC}, {TEMPLATES_QC}: a principal template's scalp is not outside its MRI head boundary")
+    vals = list(out.values())
+    F.add("wr_qc_principal_templates_offset_outside_otsu_mm_range", f"{min(vals):.1f} to {max(vals):.1f}", [min(vals), max(vals)],
+          f"{QC} :: anatomies['infant2yr'], {TEMPLATES_QC} :: anatomies['infant12mo'] .scalp_vs_mri.offsets.cap.otsu.median_mm "
+          "(derived: min and max of the magnitudes over the 24- and 12-month templates, the principal templates, each scalp "
+          "outside its boundary)")
+    adult_in = float(q24["anatomies"]["adult"]["scalp_vs_mri"]["offsets"]["cap"]["otsu"]["median_mm"])
+    conv = [adult_in + v for v in vals]
+    F.add("wr_qc_principal_template_adult_convention_mm_range", f"{min(conv):.1f} to {max(conv):.1f}", [min(conv), max(conv)],
+          f"{QC} :: anatomies['adult', 'infant2yr'], {TEMPLATES_QC} :: anatomies['infant12mo'] .scalp_vs_mri.offsets.cap.otsu."
+          "median_mm (derived: the adult's offset of the MRI head boundary outside its scalp plus each principal template's "
+          "scalp outside its boundary, min and max over the 24- and 12-month templates, mm: the difference between the scalp "
+          "conventions)")
+
+
+def split_facts(F: Facts, root: Path) -> None:
+    """Facts for the supplement's statements that had pooled the 18-month template with the principal heads (fifth round),
+    now given for the principal heads first and for the provisional heads separately: Delta within depth strata (fixed
+    helmet, top contact) over the principal heads and in the 18-month template; the lobe cells of the helmet scaled with
+    the head that lie at or below the adult's at top contact, per group; the exploratory spike endpoint's Bonferroni tests
+    per group; and the gradiometers' median absolute correlation at 25-50 mm, the statistic that Fig. S3E plots. The
+    claims the text makes of these groups are checked."""
+    s = json.loads((root / G3B).read_text())
+    groups = (("principal", PRINCIPAL_HEADS, HEAD_GROUP_DESC["principal"]),
+              ("infant18mo", ("infant18mo",), "the 18-month template"))
+    # Delta within depth strata
+    key = "comparisons['<head>/opm_dense/combined/intrinsic+brain/detect'].delta_by_depth[].delta"
+    for tok, heads, what in groups:
+        vals = [float(r["delta"]) for h in heads
+                for r in s["comparisons"][f"{h}/opm_dense/combined/intrinsic+brain/detect"]["delta_by_depth"] if "delta" in r]
+        if min(vals) <= 0:
+            raise ValueError(f"{G3B}: a depth stratum of {what} has Delta <= 0; the text says every stratum lies above zero")
+        F.add(f"wr_depth_strata_{tok}_dense_ib_delta_range", f"{signed(min(vals), 2)} to {signed(max(vals), 2)}",
+              [min(vals), max(vals)], f"{G3B} :: {key} (derived: min and max over every populated stratum of {what}, the "
+              "difference of the two heads' area-weighted medians, dB; every value checked to lie above zero)")
+    # the helmet scaled with the head (laterally centred): lobe cells at or below the adult's at top contact
+    pd_ = s["placement_D"]
+    val = lambda x: float(x["median"]) if isinstance(x, dict) else float(x)  # noqa: E731
+    top = pd_["adult/top/combined/intrinsic+brain"]["by_lobe"]
+    key = "placement_D['<head>/counterfactual_x-centred/combined/intrinsic+brain'].by_lobe"
+    for tok, heads, what in groups:
+        cells = [(h, lb) for h in heads for lb in top]
+        n = sum(val(pd_[f"{h}/counterfactual_x-centred/combined/intrinsic+brain"]["by_lobe"][lb]) <= val(top[lb])
+                for h, lb in cells)
+        F.add(f"wr_cfx_{tok}_lobe_cells_at_or_below_adult_top_count", count(n), n,
+              f"{G3B} :: derived: number of cells ({what} x {len(top)} lobes) of {key} at or below the adult's value for the "
+              "same lobe at top contact (placement_D['adult/top/combined/intrinsic+brain'].by_lobe), point estimates")
+        F.add(f"wr_cfx_{tok}_lobe_cells_n", count(len(cells)), len(cells),
+              f"{G3B} :: derived: {what} x {len(top)} lobes of {key}")
+    # the exploratory spike endpoint (dense array against Neuromag's 306 channels, 10-20 mm, practical detector) under a
+    # Bonferroni correction over the comparisons of one OPM array and over those of one anatomy
+    k1020 = "paired/opm_dense/opm_vs_squid/combined/practical@1/depth0"
+    cmp_ = json.loads((root / G4_PED).read_text())["comparison"]
+    p = {a: float(cmp_[f"{a}/{k1020}"]["location_sign_flip_p"]) for a in ("adult",) + PRINCIPAL_HEADS + PROVISIONAL_HEADS}
+    g4a = G4_SUMMARY.format(anatomy="adult")
+    paired = json.loads((root / g4a).read_text())["paired"]
+    pk = [k for k in paired if k.startswith("opm_dense/")]
+    n_fam = len(pk) * len(paired[pk[0]])
+    for n in (n_fam, 2 * n_fam):
+        passed = {a for a, v in p.items() if v < 0.05 / n}
+        prin = [a for a in PRINCIPAL_HEADS if a in passed]
+        fail = [a for a in PRINCIPAL_HEADS if a not in passed]
+        prov = [a for a in PROVISIONAL_HEADS if a in passed]
+        src = (f"{G4_PED} :: comparison['<head>/{k1020}'].location_sign_flip_p; {g4a} :: paired (derived: the threshold "
+               f"0.05/{n}, {len(pk)} comparisons per OPM array x {len(paired[pk[0]])} depth bands"
+               + (" x 2 OPM arrays" if n != n_fam else "") + "; ")
+        F.add(f"wr_g4_bonferroni_{n}_principal_n_pass_words", words(len(prin)), len(prin),
+              src + f"of {HEAD_GROUP_DESC['principal']}, those below it, count in words)")
+        F.add(f"wr_g4_bonferroni_{n}_principal_fail_heads", _name_list(HEAD_LABELS[a] for a in fail) if fail else "none", fail,
+              src + f"of {HEAD_GROUP_DESC['principal']}, those not below it)")
+        F.add(f"wr_g4_bonferroni_{n}_provisional_pass_heads", _name_list(HEAD_LABELS[a] for a in prov) if prov else "none", prov,
+              src + f"of {HEAD_GROUP_DESC['provisional']}, those below it)")
+        if n == n_fam and (fail or "adult" in passed or prov != ["infant18mo"]):
+            raise ValueError(f"{G4_PED}: the text says every principal head passes the Bonferroni correction over {n} "
+                             "comparisons, the adult and the three children do not, and the 18-month template does")
+        if n == 2 * n_fam and (not fail or not prov):
+            raise ValueError(f"{G4_PED}: the text names a principal head that fails, and a provisional head that passes, the "
+                             f"Bonferroni correction over {n} comparisons")
+    # the gradiometers' correlation against distance, 25-50 mm: the median absolute correlation, which Fig. S3E plots
+    row = [r for r in json.loads((root / COVVAL).read_text())["structure"]["brain"]["grad"]["corr_vs_distance"]
+           if r["bin"] == "25-50"]
+    if len(row) != 1:
+        raise ValueError(f"{COVVAL}: no single 25-50 mm bin in structure.brain.grad.corr_vs_distance")
+    for tok, k, what in (("model", "median_abs_r_b", "model"), ("measured", "median_abs_r_a", "measured")):
+        v = float(row[0][k])
+        F.add(f"wr_cov_dist_grad_d25_50_{tok}_abs_r", f"{v:.2f}", v,
+              f"{COVVAL} :: structure.brain.grad.corr_vs_distance[bin '25-50'].{k} (median absolute correlation of the "
+              f"gradiometer pairs 25-50 mm apart, {what}: the statistic of Fig. S3E)")
+
+
 def facts(root: Path = ROOT) -> dict:
     """Every writer fact, name -> {"value", "raw", "source"}."""
     root = Path(root)
@@ -1116,6 +1346,8 @@ def facts(root: Path = ROOT) -> dict:
     round3b_facts(F, root)
     round3c_facts(F, root)
     round4_facts(F, root)
+    principal_facts(F, root)
+    split_facts(F, root)
     return dict(F)
 
 

@@ -1,7 +1,6 @@
 Highlights
 
-- Array design, OPM noise and the SNR measure decide whether OPMs outperform SQUIDs
+- Whether OPMs outperform SQUIDs depends on array design, OPM noise and SNR measure
 - The modeled dense-array advantage is as large as the model's error for SQUID noise
-- Break-even OPM white noise is 31.5 fT/√Hz for a dense array, 16.7 at the SQUID sites
-- Fitting the SQUID helmet removes most of the extra OPM advantage in smaller heads
-- With an idealized detector, dense OPMs detect weaker simulated superficial spikes
+- An adult SQUID helmet costs smaller heads detectability that a fitted helmet regains
+- Idealized detectors find weaker simulated spikes with dense OPMs than with SQUIDs

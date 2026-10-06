@@ -37,6 +37,9 @@ MINUS = "−"
 SUP = str.maketrans("-0123456789", "⁻⁰¹²³⁴⁵⁶⁷⁸⁹")
 LABELS = ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC")
 SMALLER = LABELS[1:]
+# the referees' split of the smaller heads (round 3): the principal pediatric evidence and the provisional heads
+PRINCIPAL = ("school", "size2yr", "infant2yr", "infant12mo")
+PROVISIONAL = ("infant18mo", "childA", "childB", "childC")
 TOK = {a: a.lower() for a in LABELS}
 
 G2 = "results/g2/g2_summary.json"
@@ -358,6 +361,9 @@ def neuromag_facts(F: Facts, root: Path) -> None:
                "baseline; 3024: 16 points, 21-mm coil)", "8 points", "16 points")
     F.add("meth_coil_grad_points", "8", 8, f"{REGISTER} :: HW-coildef ('{q}')")
     F.add("meth_coil_mag_points", "16", 16, f"{REGISTER} :: HW-coildef ('{q}')")
+    q = quoted(root, REGISTER, "custom coil 9901 (27-point Gauss at MNE 'accurate')", "27-point")
+    F.add("meth_opm_cell_points", "27", 27, f"{REGISTER} :: A-OPM-CELL ('{q}'; a 3 x 3 x 3 Gauss-Legendre rule over the cube, "
+          "src/opmsquid/opm.py _gauss_cube(3, ...))")
     d = g2["config"]["head_position"]["dewar_spacing_mm"]
     q = quoted(root, REGISTER, "manufacturer's specification: the same TRIUX datasheet")
     F.add("meth_dewar_mm", const(d), d, f"{G2}, {REGISTER} :: config.head_position.dewar_spacing_mm; HW-18mm ('{q}')")
@@ -525,6 +531,13 @@ def skull_facts(F: Facts, root: Path) -> None:
     F.spread("meth_bem1_change_db", change, db, f"{G3B} :: derived: sensitivity_median_D_dB['delta/<head>/bem1/{key}'] - "
              f"(D_median_dB['<head>/{key}/detect'] - D_median_dB['adult/{key}/detect']) over the eight smaller heads (how much "
              "the 1-layer BEM changes each head's difference from the adult)")
+    for g, heads, what in (("principal", PRINCIPAL, "the four principal heads (the two scaled adults and the 24- and 12-month "
+                            "templates)"),
+                           ("provisional", PROVISIONAL, "the four provisional heads (the 18-month template and children A-C)")):
+        change = [S[f"delta/{lab}/bem1/{key}"] - (D[f"{lab}/{key}/detect"] - da) for lab in heads]
+        F.spread(f"meth_{g}_bem1_change_db", change, db, f"{G3B} :: derived: sensitivity_median_D_dB['delta/<head>/bem1/{key}'] "
+                 f"- (D_median_dB['<head>/{key}/detect'] - D_median_dB['adult/{key}/detect']) over {what} (how much the 1-layer "
+                 "BEM changes each head's difference from the adult)")
 
 
 def location_facts(F: Facts, root: Path, ic: IC) -> None:

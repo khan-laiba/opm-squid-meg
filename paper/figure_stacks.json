@@ -1,37 +1,55 @@
 {
  "Figure_8": {
-  "width": 522.48,
-  "height": 512.43,
+  "width": 459.15,
+  "height": 429.79,
   "parts": [
    {
-    "part": "Figure_R6_pediatric_D",
-    "width": 502.773,
-    "height": 239.792,
+    "part": "Figure_R6_pediatric_D_principal",
+    "width": 457.289,
+    "height": 177.764,
     "top": 0.0
    },
    {
     "part": "Figure_R13_maps_heads",
-    "width": 522.483,
-    "height": 263.138,
-    "top": 249.292
+    "width": 459.156,
+    "height": 242.528,
+    "top": 187.262
    }
   ]
  },
  "Figure_S5": {
-  "width": 584.09,
-  "height": 1139.61,
+  "width": 459.09,
+  "height": 1013.29,
   "parts": [
    {
     "part": "Figure_noise_sensitivity",
-    "width": 571.977,
-    "height": 719.044,
+    "width": 457.984,
+    "height": 501.36,
     "top": 0.0
    },
    {
     "part": "Figure_noise_sensitivity_depth",
-    "width": 584.091,
-    "height": 411.07,
-    "top": 728.54
+    "width": 459.088,
+    "height": 502.434,
+    "top": 510.856
+   }
+  ]
+ },
+ "Figure_S16": {
+  "width": 459.15,
+  "height": 518.78,
+  "parts": [
+   {
+    "part": "Figure_R6_pediatric_D",
+    "width": 459.064,
+    "height": 266.756,
+    "top": 0.0
+   },
+   {
+    "part": "Figure_R13_maps_heads",
+    "width": 459.156,
+    "height": 242.528,
+    "top": 276.252
    }
   ]
  }

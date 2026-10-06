@@ -12,7 +12,9 @@ configuration as stored in the summary ("config" = configs/g3b_pediatric.toml), 
 Name tokens. Anatomies: adult, school (school-age size control), size2yr (2-year size control),
 infant2yr, infant18mo, infant12mo (24-, 18-, 12-month templates), child_a, child_b, child_c.
 Groups (ranges): all, smaller (the eight smaller heads), templates_scaled (templates and size
-controls), templates, scaled, children (A-C). OPM arrays: dense, matched; Neuromag comparators:
+controls), templates, scaled, children (A-C), principal (the two size controls and the 24- and 12-month templates, the
+principal pediatric evidence), provisional (the 18-month template and children A-C, reported separately),
+principal_templates (the 24- and 12-month templates). OPM arrays: dense, matched; Neuromag comparators:
 combined (306), grad, mag. Conditions: intr, ib (intrinsic + brain), proj (projected). Metrics:
 detectability (no token), peak (peak-channel SNR), meanpow (mean-power SNR). Placements: top (the
 primary; implied when no placement token is given), centred, back, xp5mm, xm5mm, yp5mm, ym5mm,
@@ -59,13 +61,22 @@ SCALED = ("school", "size2yr")
 TEMPLATES = ("infant2yr", "infant18mo", "infant12mo")
 SCHOOL = ("childA", "childB", "childC")
 NATIVE = TEMPLATES + SCHOOL
+# the referees' split of the smaller heads (round 3): the principal pediatric evidence, and the provisional heads reported
+# separately as a sensitivity analysis (the 18-month template, classed misregistered by the MRI check, and the children,
+# whose near-scalp anatomy could not be verified)
+PRINCIPAL = SCALED + ("infant2yr", "infant12mo")
+PROVISIONAL = ("infant18mo",) + SCHOOL
 TOK = {a: a for a in ANATS} | {"childA": "child_a", "childB": "child_b", "childC": "child_c"}
 GROUPS = {"all": ANATS, "smaller": SMALLER, "templates_scaled": SCALED + TEMPLATES, "templates": TEMPLATES,
-          "scaled": SCALED, "children": SCHOOL}
+          "scaled": SCALED, "children": SCHOOL, "principal": PRINCIPAL, "provisional": PROVISIONAL,
+          "principal_templates": ("infant2yr", "infant12mo")}
 GROUP_DESC = {"all": "all nine anatomies", "smaller": "the eight smaller heads",
               "templates_scaled": "the three templates and the two size controls", "templates": "the three infant templates",
-              "scaled": "the two size controls", "children": "children A-C"}
-MAIN_GROUPS = ("smaller", "children", "templates_scaled")
+              "scaled": "the two size controls", "children": "children A-C",
+              "principal": "the four principal heads (the two size controls and the 24- and 12-month templates)",
+              "provisional": "the four provisional heads (the 18-month template and children A-C)",
+              "principal_templates": "the 24- and 12-month templates"}
+MAIN_GROUPS = ("smaller", "children", "templates_scaled", "principal", "provisional")
 OPM = {"opm_dense": "dense", "opm_matched": "matched"}
 REFS = ("combined", "grad", "mag")
 COND = {"intrinsic": "intr", "intrinsic+brain": "ib", "projected": "proj"}
@@ -362,7 +373,7 @@ def anatomy_facts(F: Facts, s: dict) -> None:
     F.range("g3b_children_age", {c["key"]: c["age_y"] for c in cfg["anatomy"]["school"]}, lambda v: fixed(v, 1), G3B,
             "config.anatomy.school[].age_y", GROUP_DESC["children"])
     key = "anatomies['<anat>']"
-    for g in ("all", "smaller", "templates", "children", "templates_scaled"):
+    for g in ("all", "smaller", "templates", "children", "templates_scaled", "principal", "provisional"):
         F.range(f"g3b_{g}_ofc_cm", {a: an[a]["head_size"]["ofc_mm"] / 10 for a in GROUPS[g]}, lambda v: fixed(v, 1), G3B,
                 f"{key}.head_size.ofc_mm / 10", GROUP_DESC[g])
         F.range(f"g3b_{g}_cortex_area_cm2", {a: an[a]["cortical_area_cm2"] for a in GROUPS[g]}, count, G3B,
@@ -1026,6 +1037,14 @@ def school_check_facts(F: Facts, root: Path) -> None:
             mm, CHECKS, f"{path}.distance_mm (lpa, nasion, rpa)", "the three templates and three fiducials")
     F.range("g3b_templates_fid_transfer_rotation", {k: fid[key]["head_frame_rotation_deg"] for key, k in tnames.items()},
             lambda v: fixed(v, 1), CHECKS, f"{path}.head_frame_rotation_deg", "the three templates")
+    for g, what in (("principal_templates", GROUP_DESC["principal_templates"]),
+                    ("provisional", "the 18-month template (the provisional heads' template)")):
+        ts = {key: k for key, k in tnames.items() if k in GROUPS[g]}
+        F.range(f"g3b_{g}_fid_transfer", {f"{k} {f_}": v for key, k in ts.items() for f_, v in fid[key]["distance_mm"].items()},
+                mm, CHECKS, f"{path}.distance_mm (lpa, nasion, rpa)", f"{what} and three fiducials")
+    F.range("g3b_principal_templates_fid_transfer_rotation",
+            {k: fid[key]["head_frame_rotation_deg"] for key, k in tnames.items() if k in GROUPS["principal_templates"]},
+            lambda v: fixed(v, 1), CHECKS, f"{path}.head_frame_rotation_deg", GROUP_DESC["principal_templates"])
     F.range("g3b_templates_fid_scalpfit_nasion", {k: fid[key]["scalp_fit"]["distance_mm"]["nasion"] for key, k in tnames.items()},
             mm, CHECKS, f"{path}.scalp_fit.distance_mm.nasion", "the three templates")
     mni = ch["mni_fiducials_on_adult"]

@@ -34,6 +34,14 @@ MINUS = "\u2212"
 LABELS = ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC")
 TEMPLATES_CONTROLS = ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo")
 CHILDREN = ("childA", "childB", "childC")
+# the referees' split of the smaller heads (round 3): the principal pediatric evidence (the scaled adults and the 24- and
+# 12-month templates; with the adult where a statement includes it) and the provisional heads reported separately (the
+# 18-month template, classed misregistered by the MRI check, and children A-C)
+PRINCIPAL = ("school", "size2yr", "infant2yr", "infant12mo")
+PROVISIONAL = ("infant18mo", "childA", "childB", "childC")
+SPLIT = (("principal", PRINCIPAL, "the four principal heads"),
+         ("adult_principal", ("adult",) + PRINCIPAL, "the adult and the four principal heads"),
+         ("provisional", PROVISIONAL, "the four provisional heads"))
 BANDS = ("10_20mm", "20_30mm", "30_45mm", "45_70mm")  # depth0..depth3
 BAND_EDGES = (10, 20, 30, 45, 70)  # docs/methods.md section 9
 DETECTORS = {"squid/combined": "combined", "squid/grad": "grad", "squid/mag": "mag", "opm_matched/opm": "matched",
@@ -498,7 +506,7 @@ def _detection(root: Path, out: dict) -> None:
     n_pass = sum(v < 0.05 for v in adj.values())
     _add(out, "g4_holm_10_20mm_n_pass", count(n_pass), n_pass, f"{src}.location_sign_flip_p; derived: anatomies with Holm-adjusted p < 0.05")
     for group, labs in (("all", LABELS), ("smaller_heads", LABELS[1:]), ("templates_controls", TEMPLATES_CONTROLS),
-                        ("childrenabc", CHILDREN)):
+                        ("childrenabc", CHILDREN)) + tuple((g, labs_) for g, labs_, _ in SPLIT):
         r = [P[lab]["s50_ratio_squid_over_opm"]["value"] for lab in labs]
         p = [P[lab]["location_sign_flip_p"] for lab in labs]
         nm = f"g4_{group}_dense_vs_combined_practical_10_20mm"
@@ -854,6 +862,11 @@ def _localization(root: Path, out: dict) -> None:
             f"{ALL} :: results['<array>/focal/320nAm'].ecd_error_mm_median_detected, nine anatomies x three arrays")
     _spread(out, "loc_childrenabc_ecd_det_focal320_mm", res(CHILDREN, ARRAYS, "focal/320nAm", "ecd_error_mm_median_detected"), mm,
             f"{ALL} :: results['<array>/focal/320nAm'].ecd_error_mm_median_detected, children A-C x three arrays")
+    for k, labs, what in SPLIT:
+        _spread(out, f"loc_{k}_ecd_det_focal320_mm", res(labs, ARRAYS, "focal/320nAm", "ecd_error_mm_median_detected"), mm,
+                f"{ALL} :: results['<array>/focal/320nAm'].ecd_error_mm_median_detected, {what} x three arrays")
+        _spread(out, f"loc_{k}_coreg_displacement_mm", [coreg[lab] for lab in labs], mm,
+                f"{ALL} :: coreg_displacement_mm_median over {what}")
     _spread(out, "loc_adult_patch80_detected", res(["adult"], ARRAYS, "patch/80nAm", "detected"), share,
             f"{A} :: results['<array>/patch/80nAm'].detected over the three arrays")
     _spread(out, "loc_adult_chi2_det", [L["adult"]["results"][f"{a}/{c}"]["ecd_khi2_per_dof_median_detected"] for a in ARRAYS for c in CONDS],
@@ -908,6 +921,18 @@ def _localization(root: Path, out: dict) -> None:
     _add(out, "loc_childrenabc_min_p", pval(pmin), pmin, f"{src}: smallest p in children A-C")
     _add(out, "loc_childrenabc_min_p_3sf", sig(pmin, 3), pmin,
          f"{src}: smallest p in children A-C, 3 significant digits (2 would print it equal to the 0.0025 threshold it misses)")
+    for k, labs, what in SPLIT:
+        sub = [r for r in rows if r["lab"] in labs]
+        sg = [r for r in sub if r["p"] < 0.05]
+        _add(out, f"loc_{k}_n", count(len(sub)), len(sub), f"{src}: comparisons in {what}")
+        _add(out, f"loc_{k}_n_sig", count(len(sg)), len(sg), f"{src}: p < 0.05, {what}")
+        _add(out, f"loc_{k}_expected_by_chance", count(round(0.05 * len(sub))), 0.05 * len(sub),
+             f"{src}: 0.05 x comparisons in {what} (if independent, which they are not)")
+        _add(out, f"loc_{k}_n_sig_favour_opm", count(sum(r["dir"] == "opm" for r in sg)), sum(r["dir"] == "opm" for r in sg),
+             f"{src}: p < 0.05 favouring an OPM array, {what}")
+        n = sum(r["p"] < 0.05 / fam_n for r in sub)
+        _add(out, f"loc_survivors_bonferroni_20_n_{k}", count(n), n,
+             f"{src}: p < 0.05/{fam_n} (within anatomy and OPM array), survivors in {what}")
     small = [r for r in rows if r["lab"] != "adult"]
     _add(out, "loc_smaller_heads_min_p", pval(min(r["p"] for r in small)), min(r["p"] for r in small), f"{src}: smallest p in the eight smaller heads")
     _add(out, "loc_family_min_p", pval(min(r["p"] for r in rows)), min(r["p"] for r in rows), f"{src}: smallest p over the nine anatomies")
@@ -930,7 +955,8 @@ def _localization(root: Path, out: dict) -> None:
                              f"{src}: survivors in {lab} at {st[:-3]} nAm")
             n = sum(r["dir"] == "opm" for r in sv)
             _add(out, "loc_survivors_bonferroni_20_n_favour_opm", count(n), n, f"{src}: survivors favouring an OPM array")
-    for k, labs, d in (("smaller_heads", LABELS[1:], 8 * 2 * fam_n), ("all", LABELS, 9 * 2 * fam_n)):
+    for k, labs, d in (("smaller_heads", LABELS[1:], 8 * 2 * fam_n), ("all", LABELS, 9 * 2 * fam_n)) + tuple(
+            (g, labs_, len(labs_) * 2 * fam_n) for g, labs_, _ in SPLIT):
         n = sum(r["p"] < 0.05 / d for r in rows if r["lab"] in labs)
         _add(out, f"loc_survivors_bonferroni_{k}", count(n), n, f"{src}: p < 0.05/{d} over {len(labs)} anatomies")
 

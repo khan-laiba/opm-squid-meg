@@ -109,7 +109,7 @@ class TestDeployPages(unittest.TestCase):
     def test_source_commit_marks_uncommitted_sources(self):
         short = self.git("rev-parse", "--short", "HEAD")
         self.assertEqual(deploy.source_commit(self.repo), (short, []))
-        self.write(self.repo, {"configs/x.toml": "a = 1\n"})  # outside the source paths
+        self.write(self.repo, {"notes/x.txt": "a = 1\n"})  # outside the source paths
         self.assertEqual(deploy.source_commit(self.repo), (short, []))
         self.write(self.repo, {"docs/new.md": "new\n"})  # untracked, in a source path
         self.assertEqual(deploy.source_commit(self.repo), (short + "+dirty", ["?? docs/new.md"]))

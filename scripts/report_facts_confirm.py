@@ -23,7 +23,9 @@ ranges "lo to hi" from unrounded values (one value when both ends print alike) w
 negatives. "raw" holds the unrounded value (a fraction for _pct facts).
 
 Names. Anatomies adult, school, size2yr, infant2yr, infant18mo, infant12mo, childa, childb, childc; groups over anatomies
-all, smaller_heads, templates_controls (scaled adults and infant templates), childrenabc. Arrays dense and matched (the
+all, smaller_heads, templates_controls (scaled adults and infant templates), childrenabc, principal (the scaled adults and
+the 24- and 12-month templates), adult_principal (the adult and those four), provisional (the 18-month template and
+children A-C; the referees' split, reported separately; the declared Holm family stays all nine). Arrays dense and matched (the
 dense and the site-matched OPM arrays), always against Neuromag's 306 channels (combined); S50 also for combined.
 Detectors: practical (the endpoint's scanning detector, thresholds frozen at 1 false event per minute on the calibration
 null), matchedrate (the same detector, thresholds matched to 1 false event per minute on the held-out null; its realized
@@ -87,7 +89,8 @@ holm = G4._holm
 
 ANATOMIES = G4.LABELS
 GROUPS = {"all": ANATOMIES, "smaller_heads": ANATOMIES[1:], "templates_controls": G4.TEMPLATES_CONTROLS,
-          "childrenabc": G4.CHILDREN}
+          "childrenabc": G4.CHILDREN, "principal": G4.PRINCIPAL, "adult_principal": ("adult",) + G4.PRINCIPAL,
+          "provisional": G4.PROVISIONAL}
 NAMES = {"adult": "adult", "school": "school-age size", "size2yr": "2-year size", "infant2yr": "24-month template",
          "infant18mo": "18-month template", "infant12mo": "12-month template", "childA": "child A", "childB": "child B",
          "childC": "child C"}  # prose names (Table 1 of the report)
@@ -329,6 +332,10 @@ def _design(F: Facts, D: dict, reasons: list[str]) -> None:
     F.add("cf_n_anatomies", count(len(labs)), len(labs), f"{CF} :: anatomies (count)")
     F.add("cf_n_anatomies_declared", count(len(ep["anatomies"])), len(ep["anatomies"]),
           f"{CF} :: endpoint.definition.anatomies (count; the Holm family declared in {CFG})")
+    for g, members in GROUPS.items():
+        if g != "all":
+            sel = [lab for lab in members if lab in labs]
+            F.add(f"cf_{g}_n_anatomies", count(len(sel)), len(sel), f"{CF} :: anatomies (count of {names(sel)})")
     commits = cf["simulated_at_commits"]
     F.add("cf_commit", listing(commits), commits, f"{CF} :: simulated_at_commits (code commit of every anatomy's simulation)")
     F.add("cf_n_commits", count(len(commits)), len(commits), f"{CF} :: simulated_at_commits (count)")
@@ -548,6 +555,16 @@ def _family_summary(F: Facts, D: dict, rows: dict, holm_p: dict, fb: str, gb: st
             n = sum(holm_p[lab] < alpha for lab in sel)
             F.add(f"{b}_n_holm_pass", count(n), n, f"{hsrc}; derived: anatomies of {names(sel)} with Holm-adjusted p below "
                   f"{const(alpha)}")
+            for nm, test, what in (("n_ratio_above1", _above1, "above 1 (a censored estimate: its lower bound at least 1)"),
+                                   ("n_ratio_below1", _below1, "below 1 (a censored estimate: its upper bound at most 1)")):
+                n = sum(test(sr[lab]) for lab in sel)
+                F.add(f"{b}_{nm}", count(n), n, f"{gsrc}.s50_ratio_squid_over_opm; derived: anatomies of {names(sel)} with the "
+                      f"ratio {what}")
+            for side in ("above", "below", "includes"):
+                n = sum(_ci_side(sr[lab]) == side for lab in sel)
+                what = {"above": "lower end above 1", "below": "upper end below 1", "includes": "including 1 (open ends unbounded)"}[side]
+                F.add(f"{b}_n_ci_{side}1", count(n), n, f"{gsrc}.s50_ratio_squid_over_opm.ci95; derived: anatomies of {names(sel)} "
+                      f"with the interval's {what}")
 
 
 def _families(F: Facts, D: dict) -> None:
@@ -653,6 +670,12 @@ def _monte_carlo(F: Facts, D: dict) -> None:
                  "the anatomies")
         F.spread("cf_mc_sd_pct", [2 ** x - 1 for x in sds], pct, f"{ALLF} :: monte_carlo['{base_name}'].log2_s50_ratio_sd; "
                  "derived: 2**SD - 1 over the anatomies")
+        for g, members in GROUPS.items():
+            sel = [lab for lab in members if lab in labs and per[lab]["monte_carlo"][base_name]["log2_s50_ratio_sd"] is not None]
+            if g == "all" or not sel:
+                continue
+            F.spread(f"cf_{g}_mc_sd_pct", [2 ** per[lab]["monte_carlo"][base_name]["log2_s50_ratio_sd"] - 1 for lab in sel], pct,
+                     f"{_files(sel)} :: monte_carlo['{base_name}'].log2_s50_ratio_sd; derived: 2**SD - 1 over {names(sel)}")
     F.add("cf_mc_n_cells", count(cells), cells, f"{CF} :: monte_carlo_summary.n_replicates; derived: anatomies x replicates")
     F.add("cf_mc_n_p05", count(n05), n05, f"{ALLF} :: monte_carlo['{base_name}'].n_p_below_alpha, summed over the anatomies "
           "(uncorrected)")
@@ -737,6 +760,14 @@ def _mismatch(F: Facts, D: dict) -> None:
                         vals += [] if x_ is None else [x_]
                         sides.append((lab, _ci_side(sr)))
                     _spread_counts(F, f"cf_{v}_ratio_change_{at}{kt}{st}", vals, sides, f"{ALL} :: mismatch['{name}']")
+                    for g, members in GROUPS.items():
+                        sel = [lab for lab in members if lab in labs]
+                        if g == "all" or not sel:
+                            continue
+                        srs = {lab: per[lab]["mismatch"][name] for lab in sel}
+                        _spread_counts(F, f"cf_{g}_{v}_ratio_change_{at}{kt}{st}",
+                                       [s["value"] for s in srs.values() if s.get("value") is not None],
+                                       [(lab, _ci_side(s)) for lab, s in srs.items()], f"{_files(sel)} :: mismatch['{name}']")
 
 
 def _spread_counts(F: Facts, base: str, vals: list, sides: list, src: str) -> None:
@@ -773,6 +804,13 @@ def _false_events(F: Facts, D: dict) -> None:
     for (vt, kind, dt), xs in groups.items():
         F.spread(f"cf_rate_{dt}_{vt}_{kind}", [x["rate_per_min"] for _, x in xs], share,
                  f"{ALL} :: false_events['{_key_of(dt)}|{_variant_of(vt)}'].{kind}.rate_per_min over the anatomies")
+        for g, members in GROUPS.items():
+            sel = [(lab, x) for lab, x in xs if lab in members]
+            if g == "all" or not sel:
+                continue
+            gl = [lab for lab, _ in sel]
+            F.spread(f"cf_{g}_rate_{dt}_{vt}_{kind}", [x["rate_per_min"] for _, x in sel], share,
+                     f"{_files(gl)} :: false_events['{_key_of(dt)}|{_variant_of(vt)}'].{kind}.rate_per_min over {names(gl)}")
     for vt in variants.values():
         for kind in RATE_KINDS:
             xs = [x for dt in DETSETS.values() for _, x in groups[(vt, kind, dt)]]
@@ -805,7 +843,7 @@ def _false_events(F: Facts, D: dict) -> None:
           + listing(low))
     F.spread("cf_rate_equality_p", [p for *_, p in ps], pval, src)
     # the oracle on the held-out null
-    fpp = []
+    fpp, fpp_by = [], {}
     for lab in labs:
         for key, dt in DETSETS.items():
             o = per[lab]["oracle"][key]
@@ -818,9 +856,15 @@ def _false_events(F: Facts, D: dict) -> None:
             F.add(f"cf_{tag(lab)}_oracle_fpp_{dt}_ci", iv(o["ci95"][0], o["ci95"][1], prob), o["ci95"],
                   f"{src}.ci95 (exact binomial)")
             fpp.append(o["heldout_false_positive_probability"])
+            fpp_by.setdefault(lab, []).append(o["heldout_false_positive_probability"])
     if fpp:
         F.spread("cf_oracle_fpp", fpp, prob, f"{ALL} :: oracle[*].heldout_false_positive_probability over the anatomies and "
                  "arrays")
+    for g, members in GROUPS.items():
+        sel = [lab for lab in members if lab in fpp_by]
+        if g != "all" and sel:
+            F.spread(f"cf_{g}_oracle_fpp", [p for lab in sel for p in fpp_by[lab]], prob, f"{_files(sel)} :: oracle[*]."
+                     f"heldout_false_positive_probability over {names(sel)} and the arrays")
 
 
 def _key_of(dt: str) -> str:

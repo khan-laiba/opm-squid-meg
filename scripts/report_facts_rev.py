@@ -42,7 +42,8 @@ condition). A comparison is <array>_vs_<comparator>_<condition> with _ratio (med
 c<f>hz; sub-bands sb<lo>_<hi> (Hz) and b<lo>_<hi> (the covariance validation's bands); depth bins <lo>_<hi> (mm below the
 scalp); distance bands from the inner skull band_<lo>_<hi> (mm); anatomies adult, infant2yr, child_a, child_b, child_c
 (rev_cgap_: adult, school, size2yr, infant2yr, infant18mo, infant12mo, child_a, child_b, child_c; helmets fixed, scaled,
-scaledx, fitted, fittedtop; groups all, smaller, scaled, templates, templates_scaled, children; dB signed with 2 decimals,
+scaledx, fitted, fittedtop; groups all, smaller, scaled, templates, templates_scaled, children, principal (the two scaled
+adults and the 24- and 12-month templates), provisional (the 18-month template and children A-C); dB signed with 2 decimals,
 intervals '[0.00, +0.05]' (no sign on a zero), k 3 decimals, gaps 1 decimal with _2dp twins).
 The covariance validation's OPM/Neuromag scenarios are rev_cov_opm_<array>_vs_<comparator>_<scenario> (s1 to s5,
 s4_uncorrected, model306, model305, corr5mm_model, ...), in the condition ibenv unless the token says ib (model306_ib) or
@@ -1489,17 +1490,24 @@ CG_SMALLER = CG_ANATS[1:]
 CG_SCALED = ("school", "size2yr")
 CG_TEMPLATES = ("infant2yr", "infant18mo", "infant12mo")
 CG_CHILDREN = ("childA", "childB", "childC")
+# the referees' split of the smaller heads (round 3): the principal pediatric evidence, and the provisional heads reported
+# separately (the 18-month template, classed misregistered by the MRI check, and the children)
+CG_PRINCIPAL = CG_SCALED + ("infant2yr", "infant12mo")
+CG_PROVISIONAL = ("infant18mo",) + CG_CHILDREN
 CG_TOK = {a: a for a in CG_ANATS} | {"childA": "child_a", "childB": "child_b", "childC": "child_c"}
 CG_NAME = {"adult": "adult", "school": "school-age size", "size2yr": "2-year size", "infant2yr": "24-month template",
            "infant18mo": "18-month template", "infant12mo": "12-month template", "childA": "child A", "childB": "child B",
            "childC": "child C"}
 CG_GROUPS = {"all": CG_ANATS, "smaller": CG_SMALLER, "scaled": CG_SCALED, "templates": CG_TEMPLATES,
-             "templates_scaled": CG_SCALED + CG_TEMPLATES, "children": CG_CHILDREN}
+             "templates_scaled": CG_SCALED + CG_TEMPLATES, "children": CG_CHILDREN, "principal": CG_PRINCIPAL,
+             "provisional": CG_PROVISIONAL}
 CG_GROUP_DESC = {"all": "all nine heads", "smaller": "the eight smaller heads", "scaled": "the two scaled adults",
                  "templates": "the three infant templates", "templates_scaled": "the two scaled adults and the three templates",
-                 "children": "children A-C"}
-RANGE_GROUPS = ("smaller", "scaled", "templates", "templates_scaled", "children")
-COUNT_GROUPS = ("smaller", "templates", "templates_scaled", "children")
+                 "children": "children A-C",
+                 "principal": "the four principal heads (the two scaled adults and the 24- and 12-month templates)",
+                 "provisional": "the four provisional heads (the 18-month template and children A-C)"}
+RANGE_GROUPS = ("smaller", "scaled", "templates", "templates_scaled", "children", "principal", "provisional")
+COUNT_GROUPS = ("smaller", "templates", "templates_scaled", "children", "principal", "provisional")
 # helmets: the fixed adult helmet at top contact; scaled with the head (centred, laterally centred); fitted at the adult's
 # gap (the adult laterally centred in its own helmet) and at the adult's top-contact gap
 HELMETS = {"top": "fixed", "counterfactual": "scaled", "counterfactual_x-centred": "scaledx", "gap_matched": "fitted",
@@ -1773,9 +1781,9 @@ def cgap_delta_facts(F, d):
                         cg_spans(F, f"rev_cgap_{{g}}_{ft}_{stem}_delta", {c: e["median"] for c, e in entries.items()}, db,
                                  path + ".median")
                         cg_spans(F, f"rev_cgap_{{g}}_{ft}_{stem}_delta_ci_hi", {c: e["ci95"][1] for c, e in entries.items()},
-                                 db, path + ".ci95[1]", groups=("smaller", "templates_scaled"))
+                                 db, path + ".ci95[1]", groups=("smaller", "templates_scaled", "principal", "provisional"))
                         cg_spans(F, f"rev_cgap_{{g}}_{ft}_{stem}_delta_ci_lo", {c: e["ci95"][0] for c, e in entries.items()},
-                                 db, path + ".ci95[0]", groups=("smaller", "templates_scaled"))
+                                 db, path + ".ci95[0]", groups=("smaller", "templates_scaled", "principal", "provisional"))
                         cg_counts(F, f"rev_cgap_{ft}_{stem}_delta", entries, path)
     # equal OPM site count: the adult's dense array subsampled to each head's dense site count, the adult in the same rule
     for h, ht in EQSITES:
