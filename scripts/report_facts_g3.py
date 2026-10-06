@@ -61,7 +61,7 @@ SCALED = ("school", "size2yr")
 TEMPLATES = ("infant2yr", "infant18mo", "infant12mo")
 SCHOOL = ("childA", "childB", "childC")
 NATIVE = TEMPLATES + SCHOOL
-# the referees' split of the smaller heads (round 3): the principal pediatric evidence, and the provisional heads reported
+# the split of the smaller heads: the principal pediatric evidence, and the provisional heads reported
 # separately as a sensitivity analysis (the 18-month template, classed misregistered by the MRI check, and the children,
 # whose near-scalp anatomy could not be verified)
 PRINCIPAL = SCALED + ("infant2yr", "infant12mo")

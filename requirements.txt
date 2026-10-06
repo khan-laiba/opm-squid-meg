@@ -1,5 +1,5 @@
 # Pinned environment of the development venv (Python 3.12.14, macOS arm64), captured 2026-09-30.
-# Direct dependencies: mne, numpy, scipy, matplotlib, pillow, jinja2 (site builder), tqdm, pooch (MNE datasets).
+# Direct dependencies: mne, numpy, scipy, matplotlib, pillow, jinja2 (paper build), tqdm, pooch (MNE datasets).
 # Install into a fresh Python 3.12 venv with: python -m pip install -r requirements.txt
 certifi==2026.7.22
 charset-normalizer==3.5.1

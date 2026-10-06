@@ -94,7 +94,7 @@ Read only; nothing is re-run. Every fact is computed from unrounded stored value
                                   the text over the principal heads (the two scaled adults and the 24- and 12-month
                                   templates; with the adult where a statement includes it) and, separately, over the
                                   provisional heads (the 18-month template, classed misregistered by the MRI check, and
-                                  children A-C), the referees' split; the split is checked against the labels and the MRI
+                                  children A-C), the split of the smaller heads; the split is checked against the labels and the MRI
                                   check's verdicts, and the claims the text makes of the principal heads are checked
   wr_depth_strata_<principal|infant18mo>_dense_ib_delta_range, wr_cfx_<principal|infant18mo>_lobe_cells_*,
   wr_g4_bonferroni_<24|48>_*      statements of the supplement that pooled the 18-month template with the principal heads,
@@ -141,7 +141,7 @@ CONFIRM_ENDPOINT_PAIR = "opm_dense/opm_vs_squid/combined/primary/{thresholds}"
 HEAD_LABELS ={"adult": "adult", "school": "school-age size", "size2yr": "2-year size", "infant2yr": "24-month template",
                "infant18mo": "18-month template", "infant12mo": "12-month template", "childA": "child A",
                "childB": "child B", "childC": "child C"}
-# the referees' split of the smaller heads (round 3): the principal pediatric evidence, and the provisional heads reported
+# the split of the smaller heads: the principal pediatric evidence, and the provisional heads reported
 # separately as a sensitivity analysis (checked in principal_facts against the labels and the MRI check's verdicts)
 PRINCIPAL_HEADS = ("school", "size2yr", "infant2yr", "infant12mo")
 PROVISIONAL_HEADS = ("infant18mo", "childA", "childB", "childC")
@@ -970,7 +970,7 @@ def round3b_facts(F: Facts, root: Path) -> None:
           "template's, mm; the difference between the two heads' scalp conventions)")
 
     import subprocess
-    sources = ("src", "scripts", "configs", "tests", "requirements.txt", "legacy", "site", "report", "results", "docs", "README.md")
+    sources = ("src", "scripts", "configs", "tests", "requirements.txt", "legacy", "paper", "results", "docs", "README.md")
     try:
         head = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
         dirty = subprocess.run(["git", "status", "--porcelain", "--", *sources], cwd=root, capture_output=True, text=True,
@@ -1123,7 +1123,7 @@ def round4_facts(F: Facts, root: Path) -> None:
 
 def principal_facts(F: Facts, root: Path) -> None:
     """The pooled quantities of the text over the principal heads and, separately, over the provisional heads (the
-    referees' split of the smaller heads): counts in words; the helmet-fit interaction and the principal templates' share of
+    split of the smaller heads of the smaller heads): counts in words; the helmet-fit interaction and the principal templates' share of
     it; Delta at the adult's gap (its interval bounds and the head with the highest value), at the adult's top-contact gap
     against the adult at top contact, and the projected-condition intervals that include zero; the principal templates'
     scalp convention. The split is checked against the labels and the MRI check's verdicts, and the claims the text makes
@@ -1139,7 +1139,7 @@ def principal_facts(F: Facts, root: Path) -> None:
     if mis != prov_templates:
         raise ValueError(f"{QC}, {TEMPLATES_QC}: the templates the MRI check classes misregistered ({mis}) are not the "
                          f"provisional templates ({prov_templates})")
-    split = (f"{G4_PED} :: labels; {QC}, {TEMPLATES_QC} :: verdicts[*].class (derived: the referees' split of the smaller "
+    split = (f"{G4_PED} :: labels; {QC}, {TEMPLATES_QC} :: verdicts[*].class (derived: the split of the smaller "
              "heads, the provisional template being the one the MRI check classes misregistered)")
     for g, heads in HEAD_GROUPS.items():
         F.add(f"wr_n_{g}_words", words(len(heads)), len(heads), f"{split}: {HEAD_GROUP_DESC[g]}, count in words")

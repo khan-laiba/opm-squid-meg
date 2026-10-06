@@ -25,7 +25,7 @@ negatives. "raw" holds the unrounded value (a fraction for _pct facts).
 Names. Anatomies adult, school, size2yr, infant2yr, infant18mo, infant12mo, childa, childb, childc; groups over anatomies
 all, smaller_heads, templates_controls (scaled adults and infant templates), childrenabc, principal (the scaled adults and
 the 24- and 12-month templates), adult_principal (the adult and those four), provisional (the 18-month template and
-children A-C; the referees' split, reported separately; the declared Holm family stays all nine). Arrays dense and matched (the
+children A-C; the split of the smaller heads, reported separately; the declared Holm family stays all nine). Arrays dense and matched (the
 dense and the site-matched OPM arrays), always against Neuromag's 306 channels (combined); S50 also for combined.
 Detectors: practical (the endpoint's scanning detector, thresholds frozen at 1 false event per minute on the calibration
 null), matchedrate (the same detector, thresholds matched to 1 false event per minute on the held-out null; its realized

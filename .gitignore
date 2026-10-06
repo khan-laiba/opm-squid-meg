@@ -12,13 +12,18 @@ __pycache__/
 data/
 cache/
 
-# reference papers are not redistributed
-/2026.08.17.744953.full.pdf
-/Hunold_2016_Physiol._Meas._37_1146.pdf
-/Human Brain Mapping - 2008 - Goldenholz*.pdf
+# reference papers and other documents at the top level are not redistributed
+/*.pdf
+/*.docx
+/*.pptx
+/*.zip
+~$*
+/refs/
+/prose_example/
+/story_*.md
 
-# locally built website (published only with explicit owner approval)
-site/_build/
-
-# manuscript build outputs (the PDFs in paper/ are kept)
+# manuscript build outputs (the compiled PDFs and the rendered sources in paper/ are kept)
 paper/build/
+
+# outputs of the Fig. 3 replica, written next to it
+legacy/figure3_output/

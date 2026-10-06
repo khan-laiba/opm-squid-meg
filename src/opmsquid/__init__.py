@@ -1,4 +1,4 @@
-"""opmsquid: adult-to-pediatric OPM vs SQUID MEG simulation study (see PLAN.md and docs/methods.md).
+"""opmsquid: adult-to-pediatric OPM vs SQUID MEG simulation study (see README.md and docs/methods.md).
 
 Modules
 -------

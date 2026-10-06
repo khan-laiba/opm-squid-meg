@@ -34,7 +34,7 @@ MINUS = "\u2212"
 LABELS = ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC")
 TEMPLATES_CONTROLS = ("school", "size2yr", "infant2yr", "infant18mo", "infant12mo")
 CHILDREN = ("childA", "childB", "childC")
-# the referees' split of the smaller heads (round 3): the principal pediatric evidence (the scaled adults and the 24- and
+# the split of the smaller heads: the principal pediatric evidence (the scaled adults and the 24- and
 # 12-month templates; with the adult where a statement includes it) and the provisional heads reported separately (the
 # 18-month template, classed misregistered by the MRI check, and children A-C)
 PRINCIPAL = ("school", "size2yr", "infant2yr", "infant12mo")

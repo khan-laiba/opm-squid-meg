@@ -1,4 +1,4 @@
-# Methods (living document)
+# Detailed methods
 
 Status labels: **REPRO** reproduction with the paper's definitions; **ADAPT** methodological
 adaptation; **NEW** new study choice. Parameter IDs refer to `docs/provenance_register.md`.

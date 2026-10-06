@@ -6,7 +6,7 @@ OPM sensitive-axis construction and its effect, the external-field projection, t
 parameters of the time-domain (spike) model, the two dSPM implementations, the number of bootstrap resamples of every
 interval family, the random seeds of the spike runs, the 12-month template's thin skull and the single-layer check, what
 18 (or 36) locations per band allow a location-level test to show, and the provenance of the declared parameters.
-report/methods_additions.md uses these facts.
+The manuscript's Methods and the supplementary material use these facts.
 
 facts(root) -> {name: {"value": text as printed, "raw": unrounded number(s) or text, "source": "<file> :: <key path>" or
 "<file> :: derived: <how>"}}. Sources are the committed result files (with key paths), the configurations (TOML key
@@ -37,7 +37,7 @@ MINUS = "−"
 SUP = str.maketrans("-0123456789", "⁻⁰¹²³⁴⁵⁶⁷⁸⁹")
 LABELS = ("adult", "school", "size2yr", "infant2yr", "infant18mo", "infant12mo", "childA", "childB", "childC")
 SMALLER = LABELS[1:]
-# the referees' split of the smaller heads (round 3): the principal pediatric evidence and the provisional heads
+# the split of the smaller heads: the principal pediatric evidence and the provisional heads
 PRINCIPAL = ("school", "size2yr", "infant2yr", "infant12mo")
 PROVISIONAL = ("infant18mo", "childA", "childB", "childC")
 TOK = {a: a.lower() for a in LABELS}

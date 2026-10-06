@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Every number printed in the report (report/report.md), read from the committed result files.
+"""Every number printed in the manuscript and its supplementary material (paper/), read from the committed result files.
 
 build_facts() merges the per-milestone fact modules:
   scripts/report_facts_g12.py  G1A, G1B, G1C, G2 (adult) and the adult regions

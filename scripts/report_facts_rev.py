@@ -1490,7 +1490,7 @@ CG_SMALLER = CG_ANATS[1:]
 CG_SCALED = ("school", "size2yr")
 CG_TEMPLATES = ("infant2yr", "infant18mo", "infant12mo")
 CG_CHILDREN = ("childA", "childB", "childC")
-# the referees' split of the smaller heads (round 3): the principal pediatric evidence, and the provisional heads reported
+# the split of the smaller heads: the principal pediatric evidence, and the provisional heads reported
 # separately (the 18-month template, classed misregistered by the MRI check, and the children)
 CG_PRINCIPAL = CG_SCALED + ("infant2yr", "infant12mo")
 CG_PROVISIONAL = ("infant18mo",) + CG_CHILDREN

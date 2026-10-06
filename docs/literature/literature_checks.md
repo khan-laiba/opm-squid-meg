@@ -1,19 +1,6 @@
-# Literature checks for the revision (referee round 1)
+# Literature checks
 
-This note answers the literature requests of the first referee round: Referee 1, claims point 5 and minor points 4–6; Referee 2, minor point 5. For each question it gives the finding, the full citation with DOI, the values with their place in the source, and how each value was verified. Searches and reading were done on 2026-10-05.
-
-**Conventions**
-
-- Values are given as printed. **[derived]**: we computed it; the source does not state it.
-- *Read* says how a value was verified:
-  - *full text*: the article itself, with page, section, table or figure legend;
-  - *manufacturer document*: a datasheet, manual or product page of the maker;
-  - *metadata*: Crossref, PubMed, Europe PMC or bioRxiv records;
-  - *abstract*;
-  - *secondary*: a statement about the item in another paper.
-- "Not verifiable from accessible sources" marks what could not be checked.
-- Text is paraphrased. Quotation marks mark a source's own wording (at most one short quote per source).
-- Study values come from the repository: `configs/g2_adult.toml` and the rows of `docs/provenance_register.md` named in each section.
+This note records five checks of the literature behind the manuscript: the full text of Ren et al. (2025), the publication status of Jas et al. (2026), the white noise of the MEGIN/Elekta Neuromag systems, the OPM vapour-cell size and sensing-centre standoff, and the frequency band of each clinical OPM noise figure. For each question it gives the finding, the full citation with DOI, the values with their place in the source, and how each value was verified. Searches and reading were done on 2026-10-05.
 
 ## Summary
 
@@ -63,12 +50,7 @@ This note answers the literature requests of the first referee round: Referee 1,
   - The Beijing Municipal Science and Technology Commission reported the market approval of the 128-channel Marvel MEG on 24 July 2024 ([kw.beijing.gov.cn](https://kw.beijing.gov.cn/xwdt/kcyx/xwdtyqqy/202407/t20240724_3821972.html), in Chinese).
   - The item says the device's registration clinical study was run at Beijing Tiantan Hospital, Ren et al.'s institution. It does not cite the article.
 
-**For the manuscript.**
-
-- Keep Ren et al. labelled as abstract only.
-- If the systems are named, say "probably" and give the indirect basis.
-- Do not state an SNR definition, a channel choice or a sensor noise for this study.
-- The article is open access, so a reader using an ordinary browser can close this point.
+**Use in the manuscript.** Ren et al. (2025) is cited from its abstract only (Table S19), and no SNR definition, channel choice or sensor noise is attributed to the study. The article is open access, so its full text can be checked in an ordinary browser.
 
 ---
 
@@ -161,11 +143,10 @@ Elekta Neuromag Oy (2005). *Elekta Neuromag® System Hardware: Technical manual*
 - A datasheet for the TRIUX neo: the MEGIN pages reached give no noise figures.
 - Any typical white-noise value for the VectorView.
 
-**For the manuscript.**
+**Use in the manuscript.**
 
-- **Current wording.** The report's Methods (sensor noise) call the TRIUX values "not verified against its specification sheet". `report/methods_additions.md` adds that the sheet was not available, and register U-HW1 says the same.
-- **Proposed wording.** It can say instead that the values are the typical white-noise levels of the manufacturer's TRIUX datasheet (3.5 fT/√Hz and 3.6 fT/(cm √Hz)), with the datasheet's 18-mm coil-to-surface distance, and cite the datasheet.
-- **Two cautions belong with it.**
+- The manuscript gives the Neuromag values as the typical white-noise levels of the manufacturer's TRIUX datasheet (3.5 fT/√Hz and 3.6 fT/(cm √Hz)), with the datasheet's 18-mm coil-to-surface distance, and cites the datasheet (register U-HW1).
+- **Two cautions go with these values.**
   - These are typical, not guaranteed, values. The guaranteed maxima are 5 (60–70 Hz) and 12 (1–10 Hz) for 96 % of channels.
   - The white level is specified at 60–70 Hz, so the 1–40 Hz analysis band may hold more SQUID noise. The study's sensitivity analysis with the measured empty-room spectrum covers this. The register row on Neuromag noise from the measured spectrum gives median in-band RMS of 25.9 fT (magnetometers) and 20.0 fT/cm (gradiometers), against 20.7 fT and 21.3 fT/cm from the typical values.
 - **Coil geometry.** The VectorView and TRIUX documents give the same coil size (28 mm), baseline (17.0 mm) and 18-mm spacing. The model's coil definitions (register HW-T3) were not compared with these here.
@@ -223,7 +204,7 @@ Two reviews state the general picture:
   - The 10-mm figure appears only in Jas et al.'s description (p. 10, as extracted in `jas2026.md` §5.2).
   - In the model the cube is an averaging volume. The register gives its effect on the field at the peak as −1.9 % at 10 mm source distance, −0.4 % at 15 mm and −0.04 % at 30 mm (A-OPM-CELL). A 3-mm cell would lie closer to a point sensor [inference].
   - Suggested wording: a 10-mm cubic averaging volume, larger than the 3-mm cells of current alkali OPMs, with an effect of at most 1.9 % on the peak field. This needs no new computation.
-- **Clinical array sizes (Referee 1, minor point 5, second half).**
+- **Clinical array sizes.**
   - The largest clinical OPM arrays in `epilepsy_opm_studies.md` §1:
     - 64 dual-mode sensors with 128 channels (Shen et al. 2026);
     - a 128-channel system (Ren et al. 2025, abstract);
@@ -231,7 +212,7 @@ Two reviews state the general picture:
     - 48 sensors with 116 channels (Feys et al. 2024).
   - The dense array has 208 single-axis sites (register A-OPM-CLEAR). It exceeds every clinical array in both sensors and channels.
 
-**Related device parameters (Referee 2, minor point 5).**
+**Related device parameters.**
 
 - **Package footprint** (register U-OPM-PACK, marked unverified).
   - QuSpin Gen-2/Gen-3: 12.4 × 16.6 mm (Hill et al. 2020; QuSpin pages; Boto et al. 2022).
@@ -272,7 +253,7 @@ Two reviews state the general picture:
   - The specification sheet (2023, distributor copy) lists 8 and 15 fT/√Hz over **10–130 Hz** in its Min/Typ/Max columns. The text we could read does not show unambiguously which column holds 8; 15 is in the last column.
   - The HEDscan web page states below 15 fT/√Hz, without a band.
 
-**For the manuscript (Referee 1, minor point 6).**
+**Relation to the model.**
 
 - **The model's figure.** The model's 15 fT/√Hz is a white, frequency-independent level applied over the whole 1–40 Hz analysis band (`configs/g2_adult.toml`, `[band]`; register A-OPM-NOISE).
 - **How it compares with the specifications.**

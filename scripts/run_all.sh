@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Reproduce every milestone in order (see README.md). Requires the MNE sample data in
+# Run the whole analysis pipeline in order, then draw the paper's figures and build it (see README.md,
+# 'Reproducing the results'). Requires the MNE sample data in
 # data/external/MNE-sample-data. Full-resolution lead fields take ~6 min each; the whole run
 # takes roughly 2 h on a laptop for the adult part (about 40 min of it for the lead fields) and
 # about 9 h for the pediatric part (G3B, eight pediatric G4 runs of about 1 h each, the motion
@@ -47,7 +48,7 @@ step g4_adult $PY scripts/g4_epilepsy_adult.py                           # G4   
 step g4_loc $PY scripts/g4_localization.py                               # G4   bounded localization, adult
 step g4_vs_g2 $PY scripts/study_g4_vs_g2.py                              # G4   detection vs the G2 detectability at the G4 locations
 # after the adult baseline; needs the 12-, 18- and 24-month infant templates and the school-aged
-# children (scripts/fetch_school_subjects.py; README, Reproduce):
+# children (scripts/fetch_school_subjects.py; README.md, 'External data'):
 step g3a $PY scripts/g3a_jas_size_benchmark.py                           # G3A  Jas Table 1 / Fig. 5 (REPRO)
 step school_prep $PY scripts/prepare_school_subjects.py                  # G3B  school-aged children: modelled skull, fiducials, source space
 step child_bem $PY scripts/study_child_bem.py                            # G3B  the modelled skull (A-BEM-CHILD) checked on the adult
@@ -93,4 +94,5 @@ step report_figures_clean $PY scripts/report_figures_clean.py           # G5   m
 step report_figures_supplement $PY scripts/report_figures_supplement.py # G5   supplementary spike figures: localization, joint detection, adult curves
 step report_figures_qc $PY scripts/report_figures_qc.py                 # G5   figures of the children's MRI quality check
 step report_figures_confirm $PY scripts/report_figures_confirm.py       # G5   confirmatory spike figure (R16; needs g4c_combine)
-step site $PY scripts/build_site.py                                      # G5   report and supplementary pages in site/_build
+step paper_figures $PY paper/export_figures.py                          # print figures of the paper (paper/figures/)
+step paper $PY paper/build_paper.py                                      # manuscript and supplementary material (needs tectonic)

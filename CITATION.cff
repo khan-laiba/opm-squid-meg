@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use this code or these results, please cite the paper given under preferred-citation."
+type: software
+title: "Sensor noise, array design and helmet fit in on-scalp and cryogenic magnetoencephalography: a simulation study in adult and pediatric head models"
+authors:
+  - given-names: Laiba
+    family-names: Khan
+    affiliation: "Lexington High School, Lexington, MA, USA"
+  - given-names: Mainak
+    family-names: Jas
+    affiliation: "Athinoula A. Martinos Center for Biomedical Imaging, Massachusetts General Hospital and Harvard Medical School, Charlestown, MA, USA"
+repository-code: "https://github.com/khan-laiba/opm-squid-meg"
+url: "https://khan-laiba.github.io/opm-squid-meg/"
+license: MIT
+keywords:
+  - magnetoencephalography
+  - optically pumped magnetometer
+  - SQUID
+  - pediatric neuroimaging
+  - helmet fit
+  - noise covariance
+  - interictal spikes
+preferred-citation:
+  type: article
+  title: "Sensor noise, array design and helmet fit in on-scalp and cryogenic magnetoencephalography: a simulation study in adult and pediatric head models"
+  authors:
+    - given-names: Laiba
+      family-names: Khan
+      affiliation: "Lexington High School, Lexington, MA, USA"
+    - given-names: Mainak
+      family-names: Jas
+      affiliation: "Athinoula A. Martinos Center for Biomedical Imaging, Massachusetts General Hospital and Harvard Medical School, Charlestown, MA, USA"
+  journal: NeuroImage
+  status: in-preparation
+  year: 2026
