@@ -849,7 +849,7 @@ def helmet_fit_figure(s: dict, g3b: dict, path: Path) -> None:
     the helmet fitted at the adult's gap; (b) Delta against the adult placed by the same rule in each helmet, with the
     fixed helmet's range over its source-blind placements; (c) the interaction, the primary helmet-fit quantity (a
     head's fixed-minus-fitted contrast minus the adult's), which does not depend on the OPM noise. Dense OPM array
-    against Neuromag's 306 channels, sensor plus brain noise; the children, provisional examples, are set apart. The
+    against Neuromag's 306 channels, sensor plus brain noise; the heads reported separately (Section S10) are set apart. The
     heads are those of report_style.ANAT_ORDER (all nine: Fig. S17; principal_heads(): Fig. 9). Drawn at the text width,
     no text under 7.2 pt; bars and caps 1.2 pt wide (thinner, a bar can print as a pale hairline). Under set_apart()
     the heads right of the dotted line, APART with the children, are labelled APART_HEAD in each panel (the upper limit

@@ -25,7 +25,7 @@ This note records five checks of the literature behind the manuscript: the full 
   - OpenAlex and Semantic Scholar list the article as gold open access under CC BY.
   - The other records disagree. PubMed shows only an Elsevier copyright line and no licence. Europe PMC records the CC BY licence but labels its publisher link "subscription required". The licence record is the publisher's own deposit. Read: metadata.
 - **Repositories.** The article is not in PMC and not in Europe PMC; Europe PMC record 40254146 has no full text.
-- **Full text.** The publisher's page could not be read for this check, and the DOAJ record and the Beihang University research portal give the abstract only.
+- **Full text.** Not read for this note; the DOAJ record and the Beihang University research portal give the abstract only.
 - **Result.** The following are **not verifiable from accessible sources**: the OPM sensor type and noise, the SQUID system, the comparator channels, the SNR and amplitude definitions, the effect sizes and the table values. The extraction in `epilepsy_opm_studies.md` §3.10 stays abstract-only and needs no correction.
 
 **What accessible records add.** These are indirect; they are not the article's text.

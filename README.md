@@ -181,7 +181,7 @@ on the per-location differences in detection counts, Holm-adjusted over the nine
 its sample size (36 locations per anatomy, five noise replicates), in commit 10e37b9 of 4 October 2026. It was run at
 commit ae458a9, which differs from 10e37b9 only in the result files of other analyses. The number of locations was
 chosen after two pilot runs in child A whose outputs were not kept. Only the history of this repository attests the
-declaration; the run was not registered externally.
+declaration; the run was not registered externally. The declaration file is kept exactly as committed, including its header comment.
 
 **Tests.** After the external data have been downloaded, `.venv/bin/python -m unittest discover -s tests -t .` runs
 299 tests (about 10 min). Without the MNE sample dataset, the run reports six errors and skips 35 tests.
