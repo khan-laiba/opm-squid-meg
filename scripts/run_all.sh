@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Run the whole analysis pipeline in order, then draw the paper's figures and build it (see README.md,
-# 'Reproducing the results'). Requires the MNE sample data in
+# 'Reproducing the paper'). Requires the MNE sample data in
 # data/external/MNE-sample-data. Full-resolution lead fields take ~6 min each; the whole run
 # takes roughly 2 h on a laptop for the adult part (about 40 min of it for the lead fields) and
 # about 9 h for the pediatric part (G3B, eight pediatric G4 runs of about 1 h each, the motion
