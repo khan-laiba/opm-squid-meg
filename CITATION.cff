@@ -21,7 +21,7 @@ keywords:
   - noise covariance
   - interictal spikes
 preferred-citation:
-  type: article
+  type: unpublished
   title: "Sensor noise, array design and helmet fit in on-scalp and cryogenic magnetoencephalography: a simulation study in adult and pediatric head models"
   authors:
     - given-names: Laiba
@@ -30,6 +30,5 @@ preferred-citation:
     - given-names: Mainak
       family-names: Jas
       affiliation: "Athinoula A. Martinos Center for Biomedical Imaging, Massachusetts General Hospital and Harvard Medical School, Charlestown, MA, USA"
-  journal: NeuroImage
-  status: in-preparation
+  notes: Preprint
   year: 2026

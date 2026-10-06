@@ -4,7 +4,7 @@ This repository contains the code, the stored analysis outputs and the manuscrip
 
 > **Sensor noise, array design and helmet fit in on-scalp and cryogenic magnetoencephalography: a simulation study
 > in adult and pediatric head models.**
-> Laiba Khan and Mainak Jas. Manuscript prepared for submission to *NeuroImage*, 2026.
+> Laiba Khan and Mainak Jas. Preprint, 2026.
 
 **Paper:** [HTML](https://khan-laiba.github.io/opm-squid-meg/) · [PDF](paper/manuscript.pdf) ·
 [Supplementary material](paper/supplementary.pdf)
@@ -195,7 +195,7 @@ If you use this code or these results, please cite the paper ([`CITATION.cff`](C
   author = {Khan, Laiba and Jas, Mainak},
   title  = {Sensor noise, array design and helmet fit in on-scalp and cryogenic magnetoencephalography:
             a simulation study in adult and pediatric head models},
-  note   = {Manuscript prepared for submission to NeuroImage},
+  note   = {Preprint},
   year   = {2026}
 }
 ```

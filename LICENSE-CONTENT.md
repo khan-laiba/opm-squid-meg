@@ -8,7 +8,7 @@ the figures in `paper/figures/` and the compiled PDFs), the documentation in `do
 `results/` are released under the Creative Commons Attribution 4.0 International license (CC BY 4.0,
 https://creativecommons.org/licenses/by/4.0/). Please cite the manuscript (Khan and Jas, 2026): Khan, L., Jas, M.,
 2026. Sensor noise, array design and helmet fit in on-scalp and cryogenic magnetoencephalography: a simulation study
-in adult and pediatric head models. Manuscript prepared for submission to NeuroImage.
+in adult and pediatric head models. Preprint.
 
 **Third-party material keeps its own terms**, credited where it appears:
 - figures adapted from Jas et al. (2026), bioRxiv doi:10.64898/2026.08.17.744953 (CC BY 4.0);

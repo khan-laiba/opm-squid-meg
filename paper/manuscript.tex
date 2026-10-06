@@ -41,7 +41,11 @@
 \setlength{\emergencystretch}{3em}  % fewer overfull lines in the justified text
 % notes set below a table body
 \newcommand{\tablenotes}[1]{\par\smallskip{\footnotesize\raggedright #1\par}}
-\journal{NeuroImage}
+% first-page footer: 'Preprint' and the date (elsarticle would print 'Preprint submitted to <journal>')
+\makeatletter
+\def\ps@pprintTitle{\let\@oddhead\@empty\let\@evenhead\@empty
+  \def\@oddfoot{\hbox to \textwidth{\footnotesize\itshape Preprint\hfill\@date}}\let\@evenfoot\@oddfoot}
+\makeatother
 
 \begin{document}
 

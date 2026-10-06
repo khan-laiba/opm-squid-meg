@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the NeuroImage manuscript: fill every number from the facts of scripts/report_facts.py, then compile.
+"""Build the manuscript: fill every number from the facts of scripts/report_facts.py, then compile.
 
 The sources are LaTeX templates in this folder (manuscript.tex.j2, supplementary.tex.j2) in which every number read from
 an analysis output is written as << F.name >>, a fact of scripts/report_facts.py (value as printed, the unrounded value
@@ -36,7 +36,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import report_facts  # noqa: E402
 
 DOCS = ("manuscript", "supplementary")
-ABSTRACT_MAX_WORDS = 400  # the Guide for Authors of NeuroImage asks for at most 250
+ABSTRACT_MAX_WORDS = 400
 SUPERSCRIPT = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺", "0123456789-+")
 LATEX_SPECIAL = {"\\": r"\textbackslash{}", "{": r"\{", "}": r"\}", "$": r"\$", "&": r"\&", "#": r"\#", "_": r"\_",
                  "%": r"\%", "~": r"\textasciitilde{}", "^": r"\textasciicircum{}"}
