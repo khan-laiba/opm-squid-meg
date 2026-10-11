@@ -371,3 +371,22 @@ return accept or minor revisions in the same round.
   other 23 figures are pixel-identical. Committed as 6602396 (main fast-forwarded) and deployed as gh-pages fe38257,
   checked live (2 pages, 31 internal assets, 239 anchors, 0 failures). Unit tests: 302 pass; facts: 68,864, 0
   problems.
+- 2026-10-11: owner: review the main-text figures panel by panel, element by element, with Claude Fable 5.1 (maximum
+  effort) and GPT-6 Astra (Codex, maximum reasoning) as independent referees, and update the captions, keys and text
+  with the review. Both referees recomputed the plotted values from the result files and found none wrong. Round 1
+  (Fable: 3 major, 44 minor findings; Astra: 3 major, 21 minor) asked for definitions, one term and one encoding per
+  entity, and legibility. Applied: panel letters in Figs. 2 and 6; one scalp contour per section in Fig. 2; 'OPM white
+  noise' and the BEM row's 1,000-target subset in Fig. 3; in Fig. 4 the room field projected out dashed as in Figs. 5
+  and 8, the joint run dash-dotted, the frequency-whitening detector named as in the text, k a variance factor and the
+  near-skull rows as background, additional targets or both; 'room field projected out' in every key; Fig. 8A's D
+  defined; Fig. 9B's axis; Fig. 10's light markers and ticks; captions that define every marker, band, interval and
+  count; the text, Table 3, Sections S3.5-S3.6, Table S3 and the captions of Figs. S16-S18 aligned. Declined with
+  reasons both referees accepted: a new color for the 24-month template, one marker shape for the fitted helmet in
+  Figs. 2 and 9. Round 2: Astra found that the longer Fig. 4 caption ran off its page in the PDF (LaTeX reported the
+  float too large; the build did not check); the captions now leave to the keys what the keys show, and the build
+  fails on any float taller than its page. Rounds 3-6 settled the rest: Fig. 2's scalp clause; Fig. 4C's axis label
+  against D's key (Fable); the export's overlap audit, which now tests texts against the keys' symbols on the layout
+  of each PDF's own render and stops the export, with a regression test (both referees); it found an axis label of
+  Fig. S5 within 1 pt of a panel title, now moved. Final verdicts: accept from both, for all ten figures. Committed as
+  cd1ca05 (main fast-forwarded) and deployed as gh-pages 9e81cbd, checked live (2 pages, 31 internal assets, 239
+  anchors, 0 failures). Unit tests: 305 pass; facts: 68,867, 0 problems.
