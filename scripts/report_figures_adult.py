@@ -56,6 +56,9 @@ R1_DODGE_PEAK = {"opm_dense": -0.3, "opm_matched": 0.3}
 R1_BAR = dict(fmt="none", elinewidth=0.9, capsize=1.6, capthick=0.9)
 # secondary dB axes (20 log10 of the ratio; D for a detectability ratio): tick spacing in dB per panel
 R1_DB_STEP = (2.0, 5.0)  # (a) detectability ratio, (b) peak-field ratio
+R1_IQR_ALPHA = 0.15  # R1 (a): the interquartile range over targets, shaded in each array's colour
+R3_BAND_ALPHA, R3_ROW_GRAY = 0.13, "0.9"  # R3: each array's primary interval (vertical band), the primary row
+R3_BAND_NAME = {"opm_dense": "dense", "opm_matched": "site-matched"}
 R3_DB_STEP = 1.0
 R4_DB_STEP = (1.0, 5.0)  # (a, b) detectability ratio, (d) peak-field ratio
 
@@ -253,7 +256,7 @@ def figure_depth(s):
             xs = x + R1_DODGE.get((a, cond), 0.0)
             if primary:
                 ax.fill_between(xs, 2.0 ** np.array([r["q25"] for r in rows]), 2.0 ** np.array([r["q75"] for r in rows]),
-                                color=col, alpha=0.15, lw=0, zorder=2)
+                                color=col, alpha=R1_IQR_ALPHA, lw=0, zorder=2)
             ax.plot(xs, med[a, cond][1], ls, color=col, lw=1.5 if primary else 1.2, zorder=3)  # no markers: the bars mark the bins
             if cond in R1_CI_CONDS:
                 iv = np.array([ci[f"{a}/combined/{cond}"][(r["lo"], r["hi"])][1:3] for r in rows]).T
@@ -271,11 +274,13 @@ def figure_depth(s):
     db_axis(ax, "y", R1_DB_STEP[0], "D (dB)")
     ax.set_ylabel(f"Detectability ratio, OPM over\nNeuromag ({c['n_all']} channels), log scale")
     ax.set_title(f"(a) Detectability ratio: median over the targets of each {width:g}-mm depth bin", loc="left")
-    h = [Line2D([], [], color=style.ARRAY_COLOR[a], lw=1.5, label=r1_sites(s, a)) for a in ARRAYS]
-    h += [Patch(color="0.5", alpha=0.3, label="IQR over targets (primary)"),
-          Line2D([], [], color="0.15", lw=0, marker="|", ms=7, mew=0.9, label="95 % interval of the bin median")]
-    h += [Line2D([], [], color="0.15", ls=ls, lw=1.3, label=lab) for _, ls, lab in conds]
-    ax.legend(handles=h, loc="upper right", ncol=2, handlelength=2.6, columnspacing=1.2, fontsize=7)
+    keys = [(Line2D([], [], color=style.ARRAY_COLOR[a], lw=1.5), r1_sites(s, a)) for a in ARRAYS]
+    keys += [(style.band_pair(R1_IQR_ALPHA), "IQR over targets (primary)"),
+             (Line2D([], [], color="0.15", lw=0, marker="|", ms=7, mew=0.9), "95 % interval of the bin median")]
+    keys += [(Line2D([], [], color="0.15", ls=ls, lw=1.3), lab) for _, ls, lab in conds]
+    lg = ax.legend([k for k, _ in keys], [lab for _, lab in keys], loc="upper right", ncol=2, handlelength=2.6,
+                   columnspacing=1.2, fontsize=7, handler_map=style.KEY_HANDLERS)
+    lg.source_handles = [k for k, _ in keys]  # the composite IQR key, for a legend rebuilt from this one
 
     sph, centers = br["sphere_ratio_vs_depth"], np.array(br["depth_centers_mm"])
     lead = {}
@@ -660,11 +665,12 @@ def figure_conditions(s, t):
     ax, vx = fig.subplots(1, 2, sharey=True, gridspec_kw=dict(width_ratios=[4.0, 1.2]))
     get = {r["id"]: r["values"] for r in rows}
     for a in ARRAYS:
-        ax.axvspan(get["primary"][a][1], get["primary"][a][2], color=style.ARRAY_COLOR[a], alpha=0.13, lw=0, zorder=0)
+        ax.axvspan(get["primary"][a][1], get["primary"][a][2], color=style.ARRAY_COLOR[a], alpha=R3_BAND_ALPHA, lw=0,
+                   zorder=0)
     off = {"opm_dense": 0.18, "opm_matched": -0.18, "triaxial": -0.18}
     for yy, r in zip(ys, rows):
         if r["id"] == "primary":
-            ax.axhspan(yy - 0.48, yy + 0.48, color="0.9", lw=0, zorder=0)
+            ax.axhspan(yy - 0.48, yy + 0.48, color=R3_ROW_GRAY, lw=0, zorder=0)
         for a, (v, lo, hi) in r["values"].items():
             col = style.ARRAY_COLOR["opm_matched" if a == "triaxial" else a]
             if lo is not None:
@@ -696,7 +702,9 @@ def figure_conditions(s, t):
     h = [Line2D([], [], color=style.ARRAY_COLOR[a], marker=MARKER[a], ms=4.5, lw=1.3, label=sites(s, a)) for a in ARRAYS]
     h += [Line2D([], [], color=style.ARRAY_COLOR["opm_matched"], marker="^", ms=4.8, lw=1.3,
                  label=f"triaxial OPM ({s['triaxial_control']['sites']} sites, {s['triaxial_control']['channels']} channels)"),
-          Patch(color="0.5", alpha=0.25, label="primary 95 % interval, per array (shaded)")]
+          *[style.band_key(a, R3_BAND_ALPHA, label=f"vertical band: primary 95 % interval, {R3_BAND_NAME[a]}")
+            for a in ARRAYS],
+          Patch(facecolor=R3_ROW_GRAY, edgecolor="0.6", lw=0.6, label="gray row: primary condition")]
     fig.legend(handles=h, loc="outside lower center", ncol=2, title=f"Lines: 95 % parcel-bootstrap intervals ({n_par} labels)",
                title_fontsize=7.5)
     db_checked = check_db_axes(fig)

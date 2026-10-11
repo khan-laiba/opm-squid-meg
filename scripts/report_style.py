@@ -11,6 +11,10 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+from matplotlib.colors import to_rgba  # noqa: E402
+from matplotlib.legend_handler import HandlerPatch, HandlerTuple  # noqa: E402
+from matplotlib.lines import Line2D  # noqa: E402
+from matplotlib.patches import Patch, Rectangle  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "results" / "report"
@@ -45,6 +49,39 @@ CLASS_LABEL = {"adult": "adult", "scaled": "scaled adult (size only)", "template
 CLASS_MARKER = {"adult": "D", "scaled": "s", "template": "^", "child": "o"}
 ANAT_COLOR = {"adult": "#000000", "school": "#56B4E9", "size2yr": "#0072B2", "infant2yr": "#D55E00", "infant18mo": "#E69F00",
               "infant12mo": "#CC79A7", "childA": "#009E73", "childB": "#8C564B", "childC": "#7F7F7F"}
+
+
+class KeyPair(tuple):
+    """A legend key of two handles set side by side, one per OPM array (drawn by KEY_HANDLERS)."""
+
+
+class BandLine(Patch):
+    """The legend handle of a reference drawn as a shaded band (an interval) with a line at its middle (the median)."""
+
+
+class _HandlerBandLine(HandlerPatch):
+    def create_artists(self, legend, orig_handle, xdescent, ydescent, width, height, fontsize, trans):
+        band = Rectangle((-xdescent, -ydescent), width, height, facecolor=orig_handle.get_facecolor(),
+                         edgecolor="none", transform=trans)
+        x = -xdescent + width / 2
+        line = Line2D([x, x], [-ydescent, -ydescent + height], color=orig_handle.get_edgecolor(),
+                      lw=orig_handle.get_linewidth(), transform=trans)
+        return [band, line]
+
+
+# legend handler map of the composite keys above (pass it to every legend that holds one)
+KEY_HANDLERS = {KeyPair: HandlerTuple(ndivide=None, pad=0.3), BandLine: _HandlerBandLine()}
+
+
+def band_key(array: str, alpha: float, label: str | None = None) -> Patch:
+    """The key of a band shaded in an array's colour at `alpha`, as drawn, with a thin outline so that it shows."""
+    c = ARRAY_COLOR[array]
+    return Patch(facecolor=to_rgba(c, alpha), edgecolor=to_rgba(c, 0.6), lw=0.6, label=label)
+
+
+def band_pair(alpha: float, arrays=("opm_dense", "opm_matched")) -> KeyPair:
+    """One key for the bands of both OPM arrays: one swatch in each array's colour."""
+    return KeyPair(band_key(a, alpha) for a in arrays)
 
 
 def apply() -> None:

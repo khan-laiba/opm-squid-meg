@@ -187,7 +187,6 @@ EXACT = {"+ room field": "Sensor, brain and room noise",
          "3-layer BEM (primary model)": "Three-layer BEM (primary model)",
          "medial wall (not cortex)": "medial wall (not colored)",
          "within 4 mm of the inner skull (not simulated)": "within 4 mm of the inner skull (neither target nor background)",
-         "primary 95 % interval, per array (shaded)": "primary 95 % interval (in each array's color)",
          "panels f and i": "panels F and I",
          # Fig. 3: the gap rows add a gap to the nominal OPM standoff (the primary condition has none beyond it)
          "OPM scalp gap 3 mm": "OPM scalp gap, additional 3 mm", "OPM scalp gap 6 mm": "OPM scalp gap, additional 6 mm",
@@ -635,15 +634,20 @@ def label_width(fig: Figure, texts) -> float:
 
 
 def rebuild_legend(old, handles=None, labels=None, **kw):
-    """A legend replaced by one with the same entries (or those given) and the given options; returns the new one."""
-    handles = list(old.legend_handles) if handles is None else handles
+    """A legend replaced by one with the same entries (or those given) and the given options; returns the new one. A key
+    that a drawing script composed (report_style.KEY_HANDLERS: one swatch per array) is rebuilt from the handles the
+    script drew the legend from (its source_handles), since the legend keeps only the first part of such a key."""
+    handles = list(getattr(old, "source_handles", None) or old.legend_handles) if handles is None else handles
     labels = [t.get_text() for t in old.get_texts()] if labels is None else labels
     parent = old.axes if old.axes is not None else old.get_figure(root=False)
     title = old.get_title().get_text()
     old.remove()
     if title:
         kw.setdefault("title", title)
-    return parent.legend(handles, labels, **kw)
+    kw.setdefault("handler_map", style.KEY_HANDLERS)
+    new = parent.legend(handles, labels, **kw)
+    new.source_handles = handles
+    return new
 
 
 def fit_width(fig: Figure, gridspecs, width_in: float) -> None:
@@ -848,7 +852,8 @@ def helmet_fit_figure(s: dict, g3b: dict, path: Path) -> None:
     quantities in four panels with a third helmet): (a) the Neuromag gap in the fixed adult helmet at top contact and in
     the helmet fitted at the adult's gap; (b) Delta against the adult placed by the same rule in each helmet, with the
     fixed helmet's range over its source-blind placements; (c) the interaction, the primary helmet-fit quantity (a
-    head's fixed-minus-fitted contrast minus the adult's), which does not depend on the OPM noise. Dense OPM array
+    head's fixed-minus-fitted contrast minus the adult's), which does not depend on the OPM noise; it compares the two
+    helmets, so it is drawn in a style of its own (gray diamonds), keyed. Dense OPM array
     against Neuromag's 306 channels, sensor plus brain noise; the heads reported separately (Section S10) are set apart. The
     heads are those of report_style.ANAT_ORDER (all nine: Fig. S17; principal_heads(): Fig. 9). Drawn at the text width,
     no text under 7.2 pt; bars and caps 1.2 pt wide (thinner, a bar can print as a pale hairline). Under set_apart()
@@ -864,6 +869,7 @@ def helmet_fit_figure(s: dict, g3b: dict, path: Path) -> None:
     xs = {k: i for i, k in enumerate(keys)}
     fixed = dict(marker="s", color="#000000", mfc="#000000")
     fitted = dict(marker="o", color="#D55E00", mfc="#D55E00")
+    inter = dict(marker="D", color="0.4", mfc="0.4")  # (c): the interaction compares the two helmets: neither's style
     apart = APART in keys and style.ANAT_CLASS[APART] == "child"  # set_apart() in force
 
     def face(k, st):  # APART, set apart: open markers
@@ -921,7 +927,7 @@ def helmet_fit_figure(s: dict, g3b: dict, path: Path) -> None:
 
     ax = axs[2]
     for k in kids:
-        point(ax, xs[k], s["interaction"][f"{k}/gap_matched/{ref}/{cond}"]["interaction"], fitted, 0.0, k)
+        point(ax, xs[k], s["interaction"][f"{k}/gap_matched/{ref}/{cond}"]["interaction"], inter, 0.0, k)
     ax.set_ylabel("interaction (dB)")
     ax.set_title("(c)  Interaction", loc="left")
     xaxis(ax, kids)
@@ -929,13 +935,14 @@ def helmet_fit_figure(s: dict, g3b: dict, path: Path) -> None:
     handles = [Line2D([], [], ls="none", ms=4.5, label="fixed adult helmet, top contact", **fixed),
                Line2D([], [], ls="none", ms=4.5, label="helmet fitted at the adult's gap", **fitted)]
     if apart:
-        handles.append((Line2D([], [], ls="none", ms=4.5, **dict(fixed, mfc="white")),
-                        Line2D([], [], ls="none", ms=4.5, **dict(fitted, mfc="white"))))
-    handles += [Line2D([], [], color="#D55E00", ls="--", lw=0.8),
+        handles.append(tuple(Line2D([], [], ls="none", ms=4.5, **dict(st, mfc="white")) for st in (fixed, fitted, inter)))
+    handles += [Line2D([], [], ls="none", ms=4.5, **inter),
+                Line2D([], [], color="#D55E00", ls="--", lw=0.8),
                 Patch(fc="0.88", ec="none")]
     labels = ["fixed adult helmet, top contact", "helmet fitted at the adult's gap"]
     labels += [f"open: {style.ANAT_LABEL[APART]}"] if apart else []
-    labels += [f"(a) the adult's gap ({target:.1f} mm)",
+    labels += ["the interaction (c), which compares the two helmets",
+               f"(a) the adult's gap, laterally centered ({target:.1f} mm)",
                "(b) fixed helmet over its source-blind placements\n(difference of medians, not paired)"]
     fig.legend(handles, labels, loc="lower center", ncol=2, bbox_to_anchor=(0.5, 0.0), fontsize=7.2,
                handler_map={tuple: HandlerTuple(ndivide=None, pad=0.6)})
@@ -1046,7 +1053,8 @@ def fix_noise_checks(fig: Figure, principal: bool = False) -> None:
     if n != 2:
         raise SystemExit(f"Figure_R17_noise_checks: {n} projected break-even intervals found, 2 expected")
     old = axd.get_legend()
-    handles, labels = list(old.legend_handles), [t.get_text() for t in old.get_texts()]
+    handles = list(getattr(old, "source_handles", None) or old.legend_handles)
+    labels = [t.get_text() for t in old.get_texts()]
     i = next(i for i, lab in enumerate(labels) if lab.startswith("break-even"))
 
     def key(filled: bool):
@@ -1855,8 +1863,25 @@ def put_marks(ax, items, gap: float = 1.3, pad_drawn: float = 0.4, pad_marks: fl
 
 
 def fix_helmet_fit(fig: Figure, principal: bool = False) -> None:
-    """Figs. 9 and S17 (helmet_fit_figure, drawn at the text width): what is drawn spans the text width exactly."""
-    fit_width(fig, [fig.axes[0].get_subplotspec().get_gridspec()], DRAWN_W)
+    """Figs. 9 and S17 (helmet_fit_figure, drawn at the text width): what is drawn spans the text width exactly, and the
+    key below the panels clears their slanted head labels, which clashes() leaves out: the figure is made taller in
+    0.05-in steps, the panels keeping their height, until the key's top lies 2 pt below the lowest head label."""
+    gs = fig.axes[0].get_subplotspec().get_gridspec()
+    fit_width(fig, [gs], DRAWN_W)
+    key = fig.legends[0]
+    for _ in range(20):
+        fig.canvas.draw()
+        r = fig.canvas.get_renderer()
+        lowest = min(t.get_window_extent(r).y0 for ax in fig.axes for t in ax.get_xticklabels() if t.get_text())
+        if key.get_window_extent(r).y1 + 2.0 * fig.dpi / 72 <= lowest:
+            return
+        W, H = fig.get_size_inches()
+        bottom, top = gs.bottom * H + 0.05, gs.top * H + 0.05  # inches: the panels move up with the added height
+        fig.set_size_inches(W, H + 0.05)
+        gs.update(bottom=bottom / (H + 0.05), top=top / (H + 0.05))
+        for ax in fig.axes:
+            ax.set_position(ax.get_subplotspec().get_position(fig))
+    raise SystemExit("helmet-fit figure: the key still meets the slanted head labels")
 
 
 def no_clashes(fig: Figure, name: str, **kw) -> None:
@@ -2228,9 +2253,12 @@ def fix_adult_depth(fig: Figure, principal: bool = False) -> None:
     words): narrower, the key stands in the empty upper right of A instead of over the shallowest bins."""
     floor_fonts(fig, 7.35)
     a = next(ax for ax in fig.axes if ax.get_legend() is not None and ax.get_legend()._ncols == 2)
-    two = {s.replace("\n", " "): s for s in ("Sensor, brain and room noise,\nroom field projected out",)}
+    two = {s.replace("\n", " "): s for s in ("sensor, brain and room noise,\nroom field projected out",)}
     old = a.get_legend()
-    rebuild_legend(old, labels=[rewrapped(t.get_text(), two) for t in old.get_texts()], loc="upper right", ncol=2,
+    labels = [t.get_text() for t in old.get_texts()]
+    # the projected condition's key, a row label in Fig. 3 (EXACT), in lower case like the other keys
+    labels = [lab[0].lower() + lab[1:] if lab.startswith("Sensor, brain and room noise") else lab for lab in labels]
+    rebuild_legend(old, labels=[rewrapped(lab, two) for lab in labels], loc="upper right", ncol=2,
                    fontsize=7.35, handlelength=2.2, columnspacing=1.0, handletextpad=0.6)
     fig.canvas.draw()
     for ax in fig.axes:

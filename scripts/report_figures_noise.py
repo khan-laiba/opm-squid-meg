@@ -46,6 +46,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import numpy as np  # noqa: E402
 import report_style as style  # noqa: E402  (selects the Agg backend before pyplot is used)
 import matplotlib.pyplot as plt  # noqa: E402
+from matplotlib.colors import to_rgba  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
 from matplotlib.patches import Patch  # noqa: E402
 from matplotlib.ticker import FixedFormatter, FixedLocator, NullLocator  # noqa: E402
@@ -62,6 +63,8 @@ OUT_JSON = "figures_noise.json"
 # page width; the figure is drawn 0.5 mm narrower so that the saved PNG (tight bbox plus its 0.03-in pad) fits it (checked)
 PAGE_MM, WIDTH_MM, HEIGHT_IN = 175.0, 174.5, 7.7
 ARRAYS = ("opm_dense", "opm_matched")
+REF_ALPHA, REF_LW = 0.14, 0.8  # (b), (c): the primary model's interval (band) and median (line), in each array's colour
+D_BAND_ALPHA = 0.17  # (d): the 95 % intervals of the sweep with sensor plus brain noise
 ARRAY_TERM = {"opm_dense": "dense OPM array", "opm_matched": "site-matched OPM array"}  # the manuscript's terms
 MARKER = {"opm_dense": "o", "opm_matched": "s"}
 DODGE = {"opm_dense": -0.15, "opm_matched": 0.15}  # rows run downwards: the dense array above the site-matched
@@ -158,8 +161,8 @@ def forest(ax, y, values, ms=4.0):
 def reference(ax, pub):
     """The published model: a line at each array's median, its 95 % interval shaded."""
     for a in ARRAYS:
-        ax.axvspan(pub[a][1], pub[a][2], color=style.ARRAY_COLOR[a], alpha=0.14, lw=0, zorder=0)
-        ax.axvline(pub[a][0], color=style.ARRAY_COLOR[a], lw=0.8, alpha=0.9, zorder=1)
+        ax.axvspan(pub[a][1], pub[a][2], color=style.ARRAY_COLOR[a], alpha=REF_ALPHA, lw=0, zorder=0)
+        ax.axvline(pub[a][0], color=style.ARRAY_COLOR[a], lw=REF_LW, alpha=0.9, zorder=1)
 
 
 def headers(ax, layout):
@@ -406,7 +409,7 @@ def panel_d(sf, ns, pub):
                     raise ValueError(f"{NS}: sweep.entries['{lv:g}'] of {a}/{key} differs from its headline row")
             v = np.array([ri(ee) for ee in e])
             vals["sweep"][f"{a}/{key}"] = v.tolist()
-            ax.fill_between(x, v[:, 1], v[:, 2], color=col, alpha=0.17 if key == IB else 0.10, lw=0, zorder=1)
+            ax.fill_between(x, v[:, 1], v[:, 2], color=col, alpha=D_BAND_ALPHA if key == IB else 0.10, lw=0, zorder=1)
             ax.plot(x, v[:, 0], ls=SWEEP_LS[key], color=col, lw=1.5, zorder=3, marker=MARKER[a] if key == IB else None,
                     ms=3.4, mec="white" if a == "opm_dense" else col, mew=0.4)
             b = be["entries"][f"{a}/{key}"]  # the level at which the median ratio is 1
@@ -453,15 +456,17 @@ def panel_d(sf, ns, pub):
     ax.set_ylabel(f"OPM / Neuromag detectability\n({ns['setup']['arrays']['squid']} channels), log scale")
     h = [Line2D([], [], color="0.25", lw=1.5, ls=SWEEP_LS[IB], marker="o", ms=3.4, label="sensor plus brain noise"),
          Line2D([], [], color="0.25", lw=1.5, ls=SWEEP_LS[PR], label=f"after the {n_ext(ns)}-term projection"),
-         Patch(color="0.5", alpha=0.28, lw=0, label="95 % intervals (bands)"),
+         style.band_pair(D_BAND_ALPHA),  # one swatch in each array's colour
          Line2D([], [], color="0.25", lw=1.25, ls=ADVERSE_LS,
                 label=f"joint run: near-skull cortex\n+ {ns['config']['sensitivity']['joint']['corner_hz']:g}-Hz corner, "
                       "frequency-resolved"),
          Line2D([], [], color="0.25", lw=0, marker="D", ms=4.4, label="break-even level, 95 % interval (filled: sensor\n"
                 "plus brain noise; open: after the projection)"),
          Line2D([], [], color="0.7", lw=0.8, label=f"primary model's level ({prim:g} fT/√Hz)")]
-    ax.legend(handles=h, loc="upper center", bbox_to_anchor=(0.5, -0.2), fontsize=FS_NOTE, handlelength=2.4,
-              borderaxespad=0.0, labelspacing=0.45, ncol=1)
+    labels = [hd.get_label() if not isinstance(hd, style.KeyPair) else "95 % intervals (bands)" for hd in h]
+    lg = ax.legend(h, labels, loc="upper center", bbox_to_anchor=(0.5, -0.2), fontsize=FS_NOTE, handlelength=2.4,
+                   borderaxespad=0.0, labelspacing=0.45, ncol=1, handler_map=style.KEY_HANDLERS)
+    lg.source_handles = h  # the composite band key, for a legend rebuilt from this one
     title(sf, "(d) OPM white-noise level")
     return ax, vals, checks
 
@@ -691,9 +696,14 @@ def main():
     h = [Line2D([], [], color=style.ARRAY_COLOR[a], marker=MARKER[a], ms=4.2, lw=1.3,
                 mec="white" if a == "opm_dense" else style.ARRAY_COLOR[a], mew=0.4,
                 label=f"{ARRAY_TERM[a]} ({g2['arrays'][a]['n_sites']} sites)") for a in ARRAYS]
-    h += [Patch(facecolor="0.88", edgecolor="0.45", lw=0.6, label="primary model, 95 % interval shaded (b, c)")]
-    fig.legend(handles=h, loc="outside upper center", ncol=3, fontsize=7.3, handlelength=1.8, columnspacing=1.1,
-               title="Medians over the targets with their 95 % parcel-bootstrap intervals (lines, bands)", title_fontsize=7.3)
+    ref = style.KeyPair(style.BandLine(facecolor=to_rgba(style.ARRAY_COLOR[a], REF_ALPHA),
+                                       edgecolor=to_rgba(style.ARRAY_COLOR[a], 0.9), lw=REF_LW) for a in ARRAYS)
+    labels = [hd.get_label() for hd in h] + ["primary model: median and interval (b, c)"]
+    h += [ref]  # reference(): a line at each array's median, its interval shaded, in the array's colour
+    lg = fig.legend(h, labels, loc="outside upper center", ncol=3, fontsize=7.3, handlelength=1.8, columnspacing=1.1,
+                    title="Medians over the targets with their 95 % parcel-bootstrap intervals (lines, bands)",
+                    title_fontsize=7.3, handler_map=style.KEY_HANDLERS)
+    lg.source_handles = h
     db = check_db_axes(fig)
     path = style.save(fig, NAME)
     px = plt.imread(path).shape
