@@ -220,7 +220,7 @@ return accept or minor revisions in the same round.
 
 | Requirement | Status |
 |---|---|
-| A. The paper's prose (style, tone, word selection, sentence structure and length, sentence and paragraph composition, flow) matches the four papers in `prose_example/` (not committed) | main text rewritten: prose profiles of the four papers, a measurable prose guide (46 targets), then a section-by-section rewrite; 44 of 46 targets met (the two misses are bounded by keeping every reported number and by not hedging findings); the adult comparison and the spike detection moved into main-text Tables 3 and 5 so that the Results prose is figure- and table-led |
+| A. The paper's prose (style, tone, word selection, sentence structure and length, sentence and paragraph composition, flow) matches the four papers in `prose_example/` (not committed) | main text rewritten: prose profiles of the four papers, a measurable prose guide (46 targets), then a section-by-section rewrite; 44 of 46 targets met (the two misses are bounded by keeping every reported number and by not hedging findings); the adult comparison and the spike detection moved into main-text Tables 3 and 5 so that the Results prose is figure- and table-led. Restyled again on 2026-10-11, at the owner's request, after two further papers of the group (see the log) |
 | B. https://khan-laiba.github.io/opm-squid-meg/ shows the HTML version of the paper | done and live: `paper/build_html.py` (the rendered LaTeX with LaTeX's own numbering and BibTeX's reference list, figures rasterized, equations by MathJax, every local link checked), published by `scripts/deploy_pages.py`; first deployed 2026-10-06 from 8cbb043 (gh-pages bea4a64; live check: 2 pages, 31 internal assets, 235 anchors, 0 failures), redeployed with every revision |
 | C. The repository is cleaned and restructured as the accompanying repository of a NeuroImage paper | done (8c77a11, merged to main): code, configurations, results, manuscript sources, documentation and tests; the report, its site builder, PLAN.md and other process material removed (kept in the history); CITATION.cff; a map from every figure and table to its scripts and result files in `scripts/README.md`. README rewritten again on 2026-10-06 at the owner's request, for a scientific reader (see the log) |
 | D. The abstract reads as well as the abstracts of the four example papers (style, flow, prose); written last, after the whole final paper is read; up to 400 words allowed by the owner (the Guide for Authors asks for 250) | rewritten in full on 2026-10-06 at the owner's request, after rereading the whole paper, in the flow of the abstract of 2026.08.17.744953 (premise; the open question; the factors examined; findings in words with their conditions; "Overall, ..."); 397 words; five new highlights; to be judged by both referees |
@@ -344,3 +344,19 @@ return accept or minor revisions in the same round.
   "Preprint" (elsarticle printed "Preprint submitted to NeuroImage"), and the HTML top line, the README, CITATION.cff
   and the content license no longer name a journal (a354d0d; gh-pages 90b4cc6, checked live). References to other
   papers published in NeuroImage are unchanged.
+- 2026-10-11: owner: restyle the paper's prose (style, tone, word selection, sentence and paragraph composition,
+  flow) after two papers of the group, Jas et al. (2025, Sensors 25, 2759) and the bioRxiv preprint
+  2026.08.17.745285, with GPT-6 Astra (Codex, maximum reasoning) doing the work and the science unchanged. Astra first
+  studied both papers and the manuscript and wrote a measured style profile with rewriting rules. It then restyled the
+  abstract and the main text under a brief that locked every number, citation, cross-reference, float, equation and
+  heading, and a checker enforced the lock. The rewrite was read sentence by sentence against the previous version,
+  with every number filled in, and audited twice independently. Two correction rounds by Astra restored the meaning in
+  112 places: dropped scope or conditions, drifting referents, agency errors, generalizations, and one added condition
+  at 30 fT/√Hz that the result files contradict. Four imprecisions inherited from the earlier text were also
+  corrected; for example, Section S6 reports the smaller heads' peak-channel SNR for the dense array only. The second
+  audit judged the final text scientifically faithful. The main text has 9,618 words instead of 10,495, and the mean
+  sentence 20.5 words instead of 23.4 (SD 6.7 instead of 9.5). Sentences of 35 words or more fell from 16.7 % to
+  2.2 % (the two model papers: 8.2 % and 5.8 %). The abstract has 400 words, and the Limitations remain one paragraph.
+  Committed as 5ebf269 (main fast-forwarded) and deployed as gh-pages c957ce9, checked live (2 pages, 31 internal assets, 239 anchors, 0 failures).
+  Unit tests: 302 pass; facts: 68,864,
+  0 problems.
