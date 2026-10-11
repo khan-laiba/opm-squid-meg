@@ -210,5 +210,5 @@ documentation and the result files are released under CC BY 4.0, and third-party
 
 ## Contact
 
-Correspondence about the paper: Mainak Jas (mjas@mgh.harvard.edu). Questions about the code can be raised as
+Questions about the paper or the code can be raised as
 [issues](https://github.com/khan-laiba/opm-squid-meg/issues).
