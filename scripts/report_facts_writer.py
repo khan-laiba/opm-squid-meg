@@ -64,6 +64,9 @@ Read only; nothing is re-run. Every fact is computed from unrounded stored value
                                   targets above it (results/report/figures_clean.json); the _cortical_ twins count the
                                   coloured cortical targets only (medial wall excluded), recomputed from the per-target
                                   tables results/g3b/g3b_targets_<template>.csv
+  wr_fig_maps_adult_*             the colour-scale limit of the adult's cortical maps (results/report/figures_clean.json)
+                                  and the number of its cortical targets (medial wall excluded) above it, per OPM array
+                                  (results/g2/g2_targets.csv)
   wr_sphere_brain_depth_mm        the depth of the brain surface below the scalp in the spherical benchmark, head radius
                                   minus brain radius (results/g1a/g1a_benchmark.json)
   wr_cgap_fitted_proj_delta_n_ci_includes_zero_words  how many of the eight smaller heads' projected-condition Delta
@@ -702,6 +705,8 @@ def background_scaling_facts(F: Facts, root: Path) -> None:
 G3B_TARGETS = "results/g3b/g3b_targets_{head}.csv"
 MAPS_NUM = "detect_opm_dense_opm_intrinsic+brain"
 MAPS_DEN = "detect_squid_top_combined_intrinsic+brain"
+G2_TARGETS = "results/g2/g2_targets.csv"
+MAPS_ADULT_DEN = "detect_squid_combined_intrinsic+brain"
 
 
 def maps_heads_facts(F: Facts, root: Path) -> None:
@@ -732,6 +737,25 @@ def maps_heads_facts(F: Facts, root: Path) -> None:
               "against Neuromag's 306 channels at top contact, sensor plus brain noise); derived: the share of the "
               f"cortical targets (region not '*.unknown', the medial wall) with D above the colour limit of "
               f"{FIGS_CLEAN} :: figures.Figure_R13_maps_heads.values.colour_limit_dB, as a percentage")
+
+
+def maps_adult_facts(F: Facts, root: Path) -> None:
+    """How many of the adult's cortical targets (medial wall excluded) lie above the colour limit of its cortical maps
+    (Fig. 6) and are drawn in the end colour, per OPM array, recomputed from the per-target table."""
+    v = json.loads((root / FIGS_CLEAN).read_text())["figures"]["Figure_R11_maps_adult"]["values"]
+    lim = float(v["colour_limit_dB"])
+    F.add("wr_fig_maps_adult_colour_limit_db", f"{lim:g}", lim,
+          f"{FIGS_CLEAN} :: figures.Figure_R11_maps_adult.values.colour_limit_dB (the end of the colour scale, dB)")
+    rows = _read_targets_csv(root / G2_TARGETS)
+    cortical = [r for r in rows if not r["region"].endswith(".unknown")]
+    for arr, short in (("opm_dense", "dense"), ("opm_matched", "matched")):
+        num = f"detect_{arr}_opm_intrinsic+brain"
+        n = sum(20.0 * math.log10(float(r[num]) / float(r[MAPS_ADULT_DEN])) > lim for r in cortical)
+        F.add(f"wr_fig_maps_adult_above_limit_cortical_n_{short}", f"{n:,}", n,
+              f"{G2_TARGETS} :: D = 20 log10({num} / {MAPS_ADULT_DEN}) per target (the adult at its measured head "
+              "position, sensor plus brain noise); derived: the number of cortical targets (region not '*.unknown', the "
+              f"medial wall) with D above the colour limit of {FIGS_CLEAN} :: "
+              "figures.Figure_R11_maps_adult.values.colour_limit_dB")
 
 
 def cgap_projected_interval_facts(F: Facts, root: Path) -> None:
@@ -1338,6 +1362,7 @@ def facts(root: Path = ROOT) -> dict:
     depth_band_facts(F, root)
     background_scaling_facts(F, root)
     maps_heads_facts(F, root)
+    maps_adult_facts(F, root)
     sphere_facts(F, root)
     cgap_projected_interval_facts(F, root)
     confirm_depth_comparison_facts(F, root)

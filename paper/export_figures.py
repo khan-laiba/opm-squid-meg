@@ -15,9 +15,10 @@ Legibility: the figures listed in FIXES are re-laid out at save time (size, type
 no text prints smaller than 7 pt under the documents' \\includegraphics options (PRINT below), or 6.5 pt in the figures
 whose layout leaves no more room (LEGIBLE); every text drawn into each PDF is recorded
 (build/figure_export/font_audit.json) and the printed sizes are checked (build/figure_export/print_audit.txt). Every
-figure is also checked, after its fixes, for texts that overlap or touch (clashes(); recorded in
-build/figure_export/clash_audit.json and reported in print_audit.txt), the re-laid-out ones also for keys that cover
-data.
+figure is also checked, after its fixes, for texts that overlap or touch, each other or a key's symbols (clashes(),
+on the layout of the PDF's own render as well as on the screen's; recorded in build/figure_export/clash_audit.json
+and reported in print_audit.txt), the re-laid-out ones also for keys that cover data. The export stops when a
+figure prints text under the size wanted or has texts that overlap or touch.
 
 The main text shows the adult and the four principal smaller heads (PRINCIPAL) in its pediatric figures (Figs. 8-10):
 those figures are drawn a second time with report_style.ANAT_ORDER restricted to them and saved with the suffix
@@ -25,12 +26,14 @@ those figures are drawn a second time with report_style.ANAT_ORDER restricted to
 template, reported with the children in Section S10, is set apart with them (set_apart()), as it is in the other
 supplementary figures that group the heads (Figs. S9, S12, S14, S15); in Figs. S7, S8 and S11 it keeps its place among
 the templates, labelled misregistered (misregistered()). In every figure the children stand in the order of their
-labels, A, B, C, as in the tables (pediatric()). In Fig. 2, child B's column title names Section S10, where the text
-reports it.
+labels, A, B, C, as in the tables (pediatric()). In Fig. 2, child B's column title gives the age in
+years, as Table 1 does.
 
 Outputs: paper/figures/Figure_1.pdf ... Figure_10.pdf (main text) and Figure_S1.pdf ... Figure_S18.pdf (supplementary
 material), each with a 300-dpi PNG preview beside it in paper/build/figure_export/; paper/figure_stacks.json gives where
-each part of a stacked figure sits, so that a document can show one part alone (build_paper.py's trim()).
+each part of a stacked figure sits, so that a document can show one part alone (build_paper.py's trim()). The figure
+files are stacked in paper/build/figure_export/staged/ first and replace those of paper/figures/ (and the stacks file
+its predecessor) only when the print audit passes.
 
 Usage: .venv/bin/python paper/export_figures.py [--no-draw]
 """
@@ -60,6 +63,7 @@ import matplotlib.axis  # noqa: E402
 import matplotlib.category  # noqa: E402
 import matplotlib.collections  # noqa: E402
 import matplotlib.legend  # noqa: E402
+import matplotlib.offsetbox  # noqa: E402
 import matplotlib.colors  # noqa: E402
 import matplotlib.patches  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
@@ -80,7 +84,7 @@ PANEL = re.compile(r"^(?:\(([a-l])\)(?:\s+|$)|([a-l])(?:\s{2,}|$))(.*)$", re.S) 
 # letters given to the axes that carry a left title, in reading order
 EXTRA_LETTERS = {"Figure_noise_sensitivity_depth": "ghij"}
 # single-panel figures of the manuscript that the report drew as one panel of a larger figure: that panel letter goes
-DROP_LETTER = {"Figure_R12_geometry": "(d)", "Figure_R11_maps_adult": "(c)"}
+DROP_LETTER = {"Figure_R12_geometry": "(d)"}
 
 # the main text's pediatric figures (Figs. 8-10) show the adult and these four smaller heads: the scaled adults and the
 # 24- and 12-month templates; the 18-month template and the three children are shown in the supplement (Figs. S16-S18)
@@ -315,21 +319,50 @@ def text_ink(t: Text, renderer, box=None) -> list:
     return out
 
 
+def key_symbols(fig: Figure, renderer) -> list:
+    """(legend, display box) of every symbol drawn in the figure's keys: the line, marker or patch of each entry, each
+    part of a composite one included (the artists of the legend's handle boxes). A line's box is widened by half its
+    width on every side: matplotlib's extent of a line is that of its path (and markers), which for a horizontal key
+    line has no height."""
+    out = []
+    for lg in fig.findobj(lambda o: isinstance(o, matplotlib.legend.Legend)):
+        if not lg.get_visible():
+            continue
+        for box in lg.findobj(lambda o: isinstance(o, matplotlib.offsetbox.DrawingArea)):
+            for a in box.get_children():
+                if a.get_visible():
+                    bb = a.get_window_extent(renderer)
+                    if isinstance(a, Line2D) and a.get_linestyle() not in ("None", "none", " ", ""):
+                        bb = bb.padded(a.get_linewidth() * fig.dpi / 72 / 2)
+                    if bb.width > 0 or bb.height > 0:
+                        out.append((lg, bb))
+    return out
+
+
 def clashes(fig: Figure, gap_pt: float = 1.0, tol_pt: float = 0.3) -> list[str]:
     """Pairs of texts drawn into the figure whose glyphs overlap, or come closer than gap_pt points side by side or one
     above the other (overlapping by more than tol_pt the other way); each line of a text is taken by the extent of its
     glyphs. The entries of one legend, set at its own spacing, count only when they overlap. Texts set at an angle
-    other than 0 or 90 degrees are left out, and texts at 90 degrees are taken by their boxes."""
+    other than 0 or 90 degrees are left out, and texts at 90 degrees are taken by their boxes. Texts are checked in the
+    same way against the symbols of every key they do not belong to (key_symbols()), so that a label running into a
+    key's line or marker is found too."""
     global _SEEN
     _SEEN = []
     try:
         fig.canvas.draw()
-        seen = [(t, b) for t, b in _SEEN if round(t.get_rotation()) % 90 == 0]
+        seen = list(_SEEN)
     finally:
         _SEEN = None
+    return clash_pairs(fig, seen, fig.canvas.get_renderer(), gap_pt, tol_pt)
+
+
+def clash_pairs(fig: Figure, seen: list, renderer, gap_pt: float = 1.0, tol_pt: float = 0.3) -> list[str]:
+    """clashes() on the texts recorded during one draw of the figure ((text, extent) pairs), with that draw's renderer:
+    the screen's in clashes(), the PDF's own in savefig(), whose layout can differ (a constrained layout is solved again
+    with the PDF renderer's text metrics)."""
+    seen = [(t, b) for t, b in seen if round(t.get_rotation()) % 90 == 0]
     legend_of = {id(t): id(lg) for lg in fig.findobj(lambda o: isinstance(o, matplotlib.legend.Legend))
                  for t in lg.get_texts() + [lg.get_title()]}
-    renderer = fig.canvas.get_renderer()
     boxes = [(t, text_ink(t, renderer, b)) for t, b in seen]
     gap, tol = gap_pt * fig.dpi / 72, tol_pt * fig.dpi / 72
     out = []
@@ -347,6 +380,17 @@ def clashes(fig: Figure, gap_pt: float = 1.0, tol_pt: float = 0.3) -> list[str]:
                 else:
                     continue
                 break
+    symbols = key_symbols(fig, renderer)
+    for s, sa in boxes:
+        own = legend_of.get(id(s))
+        for lg, b in symbols:
+            if id(lg) == own:
+                continue
+            for a in sa:
+                dx, dy = min(a.x1, b.x1) - max(a.x0, b.x0), min(a.y1, b.y1) - max(a.y0, b.y0)
+                if (dx > -gap and dy > tol) or (dy > -gap and dx > tol):
+                    out.append(f"{s.get_text()[:30]!r} / a key's symbol")
+                    break
     return out
 
 
@@ -354,7 +398,7 @@ def savefig(self, fname, *args, **kwargs):
     """Every figure saved during the export: panel labels converted, spelling made American, notes removed, the
     legibility fixes of FIXES applied, then a vector PDF and a PNG preview in EXPORT (cropped to what is drawn). A figure
     saved while principal_heads() is in force gets the suffix VARIANT."""
-    global _DRAWN
+    global _DRAWN, _SEEN
     base = Path(str(fname)).stem
     stem = base + VARIANT
     if base in RECOLOR:
@@ -376,16 +420,26 @@ def savefig(self, fname, *args, **kwargs):
         self._suptitle.set_visible(False)
     if base in FIXES:
         FIXES[base](self, principal=bool(VARIANT))
-    CLASH[stem] = clashes(self)
+    found = clashes(self)  # the layout drawn on the screen canvas
     EXPORT.mkdir(parents=True, exist_ok=True)
     kwargs.pop("dpi", None)
     kwargs.update(bbox_inches="tight", pad_inches=0.03)
-    _DRAWN = []
+    final: list[str] = []
+
+    def audited(event):  # each draw of the PDF render; the last one is the layout the file holds
+        global _SEEN
+        final[:] = clash_pairs(self, _SEEN or [], event.renderer)
+        _SEEN = []
+
+    cid = self.canvas.mpl_connect("draw_event", audited)
+    _DRAWN, _SEEN = [], []
     try:
         _orig_savefig(self, EXPORT / f"{stem}.pdf", *args, dpi=PDF_DPI, **kwargs)
         FONTS[stem] = sorted(set(_DRAWN))
     finally:
-        _DRAWN = None
+        _DRAWN = _SEEN = None
+        self.canvas.mpl_disconnect(cid)
+    CLASH[stem] = found + [c for c in final if c not in found]
     _orig_savefig(self, EXPORT / f"{stem}.png", *args, dpi=PNG_DPI, **kwargs)
     TEXT_AUDIT.extend(audit_text(self, stem))
 
@@ -699,7 +753,8 @@ def run_main(name: str, argv: list[str]):
         sys.argv = old
 
 
-# the scaled adults get colors no array uses (the report drew them in the arrays' blues); labels as in Table 2
+# the scaled adults get colors no array uses (the report drew them in the arrays' blues): indigo and wine of Paul Tol's
+# color-blind-safe palette; the other anatomies keep their colors of report_style.ANAT_COLOR; labels as in Table 1
 HEAD_COLORS = {"school": "#332288", "size2yr": "#882255"}
 HEAD_SHORT = {"school": "School-age size", "size2yr": "2-year size"}
 # per figure: colors replaced in every artist ({old: new}, lower-case hex); Fig. 7's fitted helmet as in Fig. 1
@@ -745,17 +800,10 @@ def draw_noise_checks():
     HEIGHT_IN high, with its type sizes FS_* (rows, group headers, notes). Printed at the text width (0.926 of 175 mm) under
     a height cap of 0.72, it needs type of 7.6 pt (fix_noise_checks raises the rest) and 7.55 in instead of 7.7. (Drawn
     at the text width instead, the forest plots of B and C, whose row labels and group headers need the width the report
-    gives them, are squeezed by the constrained layout.) Scenario C's gloss in (B), the report's 'pessimistic', reads
-    'least favorable to the OPM', on a second line."""
+    gives them, are squeezed by the constrained layout.)"""
     noise = load("report_figures_noise")
     noise.HEIGHT_IN = 7.55
     noise.FS_ROW = noise.FS_HEAD = noise.FS_NOTE = 7.6
-    # (B): scenario C is the one least favorable to the OPM (the report's gloss: 'pessimistic'), on two lines
-    glosses = {letter: gloss for letter, _, gloss in noise.SCENARIOS}
-    if glosses.get("C") != "OPM bears the excess (pessimistic)":
-        raise SystemExit(f"Figure_R17_noise_checks: scenario C's gloss is no longer the one replaced: {glosses.get('C')!r}")
-    noise.SCENARIOS = tuple((letter, key, "OPM bears the excess\n(least favorable to the OPM)" if letter == "C" else gloss)
-                            for letter, key, gloss in noise.SCENARIOS)
     noise.main()
 
 
@@ -921,7 +969,8 @@ def helmet_fit_figure(s: dict, g3b: dict, path: Path) -> None:
     for k in kids:
         point(ax, xs[k], g3b["comparisons"][f"{k}/{o}/{ref}/{cond}/detect"]["delta"], fixed, -0.13, k)
         point(ax, xs[k], s["delta_same_rule"][f"{k}/gap_matched/{o}/{ref}/{cond}"]["delta"], fitted, 0.13, k)
-    ax.set_ylabel("Δ, paired change from the adult (dB)")
+    ax.set_ylabel("change from the adult (dB)")  # the paired Δ (markers) and, for the fixed helmet, the difference of
+    # medians over its placements (gray ranges)
     ax.set_title("(b)  Change from the adult", loc="left")
     xaxis(ax, kids)
 
@@ -966,7 +1015,7 @@ def plain_p_values(fig: Figure) -> None:
 # legibility fixes, per drawn figure (FIXES, by the name the drawing script saves it under); each is applied to the
 # finished figure at save time and changes only its size, layout, type sizes and keys, never what is plotted
 DRAWN_W = TEXT_W / 72.0 - 0.06  # inches: what is drawn, so that the saved figure (0.03-in pad each side) is the text width
-DOTTED = (0, (1.0, 1.4))         # report_figures_noise's line style of the projected condition
+DOTTED = (0, (1.0, 1.4))         # a dotted line (sensor noise only in Fig. 5)
 
 
 def square_keys(fig: Figure) -> None:
@@ -1005,7 +1054,7 @@ def fix_conditions(fig: Figure, principal: bool = False) -> None:
         t.set_text(t.get_text().replace("site-", "site-\n"))
         t.set_verticalalignment("bottom")
         t.set_y(0.45)
-    ax.set_xlabel(ax.get_xlabel().replace(" (log scale", "\n(log scale"))
+    ax.set_xlabel(ax.get_xlabel().replace(" targets (", " targets\n(", 1))
     floor_fonts(fig, 7.2)
     fig.set_layout_engine("none")
     W, H = DRAWN_W, 7.0
@@ -1039,16 +1088,18 @@ def fix_conditions(fig: Figure, principal: bool = False) -> None:
 
 def fix_noise_checks(fig: Figure, principal: bool = False) -> None:
     """Fig. 4 (R17), its type raised to 7.6 pt (draw_noise_checks sets report_figures_noise's FS_* and HEIGHT_IN; the
-    rest here): in (D) the break-even intervals after the projection are dotted, the projection's line style, and the
-    open diamonds get their own key entry beside the filled ones; the break-even values, which the report wrote beside
-    their diamonds among the curves, are given instead in a small key of the diamonds in the empty lower left corner of
-    (D), checked to cover no plotted point. The dB axes are checked again."""
+    rest here): in (D) the break-even intervals with the room field projected out take that condition's line style
+    (dashed, report_figures_noise.SWEEP_LS), and the open diamonds get their own key entry beside the filled ones; the
+    break-even values, which the report wrote beside their diamonds among the curves, are given instead in a small key
+    of the diamonds in the empty lower left corner of (D), checked to cover no plotted point. The dB axes are checked
+    again."""
+    noise = sys.modules["report_figures_noise"]
     axd = next(a for a in fig.findobj(lambda o: isinstance(o, matplotlib.axes.Axes))
                if a.get_legend() is not None and any("break-even" in t.get_text() for t in a.get_legend().get_texts()))
     n = 0
-    for ln in axd.get_lines():  # interval bars: two points, 2.4 pt; the projected ones just below a ratio of 1
-        if ln.get_linewidth() == 2.4 and len(ln.get_xdata()) == 2 and ln.get_ydata()[0] < 1:
-            ln.set_linestyle(DOTTED)
+    for ln in axd.get_lines():  # interval bars: two points, BE_BAR_LW wide; the projected ones just below a ratio of 1
+        if ln.get_linewidth() == noise.BE_BAR_LW and len(ln.get_xdata()) == 2 and ln.get_ydata()[0] < 1:
+            ln.set_linestyle(noise.SWEEP_LS[noise.PR])
             n += 1
     if n != 2:
         raise SystemExit(f"Figure_R17_noise_checks: {n} projected break-even intervals found, 2 expected")
@@ -1058,11 +1109,13 @@ def fix_noise_checks(fig: Figure, principal: bool = False) -> None:
     i = next(i for i, lab in enumerate(labels) if lab.startswith("break-even"))
 
     def key(filled: bool):
-        bar = Line2D([], [], color="0.25", lw=2.4, alpha=0.6, solid_capstyle="butt", ls="-" if filled else DOTTED)
+        bar = Line2D([], [], color="0.25", lw=noise.BE_BAR_LW, alpha=0.6, solid_capstyle="butt",
+                     ls="-" if filled else noise.SWEEP_LS[noise.PR])
         return bar, Line2D([], [], ls="none", marker="D", ms=4.4, mec="0.25", mfc="0.25" if filled else "white", mew=1.1)
 
     handles[i:i + 1] = [key(True), key(False)]
-    labels[i:i + 1] = ["break-even level, 95 % interval:\nsensor plus brain noise (filled)", "after the projection (open, dotted)"]
+    labels[i:i + 1] = ["break-even level, 95 % interval:\nsensor plus brain noise (filled)",
+                       "room field projected out (open, dashed)"]
     rebuild_legend(old, handles, labels, loc="upper center", bbox_to_anchor=(0.5, -0.2), fontsize=7.6, handlelength=2.4,
                    borderaxespad=0.0, labelspacing=0.45, ncol=1)
     # (D): the break-even values, written at their diamonds where the curves cross a ratio of 1, in a key of the
@@ -1164,8 +1217,9 @@ def class_headings(fig: Figure, a1, a2) -> float | None:
 
 def fix_pediatric_d(fig: Figure, principal: bool = False) -> None:
     """R6 (top of Figs. 8 and S16): drawn at the text width, no text under 7.2 pt; the height follows the rows (the
-    report's spacing), so that the principal version, with four smaller heads, is shorter. B's axis label names Δ as
-    the text does (on two lines: on one it would reach A's); the class headings set in the gaps between the classes
+    report's spacing), so that the principal version, with four smaller heads, is shorter. A's axis label says what D is
+    per head (its area-weighted median over the cortical targets) and B's names Δ as the text does, each on two lines
+    (on one, B's would reach A's); the class headings set in the gaps between the classes
     (class_headings()); with all nine anatomies, the class headed APART_HEAD set off by a divider (0.45 gray) across
     the label column and both panels. The panel titles 0.04 in below the key's box (the report left about 0.16 in), so
     that Fig. 8 keeps its 7-pt type under its height cap."""
@@ -1173,6 +1227,7 @@ def fix_pediatric_d(fig: Figure, principal: bool = False) -> None:
     gs = a1.get_subplotspec().get_gridspec()
     if principal:
         square_keys(fig)
+    a1.set_xlabel("D, area-weighted median\nover cortical targets (dB)")
     a2.set_xlabel("Δ, paired change\nfrom the adult (dB)")
     floor_fonts(fig, 7.2)
     divider = class_headings(fig, a1, a2)
@@ -1610,6 +1665,8 @@ def fix_noise_sensitivity(fig: Figure, principal: bool = False) -> None:
             lab.set_fontsize(7.0)
         rewrap([ax.xaxis.label, ax.yaxis.label], two)
         ax.tick_params(axis="both", which="both", labelsize=FS)
+    for ax in (C, D):  # their two-line axis labels are a little longer than the plots are high: centered lower, so that
+        ax.yaxis.label.set_y(0.45)  # the upper end keeps clear of the panel's title, in the PDF's own render too
     heads = {}
     for ax in (B, F):
         ax.xaxis.set_major_locator(matplotlib.ticker.MultipleLocator(0.1))
@@ -2208,7 +2265,8 @@ def fix_geometry(fig: Figure, principal: bool = False) -> None:
     """Fig. 2 (R12), drawn at the text width by draw_clean(): the sensor markers scaled with the panels (figure_geometry
     makes the three panels W - 0.66 - 0.04 - 2 x 0.10 in wide), so that they print as before; the note under each
     column title (gaps, scale factor, sites), wider than a column at this width, on four lines (the same words), and the
-    figure made taller at the top to hold it. Child B's column title names Section S10, where the text reports it."""
+    figure made taller at the top to hold it. Child B's column title gives the age in years, as Table 1 does (the
+    caption names Section S10, where the text reports child B: in the lettered title it would overrun the column)."""
     W, H = fig.get_size_inches()
     f = (W - 0.9) / (REPORT_W - 0.9)
     marked = [ln for ax in fig.axes for ln in ax.get_lines() if ln.get_marker() not in ("None", "none", "", None)]
@@ -2220,11 +2278,11 @@ def fix_geometry(fig: Figure, principal: bool = False) -> None:
     notes = [t for t in fig.texts if t.get_text().startswith("median gap:")]
     if len(notes) != 3:
         raise SystemExit(f"Figure_R12_geometry: {len(notes)} column notes, 3 expected")
-    # child B, one of the heads the text reports separately: its column title says where (Section S10)
-    title_b = [t for t in fig.texts if t.get_text() == style.ANAT_LABEL["childB"]]
-    if len(title_b) != 1 or not style.ANAT_LABEL["childB"].endswith(")"):
-        raise SystemExit(f"Figure_R12_geometry: one column title {style.ANAT_LABEL['childB']!r} expected")
-    title_b[0].set_text(style.ANAT_LABEL["childB"][:-1] + "; Section S10)")
+    # child B: the age in years in its column title, as in Table 1
+    title_b = [t for t in fig.texts if t.get_text().endswith(style.ANAT_LABEL["childB"])]  # after its panel letter
+    if len(title_b) != 1 or not style.ANAT_LABEL["childB"].endswith(" y)"):
+        raise SystemExit(f"Figure_R12_geometry: one column title ending {style.ANAT_LABEL['childB']!r} expected")
+    title_b[0].set_text(title_b[0].get_text()[:-len(" y)")] + " years)")
     for t in notes:
         s = t.get_text()
         t.set_text(rewrapped(s, {s: s.replace(", fitted ", ",\nfitted ", 1).replace("; ", ";\n", 1)}))
@@ -2377,10 +2435,10 @@ def page_size(pdf: Path) -> tuple[float, float]:
     return float(w), float(h)
 
 
-def stack_layout(name: str, parts: list[Path]) -> dict:
-    """Where each part sits in the stacked figure (bp, from the top; parts are centered), so that a document can show
-    one part alone by trimming the others away."""
-    W, H = page_size(FIGDIR / f"{name}.pdf")
+def stack_layout(name: str, parts: list[Path], where: Path) -> dict:
+    """Where each part sits in the stacked figure where/<name>.pdf (bp, from the top; parts are centered), so that a
+    document can show one part alone by trimming the others away."""
+    W, H = page_size(where / f"{name}.pdf")
     sizes = [page_size(p) for p in parts]
     gap = (H - sum(h for _, h in sizes)) / max(len(parts) - 1, 1)
     out, y = [], 0.0
@@ -2390,7 +2448,7 @@ def stack_layout(name: str, parts: list[Path]) -> dict:
     return {"width": round(W, 3), "height": round(H, 3), "parts": out}
 
 
-def print_audit(fonts: dict, clash: dict) -> tuple[list[str], list[str], list[str]]:
+def print_audit(fonts: dict, clash: dict, where: Path) -> tuple[list[str], list[str], list[str]]:
     """Per manuscript figure (per part when its parts are printed on separate pages): page size, print scale under the
     \\includegraphics options of PRINT (width = the text width; height capped where a cap is given; aspect kept), the
     smallest text drawn into it, drawn and printed, and its texts that overlap or touch (clashes()). Returns the
@@ -2406,7 +2464,7 @@ def print_audit(fonts: dict, clash: dict) -> tuple[list[str], list[str], list[st
             groups = [(f"{name} part {i + 1} ({p})", [p], page_size(EXPORT / f"{p}.pdf"), c, i)
                       for i, (p, c) in enumerate(zip(parts, cap))]
         else:
-            groups = [(name, parts, page_size(FIGDIR / f"{name}.pdf"), cap, None)]
+            groups = [(name, parts, page_size(where / f"{name}.pdf"), cap, None)]
         for label, ps, (w, h), c, part in groups:
             scale = min(TEXT_W / w, TEXT_H * c / h) if c else TEXT_W / w
             drawn = [(s, t) for p in ps for s, t in fonts.get(p, [])]
@@ -2438,26 +2496,34 @@ def main(argv=None):
         draw_all()
         (EXPORT / "text_audit.txt").write_text("\n".join(TEXT_AUDIT) + "\n")
         print(f"text left to fix in the figures: {len(TEXT_AUDIT)} (build/figure_export/text_audit.txt)")
-    FIGDIR.mkdir(exist_ok=True)
+    staged = EXPORT / "staged"  # the documents' figure files, audited before they replace those of FIGDIR
+    staged.mkdir(parents=True, exist_ok=True)
     layouts = {}
     for name, parts in {**MAIN, **SUPP}.items():
         paths = [EXPORT / f"{p}.pdf" for p in parts]
         missing = [p.name for p in paths if not p.exists()]
         if missing:
             raise SystemExit(f"{name}: not drawn: {missing}")
-        stack(paths, FIGDIR / f"{name}.pdf")
+        stack(paths, staged / f"{name}.pdf")
         print(f"{name}.pdf <- {', '.join(parts)}")
         if len(paths) > 1:
-            layouts[name] = stack_layout(name, paths)
-    (HERE / "figure_stacks.json").write_text(json.dumps(layouts, indent=1) + "\n")
+            layouts[name] = stack_layout(name, paths, staged)
     fonts, clash = ({}, {}) if not (EXPORT / "font_audit.json").exists() else (
         json.loads((EXPORT / "font_audit.json").read_text()), json.loads((EXPORT / "clash_audit.json").read_text()))
-    lines, short, overlapping = print_audit(fonts, clash)
+    lines, short, overlapping = print_audit(fonts, clash, staged)
     (EXPORT / "print_audit.txt").write_text("\n".join(lines) + "\n")
     print(f"figures revised for legibility printing text under the size wanted: {len(short)} "
           f"(build/figure_export/print_audit.txt){': ' + ', '.join(short) if short else ''}")
     print(f"figures with texts that overlap or touch: {len(overlapping)}"
           f"{': ' + ', '.join(overlapping) if overlapping else ''} (build/figure_export/print_audit.txt)")
+    if short or overlapping:
+        raise SystemExit("figures with text under the size wanted or with texts that overlap or touch; see "
+                         "build/figure_export/print_audit.txt (paper/figures/ and figure_stacks.json left unchanged)")
+    FIGDIR.mkdir(exist_ok=True)
+    for name in {**MAIN, **SUPP}:
+        shutil.copy2(staged / f"{name}.pdf", FIGDIR / f"{name}.pdf")
+    (HERE / "figure_stacks.json").write_text(json.dumps(layouts, indent=1) + "\n")
+    print(f"figure files of paper/figures/ replaced: {len(MAIN) + len(SUPP)}")
 
 
 if __name__ == "__main__":

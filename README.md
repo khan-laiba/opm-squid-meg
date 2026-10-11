@@ -156,6 +156,8 @@ committed in `paper/figures/`, so the PDFs can be rebuilt without the external d
 The build also writes `paper/build/numbers_used.tsv` (not committed), which lists every value with the file and key
 it was read from. `.venv/bin/python paper/export_figures.py` redraws the print figures from `results/`; it also reads
 the external data (the cortical surfaces for the maps and the T1-weighted images for Fig. S6) and stops without them.
+It checks every figure for text printed under its target size and for overlapping texts, and stops, leaving
+`paper/figures/` unchanged, when a check fails.
 The paper's data and code availability statement names the commit of the result files it reports.
 [`scripts/README.md`](scripts/README.md) gives the scripts and result files behind each figure and table.
 
@@ -184,7 +186,7 @@ chosen after two pilot runs in child A whose outputs were not kept. Only the his
 declaration; the run was not registered externally. The declaration file is kept exactly as committed, including its header comment.
 
 **Tests.** After the external data have been downloaded, `.venv/bin/python -m unittest discover -s tests -t .` runs
-299 tests (about 10 min). Without the MNE sample dataset, the run reports six errors and skips 35 tests.
+305 tests (about 11 min). Without the MNE sample dataset, the run reports six errors and skips 35 tests.
 
 ## Citation
 

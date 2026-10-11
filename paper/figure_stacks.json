@@ -5,7 +5,7 @@
   "parts": [
    {
     "part": "Figure_R6_pediatric_D_principal",
-    "width": 457.289,
+    "width": 457.438,
     "height": 177.764,
     "top": 0.0
    },
@@ -36,12 +36,12 @@
   ]
  },
  "Figure_S16": {
-  "width": 459.15,
+  "width": 459.21,
   "height": 518.78,
   "parts": [
    {
     "part": "Figure_R6_pediatric_D",
-    "width": 459.064,
+    "width": 459.213,
     "height": 266.756,
     "top": 0.0
    },

@@ -57,7 +57,9 @@ R1_BAR = dict(fmt="none", elinewidth=0.9, capsize=1.6, capthick=0.9)
 # secondary dB axes (20 log10 of the ratio; D for a detectability ratio): tick spacing in dB per panel
 R1_DB_STEP = (2.0, 5.0)  # (a) detectability ratio, (b) peak-field ratio
 R1_IQR_ALPHA = 0.15  # R1 (a): the interquartile range over targets, shaded in each array's colour
-R3_BAND_ALPHA, R3_ROW_GRAY = 0.13, "0.9"  # R3: each array's primary interval (vertical band), the primary row
+# R3: each array's primary interval (vertical band; the paler site-matched colour needs more opacity to show), and the
+# primary row
+R3_BAND_ALPHA, R3_ROW_GRAY = {"opm_dense": 0.13, "opm_matched": 0.24}, "0.9"
 R3_BAND_NAME = {"opm_dense": "dense", "opm_matched": "site-matched"}
 R3_DB_STEP = 1.0
 R4_DB_STEP = (1.0, 5.0)  # (a, b) detectability ratio, (d) peak-field ratio
@@ -511,7 +513,7 @@ def figure_noise(s, bands):
     note = fig.add_subplot(foot)
     note.axis("off")
     note.text(0.0, 1.0, textwrap.fill(
-        f"Note: no OPM noise is measured in this model. The OPM sensor noise is a declared white {c['asd']:g} fT/\u221aHz; the "
+        f"Note: no OPM noise is measured in this model. The OPM white noise is a declared {c['asd']:g} fT/\u221aHz; the "
         "OPM brain and room noise are the Neuromag-calibrated cortical background and the room field fitted to the Neuromag "
         "empty-room recording, seen through each OPM array's own lead fields and coils. Band "
         f"{c['band'].replace('-', chr(0x2013))}; RMS: the square root of each component's median channel variance.", 128),
@@ -626,7 +628,7 @@ def condition_rows(s):
     add("projected", g, f"+ room field, after the {c['n_ext']}-term projection", *both(P["oracle"], "primary.oracle", "combined/projected"))
     for asd in cfg["sensors"]["opm_asd_fT_per_rtHz"]:
         if asd != c["asd"]:
-            add(f"asd{asd:g}", g, f"OPM sensor noise {asd:g} fT/\u221aHz (primary {c['asd']:g})",
+            add(f"asd{asd:g}", g, f"OPM white noise {asd:g} fT/\u221aHz (primary {c['asd']:g})",
                 *both(S[f"opm_asd_{asd:g}fT"], f"sensitivity.opm_asd_{asd:g}fT", "combined/intrinsic+brain"))
     for gap in cfg["sensors"]["opm_scalp_gap_mm"]:
         if gap:
@@ -665,7 +667,7 @@ def figure_conditions(s, t):
     ax, vx = fig.subplots(1, 2, sharey=True, gridspec_kw=dict(width_ratios=[4.0, 1.2]))
     get = {r["id"]: r["values"] for r in rows}
     for a in ARRAYS:
-        ax.axvspan(get["primary"][a][1], get["primary"][a][2], color=style.ARRAY_COLOR[a], alpha=R3_BAND_ALPHA, lw=0,
+        ax.axvspan(get["primary"][a][1], get["primary"][a][2], color=style.ARRAY_COLOR[a], alpha=R3_BAND_ALPHA[a], lw=0,
                    zorder=0)
     off = {"opm_dense": 0.18, "opm_matched": -0.18, "triaxial": -0.18}
     for yy, r in zip(ys, rows):
@@ -691,7 +693,8 @@ def figure_conditions(s, t):
     ax.tick_params(axis="y", length=0)
     ax.set_ylim(min(ys) - 0.8, 0.7)
     ax.spines["left"].set_visible(False)
-    ax.set_xlabel(f"Median ratio OPM / Neuromag over the {s['n_targets']:,} targets (log scale; > 1: OPM higher)")
+    ax.set_xlabel(f"Median ratio OPM / Neuromag over the {s['n_targets']:,} targets "
+                  f"({s['config']['convergence']['subset_targets']:,} in the BEM row; log scale; > 1: OPM higher)")
     vx.axis("off")
     for x_, a, lab in ((0.06, "opm_dense", "dense"), (0.5, "opm_matched", "site-matched")):
         vx.text(x_, 0.7, lab, transform=vx.get_yaxis_transform(), ha="left", va="center", fontsize=7.5, fontweight="bold",
@@ -702,7 +705,7 @@ def figure_conditions(s, t):
     h = [Line2D([], [], color=style.ARRAY_COLOR[a], marker=MARKER[a], ms=4.5, lw=1.3, label=sites(s, a)) for a in ARRAYS]
     h += [Line2D([], [], color=style.ARRAY_COLOR["opm_matched"], marker="^", ms=4.8, lw=1.3,
                  label=f"triaxial OPM ({s['triaxial_control']['sites']} sites, {s['triaxial_control']['channels']} channels)"),
-          *[style.band_key(a, R3_BAND_ALPHA, label=f"vertical band: primary 95 % interval, {R3_BAND_NAME[a]}")
+          *[style.band_key(a, R3_BAND_ALPHA[a], label=f"vertical band: primary 95 % interval, {R3_BAND_NAME[a]}")
             for a in ARRAYS],
           Patch(facecolor=R3_ROW_GRAY, edgecolor="0.6", lw=0.6, label="gray row: primary condition")]
     fig.legend(handles=h, loc="outside lower center", ncol=2, title=f"Lines: 95 % parcel-bootstrap intervals ({n_par} labels)",
@@ -878,7 +881,7 @@ def figure_regions(s, t):
     log_axis(ax, "x", [1, 2, 4], (0.9, 7.0))
     db_axis(ax, "x", R4_DB_STEP[1], "dB")
     ax.set_title("(d) Signal", loc="left")
-    ax.set_xlabel("median peak-field ratio\ndense OPM / mag. (log)", fontsize=7.5)
+    ax.set_xlabel("median peak-field\nratio, dense OPM /\nmagnetometer (log)", fontsize=7.5)
     axs[0].set_yticks(ys, [r["label"] for r in regs])
     for ax in axs:
         ax.tick_params(axis="y", length=0)

@@ -376,6 +376,20 @@ class TestWriterFacts(unittest.TestCase):
         self.assertEqual(self.F["wr_sphere_brain_depth_mm"]["raw"], p["h_mm"] - p["b_mm"])
         self.assertEqual(self.F["wr_sphere_brain_depth_mm"]["value"], "15")
 
+    def test_maps_adult_counts_above_the_colour_limit(self):
+        import csv
+        import math
+        lim = json.loads((ROOT / "results/report/figures_clean.json").read_text())["figures"]["Figure_R11_maps_adult"][
+            "values"]["colour_limit_dB"]
+        with (ROOT / "results/g2/g2_targets.csv").open() as f:
+            f.readline()  # the provenance comment
+            rows = [r for r in csv.DictReader(f) if not r["region"].endswith(".unknown")]
+        for arr, short, want in (("opm_dense", "dense", "26"), ("opm_matched", "matched", "1")):
+            n = sum(20 * math.log10(float(r[f"detect_{arr}_opm_intrinsic+brain"])
+                                    / float(r["detect_squid_combined_intrinsic+brain"])) > lim for r in rows)
+            self.assertEqual(self.F[f"wr_fig_maps_adult_above_limit_cortical_n_{short}"]["raw"], n)
+            self.assertEqual(self.F[f"wr_fig_maps_adult_above_limit_cortical_n_{short}"]["value"], want)
+
     def test_maps_heads_cortical_shares_recomputed_from_the_target_tables(self):
         import csv
         v = json.loads((ROOT / "results/report/figures_clean.json").read_text())["figures"]["Figure_R13_maps_heads"]["values"]

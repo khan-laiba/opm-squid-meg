@@ -8,7 +8,8 @@ self-contained (the shared preamble inlined) and written twice: to build/, where
 (manuscript.tex, supplementary.tex: the submission sources, with figures read from figures/). The PDFs go to this
 folder, the highlights to highlights.txt (the journal asks for them as a separate file), and build/numbers_used.tsv
 lists every fact used with its value and source. The build fails when a highlight exceeds 85 characters, when there
-are not 3 to 5 of them, when the abstract exceeds ABSTRACT_MAX_WORDS words, or when the body holds a bullet list. tectonic
+are not 3 to 5 of them, when the abstract exceeds ABSTRACT_MAX_WORDS words, when the body holds a bullet list, or when
+a float (a figure with its caption, or a table) is taller than the page, so that its end would run off it. tectonic
 keeps the .aux and .bbl in build/, which paper/build_html.py reads for the HTML version.
 
 Template syntax (Jinja2 with LaTeX-safe delimiters): << F.name >> prints a fact; <% ... %> is a statement; <# ... #> a
@@ -209,6 +210,11 @@ def compile_pdf(tex: Path) -> Path:
                                     if (BUILD / f"{tex.stem}.log").exists() else "")))
     if missing:
         raise SystemExit(f"{tex.name}: glyphs missing from the font: {missing}")
+    too_large = re.findall(r"Float too large for page by ([\d.]+)pt on input line (\d+)",
+                           (BUILD / f"{tex.stem}.log").read_text() if (BUILD / f"{tex.stem}.log").exists() else "")
+    if too_large:  # LaTeX sets such a float anyway and its caption runs into the footer or off the page
+        raise SystemExit(f"{tex.name}: floats taller than the page: "
+                         + "; ".join(f"input line {ln}, by {pt} pt" for pt, ln in too_large))
     pdf = HERE / f"{tex.stem}.pdf"
     shutil.copy2(BUILD / f"{tex.stem}.pdf", pdf)
     return pdf

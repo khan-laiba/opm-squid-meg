@@ -44,7 +44,7 @@ import report_style as style  # noqa: E402  (selects the Agg backend)
 import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.colors import to_rgb  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
-from matplotlib.ticker import FixedLocator, NullLocator  # noqa: E402
+from matplotlib.ticker import FixedLocator, NullFormatter, NullLocator  # noqa: E402
 
 NAME = "Figure_R16_confirm"
 OUT_JSON = "figures_confirm.json"
@@ -95,8 +95,9 @@ def mstyle(k: str, filled: bool = True, ms: float = 5.0, color=None) -> dict:
     return dict(marker=m, ms=size, mec=c, mfc=c if filled else "white", mew=0.9, ls="none")
 
 
-def tint(c, f: float = 0.55):
-    """Colour blended towards white by ``f``."""
+def tint(c, f: float = 0.4):
+    """Colour blended towards white by ``f`` (the exploratory run's lighter markers; at 0.4 the palest, the 12-month
+    template's, still prints clearly)."""
     r = np.array(to_rgb(c))
     return tuple(r + (1 - r) * f)
 
@@ -157,7 +158,10 @@ def log_axis(ax, lims, narrow: bool = False):
     ax.axvline(1.0, color="0.5", lw=0.8, zorder=0)
     t = ticks_in(lims, narrow)
     ax.xaxis.set_major_locator(FixedLocator(t))
-    ax.xaxis.set_minor_locator(NullLocator())
+    # a narrow axis keeps the full axis's other ticks unlabeled, so that all panels show the same tick positions
+    extra = [x for x in ticks_in(lims) if x not in t] if narrow else []
+    ax.xaxis.set_minor_locator(FixedLocator(extra) if extra else NullLocator())
+    ax.xaxis.set_minor_formatter(NullFormatter())
     ax.set_xticklabels([f"{x:g}" for x in t])
 
 

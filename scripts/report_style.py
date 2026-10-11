@@ -1,5 +1,6 @@
 """Shared look of the report's new figures (scripts/report_figures_*.py): open fonts only, one
-colour and marker per array and per anatomy (Okabe-Ito, colour-blind safe), the same sizes.
+colour and marker per array and per anatomy (colour-blind safe: the Okabe-Ito colours, with brown and grey for
+children B and C), the same sizes.
 """
 from __future__ import annotations
 

@@ -340,7 +340,7 @@ def fig_r6(s: dict, keys) -> dict:
     a2.axvline(0, color="0.5", lw=0.8, zorder=0)
     a1.set_xlim(-0.15, 2.65)
     a2.set_xlim(-0.55, 1.65)
-    a1.set_xlabel("D$_\\mathrm{head}$ = dense OPM minus Neuromag (dB)")
+    a1.set_xlabel("D, area-weighted median over cortical targets (dB)")
     a2.set_xlabel("Δ = D$_\\mathrm{head}$ − D$_\\mathrm{adult}$ (dB)")
     a1.set_title("(a)  OPM advantage per head", loc="left")
     a2.set_title("(b)  Change from the adult", loc="left")
@@ -361,8 +361,9 @@ def fig_r6(s: dict, keys) -> dict:
                 color=GREY, style="italic")
     h = [Line2D([], [], **mstyle("childC", True, color="0.3")), Line2D([], [], **mstyle("childC", False, color="0.3")),
          Line2D([], [], color="k", lw=0.9), Line2D([], [], color="k", lw=0.9, ls=(0, (4, 2)))]
-    fig.legend(h, ["sensor plus brain noise (filled)", f"after the {projection_terms()}-term projection (open)",
-                   f"adult D, sensor plus brain noise ({db(ref[COND])} dB)", f"adult D, after the projection ({db(ref['projected'])} dB)"],
+    fig.legend(h, ["sensor plus brain noise (filled)", "room field projected out (open)",
+                   f"adult D, sensor plus brain noise ({db(ref[COND])} dB)",
+                   f"adult D, room field projected out ({db(ref['projected'])} dB)"],
                loc="upper center", ncol=2, bbox_to_anchor=(0.62, 1.0), handlelength=1.8, columnspacing=1.5)
     primary = {k: s["comparisons"][f"{k}/opm_dense/combined/{COND}/detect"] for k in kids}
     if any(primary[k]["d_child"]["n"] != n_cortical(s, kids)[k] for k in kids):

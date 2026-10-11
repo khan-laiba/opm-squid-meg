@@ -105,6 +105,7 @@ VIEWS = ((0, -1.0, "Left, lateral"), (0, 1.0, "Left, medial"), (1, -1.0, "Right,
 
 # geometry: sections through the head origin, sensors within the slab (as the G3B geometry figure)
 SLAB_MM = 20.0
+WHITE_MIN_LOOP_MM = 2.0  # (R12) white-matter section loops shorter than this (specks of the mesh-plane cut) are not drawn
 ROUND_MM = 0.01  # rounding of the exported coordinates (scripts/export_g3b_geometry.py)
 COIL_TOL_MM = 0.02  # drawn coil centre vs stored transform applied to the device-frame coil centre (both rounded)
 FIT_RULE = "gap_matched"  # the constant-gap study's primary rule: the helmet fitted at the adult's gap
@@ -335,10 +336,11 @@ def render(ax, verts, tris, gyral, val, cat, camera_x: float, norm) -> None:
     ax.axis("off")
 
 
-def map_figure(name: str, rows: list[tuple[str, list]], note: str, extend: str, letter: str | None = None) -> None:
+def map_figure(name: str, rows: list[tuple[str, list]], note: str, extend: str, letter: str | None = None,
+               row_letters: str = "") -> None:
     """Rows of four views (left lateral, left medial, right medial, right lateral) with a title above
     each row, one horizontal colour bar and the two greys below; ``letter`` (e.g. '(c)') labels the whole image
-    when the report shows it as one panel of a figure, its rows then unlettered."""
+    when it is one panel of a figure, its rows then unlettered; ``row_letters`` (e.g. 'ab') letters the rows instead."""
     norm = Normalize(-LIM_DB, LIM_DB)
     asp = max(np.ptp(v[:, 2]) / np.ptp(v[:, 1]) for _, hem in rows for v, *_ in hem)
     W, lm, rm, gap = style.FULL_W, 0.04, 0.04, 0.06
@@ -350,7 +352,8 @@ def map_figure(name: str, rows: list[tuple[str, list]], note: str, extend: str, 
         fig.text(lm / W, (H - 0.04) / H, letter, ha="left", va="top", fontsize=9)
     for i, (title, hem) in enumerate(rows):
         y0 = H - top - (i + 1) * (th + rh)
-        fig.text(lm / W, (y0 + rh + th - 0.04) / H, title, ha="left", va="top", fontsize=9)
+        fig.text(lm / W, (y0 + rh + th - 0.04) / H, f"({row_letters[i]}) {title}" if row_letters else title, ha="left",
+                 va="top", fontsize=9)
         for j, (h, cam, label) in enumerate(VIEWS):
             ax = fig.add_axes([(lm + j * (cw + gap)) / W, y0 / H, cw / W, rh / H])
             render(ax, *hem[h], cam, norm)
@@ -496,9 +499,10 @@ def figures_maps() -> dict:
     ext = extend_of([d for *_, d in adult] + [d for *_, d in heads] + [d for *_, d in scaled])
     g2s, g3 = load(G2), load(G3B)
     q = g2s["config"]["sources"]["focal_nAm"]
-    # R11 and R13 are panel (c) of the report's adult and children's figures (below R1 and R6); R14 stands alone
+    # R11 stands alone (Fig. 6, its rows A and B); R13 is panel (c) of the children's figure (below R6, Fig. 8); R14
+    # stands alone
     map_figure("Figure_R11_maps_adult", [(t, h) for t, h, _ in adult],
-               f"Adult, measured head position; sensor plus brain noise; {q:g}-nAm dipoles", ext, letter="(c)")
+               f"Adult, measured head position; sensor plus brain noise; {q:g}-nAm dipoles", ext, row_letters="ab")
     map_figure("Figure_R13_maps_heads", [(t, h) for t, h, _ in heads],
                f"Fixed adult helmet, top contact; sensor plus brain noise; {q:g}-nAm dipoles", ext, letter="(c)")
     map_figure("Figure_R14_maps_scaled", [(t, h) for t, h, _ in scaled],
@@ -661,6 +665,12 @@ def figures_maps() -> dict:
 
 # ----------------------------------------------------------------------------------------------
 # R12: geometry
+def loop_length(polyline) -> float:
+    """Length of a section polyline [mm]."""
+    p = np.asarray(polyline, float)
+    return float(np.linalg.norm(np.diff(p, axis=0), axis=1).sum())
+
+
 def segments(polylines: list) -> np.ndarray:
     """Segments (n, 2, 2) between consecutive points of each polyline of the geometry export."""
     return np.concatenate([np.stack([p[:-1], p[1:]], axis=1) for p in map(np.asarray, polylines)])
@@ -719,8 +729,11 @@ def geometry_sections(g: dict, cg: dict) -> tuple[dict, dict]:
         if len(opm) != g["arrays"][k]["opm_dense"]["n_sites"]:
             raise SystemExit(f"{GEOMETRY}: {k} has {len(opm)} dense OPM sites, {G3B} {g['arrays'][k]['opm_dense']['n_sites']}")
         sec = a["sections"]
-        out[k] = dict(scalp={plane: segments(sec[plane]["scalp"]) for plane in ("sagittal", "coronal")},
-                      white=[segments(sec["coronal"]["white"][h]) for h in ("lh", "rh")],
+        # drawn: of the scalp, the section's outer contour (its longest closed loop; the others are mesh fragments a few
+        # millimetres long or loops below the face); of the white matter, every loop of at least WHITE_MIN_LOOP_MM
+        out[k] = dict(scalp={plane: segments([max(sec[plane]["scalp"], key=loop_length)]) for plane in ("sagittal", "coronal")},
+                      white=[segments([q for q in sec["coronal"]["white"][h] if loop_length(q) >= WHITE_MIN_LOOP_MM])
+                             for h in ("lh", "rh")],
                       fixed=coils["fixed_top"], fitted=coils["fitted_adult_gap"], scaled=coils["scaled_x_centred"], opm=opm,
                       k=float(ft["k"]), coil_err=coil_err)
     return out, x
@@ -780,7 +793,7 @@ def figure_geometry() -> dict:
             for sp in ("top", "right"):
                 ax.spines[sp].set_visible(False)
         cx = (x0 + pw / 2) / W
-        fig.text(cx, (H - 0.04) / H, style.ANAT_LABEL[k], ha="center", va="top", fontsize=9)
+        fig.text(cx, (H - 0.04) / H, f"({'abc'[j]}) {style.ANAT_LABEL[k]}", ha="center", va="top", fontsize=9)
         fig.text(cx, (H - 0.24) / H,
                  f"median gap: fixed {pl['top']['median_dist_mm']:.1f}, fitted {fr['median_mm']:.1f} mm\n"
                  f"fitted helmet ×{hd['k']:.3f}; {g['arrays'][k]['opm_dense']['n_sites']} dense OPM sites",
@@ -798,7 +811,7 @@ def figure_geometry() -> dict:
     labels = ("dense OPM array (sensing centres)", "helmet fitted at the adult's gap", "fixed adult helmet, top contact")
     handles = [Line2D([], [], ls="none", label=lab, **kw) for (kw, _), lab in zip(markers, labels)][::-1]
     handles += [Line2D([], [], color="k", lw=0.9, label="scalp (MRI surface)"),
-                Line2D([], [], color=CORTEX_GREY, lw=0.8, label="white-matter surface: the sources (coronal sections)")]
+                Line2D([], [], color=CORTEX_GREY, lw=0.8, label="white-matter surface (coronal sections)")]
     fig.legend(handles=handles, loc="lower left", ncol=2, bbox_to_anchor=(lm / W, 0.0), handlelength=1.6,
                columnspacing=1.6, fontsize=7.5, borderaxespad=0.1)
     style.save(fig, "Figure_R12_geometry")
@@ -838,7 +851,9 @@ def figure_geometry() -> dict:
             "through the head origin: sagittal x = 0 and coronal y = 0. Lines: the intersection of the MRI scalp mesh "
             "(black) and, in the coronal sections, of the white-matter surfaces (grey; the cortical sources lie on them) "
             "with the plane, one segment per crossed triangle (the midsagittal plane passes between the hemispheres, so "
-            "the sagittal sections show the scalp only), as polylines rounded to 0.01 mm; the sections are cropped below "
+            "the sagittal sections show the scalp only), as polylines rounded to 0.01 mm; of the scalp, only the "
+            "section's outer contour (its longest closed loop) is drawn, and white-matter loops shorter than "
+            f"{WHITE_MIN_LOOP_MM:g} mm (specks of the cut) are left out; the sections are cropped below "
             f"z = {zl[0]:g} mm (face and neck). Markers: sensors within "
             f"{SLAB_MM:g} mm of the plane, projected onto it (the slab of results/g3b/Figure_G3B_geometry.png). Filled black squares: the "
             f"{n_coils} Neuromag magnetometer coil centres of the fixed adult helmet (VectorView geometry of the sample "

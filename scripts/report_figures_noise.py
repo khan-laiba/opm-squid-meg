@@ -12,12 +12,12 @@
       (A-E = S1-S5 of the result file; the lettering is checked against the methods text), and the
       published model's value.
   (c) The dense and site-matched ratios at the primary OPM white level with sensor plus brain noise and
-      the omissions of the noise model added: near-skull cortex (as noise, as targets, both), coloured
-      OPM noise (1/f corner 1, 3, 10 Hz, frequency-resolved, beside its white-noise reference), heart
+      the omissions of the noise model added: near-skull cortex (as background, as additional targets, both),
+      coloured OPM noise (1/f corner 1, 3, 10 Hz, frequency-whitening detector, beside its white-noise reference), heart
       and eye sources at both stored levels, and the two joint runs; the published model as reference.
-  (d) The ratio against the OPM white-noise level (the stored sweep, sensor plus brain noise and after
-      the 8-term projection, the stored 95 % intervals as bands), the break-even levels with their
-      intervals and the most adverse joint combination (dashed).
+  (d) The ratio against the OPM white-noise level (the stored sweep, sensor plus brain noise and with
+      the room field projected out, the stored 95 % intervals as bands), the break-even levels with their
+      intervals and the most adverse joint combination (dash-dotted).
 Every ratio axis carries a secondary axis in dB (20 log10 of the ratio; D for an OPM/Neuromag
 detectability ratio), checked tick by tick against the ratio axis when drawn (as in R1, R3 and R4).
 
@@ -76,8 +76,9 @@ CI_LINE = dict(lw=1.3, solid_capstyle="butt", zorder=3)
 # (b) the scenarios: letter, key in covariance_validation.json opm_implication.ratios (= its assumptions key), a short
 # gloss (the caption defines each scenario in full)
 SCENARIOS = (("A", "S1_same_relative_change", "common model error"),
-             ("B", "S2_same_variance_excess_both_modelled", "both backgrounds × {k}"),
-             ("C", "S3_neuromag_measured_opm_variance_excess", "OPM bears the excess (pessimistic)"),
+             ("B", "S2_same_variance_excess_both_modelled", "both background variances × {k}"),
+             ("C", "S3_neuromag_measured_opm_variance_excess",
+              "Neuromag measured, OPM\nbackground variance × {k}"),
              ("D", "S4_neuromag_measured_opm_as_modelled", "Neuromag measured, OPM modelled"),
              ("E", "S5_neuromag_measured_empty_room", "measured empty room"))
 # the phrases of docs/methods.md that define A-E, in this order (the letters must stay those of the methods)
@@ -85,9 +86,11 @@ METHODS_LETTERS = (("A", "the model's error common"), ("B", "both cortical backg
                    ("C", "the most pessimistic, Neuromag as measured"), ("D", "Neuromag as measured, the OPM exactly as modelled"),
                    ("E", "Neuromag with its measured empty"))
 CORNERS = (1, 3, 10)  # (c) 1/f corners, Hz
-SWEEP_LS = {IB: "-", PR: (0, (1.0, 1.4))}  # (d) sensor plus brain noise solid, after the projection dotted
-ADVERSE_LS = (0, (3.6, 2.0))  # (d) the most adverse joint combination, dashed
+SWEEP_LS = {IB: "-", PR: (0, (3.6, 2.0))}  # (d) sensor plus brain noise solid, the room field projected out dashed
+# (as in Figs. R1 and R6, where dashed is the projected condition)
+ADVERSE_LS = (0, (3.6, 1.5, 1.0, 1.5))  # (d) the most adverse joint combination, dash-dotted
 BE_DB_OFFSET = 0.13  # (d) break-even markers this many dB above (sensor plus brain noise) / below (projected) the ratio of 1
+BE_BAR_LW = 1.6  # (d) line width of the break-even intervals (pt), thin enough to leave the curves beneath visible
 
 
 # ----------------------------------------------------------------------------------------------
@@ -332,14 +335,15 @@ def panel_c(sf, ns, pub):
     # (label, stored comparisons, headline key with the same values, path of the stored comparisons)
     groups = [
         (f"Cortex {fl['floor_mm']:g}–{rule:g} mm from the inner skull", [
-            ("as noise", fl["background"]["comparisons"], "near-skull cortex (>= 2 mm) in the background",
+            ("as background", fl["background"]["comparisons"], "near-skull cortex (>= 2 mm) in the background",
              "near_skull.primary.floor_2mm.background.comparisons"),
-            ("as targets", fl["targets"]["all"], "near-skull cortex (>= 2 mm) as additional targets",
+            ("as additional targets", fl["targets"]["all"], "near-skull cortex (>= 2 mm) as additional targets",
              "near_skull.primary.floor_2mm.targets.all"),
-            ("as noise and targets", fl["both"]["all"], "near-skull cortex (>= 2 mm) in the background and as targets",
+            ("as both", fl["both"]["all"],
+             "near-skull cortex (>= 2 mm) in the background and as targets",
              "near_skull.primary.floor_2mm.both.all")]),
-        ("Coloured OPM noise: 1/f corner", [
-            ("none, frequency-resolved", co[f"frequency_resolved/flat/{lk}fT/0Hz"]["comparisons"],
+        ("Coloured OPM noise (1/f corner), frequency-whitening detector", [
+            ("none (white noise)", co[f"frequency_resolved/flat/{lk}fT/0Hz"]["comparisons"],
              "OPM 1/f corner 0 Hz, frequency-resolved (flat signal)",
              f"coloured.results['frequency_resolved/flat/{lk}fT/0Hz'].comparisons")]
          + [(f"{c:g} Hz", co[f"frequency_resolved/flat/{lk}fT/{c}Hz"]["comparisons"],
@@ -351,7 +355,7 @@ def panel_c(sf, ns, pub):
             ("at the magnetometer shortfall", ff["cardiac+ocular/magnetometer_shortfall/added"]["comparisons"],
              "heart + eyes, magnetometer shortfall level, added",
              "far_field.results['cardiac+ocular/magnetometer_shortfall/added'].comparisons")]),
-        ("Joint, frequency-resolved", [
+        ("Joint, frequency-whitening detector", [
             (f"near-skull cortex + {corner}-Hz corner", jr[f"joint_without_far_field/{lk}fT"]["comparisons"],
              f"near-skull cortex + 1/f corner (most adverse combination), OPM white {lk} fT/sqrt(Hz)",
              f"joint.results['joint_without_far_field/{lk}fT'].comparisons"),
@@ -437,7 +441,7 @@ def panel_d(sf, ns, pub):
         for key, sgn in ((IB, 1), (PR, -1)):
             bv, blo, bhi = vals["break_even"][f"{a}/{key}"]
             yb = 10 ** (sgn * BE_DB_OFFSET / 20)
-            ax.plot([blo, bhi], [yb, yb], "-", color=col, lw=2.4, alpha=0.6, solid_capstyle="butt", zorder=4)
+            ax.plot([blo, bhi], [yb, yb], "-", color=col, lw=BE_BAR_LW, alpha=0.6, solid_capstyle="butt", zorder=4)
             ax.plot(bv, yb, "D", color=col, ms=4.4, mfc=col if key == IB else "white", mec=col, mew=1.1, zorder=5)
             ax.annotate(f"{bv:.1f}", (bv, yb), xytext=(0, 4.5 * sgn), textcoords="offset points", ha="center",
                         va="bottom" if sgn > 0 else "top", fontsize=FS_NOTE, color=col, zorder=6,
@@ -452,16 +456,16 @@ def panel_d(sf, ns, pub):
     ax.xaxis.set_minor_locator(NullLocator())
     log_axis(ax, "y", [0.8, 0.9, 1, 1.1, 1.2, 1.3], (0.765, 1.36))
     db_axis(ax, "y", 1.0, "D (dB)")
-    ax.set_xlabel("OPM white noise level (fT/√Hz)")
+    ax.set_xlabel("OPM white-noise level (fT/√Hz, log scale)")
     ax.set_ylabel(f"OPM / Neuromag detectability\n({ns['setup']['arrays']['squid']} channels), log scale")
     h = [Line2D([], [], color="0.25", lw=1.5, ls=SWEEP_LS[IB], marker="o", ms=3.4, label="sensor plus brain noise"),
-         Line2D([], [], color="0.25", lw=1.5, ls=SWEEP_LS[PR], label=f"after the {n_ext(ns)}-term projection"),
+         Line2D([], [], color="0.25", lw=1.5, ls=SWEEP_LS[PR], label="room field projected out"),
          style.band_pair(D_BAND_ALPHA),  # one swatch in each array's colour
          Line2D([], [], color="0.25", lw=1.25, ls=ADVERSE_LS,
-                label=f"joint run: near-skull cortex\n+ {ns['config']['sensitivity']['joint']['corner_hz']:g}-Hz corner, "
-                      "frequency-resolved"),
+                label=f"joint run: near-skull cortex +\n{ns['config']['sensitivity']['joint']['corner_hz']:g}-Hz corner, "
+                      "frequency-whitening\ndetector"),
          Line2D([], [], color="0.25", lw=0, marker="D", ms=4.4, label="break-even level, 95 % interval (filled: sensor\n"
-                "plus brain noise; open: after the projection)"),
+                "plus brain noise; open: room field projected out)"),
          Line2D([], [], color="0.7", lw=0.8, label=f"primary model's level ({prim:g} fT/√Hz)")]
     labels = [hd.get_label() if not isinstance(hd, style.KeyPair) else "95 % intervals (bands)" for hd in h]
     lg = ax.legend(h, labels, loc="upper center", bbox_to_anchor=(0.5, -0.2), fontsize=FS_NOTE, handlelength=2.4,
@@ -489,7 +493,7 @@ def texts(v, cov, ns, g2, pub):
     jw = cv[f"near-skull cortex + {ns['config']['sensitivity']['joint']['corner_hz']:g}-Hz corner"]
     jf = cv["the same + heart and eyes"]
     room, short = cv["at the room field's level"], cv["at the magnetometer shortfall"]
-    near = [cv[x] for x in ("as noise", "as targets", "as noise and targets")]
+    near = [cv[x] for x in ("as background", "as additional targets", "as both")]
     corner_max = f"{max(CORNERS):g}"
     corners = ", ".join(f"{c:g}" for c in CORNERS[:-1]) + f" and {CORNERS[-1]:g}"
     # the parcel labels of the bootstrap: the same in both result files
@@ -515,7 +519,7 @@ def texts(v, cov, ns, g2, pub):
     assert all(x["measured"][1] > 1 for x in a_.values())  # wording guard (alt text: 'intervals above 1')
     # (c): the largest changes against the primary model, per array (%)
     chg = {a: [100 * (x[a][0] / pub[a][0] - 1) for x in c_.values()] for a in ARRAYS}
-    fr_white = {a: 100 * (cv["none, frequency-resolved"][a][0] / pub[a][0] - 1) for a in ARRAYS}
+    fr_white = {a: 100 * (cv["none (white noise)"][a][0] / pub[a][0] - 1) for a in ARRAYS}
 
     def pct(x):
         return f"{x:+.1f}".replace("-", "\u2212")
@@ -591,24 +595,25 @@ def texts(v, cov, ns, g2, pub):
         "vertices closer than 4 mm to it, "
         "left out of the primary model; below 2 mm the lead fields are not converged) in the background, as additional "
         f"targets or both (near_skull.primary.floor_2mm); coloured OPM noise with a 1/f corner at {corners} Hz under the "
-        "frequency-resolved detector (coloured.results "
+        "frequency-whitening detector (coloured.results "
         "'frequency_resolved/flat'), whose white-noise value (corner 'none') is its reference and lies below the primary "
         "band-variance ratio; heart and eye sources (a cardiac current dipole 250 mm below the head and current dipoles at "
         f"the two eyes, each half the far-field variance) added on top of the primary model's cortical background at the room "
         "field's level "
         f"({ff['room_field']:.0f} fT at the median magnetometer) or filling the magnetometer brain-noise shortfall "
         f"({ff['magnetometer_shortfall']:.0f} fT; far_field.results['cardiac+ocular/<level>/added'], the mode adverse to the "
-        f"OPM); and the joint runs (frequency-resolved): the near-skull background with the {corner_max}-Hz corner "
+        f"OPM); and the joint runs (frequency-whitening detector): the near-skull background with the {corner_max}-Hz corner "
         "(joint_without_far_field, which the result file names the most adverse combination) and the same with the heart "
         "and eyes at the shortfall level (joint). "
         f"(d) The ratio against the OPM white level ({', '.join(f'{x:g}' for x in lv)} fT/sqrt(Hz); sweep.entries) with "
-        f"sensor plus brain noise (solid, markers) and after the {nx}-term projection (dotted), the stored 95 % intervals as "
+        f"sensor plus brain noise (solid, markers) and with the room field projected out ({nx}-term projection; dashed), the "
+        "stored 95 % intervals as "
         "bands; the break-even level, the white level at which the median ratio is 1 (sweep.break_even: crossing by "
         f"log-linear interpolation on {len(grid)} log-spaced levels from {grid[0]:g} to {grid[-1]:g} fT/sqrt(Hz), interval "
         "from the same parcel resamples applied to the whole curve), drawn as a diamond on the ratio of 1 with its interval "
         f"(filled and {BE_DB_OFFSET:g} dB above the line: sensor plus brain noise; open and {BE_DB_OFFSET:g} dB below: after "
-        "the projection; the offsets only keep the intervals apart); dashed: the most adverse combination "
-        "(joint_without_far_field, sensor plus brain noise, frequency-resolved); grey vertical line: the primary model's "
+        "the projection, on dashed intervals; the offsets only keep the intervals apart); dash-dotted: the most adverse "
+        "combination (joint_without_far_field, sensor plus brain noise, frequency-whitening detector); grey vertical line: the primary model's "
         f"level. The joint run with the heart and eyes added (joint) lies, for the site-matched array, "
         f"{joint_side('opm_matched')} ({jf['opm_matched'][0]:.3f} against {jw['opm_matched'][0]:.3f} at {lk} fT/sqrt(Hz); "
         f"panel c) and, for the dense array, {joint_side('opm_dense')}. No OPM noise was measured: (a) checks the model for "
@@ -630,7 +635,7 @@ def texts(v, cov, ns, g2, pub):
         f"{lv[0]:g} to {lv[-1]:g} fT/sqrt(Hz): the dense ratio falls from {sw['opm_dense/' + IB][0][0]:.2f} to "
         f"{sw['opm_dense/' + IB][-1][0]:.2f} and reaches 1 at {be['opm_dense/' + IB][0]:.1f} fT/sqrt(Hz), the site-matched "
         f"from {sw['opm_matched/' + IB][0][0]:.2f} to {sw['opm_matched/' + IB][-1][0]:.2f}, reaching 1 at "
-        f"{be['opm_matched/' + IB][0]:.1f}; after the projection both are lower, and the most adverse combination (dashed) "
+        f"{be['opm_matched/' + IB][0]:.1f}; after the projection both are lower, and the most adverse combination (dash-dotted) "
         "lies below the sensor plus brain noise curves. All ratio axes also carry a dB scale.")
     caption = (
         "Figure R17. How far the noise model can be trusted. (a) Neuromag's detectability with its measured noise over "
@@ -653,26 +658,26 @@ def texts(v, cov, ns, g2, pub):
         "with sensor plus brain noise, what the model leaves out moves the ratios by at most "
         f"{max(abs(x) for v in chg.values() for x in v):.0f} % against the primary model (dense "
         f"{pct(min(chg['opm_dense']))} to {pct(max(chg['opm_dense']))} %, site-matched {pct(min(chg['opm_matched']))} to "
-        f"{pct(max(chg['opm_matched']))} %; the frequency-resolved detector alone, with white noise, gives "
+        f"{pct(max(chg['opm_matched']))} %; the frequency-whitening detector alone, with white noise, gives "
         f"{pct(fr_white['opm_dense'])} and {pct(fr_white['opm_matched'])} %): the cortex 2-4 mm from the "
-        f"inner skull as noise, as targets or both {near[0]['opm_dense'][0]:.3f}, {near[1]['opm_dense'][0]:.3f} and "
+        f"inner skull as background, as additional targets or both {near[0]['opm_dense'][0]:.3f}, {near[1]['opm_dense'][0]:.3f} and "
         f"{near[2]['opm_dense'][0]:.3f} (site-matched {min(x['opm_matched'][0] for x in near):.3f}-"
         f"{max(x['opm_matched'][0] for x in near):.3f}); coloured OPM noise "
         f"with a 1/f corner at {corners} Hz "
         + ", ".join(f"{cv[f'{c:g} Hz']['opm_dense'][0]:.3f}" for c in CORNERS)
-        + f" against {cv['none, frequency-resolved']['opm_dense'][0]:.3f} with white noise under the same frequency-resolved "
+        + f" against {cv['none (white noise)']['opm_dense'][0]:.3f} with white noise under the same frequency-whitening "
         "detector (site-matched " + ", ".join(f"{cv[f'{c:g} Hz']['opm_matched'][0]:.3f}" for c in CORNERS)
-        + f" against {cv['none, frequency-resolved']['opm_matched'][0]:.3f}); heart and eye fields added at the room "
+        + f" against {cv['none (white noise)']['opm_matched'][0]:.3f}); heart and eye fields added at the room "
         f"field's level or filling the magnetometer shortfall {both(room, 3)} and {both(short, 3)}; jointly, the near-skull "
         f"cortex with a {corner_max}-Hz corner "
         f"{both(jw, 3)}, with the heart and eyes added {both(jf, 3)}. (d) Against the OPM white-noise level (solid: sensor plus "
-        f"brain noise; dotted: after the {nx}-term projection) the dense ratio falls from {sw['opm_dense/' + IB][0][0]:.2f} at "
+        f"brain noise; dashed: the room field projected out) the dense ratio falls from {sw['opm_dense/' + IB][0][0]:.2f} at "
         f"{lv[0]:g} fT/√Hz to {sw['opm_dense/' + IB][-1][0]:.2f} at {lv[-1]:g} fT/√Hz "
         f"({sw['opm_dense/' + PR][-1][0]:.2f} after the projection) and the site-matched from "
         f"{sw['opm_matched/' + IB][0][0]:.2f} to {sw['opm_matched/' + IB][-1][0]:.2f}; the ratio reaches 1 (diamonds) at "
         f"{bev('opm_dense/' + IB)} fT/√Hz for the dense array ({bev('opm_dense/' + PR)} after the projection) and "
         f"{bev('opm_matched/' + IB)} for the site-matched ({bev('opm_matched/' + PR)}); in the most adverse combination "
-        f"(dashed) the dense ratio is {adv['opm_dense'][0][0]:.2f}, {adv['opm_dense'][lv.index(float(lk))][0]:.2f} and "
+        f"(dash-dotted) the dense ratio is {adv['opm_dense'][0][0]:.2f}, {adv['opm_dense'][lv.index(float(lk))][0]:.2f} and "
         f"{adv['opm_dense'][-1][0]:.2f} at {lv[0]:g}, {lk} and {lv[-1]:g} fT/√Hz. Medians over the targets with 95 % "
         "parcel-bootstrap intervals (lines and bands) within this one anatomy; top and right-hand axes: the same ratios in "
         f"dB (D for the OPM/Neuromag ratios); dense OPM array {sites['opm_dense']} sites, site-matched {sites['opm_matched']}, "
