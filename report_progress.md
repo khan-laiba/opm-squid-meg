@@ -232,7 +232,7 @@ return accept or minor revisions in the same round.
   Núñez Ponasso 2025, Wartman 2025, Arif 2025, Youssofzadeh 2026, Jiao 2024, Ward 2025, Pulliam 2024, Jia 2025, Wang
   2025. The owner saved the Guide for Authors. Toolchain: tectonic (XeTeX) with Elsevier's elsarticle class and TeX Gyre
   Termes. Title page and declarations as decided by the owner: Laiba Khan (Lexington High School) and Mainak Jas
-  (Martinos Center, MGH/HMS; corresponding author); no specific funding; no competing interests; CRediT roles; a
+  (Martinos Center, MGH/HMS); no specific funding; no competing interests; CRediT roles; a
   generative-AI declaration.
 - 2026-10-05: manuscript drafted. Main text written to the style sheet from the report (structure 1-5, Discussion with
   an unnumbered summary and the limitations in one paragraph, no bullet lists, no provenance material); the
@@ -390,3 +390,8 @@ return accept or minor revisions in the same round.
   Fig. S5 within 1 pt of a panel title, now moved. Final verdicts: accept from both, for all ten figures. Committed as
   cd1ca05 (main fast-forwarded) and deployed as gh-pages 9e81cbd, checked live (2 pages, 31 internal assets, 239
   anchors, 0 failures). Unit tests: 305 pass; facts: 68,867, 0 problems.
+- 2026-10-11: owner: remove the corresponding-author line everywhere. The manuscript's title page no longer designates
+  a corresponding author: its footnote, the designation and the email address, is removed from the PDF and from the
+  HTML version, and the README's contact section directs questions about the paper and the code to the repository's
+  issues; the earlier entry of this log no longer names one. Committed as 5fb7b55 (main fast-forwarded) and deployed
+  as gh-pages 628ab48, checked live (2 pages, 31 internal assets, 237 anchors, 0 failures).
