@@ -360,3 +360,14 @@ return accept or minor revisions in the same round.
   Committed as 5ebf269 (main fast-forwarded) and deployed as gh-pages c957ce9, checked live (2 pages, 31 internal assets, 239 anchors, 0 failures).
   Unit tests: 302 pass; facts: 68,864,
   0 problems.
+- 2026-10-11: owner: correct the figure keys (Figs. 3, 4, 5 and 9). The key for each primary-interval band now shows
+  the color in which the band is drawn, where it had shown a gray swatch. Fig. 3 also gets a key for its gray primary
+  row; Fig. 4's primary-model key shows the median line and interval band of each array, as panels B and C draw them;
+  Fig. 5's IQR key is in both colors. Fig. 9's interaction (C), which compares the two helmets, was drawn in the
+  fitted helmet's vermilion; it is now drawn as gray diamonds with a key of its own. Its dashed line is keyed as the
+  adult's gap laterally centered, so that it no longer conflicts with the adult's 28.4 mm at top contact. Fig. S17, the
+  nine-anatomy version, changed in the same way, and its key now clears the slanted head labels; the export's text
+  audit does not check slanted text. The captions of Figs. 4, 9 and S17 were updated. The data are unchanged, and the
+  other 23 figures are pixel-identical. Committed as 6602396 (main fast-forwarded) and deployed as gh-pages fe38257,
+  checked live (2 pages, 31 internal assets, 239 anchors, 0 failures). Unit tests: 302 pass; facts: 68,864, 0
+  problems.
